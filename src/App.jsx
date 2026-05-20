@@ -4403,37 +4403,37 @@ const POSTS = [
   {
     id: 1, day: "3/12", textKey: "p1Text",
     photoBg: "linear-gradient(135deg,#ffd6e0,#ffafcc)", photoIcon: "🌸",
-    unsplashQuery: "japanese student school uniform spring",
+    localImage: "/images/ep1/post1.png",
     elements: [
-      { x: 30, y: 25, emoji: "🏫", labelKey: "schoolCrest", infoKey: "schoolCrestInfo", danger: true },
-      { x: 70, y: 40, emoji: "🌸", labelKey: "cherry", infoKey: "cherryInfo", danger: false },
+      { x: 78, y: 38, emoji: "🏫", labelKey: "schoolCrest", infoKey: "schoolCrestInfo", danger: true },  // 校門の看板（右）
+      { x: 38, y: 72, emoji: "📛", labelKey: "cherry",      infoKey: "cherryInfo",      danger: false }, // 胸の校章（左下）
     ],
   },
   {
     id: 2, day: "3/20", textKey: "p2Text",
     photoBg: "linear-gradient(135deg,#fff4d6,#ffc97a)", photoIcon: "🍰",
-    unsplashQuery: "birthday cake home celebration candles",
+    localImage: "/images/ep1/post2.png",
     elements: [
-      { x: 25, y: 35, emoji: "🏢", labelKey: "sign", infoKey: "signInfo", danger: true },
-      { x: 75, y: 30, emoji: "🗼", labelKey: "landmark", infoKey: "landmarkInfo", danger: true },
+      { x: 78, y: 22, emoji: "🗼", labelKey: "landmark",    infoKey: "landmarkInfo",    danger: true },  // 東京タワー（右上）
+      { x: 68, y: 55, emoji: "🏢", labelKey: "sign",        infoKey: "signInfo",        danger: true },  // タナカ工業の看板（中央右）
     ],
   },
   {
     id: 3, day: "4/2", textKey: "p3Text",
     photoBg: "linear-gradient(135deg,#d6e8ff,#7ab8ff)", photoIcon: "☕",
-    unsplashQuery: "cafe coffee table laptop window",
+    localImage: "/images/ep1/post3.png",
     elements: [
-      { x: 30, y: 30, emoji: "📋", labelKey: "menu", infoKey: "menuInfo", danger: true },
-      { x: 70, y: 35, emoji: "📍", labelKey: "locationTag", infoKey: "locationTagInfo", danger: true },
+      { x: 80, y: 30, emoji: "🏪", labelKey: "locationTag", infoKey: "locationTagInfo", danger: true },  // カフェ名看板（右上）
+      { x: 80, y: 65, emoji: "📋", labelKey: "menu",        infoKey: "menuInfo",        danger: true },  // メニュー表（右下）
     ],
   },
   {
     id: 4, day: "4/8", textKey: "p4Text",
     photoBg: "linear-gradient(135deg,#e0d6ff,#a98aff)", photoIcon: "🐕",
-    unsplashQuery: "dog pet living room window home",
+    localImage: "/images/ep1/post4.png",
     elements: [
-      { x: 25, y: 25, emoji: "🏠", labelKey: "nameplate", infoKey: "nameplateInfo", danger: true },
-      { x: 75, y: 30, emoji: "🚗", labelKey: "license", infoKey: "licenseInfo", danger: true },
+      { x: 38, y: 42, emoji: "🏠", labelKey: "nameplate",   infoKey: "nameplateInfo",   danger: true },  // 表札「雨宮」（左中）
+      { x: 74, y: 60, emoji: "🚗", labelKey: "license",     infoKey: "licenseInfo",     danger: true },  // ナンバープレート（右中下）
     ],
   },
 ];
@@ -4717,17 +4717,16 @@ function Episode1({ onComplete }) {
   const [animStars, setAnimStars] = useState(false);
   const [timedHuntResult, setTimedHuntResult] = useState(null);
   const [useTimedMode, setUseTimedMode] = useState(true);
-  const [postImages, setPostImages] = useState({}); // {postId: {url, author, authorLink}}
-
-  // 各投稿の画像をUnsplashから取得
-  useEffect(() => {
+  const [postImages, setPostImages] = useState(() => {
+    // ローカル固定画像を直接セット（API不要）
+    const imgs = {};
     POSTS.forEach(p => {
-      if (postImages[p.id] || !p.unsplashQuery) return;
-      fetchUnsplashImage(p.unsplashQuery).then(img => {
-        if (img) setPostImages(prev => ({ ...prev, [p.id]: img }));
-      });
+      if (p.localImage) imgs[p.id] = { url: p.localImage, author: null };
     });
-  }, []);
+    return imgs;
+  });
+
+  // Unsplash取得は不要になったためuseEffectは削除
 
   useEffect(() => {
     if (phase !== "horror") return;
@@ -4927,7 +4926,7 @@ function Episode1({ onComplete }) {
                     }} style={{ position: "absolute", left: `${el.x}%`, top: `${el.y}%`, transform: "translate(-50%,-50%)", width: 46, height: 46, borderRadius: "50%", border: isFound ? "2px solid #ff4343" : "2px dashed rgba(255,255,255,.85)", background: isFound ? "rgba(255,67,67,.9)" : "rgba(255,255,255,.35)", backdropFilter: "blur(4px)", boxShadow: isFound ? "0 0 14px rgba(255,67,67,.6)" : "0 0 12px rgba(0,0,0,.4)", fontSize: 20, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", animation: isFound ? "none" : "pulse 2s infinite", color: "#fff", fontWeight: 900 }}>{isFound ? "✓" : "?"}</button>
                   );
                 })}
-                {postImages[post.id] && (
+                {postImages[post.id]?.author && (
                   <div style={{ position: "absolute", bottom: 3, right: 6, fontSize: 8, color: "rgba(255,255,255,.55)" }}>
                     Photo: <a href={postImages[post.id].authorLink} target="_blank" rel="noreferrer" style={{ color: "rgba(255,255,255,.7)" }}>{postImages[post.id].author}</a> / Unsplash
                   </div>
