@@ -370,17 +370,24 @@ const I18N = {
     },
     schoolCrest: { ja: "校章", en: "School crest", ko: "교표", zh: "校徽" },
     schoolCrestInfo: {
-      ja: "制服の左胸の校章 → 学校が特定できる",
+      ja: "制服の左胸の校章 → 学校名が特定できる",
       en: "School crest on uniform → school can be identified",
       ko: "교복 왼쪽 가슴 교표 → 학교 특정 가능",
       zh: "校服左胸的校徽 → 可识别学校",
     },
-    cherry: { ja: "桜", en: "Cherry blossom", ko: "벚꽃", zh: "樱花" },
-    cherryInfo: {
-      ja: "季節がわかるだけで個人特定にはつながらない",
-      en: "Only reveals the season — not enough to identify you",
-      ko: "계절만 알 수 있어 개인 특정으로 이어지지 않음",
-      zh: "只显示季节,不会导致身份识别",
+    schoolSign: { ja: "学校の表札", en: "School nameplate", ko: "학교 명판", zh: "学校铭牌" },
+    schoolSignInfo: {
+      ja: "「私立 桜花中学校」の表札 → 学校名・住所が完全に特定される。通学路や自宅付近もバレる可能性がある",
+      en: "School nameplate visible → school name and location fully identified",
+      ko: "학교 명판 → 학교명·주소가 완전히 특정됨",
+      zh: "学校铭牌 → 校名和地址完全暴露",
+    },
+    cafeName: { ja: "カフェの店名", en: "Café name", ko: "카페 이름", zh: "咖啡厅名称" },
+    cafeNameInfo: {
+      ja: "「カフェ ルブラン」の看板 → 検索すれば場所・住所が即判明。よく行くお店がバレると行動パターンが読まれる",
+      en: "Café name visible → location found instantly via search",
+      ko: "카페 이름 → 검색하면 위치·주소 즉시 확인 가능",
+      zh: "咖啡厅名称 → 搜索即可找到位置和地址",
     },
     sign: { ja: "向かいの看板", en: "Sign across the street", ko: "맞은편 간판", zh: "对面招牌" },
     signInfo: {
@@ -537,8 +544,8 @@ function LanguageSwitcher({ compact = false }) {
 }
 
 // =============================================================================
-// 🛡️ MAMORU — 統合版 v1.8
-// EP1にUnsplashリアル写真を組み込み（絵文字→実写化）
+// 🛡️ MAMORU — 統合版 v1.9
+// EP1 大幅改善：Twitter風レイアウト・マーカー修正・タイムアタック削除
 // =============================================================================
 
 // ─────────────────────────────────────────────
@@ -868,7 +875,7 @@ function OwlReaction({ mood, message, animate = true }) {
 }
 
 // ⑩ 今日の宿題コンポーネント
-function TodaysHomework({ tasks, accentColor = "#ffa940", mode = "dark" }) {
+function TodaysHomework({ tasks, accentColor = "#ffa940", mode = "dark", onComplete }) {
   const [done, setDone] = useState([]);
   const allDone = done.length === tasks.length;
   const isLight = mode === "light";
@@ -885,7 +892,9 @@ function TodaysHomework({ tasks, accentColor = "#ffa940", mode = "dark" }) {
         <div style={{ fontSize: 20 }}>📋</div>
         <div>
           <div style={{ fontSize: 13, fontWeight: 900, color: isLight ? "#1e293b" : "#fff" }}>今日の宿題</div>
-          <div style={{ fontSize: 11, color: isLight ? "#64748b" : "rgba(255,255,255,.4)" }}>アプリを閉じる前にやってみよう</div>
+          <div style={{ fontSize: 11, color: isLight ? "#64748b" : "rgba(255,255,255,.4)" }}>
+            3つ全部チェックしてから次へ進もう
+          </div>
         </div>
         <div style={{ marginLeft: "auto", fontFamily: "'DotGothic16',monospace", fontSize: 11, color: accentColor }}>
           {done.length}/{tasks.length}
@@ -927,9 +936,28 @@ function TodaysHomework({ tasks, accentColor = "#ffa940", mode = "dark" }) {
         })}
       </div>
 
+      {/* 全完了時：お祝い + 次へボタン（onCompleteがある場合） */}
       {allDone && (
-        <div style={{ marginTop: 12, background: isLight ? "#f0fdf4" : "rgba(74,222,128,.08)", border: `1px solid ${isLight ? "#bbf7d0" : "rgba(74,222,128,.25)"}`, borderRadius: 10, padding: "10px 12px", fontSize: 12, color: isLight ? "#166534" : "#86efac", textAlign: "center", animation: "popIn .4s ease" }}>
-          🎉 全部できた！素晴らしい！
+        <div style={{ marginTop: 12, animation: "popIn .4s ease" }}>
+          <div style={{ background: isLight ? "#f0fdf4" : "rgba(74,222,128,.08)", border: `1px solid ${isLight ? "#bbf7d0" : "rgba(74,222,128,.25)"}`, borderRadius: 10, padding: "10px 12px", fontSize: 12, color: isLight ? "#166534" : "#86efac", textAlign: "center", marginBottom: onComplete ? 10 : 0 }}>
+            🎉 全部チェックした！素晴らしい！
+          </div>
+          {onComplete && (
+            <button onClick={onComplete}
+              style={{ width: "100%", padding: 14, background: `linear-gradient(135deg,${accentColor},${accentColor}cc)`, border: "none", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 4px 16px ${accentColor}33` }}>
+              キーワードを覚える 📖 →
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* 未完了時：次へボタンをロック表示 */}
+      {!allDone && onComplete && (
+        <div style={{ marginTop: 12, padding: "10px 14px", background: "rgba(0,0,0,.06)", border: "1px solid rgba(0,0,0,.08)", borderRadius: 12, display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ fontSize: 16 }}>🔒</span>
+          <span style={{ fontSize: 12, color: isLight ? "#94a3b8" : "rgba(255,255,255,.3)" }}>
+            3つ全部チェックすると次へ進めます（あと{tasks.length - done.length}つ）
+          </span>
         </div>
       )}
     </div>
@@ -939,31 +967,103 @@ function TodaysHomework({ tasks, accentColor = "#ffa940", mode = "dark" }) {
 // ⑧ 「もしこの選択なら」比較コンポーネント
 function ChoiceComparison({ myChoice, myResult, worstChoice, worstResult, accentColor = "#ffa940", mode = "dark" }) {
   const [showWorst, setShowWorst] = useState(false);
+  const [horrorStep, setHorrorStep] = useState(0); // 0=locked, 1〜4=アニメ段階, 5=reveal
   const isLight = mode === "light";
+
+  // ホラーアニメーションの段階的進行
+  useEffect(() => {
+    if (horrorStep === 0 || horrorStep >= 5) return;
+    const delay = [0, 1800, 1800, 2200, 1800][horrorStep] || 1800;
+    const t = setTimeout(() => setHorrorStep(s => s + 1), delay);
+    return () => clearTimeout(t);
+  }, [horrorStep]);
+
+  const horrorScenes = [
+    { icon: "🔍", color: "#f97316", title: "投稿を分析中…", body: "AIが画像から情報を抽出しています", sub: "校章・背景・位置情報を解析中…" },
+    { icon: "📍", color: "#ef4444", title: "自宅住所が特定されました", body: "緯度 35.6°N　経度 139.7°E\n練馬区〇〇町△丁目", sub: "Googleマップで確認済み" },
+    { icon: "📩", color: "#dc2626", title: "見知らぬ人からDMが届きました", body: "「きょう桜花中学校の前にいたよね？かわいいね」", sub: "アカウント作成日：今日 / フォロワー：0" },
+    { icon: "😱", color: "#991b1b", title: "自宅近くで目撃されています", body: "「いつも〇〇公園通るよね。毎日見てるよ」", sub: "あなたの行動パターンが完全に読まれています" },
+  ];
+
   return (
     <div style={{ margin: "14px 0" }}>
       <div style={{ fontSize: 12, fontWeight: 700, color: isLight ? "#64748b" : "rgba(255,255,255,.5)", letterSpacing: ".1em", marginBottom: 10, fontFamily: "'DotGothic16',monospace" }}>
         CHOICE COMPARISON
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-        <div style={{ background: isLight ? "#f0fdf4" : "rgba(74,222,128,.06)", border: `1px solid ${isLight ? "#bbf7d0" : "rgba(74,222,128,.2)"}`, borderRadius: 14, padding: "14px 12px" }}>
-          <div style={{ fontSize: 10, color: isLight ? "#16a34a" : "#4ade80", fontWeight: 700, marginBottom: 6 }}>✓ あなたの選択</div>
-          <div style={{ fontSize: 12, color: isLight ? "#166534" : "#86efac", fontWeight: 700, marginBottom: 6 }}>{myChoice}</div>
-          <div style={{ fontSize: 11, color: isLight ? "#475569" : "rgba(255,255,255,.55)", lineHeight: 1.6 }}>{myResult}</div>
-        </div>
-        <div style={{ background: isLight ? "#fef2f2" : "rgba(239,68,68,.06)", border: `1px solid ${isLight ? "#fecaca" : "rgba(239,68,68,.2)"}`, borderRadius: 14, padding: "14px 12px", position: "relative", overflow: "hidden" }}>
-          {!showWorst && (
-            <div style={{ position: "absolute", inset: 0, background: isLight ? "rgba(0,0,0,.55)" : "rgba(0,0,0,.7)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", cursor: "pointer", borderRadius: 14, gap: 6 }}
-              onClick={() => setShowWorst(true)}>
-              <span style={{ fontSize: 20 }}>👀</span>
-              <span style={{ fontSize: 11, color: "rgba(255,255,255,.8)", textAlign: "center" }}>最悪の結果を見る</span>
-            </div>
-          )}
-          <div style={{ fontSize: 10, color: isLight ? "#dc2626" : "#f87171", fontWeight: 700, marginBottom: 6 }}>✗ 最悪の選択なら</div>
-          <div style={{ fontSize: 12, color: isLight ? "#991b1b" : "#fca5a5", fontWeight: 700, marginBottom: 6 }}>{worstChoice}</div>
-          <div style={{ fontSize: 11, color: isLight ? "#475569" : "rgba(255,255,255,.55)", lineHeight: 1.6 }}>{worstResult}</div>
-        </div>
+
+      {/* あなたの選択（上） */}
+      <div style={{ background: isLight ? "#f0fdf4" : "rgba(74,222,128,.06)", border: `1px solid ${isLight ? "#bbf7d0" : "rgba(74,222,128,.2)"}`, borderRadius: 14, padding: "14px 12px", marginBottom: 10 }}>
+        <div style={{ fontSize: 10, color: isLight ? "#16a34a" : "#4ade80", fontWeight: 700, marginBottom: 6 }}>✓ あなたが学んだこと</div>
+        <div style={{ fontSize: 12, color: isLight ? "#166534" : "#86efac", fontWeight: 700, marginBottom: 6 }}>{myChoice}</div>
+        <div style={{ fontSize: 11, color: isLight ? "#475569" : "rgba(255,255,255,.6)", lineHeight: 1.65 }}>{myResult}</div>
       </div>
+
+      {/* 最悪の選択（下）→ タップでアニメ開始 */}
+      {horrorStep === 0 ? (
+        <button onClick={() => { setShowWorst(true); setHorrorStep(1); }}
+          style={{ width: "100%", background: isLight ? "rgba(239,68,68,.06)" : "rgba(239,68,68,.08)", border: `1px solid ${isLight ? "rgba(239,68,68,.25)" : "rgba(239,68,68,.2)"}`, borderRadius: 14, padding: "18px 14px", cursor: "pointer", fontFamily: "inherit", display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
+          <div style={{ fontSize: 28 }}>👀</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: isLight ? "#dc2626" : "#f87171" }}>もし危険を無視していたら…</div>
+          <div style={{ fontSize: 11, color: isLight ? "#94a3b8" : "rgba(255,255,255,.4)" }}>タップして体験する</div>
+        </button>
+      ) : horrorStep < 5 ? (
+        /* ホラーアニメーション画面 */
+        <div style={{ background: "#000", borderRadius: 14, overflow: "hidden", border: "1px solid rgba(239,68,68,.4)" }}>
+          {/* 上部バー */}
+          <div style={{ background: "#1a0000", padding: "8px 14px", display: "flex", alignItems: "center", gap: 6, borderBottom: "1px solid rgba(239,68,68,.3)" }}>
+            <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#ef4444", animation: "blink .8s infinite" }} />
+            <div style={{ fontSize: 9, color: "#ef4444", fontFamily: "'DotGothic16',monospace", letterSpacing: ".1em" }}>SIMULATION MODE — もし投稿し続けていたら</div>
+          </div>
+
+          <div style={{ padding: "20px 16px", minHeight: 160, display: "flex", flexDirection: "column", gap: 12 }}>
+            {horrorScenes.slice(0, horrorStep).map((scene, i) => (
+              <div key={i} style={{ display: "flex", gap: 12, alignItems: "flex-start", animation: "slideUp .5s ease" }}>
+                <div style={{ width: 38, height: 38, borderRadius: 10, background: `${scene.color}22`, border: `1px solid ${scene.color}55`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>
+                  {scene.icon}
+                </div>
+                <div>
+                  <div style={{ fontSize: 12, fontWeight: 900, color: scene.color, marginBottom: 3 }}>{scene.title}</div>
+                  <div style={{ fontSize: 11, color: "rgba(255,255,255,.75)", lineHeight: 1.6, whiteSpace: "pre-line" }}>{scene.body}</div>
+                  <div style={{ fontSize: 9, color: "rgba(255,255,255,.3)", marginTop: 3 }}>{scene.sub}</div>
+                </div>
+              </div>
+            ))}
+            {/* ローディングドット */}
+            {horrorStep < 4 && (
+              <div style={{ display: "flex", gap: 4, paddingLeft: 4 }}>
+                {[0,1,2].map(i => <div key={i} style={{ width: 5, height: 5, borderRadius: "50%", background: "#ef4444", animation: `blink 1s ${i * .3}s infinite` }} />)}
+              </div>
+            )}
+            {horrorStep >= 4 && (
+              <button onClick={() => setHorrorStep(5)}
+                style={{ width: "100%", padding: 12, background: "linear-gradient(135deg,#ef4444,#991b1b)", border: "none", borderRadius: 12, color: "#fff", fontSize: 13, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", marginTop: 6, animation: "popIn .4s ease" }}>
+                これが現実に起きること →
+              </button>
+            )}
+          </div>
+        </div>
+      ) : (
+        /* 種明かし・まとめ */
+        <div style={{ background: isLight ? "#fef2f2" : "rgba(239,68,68,.08)", border: `1px solid ${isLight ? "#fecaca" : "rgba(239,68,68,.3)"}`, borderRadius: 14, padding: "16px 14px", animation: "slideUp .5s ease" }}>
+          <div style={{ fontSize: 11, color: isLight ? "#dc2626" : "#f87171", fontWeight: 900, marginBottom: 10 }}>⚠️ シミュレーション結果</div>
+          <div style={{ fontSize: 12, color: isLight ? "#7f1d1d" : "#fca5a5", fontWeight: 700, marginBottom: 8, lineHeight: 1.65 }}>{worstChoice}</div>
+          <div style={{ fontSize: 12, color: isLight ? "#475569" : "rgba(255,255,255,.65)", lineHeight: 1.75, marginBottom: 12 }}>{worstResult}</div>
+
+          <div style={{ background: isLight ? "#fff" : "rgba(255,255,255,.04)", borderRadius: 10, padding: "10px 12px", border: `1px solid ${isLight ? "#e2e8f0" : "rgba(255,255,255,.08)"}` }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: isLight ? "#334155" : "rgba(255,255,255,.6)", marginBottom: 6 }}>💡 これを防ぐには</div>
+            {[
+              "投稿前に校章・表札・看板が写っていないか確認する",
+              "カメラの位置情報タグを常にオフにする",
+              "知らない人からのDMは無視・ブロックする",
+            ].map((tip, i) => (
+              <div key={i} style={{ display: "flex", gap: 6, alignItems: "flex-start", marginBottom: 5 }}>
+                <span style={{ color: "#22c55e", fontWeight: 900, flexShrink: 0 }}>✓</span>
+                <span style={{ fontSize: 11, color: isLight ? "#475569" : "rgba(255,255,255,.6)", lineHeight: 1.6 }}>{tip}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -1593,6 +1693,10 @@ function ParentQA({ questions, accentColor = "#ffa940", mode = "dark" }) {
 // ParentQA（質問）→ MyWordsInput（記録）を2画面に分けて表示
 function DialogueRunner({ accentColor, bg, questions, epKey, myWordsPrompt, myWordsPlaceholder, onComplete }) {
   const [step, setStep] = useState(0);
+  const [myWordsText, setMyWordsText] = useState(() => {
+    try { return localStorage.getItem(`mamoru_mywords_${epKey}`) || ""; } catch { return ""; }
+  });
+  const canComplete = myWordsText.trim().length > 0;
 
   if (step === 0) return (
     <div style={{ minHeight: "100vh", background: bg, padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
@@ -1626,14 +1730,36 @@ function DialogueRunner({ accentColor, bg, questions, epKey, myWordsPrompt, myWo
           <div style={{ width: 36, height: 36, borderRadius: 10, background: `${accentColor}18`, border: `1px solid ${accentColor}33`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>✍️</div>
           <div>
             <div style={{ fontSize: 14, fontWeight: 900, color: "#1e293b" }}>自分の言葉で記録しよう</div>
-            <div style={{ fontSize: 11, color: "#64748b" }}>画面 2 / 2 — 記録</div>
+            <div style={{ fontSize: 11, color: "#64748b" }}>画面 2 / 2 — 1文字以上書いてから修了証をもらえます</div>
           </div>
         </div>
-        <MyWordsInput mode="light" epKey={epKey} prompt={myWordsPrompt} placeholder={myWordsPlaceholder} accentColor={accentColor} />
-        <button onClick={onComplete}
-          style={{ width: "100%", marginTop: 14, padding: 15, background: `linear-gradient(135deg,${accentColor},${accentColor}cc)`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${accentColor}33` }}>
-          🏆 修了証をもらう
-        </button>
+
+        <MyWordsInput
+          mode="light"
+          epKey={epKey}
+          prompt={myWordsPrompt}
+          placeholder={myWordsPlaceholder}
+          accentColor={accentColor}
+          onSave={(text) => setMyWordsText(text)}
+        />
+        <div style={{ marginTop: 6, marginBottom: 14, fontSize: 11, color: "#94a3b8", textAlign: "center" }}>
+          ↑ まず「保存する」を押してください
+        </div>
+
+        {/* 修了証ボタン：1文字以上入力・保存済みの場合のみ有効 */}
+        {canComplete ? (
+          <button onClick={onComplete}
+            style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${accentColor},${accentColor}cc)`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${accentColor}33`, animation: "popIn .4s ease" }}>
+            🏆 修了証をもらう
+          </button>
+        ) : (
+          <div style={{ padding: "12px 14px", background: "rgba(0,0,0,.05)", border: "1px solid rgba(0,0,0,.08)", borderRadius: 14, display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: 16 }}>🔒</span>
+            <span style={{ fontSize: 12, color: "#94a3b8" }}>
+              自分の言葉を入力して「保存する」を押すと修了証をもらえます
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -3610,12 +3736,13 @@ function KeywordPhase({ epKey, accentColor, onComplete }) {
     const saved = loadKeywords();
     return new Set(saved.map(k => k.word));
   });
-  const [learnedCount, setLearnedCount] = useState(0);
 
   const handleLearn = (kw) => {
     setLearned(prev => new Set([...prev, kw.word]));
-    setLearnedCount(c => c + 1);
   };
+
+  const recordedCount = [...learned].filter(w => keywords.find(k => k.word === w)).length;
+  const allRecorded = recordedCount >= keywords.length;
 
   return (
     <div style={{ animation: "slideUp .4s ease" }}>
@@ -3624,11 +3751,11 @@ function KeywordPhase({ epKey, accentColor, onComplete }) {
         <div>
           <div style={{ fontSize: 15, fontWeight: 900, color: "#1e293b" }}>覚えておきたいキーワード</div>
           <div style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}>
-            タップして詳細を確認 → ノートに記録しよう
+            全て「ノートに記録する」を押してから次へ
           </div>
         </div>
         <div style={{ marginLeft: "auto", fontFamily: "'DotGothic16',monospace", fontSize: 12, color: accentColor, fontWeight: 900 }}>
-          {[...learned].filter(w => keywords.find(k => k.word === w)).length}/{keywords.length}
+          {recordedCount}/{keywords.length}
         </div>
       </div>
 
@@ -3636,10 +3763,19 @@ function KeywordPhase({ epKey, accentColor, onComplete }) {
         <KeywordCard key={kw.word} kw={{ ...kw, color: accentColor }} onLearn={handleLearn} isLearned={learned.has(kw.word)} />
       ))}
 
-      <button onClick={onComplete}
-        style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${accentColor},${accentColor}cc)`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", marginTop: 8, boxShadow: `0 8px 24px ${accentColor}33` }}>
-        次へ →
-      </button>
+      {allRecorded ? (
+        <button onClick={onComplete}
+          style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${accentColor},${accentColor}cc)`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", marginTop: 8, boxShadow: `0 8px 24px ${accentColor}33`, animation: "popIn .4s ease" }}>
+          次へ →
+        </button>
+      ) : (
+        <div style={{ marginTop: 10, padding: "12px 14px", background: "rgba(0,0,0,.05)", border: "1px solid rgba(0,0,0,.08)", borderRadius: 12, display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ fontSize: 16 }}>🔒</span>
+          <span style={{ fontSize: 12, color: "#94a3b8" }}>
+            全てのキーワードをノートに記録すると次へ進めます（あと{keywords.length - recordedCount}つ）
+          </span>
+        </div>
+      )}
     </div>
   );
 }
@@ -4405,8 +4541,9 @@ const POSTS = [
     photoBg: "linear-gradient(135deg,#ffd6e0,#ffafcc)", photoIcon: "🌸",
     localImage: "/images/ep1/post1.png",
     elements: [
-      { x: 78, y: 38, emoji: "🏫", labelKey: "schoolCrest", infoKey: "schoolCrestInfo", danger: true },  // 校門の看板（右）
-      { x: 38, y: 72, emoji: "📛", labelKey: "cherry",      infoKey: "cherryInfo",      danger: false }, // 胸の校章（左下）
+      { x: 50, y: 38, emoji: "📛", labelKey: "schoolCrest", infoKey: "schoolCrestInfo", danger: true },  // 校章（50%, 38%）
+      { x: 82, y: 42, emoji: "🏫", labelKey: "schoolSign",  infoKey: "schoolSignInfo",  danger: true },  // 桜花中学校の看板
+      // 桜マーカーは削除
     ],
   },
   {
@@ -4414,8 +4551,8 @@ const POSTS = [
     photoBg: "linear-gradient(135deg,#fff4d6,#ffc97a)", photoIcon: "🍰",
     localImage: "/images/ep1/post2.png",
     elements: [
-      { x: 78, y: 22, emoji: "🗼", labelKey: "landmark",    infoKey: "landmarkInfo",    danger: true },  // 東京タワー（右上）
-      { x: 68, y: 55, emoji: "🏢", labelKey: "sign",        infoKey: "signInfo",        danger: true },  // タナカ工業の看板（中央右）
+      { x: 78, y: 22, emoji: "🗼", labelKey: "landmark",    infoKey: "landmarkInfo",    danger: true },  // 東京タワー（右上）OK
+      { x: 68, y: 55, emoji: "🏢", labelKey: "sign",        infoKey: "signInfo",        danger: true },  // タナカ工業 OK
     ],
   },
   {
@@ -4423,8 +4560,9 @@ const POSTS = [
     photoBg: "linear-gradient(135deg,#d6e8ff,#7ab8ff)", photoIcon: "☕",
     localImage: "/images/ep1/post3.png",
     elements: [
-      { x: 80, y: 30, emoji: "🏪", labelKey: "locationTag", infoKey: "locationTagInfo", danger: true },  // カフェ名看板（右上）
-      { x: 80, y: 65, emoji: "📋", labelKey: "menu",        infoKey: "menuInfo",        danger: true },  // メニュー表（右下）
+      { x: 80, y: 30, emoji: "🏪", labelKey: "cafeName",    infoKey: "cafeNameInfo",    danger: true },  // カフェ名看板
+      { x: 80, y: 65, emoji: "📋", labelKey: "menu",        infoKey: "menuInfo",        danger: true },  // メニュー
+      // 位置情報タグマーカーは削除
     ],
   },
   {
@@ -4432,8 +4570,8 @@ const POSTS = [
     photoBg: "linear-gradient(135deg,#e0d6ff,#a98aff)", photoIcon: "🐕",
     localImage: "/images/ep1/post4.png",
     elements: [
-      { x: 38, y: 42, emoji: "🏠", labelKey: "nameplate",   infoKey: "nameplateInfo",   danger: true },  // 表札「雨宮」（左中）
-      { x: 74, y: 60, emoji: "🚗", labelKey: "license",     infoKey: "licenseInfo",     danger: true },  // ナンバープレート（右中下）
+      { x: 44, y: 36, emoji: "🏠", labelKey: "nameplate",   infoKey: "nameplateInfo",   danger: true },  // 表札「雨宮」（少し右上に）
+      { x: 80, y: 62, emoji: "🚗", labelKey: "license",     infoKey: "licenseInfo",     danger: true },  // ナンバープレート（もう少し右）
     ],
   },
 ];
@@ -4770,43 +4908,91 @@ function Episode1({ onComplete }) {
     </div>
   );
 
-  // ── Normal ──
+  // ── Normal（Twitter風タイムライン） ──
   if (phase === "normal") return (
-    <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fff8f0,#ffeed6)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
-      <div style={{ maxWidth: 420, margin: "0 auto" }}>
-        <OwlSay>{t("ep1.normalOwl")}</OwlSay>
-        <div style={{ background: "#fff", borderRadius: 22, padding: 14, boxShadow: "0 10px 36px rgba(94,64,32,.12)", border: "1px solid #f4d4a8", marginBottom: 14 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 4px 12px", borderBottom: "1px solid #fef0d9" }}>
-            <div style={{ width: 44, height: 44, borderRadius: "50%", background: "linear-gradient(135deg,#ffafcc,#ffd6e0)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>👧</div>
-            <div><div style={{ fontWeight: 900, fontSize: 14, color: "#3d2817" }}>{t("ep1.characterName")} {t("ep1.characterHandle")}</div><div style={{ fontSize: 11, color: "#a08060" }}>{t("ep1.characterAge")}</div></div>
-            <div style={{ marginLeft: "auto", background: "#ffe4b5", color: "#a05500", padding: "3px 10px", borderRadius: 12, fontSize: 10, fontWeight: 700 }}>{t("ep1.followers")} 248</div>
+    <div style={{ minHeight: "100vh", background: "#f7f9fa", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+      {/* Twitter風ヘッダー */}
+      <div style={{ background: "#fff", borderBottom: "1px solid #e1e8ed", padding: "12px 16px", position: "sticky", top: 0, zIndex: 10 }}>
+        <div style={{ maxWidth: 480, margin: "0 auto", display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ fontSize: 20 }}>🐦</div>
+          <div style={{ fontSize: 15, fontWeight: 900, color: "#14171a" }}>タイムライン</div>
+        </div>
+      </div>
+
+      <div style={{ maxWidth: 480, margin: "0 auto", padding: "0 0 20px" }}>
+        <div style={{ background: "#fff8f0", borderRadius: 14, margin: "12px 16px", padding: "12px 14px", border: "1px solid #ffa94033" }}>
+          <OwlSay mood="worried">{t("ep1.normalOwl")}</OwlSay>
+        </div>
+
+        {/* プロフィールヘッダー */}
+        <div style={{ background: "#fff", borderBottom: "1px solid #e1e8ed", borderTop: "1px solid #e1e8ed", padding: "14px 16px", display: "flex", alignItems: "center", gap: 12 }}>
+          {/* ミナのアイコン */}
+          <div style={{ width: 48, height: 48, borderRadius: "50%", overflow: "hidden", flexShrink: 0, border: "2px solid #ffa940" }}>
+            <img src="/images/ep1/mina_icon.png" alt="ミナ"
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              onError={e => { e.target.style.display = "none"; e.target.parentNode.innerHTML = "👧"; }} />
           </div>
-          <div style={{ padding: "12px 4px", display: "flex", flexDirection: "column", gap: 12 }}>
-            {POSTS.slice(0, step + 1).map((p, idx) => (
-              <div key={p.id} style={{ background: "#fff8f0", borderRadius: 12, padding: 10, border: "1px solid #fef0d9", animation: "popIn .4s ease" }}>
-                <div style={{ fontSize: 10, color: "#a08060", marginBottom: 6 }}>{p.day}</div>
-                <div style={{ background: p.photoBg, borderRadius: 10, height: 80, overflow: "hidden", position: "relative", marginBottom: 8, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  {postImages[p.id] ? (
-                    <>
-                      <img src={postImages[p.id].url} alt=""
-                        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-                      <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,.08)" }} />
-                    </>
-                  ) : (
-                    <div style={{ fontSize: 34 }}>{p.photoIcon}</div>
-                  )}
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 15, fontWeight: 900, color: "#14171a" }}>{t("ep1.characterName")} <span style={{ fontSize: 12, color: "#657786", fontWeight: 400 }}>{t("ep1.characterHandle")}</span></div>
+            <div style={{ fontSize: 12, color: "#657786" }}>{t("ep1.characterAge")}</div>
+          </div>
+          <div style={{ background: "#e8f5ff", color: "#1da1f2", padding: "4px 12px", borderRadius: 99, fontSize: 11, fontWeight: 700 }}>フォロワー 248</div>
+        </div>
+
+        {/* 投稿リスト */}
+        {POSTS.slice(0, step + 1).map((p, idx) => (
+          <div key={p.id} style={{ background: "#fff", borderBottom: "1px solid #e1e8ed", animation: "slideUp .4s ease" }}>
+            <div style={{ padding: "12px 16px 0" }}>
+              <div style={{ display: "flex", gap: 10 }}>
+                {/* ミナのアイコン（小） */}
+                <div style={{ width: 40, height: 40, borderRadius: "50%", overflow: "hidden", flexShrink: 0, border: "1.5px solid #ffa94055" }}>
+                  <img src="/images/ep1/mina_icon.png" alt="ミナ"
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    onError={e => { e.target.style.display = "none"; e.target.parentNode.innerHTML = "👧"; }} />
                 </div>
-                <div style={{ fontSize: 12, color: "#3d2817", lineHeight: 1.55 }}>{getPostText(p)}</div>
-                <div style={{ display: "flex", gap: 12, marginTop: 6, fontSize: 10, color: "#a08060" }}>
-                  <span>❤️ {[42, 38, 51, 29][idx]}</span><span>💬 {[8, 5, 12, 4][idx]}</span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                    <span style={{ fontSize: 14, fontWeight: 900, color: "#14171a" }}>{t("ep1.characterName")}</span>
+                    <span style={{ fontSize: 12, color: "#657786" }}>{t("ep1.characterHandle")}</span>
+                    <span style={{ fontSize: 12, color: "#657786", marginLeft: "auto" }}>{p.day}</span>
+                  </div>
+                  <p style={{ fontSize: 14, color: "#14171a", lineHeight: 1.65, margin: "0 0 10px" }}>{getPostText(p)}</p>
                 </div>
               </div>
-            ))}
+
+              {/* 画像（全体表示・アスペクト比を保持） */}
+              <div style={{ borderRadius: 14, overflow: "hidden", marginBottom: 10, marginLeft: 50, border: "1px solid #e1e8ed" }}>
+                {postImages[p.id] ? (
+                  <img src={postImages[p.id].url} alt=""
+                    style={{ width: "100%", display: "block", objectFit: "contain", background: p.photoBg }} />
+                ) : (
+                  <div style={{ background: p.photoBg, height: 160, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 40 }}>{p.photoIcon}</div>
+                )}
+              </div>
+            </div>
+
+            {/* いいね・コメント */}
+            <div style={{ padding: "6px 16px 12px 66px", display: "flex", gap: 20, fontSize: 13, color: "#657786" }}>
+              <span>❤️ {[42, 38, 51, 29][idx]}</span>
+              <span>💬 {[8, 5, 12, 4][idx]}</span>
+              <span>🔁 {[12, 7, 23, 3][idx]}</span>
+            </div>
           </div>
+        ))}
+
+        {/* ナビゲーションボタン */}
+        <div style={{ padding: "14px 16px" }}>
+          {step < POSTS.length - 1
+            ? <button onClick={() => setStep(step + 1)}
+                style={{ width: "100%", padding: 14, background: "#1da1f2", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
+                次の投稿を見る →
+              </button>
+            : <button onClick={() => setPhase("horror")}
+                style={{ width: "100%", padding: 14, background: "linear-gradient(135deg,#ffa940,#ff8c1a)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
+                {t("ep1.looksHappy")}
+              </button>
+          }
         </div>
-        {step < POSTS.length - 1
-          ? <button onClick={() => setStep(step + 1)} style={{ width: "100%", padding: 14, background: "linear-gradient(135deg,#ffa940,#ff8c1a)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>{t("ep1.nextPost")}</button>
-          : <button onClick={() => setPhase("horror")} style={{ width: "100%", padding: 14, background: "linear-gradient(135deg,#ffa940,#ff8c1a)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>{t("ep1.looksHappy")}</button>}
       </div>
     </div>
   );
@@ -4851,109 +5037,110 @@ function Episode1({ onComplete }) {
     </div>
   );
 
-  // ── Investigate ──
+  // ── Investigate（タイムアタック廃止・全投稿統一） ──
   if (phase === "investigate") return (
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#1a0f0a,#0a0a0f)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
       <div style={{ maxWidth: 420, margin: "0 auto" }}>
+        {/* ヘッダー */}
         <div style={{ background: "rgba(255,169,64,.1)", borderRadius: 12, padding: "9px 14px", marginBottom: 14, border: "1px solid rgba(255,169,64,.2)", display: "flex", alignItems: "center" }}>
           <span style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: "#ffa940", letterSpacing: ".1em" }}>{t("ep1.evidenceScan")}</span>
           <span style={{ marginLeft: "auto", fontSize: 12, color: "#ffd28a" }}>{postIdx + 1}/{POSTS.length}</span>
         </div>
 
-        {postIdx === 0 && useTimedMode ? (
-          /* ⑤ 1枚目：タイムアタックモード */
-          <>
-            <div style={{ background: "rgba(255,169,64,.08)", border: "1px solid rgba(255,169,64,.25)", borderRadius: 12, padding: "10px 14px", marginBottom: 10, fontSize: 12, color: "#ffd28a", textAlign: "center" }}>
-              ⏰ タイムアタック！制限時間内に危険を全部見つけよう
+        <OwlSay mood="worried">
+          <FormattedText text={t("ep1.investigateOwl", { n: dangerN })} style={{ color: "inherit" }} />
+        </OwlSay>
+
+        {/* 投稿カード（Twitter風） */}
+        <div style={{ background: "#fff", borderRadius: 18, padding: 14, marginBottom: 12, boxShadow: "0 12px 40px rgba(0,0,0,.4)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, paddingBottom: 10, borderBottom: "1px solid #fef0d9", marginBottom: 12 }}>
+            {/* ミナアイコン */}
+            <div style={{ width: 36, height: 36, borderRadius: "50%", overflow: "hidden", flexShrink: 0, border: "2px solid #ffa94055" }}>
+              <img src="/images/ep1/mina_icon.png" alt="ミナ"
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                onError={e => { e.target.style.display = "none"; e.target.parentNode.innerHTML = "👧"; }} />
             </div>
-            <TimedHunt
-              post={{ ...post, unsplashImage: postImages[post.id] }}
-              dangerElements={post.elements.map(el => ({ ...el, labelKey: getElLabel(el), infoKey: getElInfo(el) }))}
-              timeLimit={25}
-              accentColor="#ffa940"
-              onComplete={(result) => {
-                setTimedHuntResult(result);
-                if (result.found >= result.total && result.timeLeft >= 10) {
-                  try {
-                    const rec = JSON.parse(localStorage.getItem("mamoru_progress_v1") || "{}");
-                    rec.ep1 = { ...rec.ep1, speedBonus: true };
-                    localStorage.setItem("mamoru_progress_v1", JSON.stringify(rec));
-                  } catch {}
-                }
-                setFound(prev => ({
-                  ...prev,
-                  [post.id]: post.elements.filter(e => e.danger).map(e => getElLabel(e))
-                }));
-              }}
-            />
-            {timedHuntResult && (
-              <button onClick={() => { setUseTimedMode(false); nextPost(); }}
-                style={{ width: "100%", marginTop: 10, padding: 14, background: "linear-gradient(135deg,#ffa940,#ff8c1a)", border: "none", borderRadius: 14, color: "#fff", fontSize: 14, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
-                次の投稿を調べる →
+            <div>
+              <div style={{ fontWeight: 900, fontSize: 13, color: "#14171a" }}>{t("ep1.characterName")}</div>
+              <div style={{ fontSize: 10, color: "#657786" }}>{post.day}</div>
+            </div>
+          </div>
+
+          {/* 画像（全体表示・paddingTop廃止） */}
+          <div style={{ position: "relative", borderRadius: 12, overflow: "hidden", marginBottom: 10 }}>
+            {postImages[post.id] ? (
+              <>
+                <img src={postImages[post.id].url} alt=""
+                  style={{ width: "100%", display: "block" }} />
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.2))" }} />
+              </>
+            ) : (
+              <div style={{ background: post.photoBg, height: 180, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 46 }}>{post.photoIcon}</div>
+            )}
+
+            {/* 危険箇所マーカー */}
+            {post.elements.map((el, i) => {
+              const elLabel = getElLabel(el);
+              const isFound = (found[post.id] || []).includes(elLabel);
+              return (
+                <button key={i} onClick={() => {
+                  setDetail({ ...el, label: elLabel, info: getElInfo(el) });
+                  if (el.danger && !isFound)
+                    setFound({ ...found, [post.id]: [...(found[post.id] || []), elLabel] });
+                }} style={{
+                  position: "absolute", left: `${el.x}%`, top: `${el.y}%`,
+                  transform: "translate(-50%,-50%)",
+                  width: 44, height: 44, borderRadius: "50%",
+                  border: isFound ? "2.5px solid #ff4343" : "2.5px dashed rgba(255,255,255,.9)",
+                  background: isFound ? "rgba(255,67,67,.92)" : "rgba(255,255,255,.25)",
+                  backdropFilter: "blur(6px)",
+                  boxShadow: isFound ? "0 0 16px rgba(255,67,67,.7)" : "0 0 14px rgba(0,0,0,.5)",
+                  fontSize: 20, cursor: "pointer",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  animation: isFound ? "none" : "pulse 2s infinite",
+                  color: "#fff", fontWeight: 900, transition: "all .2s",
+                }}>
+                  {isFound ? "✓" : "?"}
+                </button>
+              );
+            })}
+          </div>
+
+          <p style={{ fontSize: 13, color: "#3d2817", margin: 0, lineHeight: 1.65 }}>{getPostText(post)}</p>
+        </div>
+
+        {/* 発見カウンター */}
+        <div style={{ background: "rgba(255,255,255,.06)", borderRadius: 12, padding: "9px 14px", marginBottom: 14, fontSize: 12, color: "#ffd28a", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <span>{t("ep1.foundCount")}: <strong style={{ color: "#ff8a8a" }}>{foundN}/{dangerN}</strong></span>
+          <span style={{ fontSize: 10, color: "rgba(255,255,255,.4)" }}>危険箇所を全部タップしよう</span>
+        </div>
+
+        {/* 詳細モーダル */}
+        {detail && (
+          <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.75)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20, zIndex: 100, animation: "slideUp .3s ease" }}
+            onClick={() => setDetail(null)}>
+            <div style={{ background: "#fff", borderRadius: 20, padding: "22px 20px", maxWidth: 340, width: "100%", border: `3px solid ${detail.danger ? "#ff4343" : "#4caf50"}` }}
+              onClick={e => e.stopPropagation()}>
+              <div style={{ fontSize: 38, textAlign: "center", marginBottom: 8, animation: detail.danger ? "shake .5s ease" : "none" }}>{detail.emoji}</div>
+              <div style={{ background: detail.danger ? "#ff4343" : "#4caf50", color: "#fff", fontSize: 11, fontWeight: 900, padding: "3px 12px", borderRadius: 99, display: "block", width: "fit-content", margin: "0 auto 10px", letterSpacing: ".1em" }}>
+                {detail.danger ? t("ep1.danger") : t("ep1.safe")}
+              </div>
+              <h3 style={{ color: "#3d2817", fontSize: 17, fontWeight: 900, textAlign: "center", margin: "8px 0 12px" }}>{detail.label}</h3>
+              <p style={{ color: "#5d4017", fontSize: 13, lineHeight: 1.8, margin: "0 0 14px" }}>{detail.info}</p>
+              <button onClick={() => setDetail(null)}
+                style={{ width: "100%", padding: 12, background: "#ffa940", border: "none", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>
+                {t("ep1.gotIt")}
               </button>
-            )}
-          </>
-        ) : (
-          /* 2枚目以降：通常探索モード */
-          <>
-            <OwlSay mood="worried">
-              <FormattedText text={t("ep1.investigateOwl", { n: dangerN })} style={{ color: "inherit" }} />
-            </OwlSay>
-            <div style={{ background: "#fff", borderRadius: 18, padding: 14, marginBottom: 12, boxShadow: "0 12px 40px rgba(0,0,0,.4)" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, paddingBottom: 10, borderBottom: "1px solid #fef0d9", marginBottom: 12 }}>
-                <div style={{ width: 32, height: 32, borderRadius: "50%", background: "linear-gradient(135deg,#ffafcc,#ffd6e0)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>👧</div>
-                <div><div style={{ fontWeight: 900, fontSize: 12, color: "#3d2817" }}>{t("ep1.characterName")}</div><div style={{ fontSize: 10, color: "#a08060" }}>{post.day}</div></div>
-              </div>
-              <div style={{ position: "relative", background: post.photoBg, borderRadius: 12, paddingTop: "72%", overflow: "hidden", marginBottom: 10 }}>
-                {postImages[post.id] ? (
-                  <>
-                    <img src={postImages[post.id].url} alt=""
-                      style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-                    <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg,rgba(0,0,0,.1),rgba(0,0,0,.3))" }} />
-                  </>
-                ) : (
-                  <div style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%,-50%)", fontSize: 46, opacity: .3 }}>{post.photoIcon}</div>
-                )}
-                <div style={{ position: "absolute", left: 0, right: 0, height: 2, background: "linear-gradient(90deg,transparent,#ffa940,transparent)", animation: "scanDown 3s infinite linear", boxShadow: "0 0 10px #ffa940" }} />
-                {post.elements.map((el, i) => {
-                  const elLabel = getElLabel(el);
-                  const isFound = (found[post.id] || []).includes(elLabel);
-                  return (
-                    <button key={i} onClick={() => {
-                      setDetail({ ...el, label: elLabel, info: getElInfo(el) });
-                      if (el.danger && !(found[post.id] || []).includes(elLabel))
-                        setFound({ ...found, [post.id]: [...(found[post.id] || []), elLabel] });
-                    }} style={{ position: "absolute", left: `${el.x}%`, top: `${el.y}%`, transform: "translate(-50%,-50%)", width: 46, height: 46, borderRadius: "50%", border: isFound ? "2px solid #ff4343" : "2px dashed rgba(255,255,255,.85)", background: isFound ? "rgba(255,67,67,.9)" : "rgba(255,255,255,.35)", backdropFilter: "blur(4px)", boxShadow: isFound ? "0 0 14px rgba(255,67,67,.6)" : "0 0 12px rgba(0,0,0,.4)", fontSize: 20, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", animation: isFound ? "none" : "pulse 2s infinite", color: "#fff", fontWeight: 900 }}>{isFound ? "✓" : "?"}</button>
-                  );
-                })}
-                {postImages[post.id]?.author && (
-                  <div style={{ position: "absolute", bottom: 3, right: 6, fontSize: 8, color: "rgba(255,255,255,.55)" }}>
-                    Photo: <a href={postImages[post.id].authorLink} target="_blank" rel="noreferrer" style={{ color: "rgba(255,255,255,.7)" }}>{postImages[post.id].author}</a> / Unsplash
-                  </div>
-                )}
-              </div>
-              <p style={{ fontSize: 12, color: "#3d2817", margin: 0, lineHeight: 1.6 }}>{getPostText(post)}</p>
             </div>
-            <div style={{ background: "rgba(255,255,255,.05)", borderRadius: 12, padding: "9px 14px", marginBottom: 14, fontSize: 12, color: "#ffd28a" }}>
-              {t("ep1.foundCount")}: <strong style={{ color: "#ff8a8a" }}>{foundN}/{dangerN}</strong>
-            </div>
-            {detail && (
-              <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.7)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20, zIndex: 100, animation: "slideUp .3s ease" }} onClick={() => setDetail(null)}>
-                <div style={{ background: "#fff", borderRadius: 20, padding: "22px 20px", maxWidth: 340, width: "100%", border: `3px solid ${detail.danger ? "#ff4343" : "#4caf50"}` }} onClick={e => e.stopPropagation()}>
-                  <div style={{ fontSize: 38, textAlign: "center", marginBottom: 8, animation: detail.danger ? "shake .5s ease" : "none" }}>{detail.emoji}</div>
-                  <div style={{ background: detail.danger ? "#ff4343" : "#4caf50", color: "#fff", fontSize: 11, fontWeight: 900, padding: "3px 12px", borderRadius: 99, display: "block", width: "fit-content", margin: "0 auto 10px", letterSpacing: ".1em" }}>{detail.danger ? t("ep1.danger") : t("ep1.safe")}</div>
-                  <h3 style={{ color: "#3d2817", fontSize: 17, fontWeight: 900, textAlign: "center", margin: "8px 0 12px" }}>{detail.label}</h3>
-                  <p style={{ color: "#5d4017", fontSize: 13, lineHeight: 1.8, margin: "0 0 14px" }}>{detail.info}</p>
-                  <button onClick={() => setDetail(null)} style={{ width: "100%", padding: 12, background: "#ffa940", border: "none", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>{t("ep1.gotIt")}</button>
-                </div>
-              </div>
-            )}
-            {allFoundHere && (
-              <button onClick={nextPost} style={{ width: "100%", padding: 15, background: "linear-gradient(135deg,#ffa940,#ff8c1a)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", animation: "popIn .4s ease" }}>
-                {postIdx < POSTS.length - 1 ? t("ep1.nextInvestigate") : t("ep1.toExplanation")}
-              </button>
-            )}
-          </>
+          </div>
+        )}
+
+        {/* ボタン：「次の投稿を調べる」のみ（重複なし） */}
+        {allFoundHere && (
+          <button onClick={nextPost}
+            style={{ width: "100%", padding: 15, background: "linear-gradient(135deg,#ffa940,#ff8c1a)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", animation: "popIn .4s ease" }}>
+            {postIdx < POSTS.length - 1 ? "次の投稿を調べる →" : t("ep1.toExplanation")}
+          </button>
         )}
       </div>
     </div>
@@ -5053,20 +5240,17 @@ function Episode1({ onComplete }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= 2 ? "#ffa940" : "rgba(0,0,0,.1)" }} />
           ))}
         </div>
-        <OwlSay mood="proud">最後に今日の宿題を確認しよう！全部チェックできたら完璧🦉</OwlSay>
+        <OwlSay mood="proud">最後に今日の宿題を確認しよう！全部チェックしてから次へ進もう🦉</OwlSay>
         <TodaysHomework
           mode="light"
           accentColor="#ffa940"
+          onComplete={() => setPhase("keywords")}
           tasks={[
             { title: "スマホのカメラ位置情報をオフにする", desc: "設定 → プライバシー → 位置情報 → カメラ → 「許可しない」に変更" },
             { title: "最近の投稿写真を1枚チェックする", desc: "個人情報（校章・表札・背景）が映っていないか確認しよう" },
             { title: "おうちの人に今日学んだことを話す", desc: "「位置情報って危ないんだよ」と伝えてみよう" },
           ]}
         />
-        <button onClick={() => setPhase("keywords")}
-          style={{ width: "100%", marginTop: 14, padding: 15, background: "linear-gradient(135deg,#ffa940,#ff8c1a)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
-          キーワードを覚える 📖 →
-        </button>
       </div>
     </div>
   );
