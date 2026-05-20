@@ -592,7 +592,7 @@ const GlobalStyle = () => (
 
 // ① 強制クイズコンポーネント
 // 正解しないと次に進めない。間違えると解説が出て再挑戦。
-function MandatoryQuiz({ question, choices, correctId, onPass, accentColor = "#ffa940" }) {
+function MandatoryQuiz({ question, choices, correctId, onPass, accentColor = "#ffa940", mode = "dark" }) {
   const [selected, setSelected] = useState(null);
   const [wrong, setWrong] = useState(false);
   const [shake, setShake] = useState(false);
@@ -610,11 +610,26 @@ function MandatoryQuiz({ question, choices, correctId, onPass, accentColor = "#f
     }
   };
 
+  const isLight = mode === "light";
+  const m = {
+    cardBg:      isLight ? "#fff"                     : "rgba(255,255,255,.04)",
+    cardBorder:  isLight ? `${accentColor}55`          : `${accentColor}33`,
+    cardShadow:  isLight ? `0 4px 16px ${accentColor}18` : "none",
+    labelText:   isLight ? "rgba(0,0,0,.45)"           : "rgba(255,255,255,.5)",
+    questionColor: isLight ? "#1e293b"                 : "#fff",
+    optBg:       isLight ? "#f8fafc"                   : "rgba(255,255,255,.04)",
+    optBorder:   isLight ? "#e2e8f0"                   : "rgba(255,255,255,.1)",
+    optText:     isLight ? "#334155"                   : "rgba(255,255,255,.8)",
+    circleBg:    isLight ? "#e2e8f0"                   : "rgba(255,255,255,.1)",
+    circleText:  isLight ? "#64748b"                   : "#fff",
+  };
+
   return (
     <div style={{
-      background: "rgba(255,255,255,.04)",
-      border: `1.5px solid ${accentColor}33`,
+      background: m.cardBg,
+      border: `1.5px solid ${m.cardBorder}`,
       borderRadius: 18, padding: "18px 16px",
+      boxShadow: m.cardShadow,
       animation: shake ? "shake .4s ease" : "slideUp .4s ease",
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
@@ -624,10 +639,10 @@ function MandatoryQuiz({ question, choices, correctId, onPass, accentColor = "#f
           borderRadius: 99, letterSpacing: ".1em",
           fontFamily: "'DotGothic16',monospace",
         }}>CHECK</div>
-        <div style={{ fontSize: 12, color: "rgba(255,255,255,.5)" }}>正解しないと先に進めません</div>
+        <div style={{ fontSize: 12, color: m.labelText }}>正解しないと先に進めません</div>
       </div>
 
-      <p style={{ fontSize: 14, fontWeight: 700, color: "#fff", lineHeight: 1.7, margin: "0 0 14px" }}>
+      <p style={{ fontSize: 14, fontWeight: 700, color: m.questionColor, lineHeight: 1.7, margin: "0 0 14px" }}>
         {question}
       </p>
 
@@ -640,13 +655,13 @@ function MandatoryQuiz({ question, choices, correctId, onPass, accentColor = "#f
             <button key={ch.id} onClick={() => !passed && handleSelect(ch)}
               style={{
                 width: "100%", padding: "12px 14px",
-                background: isCorrect ? "rgba(74,222,128,.15)" :
-                             isWrong   ? "rgba(239,68,68,.15)" :
-                             isSelected ? `${accentColor}15` : "rgba(255,255,255,.04)",
+                background: isCorrect ? "rgba(74,222,128,.12)" :
+                             isWrong   ? "rgba(239,68,68,.1)" :
+                             isSelected ? `${accentColor}12` : m.optBg,
                 border: `1.5px solid ${
                   isCorrect ? "rgba(74,222,128,.5)" :
-                  isWrong   ? "rgba(239,68,68,.5)" :
-                  isSelected ? accentColor + "55" : "rgba(255,255,255,.1)"
+                  isWrong   ? "rgba(239,68,68,.4)" :
+                  isSelected ? accentColor + "66" : m.optBorder
                 }`,
                 borderRadius: 12, cursor: passed ? "default" : "pointer",
                 fontFamily: "inherit", textAlign: "left",
@@ -655,13 +670,19 @@ function MandatoryQuiz({ question, choices, correctId, onPass, accentColor = "#f
               }}>
               <div style={{
                 width: 24, height: 24, borderRadius: "50%",
-                background: isCorrect ? "#22c55e" : isWrong ? "#ef4444" : "rgba(255,255,255,.1)",
+                background: isCorrect ? "#22c55e" : isWrong ? "#ef4444" : m.circleBg,
                 display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: 12, color: "#fff", fontWeight: 900, flexShrink: 0,
+                fontSize: 12, color: isCorrect || isWrong ? "#fff" : m.circleText,
+                fontWeight: 900, flexShrink: 0,
               }}>
                 {isCorrect ? "✓" : isWrong ? "✗" : ch.label}
               </div>
-              <span style={{ fontSize: 13, color: isCorrect ? "#86efac" : isWrong ? "#fca5a5" : "rgba(255,255,255,.8)", fontWeight: isSelected ? 700 : 400 }}>
+              <span style={{
+                fontSize: 13, fontWeight: isSelected ? 700 : 400,
+                color: isCorrect ? (isLight ? "#166534" : "#86efac") :
+                       isWrong   ? (isLight ? "#dc2626" : "#fca5a5") :
+                       m.optText,
+              }}>
                 {ch.text}
               </span>
             </button>
@@ -847,22 +868,24 @@ function OwlReaction({ mood, message, animate = true }) {
 }
 
 // ⑩ 今日の宿題コンポーネント
-function TodaysHomework({ tasks, accentColor = "#ffa940" }) {
+function TodaysHomework({ tasks, accentColor = "#ffa940", mode = "dark" }) {
   const [done, setDone] = useState([]);
   const allDone = done.length === tasks.length;
+  const isLight = mode === "light";
 
   return (
     <div style={{
-      background: "rgba(255,255,255,.03)",
-      border: `1.5px solid ${accentColor}33`,
+      background: isLight ? "#fff" : "rgba(255,255,255,.03)",
+      border: `1.5px solid ${accentColor}${isLight ? "55" : "33"}`,
       borderRadius: 18, padding: "18px 16px",
       marginTop: 14,
+      boxShadow: isLight ? `0 4px 16px ${accentColor}14` : "none",
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
         <div style={{ fontSize: 20 }}>📋</div>
         <div>
-          <div style={{ fontSize: 13, fontWeight: 900, color: "#fff" }}>今日の宿題</div>
-          <div style={{ fontSize: 11, color: "rgba(255,255,255,.4)" }}>アプリを閉じる前にやってみよう</div>
+          <div style={{ fontSize: 13, fontWeight: 900, color: isLight ? "#1e293b" : "#fff" }}>今日の宿題</div>
+          <div style={{ fontSize: 11, color: isLight ? "#64748b" : "rgba(255,255,255,.4)" }}>アプリを閉じる前にやってみよう</div>
         </div>
         <div style={{ marginLeft: "auto", fontFamily: "'DotGothic16',monospace", fontSize: 11, color: accentColor }}>
           {done.length}/{tasks.length}
@@ -876,26 +899,26 @@ function TodaysHomework({ tasks, accentColor = "#ffa940" }) {
             <button key={i} onClick={() => setDone(prev => isDone ? prev.filter(d => d !== i) : [...prev, i])}
               style={{
                 width: "100%", padding: "12px 14px",
-                background: isDone ? `${accentColor}12` : "rgba(255,255,255,.04)",
-                border: `1px solid ${isDone ? accentColor + "44" : "rgba(255,255,255,.08)"}`,
+                background: isDone ? `${accentColor}12` : isLight ? "#f8fafc" : "rgba(255,255,255,.04)",
+                border: `1px solid ${isDone ? accentColor + "55" : isLight ? "#e2e8f0" : "rgba(255,255,255,.08)"}`,
                 borderRadius: 12, cursor: "pointer", fontFamily: "inherit",
                 display: "flex", alignItems: "flex-start", gap: 12, textAlign: "left",
                 transition: "all .2s",
               }}>
               <div style={{
                 width: 22, height: 22, borderRadius: 6, flexShrink: 0, marginTop: 1,
-                background: isDone ? accentColor : "rgba(255,255,255,.08)",
-                border: `1.5px solid ${isDone ? accentColor : "rgba(255,255,255,.2)"}`,
+                background: isDone ? accentColor : isLight ? "#e2e8f0" : "rgba(255,255,255,.08)",
+                border: `1.5px solid ${isDone ? accentColor : isLight ? "#cbd5e1" : "rgba(255,255,255,.2)"}`,
                 display: "flex", alignItems: "center", justifyContent: "center",
                 fontSize: 12, color: "#fff", transition: "all .2s",
               }}>
                 {isDone ? "✓" : ""}
               </div>
               <div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: isDone ? accentColor : "#fff", lineHeight: 1.5, textDecoration: isDone ? "line-through" : "none", opacity: isDone ? .7 : 1 }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: isDone ? accentColor : isLight ? "#1e293b" : "#fff", lineHeight: 1.5, textDecoration: isDone ? "line-through" : "none", opacity: isDone ? .7 : 1 }}>
                   {task.title}
                 </div>
-                <div style={{ fontSize: 11, color: "rgba(255,255,255,.4)", marginTop: 3, lineHeight: 1.5 }}>
+                <div style={{ fontSize: 11, color: isLight ? "#64748b" : "rgba(255,255,255,.4)", marginTop: 3, lineHeight: 1.5 }}>
                   {task.desc}
                 </div>
               </div>
@@ -905,7 +928,7 @@ function TodaysHomework({ tasks, accentColor = "#ffa940" }) {
       </div>
 
       {allDone && (
-        <div style={{ marginTop: 12, background: "rgba(74,222,128,.08)", border: "1px solid rgba(74,222,128,.25)", borderRadius: 10, padding: "10px 12px", fontSize: 12, color: "#86efac", textAlign: "center", animation: "popIn .4s ease" }}>
+        <div style={{ marginTop: 12, background: isLight ? "#f0fdf4" : "rgba(74,222,128,.08)", border: `1px solid ${isLight ? "#bbf7d0" : "rgba(74,222,128,.25)"}`, borderRadius: 10, padding: "10px 12px", fontSize: 12, color: isLight ? "#166534" : "#86efac", textAlign: "center", animation: "popIn .4s ease" }}>
           🎉 全部できた！素晴らしい！
         </div>
       )}
@@ -914,30 +937,31 @@ function TodaysHomework({ tasks, accentColor = "#ffa940" }) {
 }
 
 // ⑧ 「もしこの選択なら」比較コンポーネント
-function ChoiceComparison({ myChoice, myResult, worstChoice, worstResult, accentColor = "#ffa940" }) {
+function ChoiceComparison({ myChoice, myResult, worstChoice, worstResult, accentColor = "#ffa940", mode = "dark" }) {
   const [showWorst, setShowWorst] = useState(false);
+  const isLight = mode === "light";
   return (
     <div style={{ margin: "14px 0" }}>
-      <div style={{ fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,.5)", letterSpacing: ".1em", marginBottom: 10, fontFamily: "'DotGothic16',monospace" }}>
+      <div style={{ fontSize: 12, fontWeight: 700, color: isLight ? "#64748b" : "rgba(255,255,255,.5)", letterSpacing: ".1em", marginBottom: 10, fontFamily: "'DotGothic16',monospace" }}>
         CHOICE COMPARISON
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-        <div style={{ background: "rgba(74,222,128,.06)", border: "1px solid rgba(74,222,128,.2)", borderRadius: 14, padding: "14px 12px" }}>
-          <div style={{ fontSize: 10, color: "#4ade80", fontWeight: 700, marginBottom: 6 }}>✓ あなたの選択</div>
-          <div style={{ fontSize: 12, color: "#86efac", fontWeight: 700, marginBottom: 6 }}>{myChoice}</div>
-          <div style={{ fontSize: 11, color: "rgba(255,255,255,.55)", lineHeight: 1.6 }}>{myResult}</div>
+        <div style={{ background: isLight ? "#f0fdf4" : "rgba(74,222,128,.06)", border: `1px solid ${isLight ? "#bbf7d0" : "rgba(74,222,128,.2)"}`, borderRadius: 14, padding: "14px 12px" }}>
+          <div style={{ fontSize: 10, color: isLight ? "#16a34a" : "#4ade80", fontWeight: 700, marginBottom: 6 }}>✓ あなたの選択</div>
+          <div style={{ fontSize: 12, color: isLight ? "#166534" : "#86efac", fontWeight: 700, marginBottom: 6 }}>{myChoice}</div>
+          <div style={{ fontSize: 11, color: isLight ? "#475569" : "rgba(255,255,255,.55)", lineHeight: 1.6 }}>{myResult}</div>
         </div>
-        <div style={{ background: "rgba(239,68,68,.06)", border: "1px solid rgba(239,68,68,.2)", borderRadius: 14, padding: "14px 12px", position: "relative", overflow: "hidden" }}>
+        <div style={{ background: isLight ? "#fef2f2" : "rgba(239,68,68,.06)", border: `1px solid ${isLight ? "#fecaca" : "rgba(239,68,68,.2)"}`, borderRadius: 14, padding: "14px 12px", position: "relative", overflow: "hidden" }}>
           {!showWorst && (
-            <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,.7)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", cursor: "pointer", borderRadius: 14, gap: 6 }}
+            <div style={{ position: "absolute", inset: 0, background: isLight ? "rgba(0,0,0,.55)" : "rgba(0,0,0,.7)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", cursor: "pointer", borderRadius: 14, gap: 6 }}
               onClick={() => setShowWorst(true)}>
               <span style={{ fontSize: 20 }}>👀</span>
-              <span style={{ fontSize: 11, color: "rgba(255,255,255,.6)", textAlign: "center" }}>最悪の結果を見る</span>
+              <span style={{ fontSize: 11, color: "rgba(255,255,255,.8)", textAlign: "center" }}>最悪の結果を見る</span>
             </div>
           )}
-          <div style={{ fontSize: 10, color: "#f87171", fontWeight: 700, marginBottom: 6 }}>✗ 最悪の選択なら</div>
-          <div style={{ fontSize: 12, color: "#fca5a5", fontWeight: 700, marginBottom: 6 }}>{worstChoice}</div>
-          <div style={{ fontSize: 11, color: "rgba(255,255,255,.55)", lineHeight: 1.6 }}>{worstResult}</div>
+          <div style={{ fontSize: 10, color: isLight ? "#dc2626" : "#f87171", fontWeight: 700, marginBottom: 6 }}>✗ 最悪の選択なら</div>
+          <div style={{ fontSize: 12, color: isLight ? "#991b1b" : "#fca5a5", fontWeight: 700, marginBottom: 6 }}>{worstChoice}</div>
+          <div style={{ fontSize: 11, color: isLight ? "#475569" : "rgba(255,255,255,.55)", lineHeight: 1.6 }}>{worstResult}</div>
         </div>
       </div>
     </div>
@@ -1918,7 +1942,7 @@ const CHALLENGE_STOCK = [
 
 // Unsplash画像取得（無料API）
 async function fetchUnsplashImage(query) {
-  const UNSPLASH_KEY = "sEGkFCBcEiM6iBYaUO4bpN7J2wAOmWB8-0PNWHi5xfk"; // demo key
+  const UNSPLASH_KEY = "XyxtVKkZXu-clHAsIfY8KNLPI5YjdUydFTR0nw6tVhI";
   try {
     const res = await fetch(
       `https://api.unsplash.com/photos/random?query=${encodeURIComponent(query)}&orientation=landscape&client_id=${UNSPLASH_KEY}`
@@ -4762,7 +4786,17 @@ function Episode1({ onComplete }) {
             {POSTS.slice(0, step + 1).map((p, idx) => (
               <div key={p.id} style={{ background: "#fff8f0", borderRadius: 12, padding: 10, border: "1px solid #fef0d9", animation: "popIn .4s ease" }}>
                 <div style={{ fontSize: 10, color: "#a08060", marginBottom: 6 }}>{p.day}</div>
-                <div style={{ background: p.photoBg, borderRadius: 10, height: 80, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 34, marginBottom: 8 }}>{p.photoIcon}</div>
+                <div style={{ background: p.photoBg, borderRadius: 10, height: 80, overflow: "hidden", position: "relative", marginBottom: 8, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  {postImages[p.id] ? (
+                    <>
+                      <img src={postImages[p.id].url} alt=""
+                        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                      <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,.08)" }} />
+                    </>
+                  ) : (
+                    <div style={{ fontSize: 34 }}>{p.photoIcon}</div>
+                  )}
+                </div>
                 <div style={{ fontSize: 12, color: "#3d2817", lineHeight: 1.55 }}>{getPostText(p)}</div>
                 <div style={{ display: "flex", gap: 12, marginTop: 6, fontSize: 10, color: "#a08060" }}>
                   <span>❤️ {[42, 38, 51, 29][idx]}</span><span>💬 {[8, 5, 12, 4][idx]}</span>
@@ -4970,6 +5004,7 @@ function Episode1({ onComplete }) {
         </div>
         <OwlSay mood="excited">理解できたか確認しよう！正解するまで次に進めないよ🦉</OwlSay>
         <MandatoryQuiz
+          mode="light"
           question="投稿写真から個人情報が漏れるのを防ぐために、最も効果的な方法はどれ？"
           choices={[
             { id: "a", label: "A", text: "顔を映さないようにする" },
@@ -4995,6 +5030,7 @@ function Episode1({ onComplete }) {
         </div>
         <OwlSay mood="worried">もし最悪の選択をしていたら、何が起きていたか見てみよう🦉</OwlSay>
         <ChoiceComparison
+          mode="light"
           myChoice="危険ポイントを見つけた"
           myResult="気づけた分、次回から投稿前に確認する習慣がつく"
           worstChoice="位置情報タグONで全投稿した場合"
@@ -5020,6 +5056,7 @@ function Episode1({ onComplete }) {
         </div>
         <OwlSay mood="proud">最後に今日の宿題を確認しよう！全部チェックできたら完璧🦉</OwlSay>
         <TodaysHomework
+          mode="light"
           accentColor="#ffa940"
           tasks={[
             { title: "スマホのカメラ位置情報をオフにする", desc: "設定 → プライバシー → 位置情報 → カメラ → 「許可しない」に変更" },
