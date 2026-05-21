@@ -2067,17 +2067,8 @@ const CHALLENGE_STOCK = [
 ];
 
 // Unsplash画像取得（無料API）
-async function fetchUnsplashImage(query) {
-  const UNSPLASH_KEY = "XyxtVKkZXu-clHAsIfY8KNLPI5YjdUydFTR0nw6tVhI";
-  try {
-    const res = await fetch(
-      `https://api.unsplash.com/photos/random?query=${encodeURIComponent(query)}&orientation=landscape&client_id=${UNSPLASH_KEY}`
-    );
-    if (!res.ok) return null;
-    const data = await res.json();
-    return { url: data.urls.small, author: data.user.name, authorLink: data.user.links.html };
-  } catch { return null; }
-}
+// Unsplash APIは使用しない（削除済み）
+// EP1の画像はlocalImage（固定パス）で管理
 
 // 週のインデックスからストック問題を選ぶ（週ごとに違う問題）
 function getStockQuestionsForWeek(weekStr) {
@@ -2093,7 +2084,7 @@ function getStockQuestionsForWeek(weekStr) {
 // Claude APIで追加問題を生成
 async function generateChallengeQuestion(theme) {
   try {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
+    const res = await fetch("/api/claude", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -2323,7 +2314,6 @@ function WeeklyChallengeScreen({ onBack }) {
     return getStockQuestionsForWeek(weekStr);
   });
   const [genPhase, setGenPhase] = useState("idle");
-  const [images, setImages] = useState({});
   const [qIdx, setQIdx] = useState(0);
   const [selected, setSelected] = useState(null);
   const [answered, setAnswered] = useState(false);
@@ -2332,17 +2322,9 @@ function WeeklyChallengeScreen({ onBack }) {
   });
   const [phase, setPhase] = useState(results.length >= 3 ? "result" : "quiz");
 
-  // Unsplash画像取得
+  // Claude API追加問題生成（週に1回・APIが有効な場合のみ）
   useEffect(() => {
-    const q = questions[qIdx];
-    if (!q || images[q.id]) return;
-    fetchUnsplashImage(q.unsplashQuery || "cybersecurity safety").then(img => {
-      if (img) setImages(prev => ({ ...prev, [q.id]: img }));
-    });
-  }, [qIdx, questions]);
-
-  // Claude API追加問題生成（週に1回）
-  useEffect(() => {
+    if (!CLAUDE_API_ENABLED) { setGenPhase("done"); return; } // APIオフ時はスキップ
     const cached = (() => { try { return localStorage.getItem(CACHE_KEY); } catch { return null; } })();
     if (cached || genPhase !== "idle") return;
     setGenPhase("generating");
@@ -2378,7 +2360,7 @@ function WeeklyChallengeScreen({ onBack }) {
     } else { setPhase("result"); }
   };
 
-  const img = current ? images[current.id] : null;
+  // img変数は削除（Unsplash廃止）
 
   // ── 結果画面 ──
   if (phase === "result") return (
@@ -2440,16 +2422,9 @@ function WeeklyChallengeScreen({ onBack }) {
       </div>
 
       <div style={{ padding: "14px 16px 32px", maxWidth: 440, margin: "0 auto" }}>
-        {/* 画像エリア */}
-        <div style={{ borderRadius: 18, overflow: "hidden", marginBottom: 14, height: 140, position: "relative", background: `linear-gradient(135deg,${current.color}22,${current.color}08)`, border: `1px solid ${current.color}33`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          {img ? (
-            <>
-              <img src={img.url} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: .5 }} />
-              <div style={{ position: "absolute", inset: 0, background: `linear-gradient(135deg,${current.color}55,rgba(0,0,0,.5))` }} />
-            </>
-          ) : (
-            <div style={{ fontSize: 52, opacity: .35 }}>{current.emoji}</div>
-          )}
+        {/* テーマエリア（絵文字+カラー） */}
+        <div style={{ borderRadius: 18, overflow: "hidden", marginBottom: 14, height: 100, position: "relative", background: `linear-gradient(135deg,${current.color}22,${current.color}08)`, border: `1px solid ${current.color}33`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ fontSize: 52, opacity: .5 }}>{current.emoji}</div>
           <div style={{ position: "absolute", top: 10, left: 12 }}>
             <div style={{ background: current.color, borderRadius: 99, padding: "3px 11px", fontSize: 10, fontWeight: 900, color: "#fff", fontFamily: "'DotGothic16',monospace" }}>
               {current.emoji} {current.theme}
@@ -2495,7 +2470,6 @@ function WeeklyChallengeScreen({ onBack }) {
             <div style={{ background: "rgba(99,102,241,.06)", border: "1px solid rgba(99,102,241,.2)", borderRadius: 12, padding: "10px 13px", marginBottom: 12, fontSize: 12, color: "#a5b4fc", lineHeight: 1.7 }}>
               <span style={{ fontWeight: 700 }}>👨‍👩‍👧 保護者メモ：</span>{current.parentNote}
             </div>
-            {img && <div style={{ fontSize: 9, color: "rgba(255,255,255,.2)", marginBottom: 10, textAlign: "right" }}>Photo by <a href={img.authorLink} target="_blank" rel="noreferrer" style={{ color: "rgba(255,255,255,.3)" }}>{img.author}</a> / Unsplash</div>}
             <button onClick={handleNext} style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${current.color},${current.color}cc)`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${current.color}44` }}>
               {results.length >= 3 ? "結果を見る 🏆" : "次の問題 →"}
             </button>
@@ -3890,6 +3864,13 @@ function KeywordNoteScreen({ onBack }) {
   );
 }
 
+// ═══════════════════════════════════════════════
+// 🔧 機能フラグ
+// Claude APIが必要な機能のオン/オフを一括管理
+// APIキーを設定したらここを true に変えるだけで全機能が復活する
+// ═══════════════════════════════════════════════
+const CLAUDE_API_ENABLED = false; // true にするとClaude API機能が有効になる
+
 const STORAGE_KEY = "mamoru_progress_v1";
 
 const EP_META = {
@@ -3928,6 +3909,151 @@ function clearRecord() {
 // ─────────────────────────────────────────────
 
 // 保護者レポート ニュースタブ（Claude API連携）
+// ═══════════════════════════════════════════════
+// ℹ️ 情報ページ（運営者情報・プライバシーポリシー・利用規約）
+// ═══════════════════════════════════════════════
+function InfoScreen({ onBack }) {
+  const [tab, setTab] = useState("privacy"); // privacy | operator | terms
+
+  const sections = {
+    privacy: {
+      label: "プライバシーポリシー",
+      emoji: "🔒",
+      content: [
+        {
+          title: "収集する情報について",
+          body: "マモルは、お客様の個人情報を収集・送信しません。学習記録・キーワードノート・進捗データは、すべてお使いの端末のブラウザ内（localStorage）にのみ保存されます。外部サーバーへの送信は行いません。",
+        },
+        {
+          title: "外部APIの利用について",
+          body: "マモルは学習コンテンツの生成に Anthropic社（Claude API）を利用しています。週次チャレンジ問題・保護者向けニュースの生成時にのみ、入力したプロンプト（質問内容）がサーバーを経由します。お子様の氏名・住所・学校名などの個人情報は一切送信されません。",
+        },
+        {
+          title: "Cookieについて",
+          body: "マモルはCookieを使用しません。学習データの保存にはブラウザのlocalStorageを使用しています。",
+        },
+        {
+          title: "第三者への提供",
+          body: "収集した情報を第三者に販売・提供することはありません。",
+        },
+        {
+          title: "データの削除について",
+          body: "保護者レポート画面内の「データをリセット」ボタンから、端末内の全学習データを削除できます。また、ブラウザの設定からlocalStorageをクリアすることでも削除できます。",
+        },
+        {
+          title: "お問い合わせ",
+          body: "プライバシーポリシーに関するご質問は、下記の運営者情報に記載のメールアドレスまでお問い合わせください。",
+        },
+        {
+          title: "改定について",
+          body: "本ポリシーは予告なく改定する場合があります。重要な変更がある場合はアプリ内でお知らせします。最終更新：2026年5月",
+        },
+      ],
+    },
+    operator: {
+      label: "運営者情報",
+      emoji: "👤",
+      content: [
+        {
+          title: "サービス名",
+          body: "マモル（Mamoru）— SNSリテラシー教育アプリ",
+        },
+        {
+          title: "運営者",
+          body: "個人運営（詳細はお問い合わせください）",
+        },
+        {
+          title: "所在地",
+          body: "日本",
+        },
+        {
+          title: "お問い合わせ",
+          body: "mamoru-app-info@gmail.com\n※ ご返信に数日かかる場合があります",
+        },
+        {
+          title: "公開URL",
+          body: "https://mamoru-xi.vercel.app",
+        },
+        {
+          title: "対象年齢",
+          body: "小学校高学年〜中学生とその保護者",
+        },
+        {
+          title: "利用料金",
+          body: "完全無料（広告なし・課金なし）",
+        },
+      ],
+    },
+    terms: {
+      label: "利用規約",
+      emoji: "📋",
+      content: [
+        {
+          title: "利用について",
+          body: "マモルは、子どものSNSリテラシー教育を目的とした無料サービスです。個人・教育機関での非商用利用に限り、自由にご利用いただけます。",
+        },
+        {
+          title: "禁止事項",
+          body: "・本サービスの無断複製・改変・再配布\n・商業目的での利用（事前許可なし）\n・サービスへの不正アクセス・妨害行為\n・法令に違反する利用",
+        },
+        {
+          title: "免責事項",
+          body: "本アプリのコンテンツは教育目的で作成されており、情報の正確性に努めていますが、完全性・最新性を保証するものではありません。本サービスの利用により生じたいかなる損害についても、運営者は責任を負いません。",
+        },
+        {
+          title: "知的財産権",
+          body: "マモルのコンテンツ・デザイン・コードの著作権は運営者に帰属します。学校の授業・家庭での教育目的での利用・印刷は許可します。",
+        },
+        {
+          title: "サービスの変更・終了",
+          body: "運営者は予告なくサービスの内容を変更・終了する場合があります。",
+        },
+        {
+          title: "準拠法",
+          body: "本規約は日本国法に準拠します。",
+        },
+      ],
+    },
+  };
+
+  const current = sections[tab];
+
+  return (
+    <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#f8fafc,#f1f5f9)", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+      {/* ヘッダー */}
+      <div style={{ background: "#fff", borderBottom: "1px solid #e2e8f0", padding: "16px 20px", display: "flex", alignItems: "center", gap: 12, position: "sticky", top: 0, zIndex: 10 }}>
+        <button onClick={onBack} style={{ width: 36, height: 36, borderRadius: 10, background: "#f1f5f9", border: "1px solid #e2e8f0", cursor: "pointer", fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center" }}>←</button>
+        <div style={{ fontSize: 16, fontWeight: 900, color: "#1e293b" }}>ℹ️ アプリ情報</div>
+      </div>
+
+      {/* タブ */}
+      <div style={{ background: "#fff", borderBottom: "1px solid #e2e8f0", padding: "0 16px", display: "flex", gap: 4, overflowX: "auto" }}>
+        {Object.entries(sections).map(([key, sec]) => (
+          <button key={key} onClick={() => setTab(key)}
+            style={{ padding: "12px 14px", background: "none", border: "none", borderBottom: tab === key ? "2px solid #1e293b" : "2px solid transparent", color: tab === key ? "#1e293b" : "#64748b", fontSize: 12, fontWeight: tab === key ? 900 : 400, cursor: "pointer", fontFamily: "inherit", whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: 5 }}>
+            {sec.emoji} {sec.label}
+          </button>
+        ))}
+      </div>
+
+      {/* コンテンツ */}
+      <div style={{ padding: "16px" }}>
+        {current.content.map((item, i) => (
+          <div key={i} style={{ background: "#fff", borderRadius: 14, padding: "16px", marginBottom: 10, boxShadow: "0 2px 8px rgba(0,0,0,.04)", animation: `slideUp .3s ${i * .05}s both ease` }}>
+            <div style={{ fontSize: 13, fontWeight: 900, color: "#1e293b", marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
+              <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#ffa940", flexShrink: 0 }} />
+              {item.title}
+            </div>
+            <div style={{ fontSize: 12, color: "#475569", lineHeight: 1.85, whiteSpace: "pre-line" }}>
+              {item.body}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function ParentNewsTab() {
   const NEWS_CACHE_KEY = `mamoru_news_${getWeekNumber()}`;
   const [news, setNews] = useState(() => {
@@ -3936,10 +4062,21 @@ function ParentNewsTab() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
+  // APIが無効の場合は準備中画面を表示
+  if (!CLAUDE_API_ENABLED) return (
+    <div style={{ textAlign: "center", padding: "40px 20px", animation: "slideUp .4s ease" }}>
+      <div style={{ fontSize: 48, marginBottom: 14 }}>🚧</div>
+      <div style={{ fontSize: 15, fontWeight: 900, color: "#1e293b", marginBottom: 8 }}>準備中</div>
+      <div style={{ fontSize: 13, color: "#64748b", lineHeight: 1.75 }}>
+        AIによる週次ニュース生成機能は<br />近日公開予定です。<br />お楽しみに！
+      </div>
+    </div>
+  );
+
   const fetchNews = async () => {
     setLoading(true); setError(false);
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      const res = await fetch("/api/claude", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -4541,9 +4678,8 @@ const POSTS = [
     photoBg: "linear-gradient(135deg,#ffd6e0,#ffafcc)", photoIcon: "🌸",
     localImage: "/images/ep1/post1.png",
     elements: [
-      { x: 50, y: 38, emoji: "📛", labelKey: "schoolCrest", infoKey: "schoolCrestInfo", danger: true },  // 校章（50%, 38%）
+      // 校章マーカー削除
       { x: 82, y: 42, emoji: "🏫", labelKey: "schoolSign",  infoKey: "schoolSignInfo",  danger: true },  // 桜花中学校の看板
-      // 桜マーカーは削除
     ],
   },
   {
@@ -4551,8 +4687,8 @@ const POSTS = [
     photoBg: "linear-gradient(135deg,#fff4d6,#ffc97a)", photoIcon: "🍰",
     localImage: "/images/ep1/post2.png",
     elements: [
-      { x: 78, y: 22, emoji: "🗼", labelKey: "landmark",    infoKey: "landmarkInfo",    danger: true },  // 東京タワー（右上）OK
-      { x: 68, y: 55, emoji: "🏢", labelKey: "sign",        infoKey: "signInfo",        danger: true },  // タナカ工業 OK
+      { x: 78, y: 22, emoji: "🗼", labelKey: "landmark",    infoKey: "landmarkInfo",    danger: true },  // 東京タワー（右上）
+      { x: 76, y: 52, emoji: "🏢", labelKey: "sign",        infoKey: "signInfo",        danger: true },  // タナカ工業（右寄りに修正）
     ],
   },
   {
@@ -4560,9 +4696,8 @@ const POSTS = [
     photoBg: "linear-gradient(135deg,#d6e8ff,#7ab8ff)", photoIcon: "☕",
     localImage: "/images/ep1/post3.png",
     elements: [
-      { x: 80, y: 30, emoji: "🏪", labelKey: "cafeName",    infoKey: "cafeNameInfo",    danger: true },  // カフェ名看板
-      { x: 80, y: 65, emoji: "📋", labelKey: "menu",        infoKey: "menuInfo",        danger: true },  // メニュー
-      // 位置情報タグマーカーは削除
+      // メニュー表マーカー削除、看板のみ残して右下にずらす
+      { x: 84, y: 38, emoji: "🏪", labelKey: "cafeName",    infoKey: "cafeNameInfo",    danger: true },  // カフェ名看板（右下にずらす）
     ],
   },
   {
@@ -4570,8 +4705,8 @@ const POSTS = [
     photoBg: "linear-gradient(135deg,#e0d6ff,#a98aff)", photoIcon: "🐕",
     localImage: "/images/ep1/post4.png",
     elements: [
-      { x: 44, y: 36, emoji: "🏠", labelKey: "nameplate",   infoKey: "nameplateInfo",   danger: true },  // 表札「雨宮」（少し右上に）
-      { x: 80, y: 62, emoji: "🚗", labelKey: "license",     infoKey: "licenseInfo",     danger: true },  // ナンバープレート（もう少し右）
+      { x: 44, y: 36, emoji: "🏠", labelKey: "nameplate",   infoKey: "nameplateInfo",   danger: true },  // 表札「雨宮」
+      { x: 80, y: 62, emoji: "🚗", labelKey: "license",     infoKey: "licenseInfo",     danger: true },  // ナンバープレート
     ],
   },
 ];
@@ -4732,12 +4867,24 @@ function HomeScreen({ onNavigate, progress }) {
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 28 }}>
           {modes.map((m, i) => (
-            <button key={m.id} onClick={() => onNavigate(m.id)}
-              style={{ width: "100%", background: `linear-gradient(135deg,${m.bg1},${m.bg2})`, border: `1.5px solid ${m.accent}35`, borderRadius: 22, padding: "20px 18px", cursor: "pointer", textAlign: "left", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden", boxShadow: `0 6px 20px rgba(0,0,0,.3)`, animation: `slideUp .5s ${i * .12}s both ease` }}>
+            <button key={m.id} onClick={() => {
+              // 攻撃者体験はAPIが必要なため無効時はお知らせ
+              if (m.id === "attacker" && !CLAUDE_API_ENABLED) {
+                alert("🚧 攻撃者体験は近日公開予定です！\n\nAIリアルタイム生成が必要な機能のため、準備中です。お楽しみに。");
+                return;
+              }
+              onNavigate(m.id);
+            }}
+              style={{ width: "100%", background: m.id === "attacker" && !CLAUDE_API_ENABLED ? `linear-gradient(135deg,#1a1a1a,#111)` : `linear-gradient(135deg,${m.bg1},${m.bg2})`, border: `1.5px solid ${m.accent}35`, borderRadius: 22, padding: "20px 18px", cursor: "pointer", textAlign: "left", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden", boxShadow: `0 6px 20px rgba(0,0,0,.3)`, animation: `slideUp .5s ${i * .12}s both ease`, opacity: m.id === "attacker" && !CLAUDE_API_ENABLED ? 0.6 : 1 }}>
               <div style={{ position: "absolute", width: 130, height: 130, borderRadius: "50%", background: m.accent, opacity: .06, right: -35, top: -35, filter: "blur(30px)", pointerEvents: "none" }} />
               {m.id === "attacker" && <div style={{ position: "absolute", left: 0, right: 0, height: 1, background: `linear-gradient(90deg,transparent,${m.accent}60,transparent)`, animation: "scanDown 4s linear infinite", pointerEvents: "none" }} />}
-              {m.done && <div style={{ position: "absolute", top: 12, right: 12, background: "#22c55e", color: "#fff", fontSize: 9, fontWeight: 900, padding: "3px 9px", borderRadius: 99, letterSpacing: ".1em" }}>{t("home.clearedBadge")}</div>}
-              {!m.done && <div style={{ position: "absolute", top: 12, right: 12, background: m.accent, color: "#fff", fontSize: 9, fontWeight: 900, padding: "3px 9px", borderRadius: 99, letterSpacing: ".1em", animation: "newBadge 2s ease-in-out infinite" }}>{t("home.newBadge")}</div>}
+              {/* 攻撃者体験：近日公開バッジ */}
+              {m.id === "attacker" && !CLAUDE_API_ENABLED
+                ? <div style={{ position: "absolute", top: 12, right: 12, background: "#475569", color: "#fff", fontSize: 9, fontWeight: 900, padding: "3px 9px", borderRadius: 99, letterSpacing: ".1em" }}>🚧 近日公開</div>
+                : m.done
+                  ? <div style={{ position: "absolute", top: 12, right: 12, background: "#22c55e", color: "#fff", fontSize: 9, fontWeight: 900, padding: "3px 9px", borderRadius: 99, letterSpacing: ".1em" }}>{t("home.clearedBadge")}</div>
+                  : <div style={{ position: "absolute", top: 12, right: 12, background: m.accent, color: "#fff", fontSize: 9, fontWeight: 900, padding: "3px 9px", borderRadius: 99, letterSpacing: ".1em", animation: "newBadge 2s ease-in-out infinite" }}>{t("home.newBadge")}</div>
+              }
               <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
                 <div style={{ width: 52, height: 52, borderRadius: 14, background: `${m.accent}18`, border: `1.5px solid ${m.accent}35`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, flexShrink: 0 }}>{m.icon}</div>
                 <div>
@@ -4751,7 +4898,9 @@ function HomeScreen({ onNavigate, progress }) {
                   <span style={{ fontSize: 11, color: "rgba(255,255,255,.4)" }}>⏱ {m.duration}</span>
                   <span style={{ fontSize: 11, color: "rgba(255,255,255,.4)" }}>👤 {m.audience}</span>
                 </div>
-                <div style={{ background: m.accent, borderRadius: 99, width: 30, height: 30, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, color: "#fff" }}>→</div>
+                <div style={{ background: m.id === "attacker" && !CLAUDE_API_ENABLED ? "#475569" : m.accent, borderRadius: 99, width: 30, height: 30, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, color: "#fff" }}>
+                  {m.id === "attacker" && !CLAUDE_API_ENABLED ? "🔒" : "→"}
+                </div>
               </div>
             </button>
           ))}
@@ -4835,13 +4984,19 @@ function HomeScreen({ onNavigate, progress }) {
             <div style={{ fontSize: 16, color: "rgba(255,255,255,.3)" }}>→</div>
           </button>
         </div>
+
+        {/* アプリ情報リンク */}
+        <div style={{ marginTop: 14, textAlign: "center" }}>
+          <button onClick={() => onNavigate("info")}
+            style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "inherit", fontSize: 11, color: "rgba(255,255,255,.2)" }}>
+            プライバシーポリシー · 運営者情報 · 利用規約
+          </button>
+        </div>
+
       </div>
     </div>
   );
 }
-
-// ─────────────────────────────────────────────
-// ██ EPISODE 1 — 探偵モード
 // ─────────────────────────────────────────────
 function Episode1({ onComplete }) {
   const t = useT();
@@ -9296,7 +9451,7 @@ function AttackerMode({ onComplete }) {
 
     const run = async () => {
       try {
-        const res = await fetch("https://api.anthropic.com/v1/messages", {
+        const res = await fetch("/api/claude", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -9556,6 +9711,7 @@ export default function App() {
       {screen === "report" && <ParentReport onBack={() => navigate("home")} />}
       {screen === "keywordnote" && <KeywordNoteScreen onBack={() => navigate("home")} />}
       {screen === "weekly" && <WeeklyChallengeScreen onBack={() => navigate("home")} />}
+      {screen === "info" && <InfoScreen onBack={() => navigate("home")} />}
       {screen === "ep1" && <Episode1 onComplete={(s) => finish("ep1", s)} />}
       {screen === "ep2" && <Episode2 onComplete={(s) => finish("ep2", s)} />}
       {screen === "ep3" && <Episode3 onComplete={(s) => finish("ep3", s)} />}
