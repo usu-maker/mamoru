@@ -5,6 +5,8 @@ import { useState, useEffect, createContext, useContext } from "react";
 // ═══════════════════════════════════════════════════════════════
 
 const LANG_KEY = "mamoru_lang";
+const ONBOARDING_KEY = "mamoru_onboarding_v1";
+const AGE_MODE_KEY = "mamoru_age_mode";
 const LANGUAGES = [
   { code: "ja", flag: "🇯🇵", name: "日本語" },
   { code: "en", flag: "🇺🇸", name: "English" },
@@ -2778,7 +2780,8 @@ function EpisodeIntroCard({ epKey, onStart }) {
 function EpisodeShell({ onExit, children }) {
   return (
     <div style={{ position: "relative" }}>
-      <div style={{ position: "fixed", top: 14, right: 14, zIndex: 200 }}>
+      <div style={{ position: "fixed", top: 14, right: 14, zIndex: 200, display: "flex", gap: 8, alignItems: "center" }}>
+        <LanguageSwitcher compact />
         <ExitButton onExit={onExit} />
       </div>
       {children}
@@ -3313,7 +3316,8 @@ function ParentSecretDashboard({ onClose }) {
 function Opening({ onComplete }) {
   const [screen, setScreen] = useState(0);
   const [tutIdx, setTutIdx] = useState(0);
-  // 0=splash 1=stats 2=howto 3=cta
+  const [ageSelected, setAgeSelected] = useState(null);
+  // 0=splash 1=stats 2=howto 3=age 4=cta
 
   const next = () => setScreen(s => s + 1);
 
@@ -3386,7 +3390,7 @@ function Opening({ onComplete }) {
     }}>
       {/* 上部インジケーター */}
       <div style={{ padding: "20px 24px 0", display: "flex", gap: 6 }}>
-        {[0,1,2,3].map(i => (
+        {[0,1,2,3,4].map(i => (
           <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= 1 ? "#ffa940" : "rgba(255,255,255,.15)", transition: "background .3s" }} />
         ))}
       </div>
@@ -3486,7 +3490,7 @@ function Opening({ onComplete }) {
       }}>
         {/* インジケーター */}
         <div style={{ padding: "20px 24px 0", display: "flex", gap: 6 }}>
-          {[0,1,2,3].map(i => (
+          {[0,1,2,3,4].map(i => (
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= 2 ? "#ffa940" : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
@@ -3554,6 +3558,67 @@ function Opening({ onComplete }) {
     );
   }
 
+  // ── 年齢選択 ──
+  if (screen === 3) {
+    return (
+      <div style={{
+        minHeight: "100vh",
+        background: "linear-gradient(160deg,#0d1a2e,#0a0f1a)",
+        fontFamily: "'Zen Maru Gothic',sans-serif",
+        display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center",
+        padding: "40px 24px", position: "relative", overflow: "hidden",
+      }}>
+        {/* インジケーター */}
+        <div style={{ position: "absolute", top: 20, left: 24, right: 24, display: "flex", gap: 6 }}>
+          {[0,1,2,3,4].map(i => (
+            <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= 3 ? "#ffa940" : "rgba(255,255,255,.15)" }} />
+          ))}
+        </div>
+
+        <div style={{ animation: "popIn .6s ease", textAlign: "center", marginBottom: 32 }}>
+          <div style={{ fontSize: 52, marginBottom: 14 }}>🎓</div>
+          <div style={{ fontSize: 22, fontWeight: 900, color: "#fff", lineHeight: 1.35, marginBottom: 10 }}>
+            お子さんの学年を<br />教えてください
+          </div>
+          <div style={{ fontSize: 13, color: "rgba(255,255,255,.5)", lineHeight: 1.8 }}>
+            学年に合わせた表示に調整します
+          </div>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 14, width: "100%", maxWidth: 360 }}>
+          {[
+            { id: "elementary", icon: "🏫", label: "小学4〜6年生", desc: "やさしい言葉で説明します" },
+            { id: "middle", icon: "📱", label: "中学生以上", desc: "より詳しい内容で学べます" },
+          ].map((opt) => (
+            <button key={opt.id}
+              onClick={() => {
+                try { localStorage.setItem(AGE_MODE_KEY, opt.id); } catch {}
+                feedback("tap");
+                next();
+              }}
+              style={{
+                padding: "20px 22px",
+                background: "rgba(255,255,255,.06)",
+                border: "2px solid rgba(255,169,64,.4)",
+                borderRadius: 18, cursor: "pointer", fontFamily: "inherit",
+                display: "flex", alignItems: "center", gap: 16,
+                transition: "all .15s",
+                boxShadow: "0 4px 20px rgba(255,169,64,.12)",
+              }}>
+              <div style={{ fontSize: 36, flexShrink: 0 }}>{opt.icon}</div>
+              <div style={{ textAlign: "left" }}>
+                <div style={{ fontSize: 17, fontWeight: 900, color: "#fff", marginBottom: 4 }}>{opt.label}</div>
+                <div style={{ fontSize: 12, color: "rgba(255,255,255,.5)" }}>{opt.desc}</div>
+              </div>
+              <div style={{ marginLeft: "auto", color: "#ffa940", fontSize: 18 }}>→</div>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   // ── CTA ──
   return (
     <div style={{
@@ -3566,7 +3631,7 @@ function Opening({ onComplete }) {
     }}>
       {/* インジケーター */}
       <div style={{ position: "absolute", top: 20, left: 24, right: 24, display: "flex", gap: 6 }}>
-        {[0,1,2,3].map(i => (
+        {[0,1,2,3,4].map(i => (
           <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: "#ffa940" }} />
         ))}
       </div>
@@ -5016,7 +5081,7 @@ function HomeScreen({ onNavigate, progress }) {
   ];
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0d0d1a", fontFamily: "'Zen Maru Gothic',sans-serif" }}
+    <div style={{ minHeight: "100vh", background: "linear-gradient(160deg,#e8f4fd 0%,#f0f8ff 40%,#fff8f5 100%)", fontFamily: "'Zen Maru Gothic',sans-serif" }}
       onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
 
       {/* 隠しコマンド オーバーレイ */}
@@ -5027,20 +5092,20 @@ function HomeScreen({ onNavigate, progress }) {
 
       {/* Hero */}
       <div style={{ position: "relative", padding: "44px 20px 28px", overflow: "hidden" }}>
-        <div style={{ position: "absolute", width: 300, height: 300, borderRadius: "50%", background: "radial-gradient(circle,rgba(255,169,64,.13) 0%,transparent 70%)", top: -80, left: -60, animation: "orb 12s ease-in-out infinite", pointerEvents: "none" }} />
-        <div style={{ position: "absolute", width: 250, height: 250, borderRadius: "50%", background: "radial-gradient(circle,rgba(255,67,67,.08) 0%,transparent 70%)", top: 40, right: -40, animation: "orb2 15s ease-in-out infinite", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", width: 300, height: 300, borderRadius: "50%", background: "radial-gradient(circle,rgba(100,180,255,.18) 0%,transparent 70%)", top: -80, left: -60, animation: "orb 12s ease-in-out infinite", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", width: 250, height: 250, borderRadius: "50%", background: "radial-gradient(circle,rgba(255,169,64,.12) 0%,transparent 70%)", top: 40, right: -40, animation: "orb2 15s ease-in-out infinite", pointerEvents: "none" }} />
         <div style={{ maxWidth: 440, margin: "0 auto", position: "relative", zIndex: 2 }}>
           {/* Title row + Language switcher */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28 }}>
             <div>
-              <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 9, color: "rgba(255,255,255,.3)", letterSpacing: ".3em", marginBottom: 4 }}>{t("home.badge")}</div>
+              <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 9, color: "rgba(30,58,95,.4)", letterSpacing: ".3em", marginBottom: 4 }}>{t("home.badge")}</div>
               {/* ② ロゴ長押し3秒でシークレット2 */}
               <div
                 onMouseDown={() => { const t = setTimeout(() => { setSecret2(true); setLogoHoldTimer(null); }, 3000); setLogoHoldTimer(t); }}
                 onMouseUp={() => { if (logoHoldTimer) { clearTimeout(logoHoldTimer); setLogoHoldTimer(null); } }}
                 onTouchStart={() => { const t = setTimeout(() => { setSecret2(true); setLogoHoldTimer(null); }, 3000); setLogoHoldTimer(t); }}
                 onTouchEnd={() => { if (logoHoldTimer) { clearTimeout(logoHoldTimer); setLogoHoldTimer(null); } }}
-                style={{ fontSize: 30, fontWeight: 900, color: "#fff", letterSpacing: "-.02em", cursor: "default", userSelect: "none" }}>
+                style={{ fontSize: 30, fontWeight: 900, color: "#1e3a5f", letterSpacing: "-.02em", cursor: "default", userSelect: "none" }}>
                 {t("home.appName")}
               </div>
             </div>
@@ -5060,9 +5125,9 @@ function HomeScreen({ onNavigate, progress }) {
                 </div>
               )}
             </div>
-            <div style={{ background: "rgba(255,255,255,.06)", backdropFilter: "blur(10px)", border: "1px solid rgba(255,255,255,.1)", borderRadius: "18px 18px 18px 6px", padding: "13px 16px", flex: 1, animation: "slideUp .5s .2s both ease" }}>
-              <div style={{ fontSize: 14, color: "#fff", fontWeight: 700, marginBottom: 4 }}>{t("home.greeting")}</div>
-              <div style={{ fontSize: 12, color: "rgba(255,255,255,.6)", lineHeight: 1.7 }}>
+            <div style={{ background: "rgba(255,255,255,.85)", backdropFilter: "blur(10px)", border: "1px solid rgba(100,180,255,.25)", borderRadius: "18px 18px 18px 6px", padding: "13px 16px", flex: 1, animation: "slideUp .5s .2s both ease", boxShadow: "0 4px 16px rgba(100,180,255,.1)" }}>
+              <div style={{ fontSize: 14, color: "#1e3a5f", fontWeight: 700, marginBottom: 4 }}>{t("home.greeting")}</div>
+              <div style={{ fontSize: 12, color: "rgba(30,58,95,.6)", lineHeight: 1.7 }}>
                 <FormattedText text={t("home.greetingDesc").replace(/\*\*([^*]+)\*\*/g, '<<<$1>>>')} />
               </div>
             </div>
@@ -5074,10 +5139,10 @@ function HomeScreen({ onNavigate, progress }) {
               { icon: "⭐", val: Object.values(progress).filter(Boolean).length * 3, label: t("home.statsStar") },
               { icon: "✅", val: `${Object.values(progress).filter(Boolean).length}/10`, label: t("home.statsClear") },
             ].map((s, i) => (
-              <div key={i} style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.07)", borderRadius: 14, padding: "12px 10px", textAlign: "center", animation: `popIn .4s ${i * .1}s both ease` }}>
+              <div key={i} style={{ background: "rgba(255,255,255,.8)", border: "1px solid rgba(100,180,255,.2)", borderRadius: 14, padding: "12px 10px", textAlign: "center", animation: `popIn .4s ${i * .1}s both ease`, boxShadow: "0 2px 12px rgba(100,180,255,.1)" }}>
                 <div style={{ fontSize: 20, marginBottom: 4 }}>{s.icon}</div>
-                <div style={{ fontSize: 20, fontWeight: 900, color: "#fff", fontFamily: "'DotGothic16',monospace" }}>{s.val}</div>
-                <div style={{ fontSize: 10, color: "rgba(255,255,255,.4)", marginTop: 2 }}>{s.label}</div>
+                <div style={{ fontSize: 20, fontWeight: 900, color: "#1e3a5f", fontFamily: "'DotGothic16',monospace" }}>{s.val}</div>
+                <div style={{ fontSize: 10, color: "rgba(30,58,95,.5)", marginTop: 2 }}>{s.label}</div>
               </div>
             ))}
           </div>
@@ -5102,14 +5167,42 @@ function HomeScreen({ onNavigate, progress }) {
 
       {/* Content */}
       <div style={{ padding: "0 20px 48px", maxWidth: 440, margin: "0 auto" }}>
+        {/* はじめての方へ（保護者向け）バナー */}
+        <button onClick={() => onNavigate("opening")}
+          style={{
+            width: "100%", marginTop: 0, marginBottom: 14, padding: "16px 16px",
+            background: "linear-gradient(135deg,rgba(99,102,241,.12),rgba(139,92,246,.08))",
+            border: "1.5px solid rgba(139,92,246,.4)",
+            borderRadius: 16, cursor: "pointer", fontFamily: "inherit",
+            display: "flex", alignItems: "center", gap: 12,
+          }}>
+          <div style={{ width: 44, height: 44, borderRadius: 12, background: "rgba(139,92,246,.2)", border: "1px solid rgba(139,92,246,.4)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>
+            👨‍👩‍👧
+          </div>
+          <div style={{ flex: 1, textAlign: "left" }}>
+            <div style={{ fontSize: 13, fontWeight: 900, color: "#6d28d9" }}>
+              はじめての方へ（保護者向け）
+            </div>
+            <div style={{ fontSize: 11, color: "rgba(109,40,217,.5)", marginTop: 2 }}>
+              このアプリの使い方・目的・統計を確認する
+            </div>
+          </div>
+          <div style={{ fontSize: 16, color: "rgba(255,255,255,.3)" }}>→</div>
+        </button>
+
         {/* PLAY section */}
         <div style={{ display: "flex", alignItems: "center", gap: 10, margin: "20px 0 12px" }}>
-          <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: "rgba(255,255,255,.4)", letterSpacing: ".2em" }}>{t("home.sectionPlay")}</div>
-          <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,.06)" }} />
+          <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: "rgba(30,58,95,.5)", letterSpacing: ".2em" }}>{t("home.sectionPlay")}</div>
+          <div style={{ flex: 1, height: 1, background: "rgba(30,58,95,.1)" }} />
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 28 }}>
           {modes.map((m, i) => (
             <button key={m.id} onClick={() => {
+              // 2台モードは近日公開
+              if (m.id === "twodevice") {
+                alert("🚧 2台モードは近日公開予定です！\n\nFirebase連携によるリアル2台モードを準備中です。お楽しみに。");
+                return;
+              }
               // 攻撃者体験はAPIが必要なため無効時はお知らせ
               if (m.id === "attacker" && !CLAUDE_API_ENABLED) {
                 alert("🚧 攻撃者体験は近日公開予定です！\n\nAIリアルタイム生成が必要な機能のため、準備中です。お楽しみに。");
@@ -5150,44 +5243,21 @@ function HomeScreen({ onNavigate, progress }) {
 
         {/* COMING SOON */}
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-          <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: "rgba(255,255,255,.25)", letterSpacing: ".2em" }}>{t("home.sectionSoon")}</div>
-          <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,.05)" }} />
+          <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: "rgba(30,58,95,.35)", letterSpacing: ".2em" }}>{t("home.sectionSoon")}</div>
+          <div style={{ flex: 1, height: 1, background: "rgba(30,58,95,.08)" }} />
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {soon.map((item, i) => (
-            <div key={i} style={{ background: "rgba(255,255,255,.03)", border: "1px dashed rgba(255,255,255,.09)", borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 12, animation: `slideUp .5s ${i * .08}s both ease` }}>
-              <div style={{ width: 40, height: 40, borderRadius: 11, background: "rgba(255,255,255,.05)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, opacity: .5, filter: "grayscale(1)", flexShrink: 0 }}>{item.icon}</div>
+            <div key={i} style={{ background: "rgba(255,255,255,.5)", border: "1px dashed rgba(30,58,95,.15)", borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 12, animation: `slideUp .5s ${i * .08}s both ease` }}>
+              <div style={{ width: 40, height: 40, borderRadius: 11, background: "rgba(30,58,95,.05)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, opacity: .5, filter: "grayscale(1)", flexShrink: 0 }}>{item.icon}</div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,.35)" }}>{item.title}</div>
-                <div style={{ fontSize: 10, color: "rgba(255,255,255,.2)", marginTop: 2 }}>{item.tag}</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "rgba(30,58,95,.4)" }}>{item.title}</div>
+                <div style={{ fontSize: 10, color: "rgba(30,58,95,.25)", marginTop: 2 }}>{item.tag}</div>
               </div>
-              <div style={{ fontSize: 10, color: "rgba(255,255,255,.2)", fontFamily: "'DotGothic16',monospace" }}>{t("home.soonLabel")}</div>
+              <div style={{ fontSize: 10, color: "rgba(30,58,95,.25)", fontFamily: "'DotGothic16',monospace" }}>{t("home.soonLabel")}</div>
             </div>
           ))}
         </div>
-
-        {/* はじめての方へ（保護者向け）バナー */}
-        <button onClick={() => onNavigate("opening")}
-          style={{
-            width: "100%", marginTop: 16, padding: "16px 16px",
-            background: "linear-gradient(135deg,rgba(99,102,241,.15),rgba(139,92,246,.1))",
-            border: "1.5px solid rgba(139,92,246,.35)",
-            borderRadius: 16, cursor: "pointer", fontFamily: "inherit",
-            display: "flex", alignItems: "center", gap: 12,
-          }}>
-          <div style={{ width: 44, height: 44, borderRadius: 12, background: "rgba(139,92,246,.2)", border: "1px solid rgba(139,92,246,.4)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>
-            👨‍👩‍👧
-          </div>
-          <div style={{ flex: 1, textAlign: "left" }}>
-            <div style={{ fontSize: 13, fontWeight: 900, color: "#c4b5fd" }}>
-              はじめての方へ（保護者向け）
-            </div>
-            <div style={{ fontSize: 11, color: "rgba(255,255,255,.35)", marginTop: 2 }}>
-              このアプリの使い方・目的・統計を確認する
-            </div>
-          </div>
-          <div style={{ fontSize: 16, color: "rgba(255,255,255,.3)" }}>→</div>
-        </button>
 
         {/* 週次チャレンジバナー */}
         {(() => {
@@ -5222,16 +5292,16 @@ function HomeScreen({ onNavigate, progress }) {
         <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 10 }}>
           {/* Keyword note button */}
           <button onClick={() => onNavigate("keywordnote")}
-            style={{ width: "100%", padding: "14px 16px", background: "rgba(255,255,255,.04)", border: "1.5px solid rgba(255,255,255,.1)", borderRadius: 16, cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 12 }}>
-            <div style={{ width: 40, height: 40, borderRadius: 11, background: "rgba(255,169,64,.18)", border: "1px solid rgba(255,169,64,.4)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>📖</div>
+            style={{ width: "100%", padding: "14px 16px", background: "rgba(255,255,255,.8)", border: "1.5px solid rgba(100,180,255,.2)", borderRadius: 16, cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 12, boxShadow: "0 2px 8px rgba(100,180,255,.1)" }}>
+            <div style={{ width: 40, height: 40, borderRadius: 11, background: "rgba(255,169,64,.15)", border: "1px solid rgba(255,169,64,.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>📖</div>
             <div style={{ flex: 1, textAlign: "left" }}>
-              <div style={{ fontSize: 13, fontWeight: 900, color: "rgba(255,255,255,.8)", display: "flex", alignItems: "center", gap: 8 }}>
+              <div style={{ fontSize: 13, fontWeight: 900, color: "#1e3a5f", display: "flex", alignItems: "center", gap: 8 }}>
                 キーワードノート
                 {Boolean(kwCount) && <span style={{ fontSize: 11, background: "#ffa940", color: "#fff", borderRadius: 99, padding: "1px 8px", fontWeight: 700 }}>{kwCount}ワード</span>}
               </div>
-              <div style={{ fontSize: 11, color: "rgba(255,255,255,.35)", marginTop: 2 }}>各エピソードで学んだ重要ワードを確認</div>
+              <div style={{ fontSize: 11, color: "rgba(30,58,95,.45)", marginTop: 2 }}>各エピソードで学んだ重要ワードを確認</div>
             </div>
-            <div style={{ fontSize: 16, color: "rgba(255,255,255,.3)" }}>→</div>
+            <div style={{ fontSize: 16, color: "rgba(30,58,95,.3)" }}>→</div>
           </button>
 
           {/* Parent report button — ④ 5秒長押しでシークレットダッシュボード */}
@@ -5240,20 +5310,37 @@ function HomeScreen({ onNavigate, progress }) {
             onMouseUp={() => { if (reportHoldTimer) { clearTimeout(reportHoldTimer); setReportHoldTimer(null); } }}
             onTouchStart={() => { const t = setTimeout(() => { setSecret4(true); setReportHoldTimer(null); }, 5000); setReportHoldTimer(t); }}
             onTouchEnd={() => { if (reportHoldTimer) { clearTimeout(reportHoldTimer); setReportHoldTimer(null); } }}
-            style={{ width: "100%", padding: "14px 16px", background: "rgba(255,255,255,.04)", border: "1.5px solid rgba(255,255,255,.1)", borderRadius: 16, cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 12 }}>
-            <div style={{ width: 40, height: 40, borderRadius: 11, background: "rgba(99,102,241,.2)", border: "1px solid rgba(99,102,241,.4)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>👨‍👩‍👧</div>
+            style={{ width: "100%", padding: "14px 16px", background: "rgba(255,255,255,.8)", border: "1.5px solid rgba(100,180,255,.2)", borderRadius: 16, cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 12, boxShadow: "0 2px 8px rgba(100,180,255,.1)" }}>
+            <div style={{ width: 40, height: 40, borderRadius: 11, background: "rgba(99,102,241,.15)", border: "1px solid rgba(99,102,241,.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>👨‍👩‍👧</div>
             <div style={{ flex: 1, textAlign: "left" }}>
-              <div style={{ fontSize: 13, fontWeight: 900, color: "rgba(255,255,255,.8)" }}>{t("home.parentReport")}</div>
-              <div style={{ fontSize: 11, color: "rgba(255,255,255,.35)", marginTop: 2 }}>学習記録・アドバイス・次のステップ</div>
+              <div style={{ fontSize: 13, fontWeight: 900, color: "#1e3a5f" }}>{t("home.parentReport")}</div>
+              <div style={{ fontSize: 11, color: "rgba(30,58,95,.45)", marginTop: 2 }}>学習記録・アドバイス・次のステップ</div>
             </div>
-            <div style={{ fontSize: 16, color: "rgba(255,255,255,.3)" }}>→</div>
+            <div style={{ fontSize: 16, color: "rgba(30,58,95,.3)" }}>→</div>
+          </button>
+
+          {/* 年齢設定変更ボタン */}
+          <button onClick={() => {
+            const current = (() => { try { return localStorage.getItem(AGE_MODE_KEY); } catch { return null; } })();
+            const next = current === "elementary" ? "middle" : "elementary";
+            const label = next === "elementary" ? "小学4〜6年生" : "中学生以上";
+            if (window.confirm(`対象年齢を「${label}」に変更しますか？`)) {
+              try { localStorage.setItem(AGE_MODE_KEY, next); } catch {}
+            }
+          }}
+            style={{ width: "100%", padding: "12px 16px", background: "rgba(255,255,255,.6)", border: "1px solid rgba(30,58,95,.12)", borderRadius: 14, cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ fontSize: 18 }}>🎓</div>
+            <div style={{ flex: 1, textAlign: "left", fontSize: 12, color: "rgba(30,58,95,.6)" }}>
+              対象年齢の設定を変更する
+            </div>
+            <div style={{ fontSize: 14, color: "rgba(30,58,95,.3)" }}>→</div>
           </button>
         </div>
 
         {/* アプリ情報リンク */}
         <div style={{ marginTop: 14, textAlign: "center" }}>
           <button onClick={() => onNavigate("info")}
-            style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "inherit", fontSize: 11, color: "rgba(255,255,255,.2)" }}>
+            style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "inherit", fontSize: 11, color: "rgba(30,58,95,.3)" }}>
             プライバシーポリシー · 運営者情報 · 利用規約
           </button>
         </div>
@@ -5321,7 +5408,6 @@ function Episode1({ onComplete, onExit }) {
   if (phase === "intro") return (
     <EpisodeShell onExit={onExit}>
     <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at center,#2a1810,#0f0a08)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 20px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden" }}>
-      <div style={{ position: "absolute", top: 16, right: 16, zIndex: 10 }}><LanguageSwitcher compact /></div>
       {[...Array(28)].map((_, i) => <div key={i} style={{ position: "absolute", width: Math.random() * 3 + 1, height: Math.random() * 3 + 1, background: "#fff", borderRadius: "50%", left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%`, opacity: Math.random() * .7 + .2, animation: `blink ${Math.random() * 3 + 2}s infinite` }} />)}
       <OwlMolly size={120} />
       <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: "#ffa940", letterSpacing: ".4em", margin: "16px 0 8px" }}>{t("ep1.chapter")}</div>
@@ -5337,6 +5423,7 @@ function Episode1({ onComplete, onExit }) {
 
   // ── Normal（Twitter風タイムライン） ──
   if (phase === "normal") return (
+    <EpisodeShell onExit={onExit}>
     <div style={{ minHeight: "100vh", background: "#f7f9fa", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       {/* Twitter風ヘッダー */}
       <div style={{ background: "#fff", borderBottom: "1px solid #e1e8ed", padding: "12px 16px", position: "sticky", top: 0, zIndex: 10 }}>
@@ -5422,10 +5509,12 @@ function Episode1({ onComplete, onExit }) {
         </div>
       </div>
     </div>
+    </EpisodeShell>
   );
 
   // ── Horror ──
   if (phase === "horror") return (
+    <EpisodeShell onExit={onExit}>
     <div style={{ minHeight: "100vh", background: horrorStage >= 1 ? "radial-gradient(ellipse at center,#1a0a0a,#000)" : "linear-gradient(180deg,#fff8f0,#ffeed6)", transition: "background 1.2s ease", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
       {horrorStage >= 1 && <div style={{ position: "absolute", inset: 0, background: "repeating-linear-gradient(0deg,transparent 0px,transparent 2px,rgba(255,0,0,.025) 2px,rgba(255,0,0,.025) 4px)", pointerEvents: "none" }} />}
       {horrorStage === 0 && <div style={{ textAlign: "center", color: "#3d2817", fontSize: 14, opacity: .6 }}>{t("ep1.daysLater")}</div>}
@@ -5462,10 +5551,12 @@ function Episode1({ onComplete, onExit }) {
         </div>
       )}
     </div>
+    </EpisodeShell>
   );
 
   // ── Investigate（タイムアタック廃止・全投稿統一） ──
   if (phase === "investigate") return (
+    <EpisodeShell onExit={onExit}>
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#1a0f0a,#0a0a0f)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
       <div style={{ maxWidth: 420, margin: "0 auto" }}>
         {/* ヘッダー */}
@@ -5575,10 +5666,12 @@ function Episode1({ onComplete, onExit }) {
         )}
       </div>
     </div>
+    </EpisodeShell>
   );
 
   // ── Explain ──
   if (phase === "explain") return (
+    <EpisodeShell onExit={onExit}>
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fff8f0,#ffeed6)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 420, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 14 }}><OwlMolly size={96} /></div>
@@ -5608,10 +5701,12 @@ function Episode1({ onComplete, onExit }) {
         <button onClick={() => setPhase("quiz")} style={{ width: "100%", padding: 15, background: "linear-gradient(135deg,#ffa940,#ff8c1a)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>{t("ep1.talkToFamily")}</button>
       </div>
     </div>
+    </EpisodeShell>
   );
 
   // ── Quiz (EP1) ──
   if (phase === "quiz") return (
+    <EpisodeShell onExit={onExit}>
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fff8f0,#ffeed6)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
         <div style={{ display: "flex", gap: 4, marginBottom: 18 }}>
@@ -5634,10 +5729,12 @@ function Episode1({ onComplete, onExit }) {
         />
       </div>
     </div>
+    </EpisodeShell>
   );
 
   // ── Comparison (EP1) ──
   if (phase === "comparison") return (
+    <EpisodeShell onExit={onExit}>
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fff8f0,#ffeed6)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
         <div style={{ display: "flex", gap: 4, marginBottom: 18 }}>
@@ -5660,10 +5757,12 @@ function Episode1({ onComplete, onExit }) {
         </button>
       </div>
     </div>
+    </EpisodeShell>
   );
 
   // ── Homework (EP1) ──
   if (phase === "homework") return (
+    <EpisodeShell onExit={onExit}>
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fff8f0,#ffeed6)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
         <div style={{ display: "flex", gap: 4, marginBottom: 18 }}>
@@ -5684,10 +5783,12 @@ function Episode1({ onComplete, onExit }) {
         />
       </div>
     </div>
+    </EpisodeShell>
   );
 
   // ── Keywords (EP1) ──
   if (phase === "keywords") return (
+    <EpisodeShell onExit={onExit}>
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fff8f0,#ffeed6)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
         <OwlSay mood="excited">このエピソードで出てきた大事なワードを一緒に覚えよう！ニュースでも出てくるよ🦉</OwlSay>
@@ -5695,10 +5796,12 @@ function Episode1({ onComplete, onExit }) {
         <ParentExpertCard epKey="ep1" accentColor="#ffa940" />
       </div>
     </div>
+    </EpisodeShell>
   );
 
   // ── Dialogue (EP1) ──
   if (phase === "dialogue") return (
+    <EpisodeShell onExit={onExit}>
     <DialogueRunner
       accentColor="#ffa940"
       bg="linear-gradient(180deg,#fff8f0,#ffeed6)"
@@ -5721,6 +5824,7 @@ function Episode1({ onComplete, onExit }) {
       myWordsPlaceholder="例：写真の背景から家がわかってしまうのが怖かった"
       onComplete={() => { feedback("complete"); setAnimStars(true); setPhase("complete"); }}
     />
+    </EpisodeShell>
   );
 
   // ── Complete ──
