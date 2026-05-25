@@ -439,6 +439,15 @@ const I18N = {
 // 言語コンテキスト
 const LangContext = createContext({ lang: "ja", setLang: () => {} });
 
+// 年齢モードコンテキスト
+const AgeModeContext = createContext({ ageMode: "middle", setAgeMode: () => {} });
+function useAgeMode() { return useContext(AgeModeContext).ageMode; }
+// useET: et(標準テキスト, 小学生テキスト) → elementaryモード時は小学生テキストを返す
+function useET() {
+  const ageMode = useAgeMode();
+  return (std, el) => (ageMode === "elementary" && el !== undefined) ? el : std;
+}
+
 // 翻訳取得関数：t("home.title") → 現在の言語の値を返す
 function useT() {
   const { lang } = useContext(LangContext);
@@ -3317,6 +3326,7 @@ function Opening({ onComplete }) {
   const [screen, setScreen] = useState(0);
   const [tutIdx, setTutIdx] = useState(0);
   const [ageSelected, setAgeSelected] = useState(null);
+  const { setAgeMode } = useContext(AgeModeContext);
   // 0=splash 1=stats 2=howto 3=age 4=cta
 
   const next = () => setScreen(s => s + 1);
@@ -3593,7 +3603,7 @@ function Opening({ onComplete }) {
           ].map((opt) => (
             <button key={opt.id}
               onClick={() => {
-                try { localStorage.setItem(AGE_MODE_KEY, opt.id); } catch {}
+                setAgeMode(opt.id);
                 feedback("tap");
                 next();
               }}
@@ -3736,6 +3746,14 @@ const EP_KEYWORDS = {
       news: "2019年、写真の位置情報から歌手のファンが自宅を特定した事件が発生。瞳への反射から場所を特定したケースも。",
       scary: "毎日の登下校ルートが丸裸になる",
       action: "設定→プライバシー→カメラ→位置情報：「許可しない」に変更",
+      el: {
+        word: "いち情報タグ（じおたぐ）",
+        short: "しゃしんに自動（じどう）で記録（きろく）されるGPS情報",
+        detail: "スマホでとったしゃしんには「どこでとったか」のGPS座標（ざひょう）が自動で記録されます。SNSにのせると、その情報も一緒（いっしょ）に公開（こうかい）されます。自宅（じたく）や学校の場所がわかってしまいます。",
+        news: "2019年、しゃしんのいち情報から歌手（かしゅ）のファンが家（いえ）の場所を特定（とくてい）した事件（じけん）がありました。目（め）のひとみへのはんしゃから場所を特定したれいもあります。",
+        scary: "毎日（まいにち）の通学（つうがく）ルートが全部（ぜんぶ）バレてしまう",
+        action: "設定（せってい）→プライバシー→カメラ→いち情報：「きょかしない」にかえる",
+      },
       epKey: "ep1",
     },
     {
@@ -3747,6 +3765,14 @@ const EP_KEYWORDS = {
       news: "メタデータから作成者・会社名・PCのファイルパスが漏洩した機密文書事件が国内外で複数発生。",
       scary: "削除したつもりでも情報が残り続ける",
       action: "重要ファイルを送る前にメタデータ削除ツールで確認する",
+      el: {
+        word: "メタデータ（かくれた情報（じょうほう））",
+        short: "ファイルにかくれている「見えない情報（じょうほう）」",
+        detail: "しゃしん・動画（どうが）・文書（ぶんしょ）ファイルには「いつ・どこで・どのカメラで」という情報が自動（じどう）で記録（きろく）されます。中身（なかみ）は見えないけど、知っている人には全部（ぜんぶ）読めます。",
+        news: "メタデータから作った人の名前や会社（かいしゃ）の名前がバレた事件（じけん）が国内外（こくないがい）で起きました。",
+        scary: "消（け）したつもりでも情報（じょうほう）が残（のこ）り続（つづ）ける",
+        action: "大切（たいせつ）なファイルをおくる前（まえ）にメタデータを消（け）すツールで確認（かくにん）する",
+      },
       epKey: "ep1",
     },
   ],
@@ -3760,6 +3786,14 @@ const EP_KEYWORDS = {
       news: "2024年能登半島地震では「孤立地域に熊が出た」「某市長が逃げた」などデマが多数拡散。救助活動の妨げになった。",
       scary: "あなたも知らずにデマを広める加害者になる",
       action: "NHK・気象庁・市区町村の公式サイトで必ず確認する",
+      el: {
+        word: "フェイクニュース（うそのニュース）",
+        short: "わざとつくられたうその情報（じょうほう）",
+        detail: "本当（ほんとう）じゃないことを本物（ほんもの）のニュースに見せかけて広（ひろ）める情報のこと。SNSでは「きんきゅう」「しょうげき」「拡散（かくさん）希望（きぼう）」などの言葉（ことば）がよく使（つか）われます。",
+        news: "2024年の地震（じしん）のとき「クマが出た」「市長（しちょう）がにげた」などのデマが広まりました。助（たす）けるじゃまになりました。",
+        scary: "あなたも知らずにデマを広める加害者（かがいしゃ）になることがある",
+        action: "NHK・気象庁（きしょうちょう）・市区町村（しくちょうそん）の公式（こうしき）サイトで必（かなら）ずかくにんする",
+      },
       epKey: "ep2",
     },
     {
@@ -3771,6 +3805,14 @@ const EP_KEYWORDS = {
       news: "2023年の首相暗殺未遂デマ、2024年の著名人偽コメントなど、ファクトチェックで多数のフェイクが暴かれた。",
       scary: "何も考えずシェアした1人が加害者になれる",
       action: "怪しい情報はfact-check.org・Snopes・FactCheck.orgで確認",
+      el: {
+        word: "ファクトチェック（情報（じょうほう）かくにん）",
+        short: "情報（じょうほう）がほんとうかどうかをたしかめること",
+        detail: "ニュースや投稿（とうこう）が本当（ほんとう）かどうかを、もとの情報・専門家（せんもんか）・いくつかの情報元（じょうほうもと）でたしかめること。日本ではファクトチェック・イニシアティブ（FIJ）が活動（かつどう）しています。",
+        news: "2023年のしゅしょうあんさつみすいデマ、2024年の有名人（ゆうめいじん）のにせコメントなど、ファクトチェックで多くのフェイクがバレました。",
+        scary: "なにも考えずシェアした1人が加害者（かがいしゃ）になれる",
+        action: "あやしい情報はNHKのファクトチェックサイトや信頼（しんらい）できるニュースサイトでかくにんする",
+      },
       epKey: "ep2",
     },
     {
@@ -3782,6 +3824,14 @@ const EP_KEYWORDS = {
       news: "陰謀論・反ワクチン・特定政治思想の過激化がエコーチェンバーで促進されると研究が示す。",
       scary: "気づかないうちに極端な考えに染まっていく",
       action: "あえて反対意見や別の立場のニュースも読んでみる",
+      el: {
+        word: "エコーチェンバー（おなじ意見（いけん）だけが広がる場所（ばしょ））",
+        short: "おなじ意見（いけん）だけがひびく、とじた情報空間（じょうほうくうかん）",
+        detail: "SNSのしくみが「自分が見たいもの」だけを見せ続けることで、おなじ意見しか目に入らなくなる現象（げんしょう）。かたよった考え方がどんどん強まっていきます。",
+        news: "いんぼうろんや特定（とくてい）の政治（せいじ）思想（しそう）が過激（かげき）化するのにエコーチェンバーが関係していることがわかっています。",
+        scary: "気（き）づかないうちにかたよった考えになっていく",
+        action: "あえてちがう意見（いけん）やべつの立場（たちば）のニュースも読んでみる",
+      },
       epKey: "ep2",
     },
   ],
@@ -3795,6 +3845,14 @@ const EP_KEYWORDS = {
       news: "2024年に相次いだ「強盗指示」事件の多くがトクリュウ。「仕事」として招集された若者が逮捕・実名報道される事例が続出。",
       scary: "スカウトされた時点で既に犯罪に組み込まれている",
       action: "「高収入・簡単・スマホだけ」の募集は即ブロック＋通報",
+      el: {
+        word: "トクリュウ（とくめい・りゅうどうがた犯罪（はんざい）グループ）",
+        short: "SNSで集（あつ）められたとくめいの実行犯（じっこうはん）集団（しゅうだん）",
+        detail: "グループのリーダーがSNSなどでとくめいの実行役（じっこうやく）を集め、つかい捨て（す）にする犯罪（はんざい）組織（そしき）のかたちです。2023〜2024年にとうなんや詐欺（さぎ）で急（きゅう）に増（ふ）えました。仲間（なかま）どうしがおたがいを知りません。",
+        news: "2024年に相次（あいつ）いだ「強盗指示（ごうとうしじ）」事件（じけん）の多（おお）くがトクリュウです。「仕事（しごと）」として集められた若者（わかもの）が逮捕（たいほ）されました。",
+        scary: "スカウトされた時点（じてん）で、もう犯罪（はんざい）に組（く）み込まれている",
+        action: "「高収入（こうしゅうにゅう）・かんたん・スマホだけ」のぼしゅうはすぐブロック＋通報（つうほう）",
+      },
       epKey: "ep3",
     },
     {
@@ -3806,6 +3864,14 @@ const EP_KEYWORDS = {
       news: "2023年、受け子として逮捕された18歳が「バイトだと思っていた」と供述。懲役3年の実刑判決。前科がつき就職・進学に一生影響。",
       scary: "「知らなかった」は裁判で通用しない",
       action: "知らない人から頼まれた「荷物受け取り」「ATM操作」は絶対に断る",
+      el: {
+        word: "受（う）け子・出（だ）し子・かけ子（さぎの役割（やくわり））",
+        short: "特殊詐欺（とくしゅさぎ）の三役（さんやく）の実行犯（じっこうはん）",
+        detail: "かけ子＝でんわで被害者（ひがいしゃ）をだます役（やく） / 受（う）け子＝お金やカードを受け取る役 / 出（だ）し子＝ATMでお金を引き出す役。どの役でも詐欺（さぎ）のきょうはんとして逮捕（たいほ）されます。",
+        news: "2023年、受け子として逮捕（たいほ）された18才（さい）が「バイトだと思っていた」と話しました。懲役（ちょうえき）3年になりました。一生（いっしょう）記録（きろく）が残（のこ）ります。",
+        scary: "「知らなかった」は裁判（さいばん）で通用（つうよう）しない",
+        action: "知らない人にたのまれた「荷物（にもつ）受け取り」「ATMそうさ」は絶対（ぜったい）に断（ことわ）る",
+      },
       epKey: "ep3",
     },
     {
@@ -3817,6 +3883,14 @@ const EP_KEYWORDS = {
       news: "2024年、全国で150件超の強盗事件がこの手口。高校生・大学生の逮捕者が急増。被害者・加害者ともに10〜20代が中心に。",
       scary: "一度足を踏み入れると自力では抜け出せない",
       action: "#9110（警察相談）・弁護士ドットコムに相談。家族にも話す",
+      el: {
+        word: "闇（やみ）バイト（犯罪（はんざい）をバイトとよそおった仕事（しごと））",
+        short: "犯罪（はんざい）行為（こうい）を「バイト」とうそついてぼしゅうするもの",
+        detail: "SNSなどで「高日給（こうにっきゅう）・即日払（そくじつばら）い・スマホだけ」とぼしゅうし、実際（じっさい）には詐欺（さぎ）・強盗（ごうとう）・薬物（やくぶつ）運搬（うんぱん）などの犯罪（はんざい）をやらせます。一度（いちど）個人情報（こじんじょうほう）を送ると「やめたら家族（かぞく）にバラす」とおどされます。",
+        news: "2024年、全国（ぜんこく）で150件（けん）以上の強盗（ごうとう）事件（じけん）がこの手口（てぐち）でした。高校生・大学生の逮捕者（たいほしゃ）が急（きゅう）に増（ふ）えました。",
+        scary: "一度（いちど）足を踏（ふ）み入れると自力（じりき）では抜（ぬ）け出せない",
+        action: "#9110（けいさつ相談（そうだん））・弁護士（べんごし）ドットコムに相談（そうだん）。家族（かぞく）にも話（はな）す",
+      },
       epKey: "ep3",
     },
   ],
@@ -3830,6 +3904,14 @@ const EP_KEYWORDS = {
       news: "2024年、著名人のSNSアカウントをなりすました偽広告詐欺が急増。Meta（Instagram/Facebook）で月数百件の被害報告。",
       scary: "友達のLINEから来たメッセージも疑わなければならない",
       action: "お金や個人情報を求めるLINEは必ず電話で本人確認",
+      el: {
+        word: "なりすまし（他人（たにん）のふりをすること）",
+        short: "ほかの人のふりをして詐欺（さぎ）をすること",
+        detail: "乗（の）っ取（と）ったSNSアカウントやにせアカウントで、本人の家族（かぞく）・友人（ゆうじん）・公式（こうしき）きかんになりすまして、お金や個人情報（こじんじょうほう）をだまし取ること。",
+        news: "2024年、有名人（ゆうめいじん）のSNSアカウントになりすましたにせ広告（こうこく）詐欺（さぎ）が急（きゅう）に増（ふ）えました。",
+        scary: "友達（ともだち）のLINEから来たメッセージも疑（うたが）わなければならない",
+        action: "お金や個人情報（こじんじょうほう）を求（もと）めるLINEは必（かなら）ずでんわで本人（ほんにん）かくにん",
+      },
       epKey: "ep4",
     },
     {
@@ -3841,6 +3923,14 @@ const EP_KEYWORDS = {
       news: "二段階認証を設定していなかったために乗っ取られたケースが国内で年間数万件報告。設定するだけで99%以上の自動攻撃を防げると言われる。",
       scary: "設定していないと5秒でアカウントが奪われる",
       action: "LINE・Instagram・Gmail全てで今日中に設定する",
+      el: {
+        word: "二段階（にだんかい）にんしょう（2FA）",
+        short: "パスワード＋もう一（ひと）つのかくにんで守（まも）るしくみ",
+        detail: "ログインするとき、パスワードのほかに、スマホに届（とど）くSMSコードや認証（にんしょう）アプリの番号（ばんごう）を入力（にゅうりょく）します。パスワードがぬすまれても、コードがないとログインできません。",
+        news: "二段階（にだんかい）にんしょうを設定（せってい）していなかったために乗（の）っ取（と）られたケースが国内（こくない）で年（ねん）に何万（なんまん）件（けん）も報告（ほうこく）されています。",
+        scary: "設定（せってい）していないと5秒（びょう）でアカウントがうばわれる",
+        action: "LINE・Instagram・Gmail全（すべ）てで今日（きょう）中に設定（せってい）する",
+      },
       epKey: "ep4",
     },
     {
@@ -3852,6 +3942,14 @@ const EP_KEYWORDS = {
       news: "「友達に頼まれてSMSコードを教えた」という口実でアカウントを乗っ取る手口が急増。友達のアカウントが既に乗っ取られているケースが多い。",
       scary: "「友達」が犯人であることに気づく前に全てが終わる",
       action: "ワンタイムパスワードは「誰にも・何があっても」教えない",
+      el: {
+        word: "ワンタイムパスワード（一度（いちど）だけつかえるかくにん番号（ばんごう））",
+        short: "一度（いちど）しかつかえないつかい捨（す）てのかくにんコード",
+        detail: "SMS・メール・認証（にんしょう）アプリで届（とど）く6けたくらいの数字（すうじ）です。30秒（びょう）〜数分（すうふん）でつかえなくなり、一度（いちど）つかったらもうつかえません。これをほかの人に教（おし）えると、すぐにアカウントをうばわれます。",
+        news: "「友達（ともだち）にたのまれてSMSコードを教えた」という口実（こうじつ）でアカウントを乗（の）っ取（と）る手口（てぐち）が急（きゅう）に増（ふ）えています。",
+        scary: "「友達（ともだち）」が犯人（はんにん）だと気（き）づく前（まえ）に全部（ぜんぶ）終（お）わる",
+        action: "ワンタイムパスワードは「だれにも・どんな時（とき）でも」教（おし）えない",
+      },
       epKey: "ep4",
     },
   ],
@@ -3865,6 +3963,14 @@ const EP_KEYWORDS = {
       news: "文科省2023年調査：ネットいじめの認知件数が初めて2万件を超え過去最多。被害者の平均年齢は下がり続けている。",
       scary: "家に帰っても学校が続く。眠れない夜が続く",
       action: "証拠スクショを保存→学校・スクールカウンセラー・#9110に相談",
+      el: {
+        word: "ネットいじめ（サイバーいじめ）",
+        short: "SNS・ゲームなどを通（とお）じたいじめ",
+        detail: "LINEのグループはずし・わるぐちの拡散（かくさん）・ゲームの中（なか）のいやがらせ・にせアカウントでの悪口（あっこう）など。24時間（じかん）・365日（にち）にげる場所（ばしょ）がなく、スクリーンショットで証拠（しょうこ）が残（のこ）って広まります。",
+        news: "文科省（もんかしょう）2023年調査（ちょうさ）：ネットいじめのにんちけん数（すう）が初（はじ）めて2万件（まんけん）をこえて過去最多（かこさいた）になりました。",
+        scary: "家（いえ）に帰（かえ）っても学校（がっこう）が続（つづ）く。ねむれない夜（よる）が続く",
+        action: "証拠（しょうこ）スクショを保存（ほぞん）→学校・スクールカウンセラー・#9110に相談（そうだん）",
+      },
       epKey: "ep5",
     },
     {
@@ -3876,6 +3982,14 @@ const EP_KEYWORDS = {
       news: "いじめ被害者の92%が「誰かに気づいてほしかった」と回答。傍観者の一言で状況が変わったケースが多数報告されている。",
       scary: "あなたの沈黙が、誰かの最後の希望を消すかもしれない",
       action: "「それはどうかな」の一言、それだけでいい。完璧でなくていい",
+      el: {
+        word: "ぼうかんしゃこうか（バイスタンダーこうか）",
+        short: "人が多（おお）いほど助（たす）けない心理（しんり）",
+        detail: "「だれかが助（たす）けるだろう」という気持（きも）ちが働（はたら）き、まわりに人が多いほどだれも行動（こうどう）しなくなる現象（げんしょう）。ネットではさらに強（つよ）く働き、「自分（じぶん）一人（ひとり）が言っても」という考えで全員（ぜんいん）がだまってしまいます。",
+        news: "いじめ被害者（ひがいしゃ）の92%が「だれかに気（き）づいてほしかった」と答（こた）えました。ぼうかんしゃの一言（ひとこと）で状況（じょうきょう）が変わったれいが多く報告（ほうこく）されています。",
+        scary: "あなたのちんもくが、だれかの最後（さいご）の希望（きぼう）を消（け）すかもしれない",
+        action: "「それはどうかな」の一言（ひとこと）、それだけでいい。かんぺきでなくていい",
+      },
       epKey: "ep5",
     },
   ],
@@ -3889,6 +4003,14 @@ const EP_KEYWORDS = {
       news: "2024年警察庁：児童の性的被害のうち約65%がSNS経由。最初の接触からプレゼント提供→写真要求までの平均期間は約3週間。",
       scary: "「信頼できる」と感じた瞬間が一番危ない",
       action: "ゲーム・SNSで知り合った人とのLINE交換は断る。プレゼントは受け取らない",
+      el: {
+        word: "グルーミング（だましてなかよくなる手口（てぐち））",
+        short: "時間（じかん）をかけて信頼（しんらい）関係（かんけい）を作り、被害（ひがい）に誘（さそ）う手口（てぐち）",
+        detail: "加害者（かがいしゃ）が相手（あいて）に「友達（ともだち）」「わかってくれる人（ひと）」として時間（じかん）をかけて信頼（しんらい）を作り、少しずつ要求（ようきゅう）をエスカレートさせて性的被害（せいてきひがい）に誘（さそ）う手口（てぐち）。ゲーム・SNSがよく使（つか）われます。",
+        news: "2024年けいさつちょう：子どもの性的被害（せいてきひがい）のうち約（やく）65%がSNS経由（けいゆ）。最初（さいしょ）の接触（せっしょく）からしゃしんを求められるまでの平均（へいきん）は約（やく）3週間（しゅうかん）。",
+        scary: "「信頼（しんらい）できる」と感（かん）じた瞬間（しゅんかん）が一番（いちばん）あぶない",
+        action: "ゲーム・SNSで知り合った人とのLINE交換（こうかん）は断（ことわ）る。プレゼントは受（う）け取（と）らない",
+      },
       epKey: "ep6",
     },
     {
@@ -3900,6 +4022,14 @@ const EP_KEYWORDS = {
       news: "2023年、日本でセクストーション被害が急増。10〜20代の被害者が全体の70%。相談窓口への連絡で画像削除を支援できる場合がある。",
       scary: "ネット上の画像は完全削除が不可能に近い",
       action: "デジタル性暴力ホットライン：0120-437-104。送ってしまっても必ず相談を",
+      el: {
+        word: "デジタル性暴力（せいぼうりょく）（画像（がぞう）などをつかった性的（せいてき）な暴力（ぼうりょく））",
+        short: "画像（がぞう）・動画（どうが）をつかった性的（せいてき）な暴力（ぼうりょく）・おどし",
+        detail: "同意（どうい）なく性的（せいてき）な画像（がぞう）・動画（どうが）をとる・保存（ほぞん）する・広めること。「送（おく）らないともとの画像（がぞう）をバラまく」というおどし（セクストーション）もふくみます。被害者（ひがいしゃ）にはぜんぜん責任（せきにん）がありません。",
+        news: "2023年、日本でセクストーション被害（ひがい）が急（きゅう）に増（ふ）えました。10〜20才（さい）の被害者が全体（ぜんたい）の70%をしめます。",
+        scary: "ネット上（じょう）の画像（がぞう）は完全（かんぜん）にけすことがほぼできない",
+        action: "デジタル性暴力（せいぼうりょく）ホットライン：0120-437-104。送（おく）ってしまっても必（かなら）ず相談（そうだん）を",
+      },
       epKey: "ep6",
     },
   ],
@@ -3913,6 +4043,14 @@ const EP_KEYWORDS = {
       news: "2024年、フィッシング被害の被害額が過去最高の1,000億円超（警察庁）。三菱UFJ・楽天・Amazon・ゆうちょをかたる偽SMSが急増。",
       scary: "入力した0.1秒後にはもう犯罪者の手元に届いている",
       action: "SMSのURLは踏まない。公式アプリを直接開く。URLのドメインを必ず確認",
+      el: {
+        word: "フィッシング詐欺（さぎ）",
+        short: "本物（ほんもの）そっくりのにせサイトでIDをだまし取る詐欺（さぎ）",
+        detail: "銀行（ぎんこう）・Amazon・LINE・クレジットカード会社（がいしゃ）などになりすましたにせメール・SMSを送り、本物（ほんもの）そっくりのにせログインページに誘導（ゆうどう）してIDとパスワードをぬすむ手口（てぐち）。",
+        news: "2024年、フィッシング被害（ひがい）のひがいがくが過去最高（かこさいこう）の1000億円（おくえん）以上（いじょう）になりました（けいさつちょう）。銀行（ぎんこう）・Amazon・ゆうちょをかたるにせSMSが急（きゅう）に増（ふ）えています。",
+        scary: "入力（にゅうりょく）した0.1秒後（びょうご）にはもう犯罪者（はんざいしゃ）の手元（てもと）に届（とど）いている",
+        action: "SMSのURLはふまない。公式（こうしき）アプリを直接（ちょくせつ）開（ひら）く。URLのドメインを必（かなら）ずかくにんする",
+      },
       epKey: "ep7",
     },
     {
@@ -3924,6 +4062,14 @@ const EP_KEYWORDS = {
       news: "2024年、宅配業者をかたるスミッシングが国内で月200万件以上送信された月も。スマホ利用者の約30%が受信経験あり（調査）。",
       scary: "携帯番号さえあれば誰にでも届く。番号の流出は防げない",
       action: "宅配・銀行からのSMSにあるURLは絶対に踏まない。公式アプリで確認",
+      el: {
+        word: "スミッシング（SMSをつかったフィッシング詐欺（さぎ））",
+        short: "SMS（ショートメッセージ）をつかったフィッシング詐欺（さぎ）",
+        detail: "SMS（ショートメッセージ）でにせのリンクを送りつけ、個人情報（こじんじょうほう）をぬすむ手口（てぐち）。「たくはいびんの再配達（さいはいたつ）」「銀行（ぎんこう）こうざの異常（いじょう）」「ETCみばらい」などの内容（ないよう）が多い。",
+        news: "2024年、たくはいぎょうしゃをかたるスミッシングが国内（こくない）で月（つき）200万件（まんけん）以上（いじょう）送信（そうしん）された月（つき）もありました。",
+        scary: "けいたい番号（ばんごう）さえあればだれにでも届（とど）く。番号（ばんごう）のろうしゅつはふせげない",
+        action: "たくはい・銀行（ぎんこう）からのSMSにあるURLは絶対（ぜったい）にふまない。公式（こうしき）アプリでかくにん",
+      },
       epKey: "ep7",
     },
     {
@@ -3935,6 +4081,14 @@ const EP_KEYWORDS = {
       news: "「.com」より後ろに有名企業名がある場合（例：jp-amazon.com）は全て詐欺。本物のAmazonは必ず「amazon.co.jp」で終わる。",
       scary: "パッと見ただけでは本物と区別がつかない",
       action: "URLは最後の「.co.jp」「.ne.jp」など一番右のドメインだけを確認する",
+      el: {
+        word: "ドメイン詐称（さしょう）（にせURLで人をだます手口（てぐち））",
+        short: "本物（ほんもの）に似（に）せたにせURLで人（ひと）をだます手口（てぐち）",
+        detail: "amaz0n（oをゼロに）・amazon-secure.jp など、本物（ほんもの）のドメインに似（に）せたにせURLをつかってフィッシングサイトに誘導（ゆうどう）します。",
+        news: "「.com」より右（みぎ）に有名（ゆうめい）な会社（かいしゃ）の名前（なまえ）がある場合（ばあい）（例（れい）：jp-amazon.com）は全部（ぜんぶ）詐欺（さぎ）。本物（ほんもの）のAmazonは必（かなら）ず「amazon.co.jp」で終（お）わります。",
+        scary: "パッと見（み）ただけでは本物（ほんもの）と区別（くべつ）がつかない",
+        action: "URLは一番（いちばん）右（みぎ）の「.co.jp」「.ne.jp」など、一番（いちばん）みぎのドメインだけかくにんする",
+      },
       epKey: "ep7",
     },
   ],
@@ -3943,6 +4097,8 @@ const EP_KEYWORDS = {
 // キーワードカード単体コンポーネント
 function KeywordCard({ kw, onLearn, isLearned }) {
   const [expanded, setExpanded] = useState(false);
+  const ageMode = useAgeMode();
+  const d = (ageMode === "elementary" && kw.el) ? { ...kw, ...kw.el } : kw;
   return (
     <div style={{
       background: isLearned ? `${kw.color || "#ffa940"}08` : "#fff",
@@ -3954,10 +4110,10 @@ function KeywordCard({ kw, onLearn, isLearned }) {
       {/* Header */}
       <button onClick={() => setExpanded(e => !e)}
         style={{ width: "100%", padding: "14px 16px", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit", textAlign: "left", display: "flex", alignItems: "center", gap: 12 }}>
-        <div style={{ fontSize: 28, flexShrink: 0 }}>{kw.emoji}</div>
+        <div style={{ fontSize: 28, flexShrink: 0 }}>{d.emoji}</div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 14, fontWeight: 900, color: "#1e293b", marginBottom: 2 }}>{kw.word}</div>
-          <div style={{ fontSize: 11, color: "#64748b", lineHeight: 1.5 }}>{kw.short}</div>
+          <div style={{ fontSize: 14, fontWeight: 900, color: "#1e293b", marginBottom: 2 }}>{d.word}</div>
+          <div style={{ fontSize: 11, color: "#64748b", lineHeight: 1.5 }}>{d.short}</div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
           {isLearned && <span style={{ fontSize: 14 }}>✅</span>}
@@ -3972,25 +4128,25 @@ function KeywordCard({ kw, onLearn, isLearned }) {
 
           {/* Detail */}
           <div style={{ fontSize: 13, color: "#334155", lineHeight: 1.85, marginBottom: 12 }}>
-            {kw.detail}
+            {d.detail}
           </div>
 
           {/* News example */}
           <div style={{ background: "#fff7ed", border: "1px solid #fed7aa", borderRadius: 12, padding: "12px 14px", marginBottom: 12 }}>
             <div style={{ fontSize: 10, fontWeight: 900, color: "#c2410c", marginBottom: 6, letterSpacing: ".05em" }}>📰 実際に起きたこと</div>
-            <div style={{ fontSize: 12, color: "#7c2d12", lineHeight: 1.75 }}>{kw.news}</div>
+            <div style={{ fontSize: 12, color: "#7c2d12", lineHeight: 1.75 }}>{d.news}</div>
           </div>
 
           {/* Scary point */}
           <div style={{ background: "#fef2f2", border: "1px solid #fecaca", borderRadius: 12, padding: "10px 14px", marginBottom: 12, display: "flex", alignItems: "flex-start", gap: 8 }}>
             <span style={{ fontSize: 16, flexShrink: 0 }}>⚠️</span>
-            <div style={{ fontSize: 12, color: "#991b1b", fontWeight: 700, lineHeight: 1.65 }}>{kw.scary}</div>
+            <div style={{ fontSize: 12, color: "#991b1b", fontWeight: 700, lineHeight: 1.65 }}>{d.scary}</div>
           </div>
 
           {/* Action */}
           <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 12, padding: "10px 14px", marginBottom: 14, display: "flex", alignItems: "flex-start", gap: 8 }}>
             <span style={{ fontSize: 16, flexShrink: 0 }}>🛡️</span>
-            <div style={{ fontSize: 12, color: "#166534", lineHeight: 1.65 }}>{kw.action}</div>
+            <div style={{ fontSize: 12, color: "#166534", lineHeight: 1.65 }}>{d.action}</div>
           </div>
 
           {/* Learn button */}
@@ -4066,6 +4222,7 @@ function KeywordNoteScreen({ onBack }) {
   const [keywords, setKeywords] = useState(loadKeywords);
   const [selectedEp, setSelectedEp] = useState("all");
   const [detail, setDetail] = useState(null);
+  const ageMode = useAgeMode();
 
   const epFilters = [
     { id: "all", label: "すべて" },
@@ -4122,43 +4279,48 @@ function KeywordNoteScreen({ onBack }) {
           </div>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {filtered.map((kw, i) => (
-              <button key={i} onClick={() => setDetail(kw)}
-                style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 16, padding: "14px 16px", cursor: "pointer", fontFamily: "inherit", textAlign: "left", display: "flex", alignItems: "center", gap: 12, boxShadow: "0 2px 8px rgba(0,0,0,.04)", animation: `slideUp .3s ${i * .05}s both ease` }}>
-                <div style={{ fontSize: 28, flexShrink: 0 }}>{kw.emoji}</div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 14, fontWeight: 900, color: "#1e293b", marginBottom: 2 }}>{kw.word}</div>
-                  <div style={{ fontSize: 11, color: "#64748b", lineHeight: 1.5 }}>{kw.short}</div>
-                  <div style={{ fontSize: 10, color: "#94a3b8", marginTop: 4 }}>記録日：{kw.learnedAt}</div>
-                </div>
-                <div style={{ fontSize: 16, color: "#cbd5e1" }}>›</div>
-              </button>
-            ))}
+            {filtered.map((kw, i) => {
+              const d = (ageMode === "elementary" && kw.el) ? { ...kw, ...kw.el } : kw;
+              return (
+                <button key={i} onClick={() => setDetail(kw)}
+                  style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 16, padding: "14px 16px", cursor: "pointer", fontFamily: "inherit", textAlign: "left", display: "flex", alignItems: "center", gap: 12, boxShadow: "0 2px 8px rgba(0,0,0,.04)", animation: `slideUp .3s ${i * .05}s both ease` }}>
+                  <div style={{ fontSize: 28, flexShrink: 0 }}>{d.emoji}</div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 14, fontWeight: 900, color: "#1e293b", marginBottom: 2 }}>{d.word}</div>
+                    <div style={{ fontSize: 11, color: "#64748b", lineHeight: 1.5 }}>{d.short}</div>
+                    <div style={{ fontSize: 10, color: "#94a3b8", marginTop: 4 }}>記録日：{kw.learnedAt}</div>
+                  </div>
+                  <div style={{ fontSize: 16, color: "#cbd5e1" }}>›</div>
+                </button>
+              );
+            })}
           </div>
         )}
       </div>
 
       {/* Detail modal */}
-      {detail && (
+      {detail && (() => {
+        const dd = (ageMode === "elementary" && detail.el) ? { ...detail, ...detail.el } : detail;
+        return (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.5)", display: "flex", alignItems: "flex-end", zIndex: 200, padding: 0 }} onClick={() => setDetail(null)}>
           <div style={{ background: "#fff", borderRadius: "24px 24px 0 0", padding: "24px 20px 40px", width: "100%", maxHeight: "85vh", overflowY: "auto", animation: "slideUp .3s ease" }} onClick={e => e.stopPropagation()}>
             <div style={{ width: 40, height: 4, borderRadius: 2, background: "#e2e8f0", margin: "0 auto 20px" }} />
-            <div style={{ fontSize: 36, textAlign: "center", marginBottom: 8 }}>{detail.emoji}</div>
-            <h2 style={{ fontSize: 20, fontWeight: 900, color: "#1e293b", textAlign: "center", margin: "0 0 4px" }}>{detail.word}</h2>
+            <div style={{ fontSize: 36, textAlign: "center", marginBottom: 8 }}>{dd.emoji}</div>
+            <h2 style={{ fontSize: 20, fontWeight: 900, color: "#1e293b", textAlign: "center", margin: "0 0 4px" }}>{dd.word}</h2>
             <div style={{ fontSize: 12, color: "#94a3b8", textAlign: "center", marginBottom: 16 }}>{detail.reading}</div>
             <div style={{ background: "#f8fafc", borderRadius: 14, padding: "14px 16px", marginBottom: 14 }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: "#1e293b", marginBottom: 8 }}>📌 {detail.short}</div>
-              <div style={{ fontSize: 13, color: "#334155", lineHeight: 1.85 }}>{detail.detail}</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: "#1e293b", marginBottom: 8 }}>📌 {dd.short}</div>
+              <div style={{ fontSize: 13, color: "#334155", lineHeight: 1.85 }}>{dd.detail}</div>
             </div>
             <div style={{ background: "#fff7ed", border: "1px solid #fed7aa", borderRadius: 12, padding: "12px 14px", marginBottom: 12 }}>
               <div style={{ fontSize: 10, fontWeight: 900, color: "#c2410c", marginBottom: 6 }}>📰 実際に起きたこと</div>
-              <div style={{ fontSize: 12, color: "#7c2d12", lineHeight: 1.75 }}>{detail.news}</div>
+              <div style={{ fontSize: 12, color: "#7c2d12", lineHeight: 1.75 }}>{dd.news}</div>
             </div>
             <div style={{ background: "#fef2f2", borderRadius: 12, padding: "10px 14px", marginBottom: 12 }}>
-              <div style={{ fontSize: 12, color: "#991b1b", fontWeight: 700 }}>⚠️ {detail.scary}</div>
+              <div style={{ fontSize: 12, color: "#991b1b", fontWeight: 700 }}>⚠️ {dd.scary}</div>
             </div>
             <div style={{ background: "#f0fdf4", borderRadius: 12, padding: "10px 14px", marginBottom: 20 }}>
-              <div style={{ fontSize: 12, color: "#166534" }}>🛡️ {detail.action}</div>
+              <div style={{ fontSize: 12, color: "#166534" }}>🛡️ {dd.action}</div>
             </div>
             <button onClick={() => setDetail(null)}
               style={{ width: "100%", padding: 14, background: "#1e293b", border: "none", borderRadius: 14, color: "#fff", fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
@@ -4166,7 +4328,8 @@ function KeywordNoteScreen({ onBack }) {
             </button>
           </div>
         </div>
-      )}
+        );
+      })()}
     </div>
   );
 }
@@ -4318,6 +4481,14 @@ function InfoScreen({ onBack }) {
         {
           title: "準拠法",
           body: "本規約は日本国法に準拠します。",
+        },
+        {
+          title: "AIの利用について",
+          body: "一部のコンテンツはAI（人工知能）を使って作成されています。",
+        },
+        {
+          title: "データの取り扱い",
+          body: "利用者が入力した内容は外部に送信されません。すべてのデータはお使いの端末にのみ保存されます。",
         },
       ],
     },
@@ -4935,7 +5106,9 @@ function Typewriter({ text, speed = 60, style: s = {}, onDone }) {
 // ─────────────────────────────────────────────
 // SHARED: OWL DIALOGUE BUBBLE
 // ─────────────────────────────────────────────
-function OwlSay({ children, mood = "happy" }) {
+function OwlSay({ children, mood = "happy", e }) {
+  const ageMode = useAgeMode();
+  const content = (ageMode === "elementary" && e !== undefined) ? e : children;
   const moodStyles = {
     happy:   { bg: "#fff",                  border: "#f4d4a8", text: "#3d2817", anim: "float2 3s ease-in-out infinite" },
     worried: { bg: "#fff8f8",               border: "#ffaaaa", text: "#7a1a1a", anim: "shake .5s ease" },
@@ -4971,7 +5144,7 @@ function OwlSay({ children, mood = "happy" }) {
         fontFamily: "'Zen Maru Gothic',sans-serif",
         fontWeight: 500, maxWidth: 270,
         animation: ms.anim,
-      }}>{children}</div>
+      }}>{content}</div>
     </div>
   );
 }
@@ -5023,6 +5196,7 @@ const POSTS = [
 // ─────────────────────────────────────────────
 function HomeScreen({ onNavigate, progress }) {
   const t = useT();
+  const { ageMode, setAgeMode } = useContext(AgeModeContext);
   const kwCount = loadKeywords().length;
 
   // ── 隠しコマンド state ──
@@ -5321,17 +5495,16 @@ function HomeScreen({ onNavigate, progress }) {
 
           {/* 年齢設定変更ボタン */}
           <button onClick={() => {
-            const current = (() => { try { return localStorage.getItem(AGE_MODE_KEY); } catch { return null; } })();
-            const next = current === "elementary" ? "middle" : "elementary";
+            const next = ageMode === "elementary" ? "middle" : "elementary";
             const label = next === "elementary" ? "小学4〜6年生" : "中学生以上";
             if (window.confirm(`対象年齢を「${label}」に変更しますか？`)) {
-              try { localStorage.setItem(AGE_MODE_KEY, next); } catch {}
+              setAgeMode(next);
             }
           }}
             style={{ width: "100%", padding: "12px 16px", background: "rgba(255,255,255,.6)", border: "1px solid rgba(30,58,95,.12)", borderRadius: 14, cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 12 }}>
             <div style={{ fontSize: 18 }}>🎓</div>
             <div style={{ flex: 1, textAlign: "left", fontSize: 12, color: "rgba(30,58,95,.6)" }}>
-              対象年齢の設定を変更する
+              対象年齢の設定を変更する（現在：{ageMode === "elementary" ? "小学生モード" : "中学生以上"}）
             </div>
             <div style={{ fontSize: 14, color: "rgba(30,58,95,.3)" }}>→</div>
           </button>
@@ -5714,7 +5887,7 @@ function Episode1({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i === 0 ? "#ffa940" : "rgba(0,0,0,.1)" }} />
           ))}
         </div>
-        <OwlSay mood="excited">理解できたか確認しよう！正解するまで次に進めないよ🦉</OwlSay>
+        <OwlSay mood="excited" e="ちゃんとりかいできたかかくにんしよう！正解するまで次に進めないよ🦉">理解できたか確認しよう！正解するまで次に進めないよ🦉</OwlSay>
         <MandatoryQuiz
           mode="light"
           question="投稿写真から個人情報が漏れるのを防ぐために、最も効果的な方法はどれ？"
@@ -5742,7 +5915,7 @@ function Episode1({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= 1 ? "#ffa940" : "rgba(0,0,0,.1)" }} />
           ))}
         </div>
-        <OwlSay mood="worried">もし最悪の選択をしていたら、何が起きていたか見てみよう🦉</OwlSay>
+        <OwlSay mood="worried" e="もしいちばん悪い選択（せんたく）をしていたら、何が起きていたか見てみよう🦉">もし最悪の選択をしていたら、何が起きていたか見てみよう🦉</OwlSay>
         <ChoiceComparison
           mode="light"
           myChoice="危険ポイントを見つけた"
@@ -5770,7 +5943,7 @@ function Episode1({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= 2 ? "#ffa940" : "rgba(0,0,0,.1)" }} />
           ))}
         </div>
-        <OwlSay mood="proud">最後に今日の宿題を確認しよう！全部チェックしてから次へ進もう🦉</OwlSay>
+        <OwlSay mood="proud" e="最後（さいご）に今日（きょう）のしゅくだいをかくにんしよう！全部（ぜんぶ）チェックしてから次へ進もう🦉">最後に今日の宿題を確認しよう！全部チェックしてから次へ進もう🦉</OwlSay>
         <TodaysHomework
           mode="light"
           accentColor="#ffa940"
@@ -5791,7 +5964,7 @@ function Episode1({ onComplete, onExit }) {
     <EpisodeShell onExit={onExit}>
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fff8f0,#ffeed6)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
-        <OwlSay mood="excited">このエピソードで出てきた大事なワードを一緒に覚えよう！ニュースでも出てくるよ🦉</OwlSay>
+        <OwlSay mood="excited" e="このおはなしにでてきた大切な言葉（ことば）をおぼえよう！ニュースでも出てくるよ🦉">このエピソードで出てきた大事なワードを一緒に覚えよう！ニュースでも出てくるよ🦉</OwlSay>
         <KeywordPhase epKey="ep1" accentColor="#ffa940" onComplete={() => setPhase("dialogue")} />
         <ParentExpertCard epKey="ep1" accentColor="#ffa940" />
       </div>
@@ -6332,7 +6505,7 @@ function Episode2({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i === 0 ? "#7c3aed" : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
-        <OwlSay mood="excited">正解するまで次に進めないよ！よく考えて選んでね🦉</OwlSay>
+        <OwlSay mood="excited" e="正解するまで次に進めないよ！よく考えてえらんでね🦉">正解するまで次に進めないよ！よく考えて選んでね🦉</OwlSay>
         <MandatoryQuiz
           question="「緊急拡散希望」という言葉を見たとき、最初にすべき行動は？"
           choices={[
@@ -6380,7 +6553,7 @@ function Episode2({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= 2 ? "#7c3aed" : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
-        <OwlSay mood="proud">今日の宿題！全部チェックしてから次へ進もう🦉</OwlSay>
+        <OwlSay mood="proud" e="今日（きょう）のしゅくだい！全部（ぜんぶ）チェックしてから次へ進もう🦉">今日の宿題！全部チェックしてから次へ進もう🦉</OwlSay>
         <TodaysHomework
           accentColor="#7c3aed"
           tasks={[
@@ -6852,7 +7025,7 @@ function Episode3({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= 2 ? "#16a34a" : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
-        <OwlSay mood="proud">今日の宿題！全部チェックしてから次へ進もう🦉</OwlSay>
+        <OwlSay mood="proud" e="今日（きょう）のしゅくだい！全部（ぜんぶ）チェックしてから次へ進もう🦉">今日の宿題！全部チェックしてから次へ進もう🦉</OwlSay>
         <TodaysHomework
           accentColor="#16a34a"
           tasks={[
@@ -7443,7 +7616,7 @@ function Episode4({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i === 0 ? sky : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
-        <OwlSay mood="excited">正解するまで次に進めないよ🦉</OwlSay>
+        <OwlSay mood="excited" e="正解するまで次に進めないよ🦉">正解するまで次に進めないよ🦉</OwlSay>
         <MandatoryQuiz
           question="友達から「LINEの認証コードを教えて」と来た。正しい対応は？"
           choices={[
@@ -7493,7 +7666,7 @@ function Episode4({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= 2 ? sky : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
-        <OwlSay mood="proud">今日の宿題！全部チェックしてから次へ進もう🦉</OwlSay>
+        <OwlSay mood="proud" e="今日（きょう）のしゅくだい！全部（ぜんぶ）チェックしてから次へ進もう🦉">今日の宿題！全部チェックしてから次へ進もう🦉</OwlSay>
         <TodaysHomework
           accentColor={sky}
           tasks={[
@@ -7985,7 +8158,7 @@ function Episode5({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i === 0 ? pink : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
-        <OwlSay mood="excited">正解するまで次に進めないよ🦉</OwlSay>
+        <OwlSay mood="excited" e="正解するまで次に進めないよ🦉">正解するまで次に進めないよ🦉</OwlSay>
         <MandatoryQuiz
           question="グループLINEでクラスメートの悪口が流れてきた。最も正しい行動は？"
           choices={[
@@ -8033,7 +8206,7 @@ function Episode5({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= 2 ? pink : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
-        <OwlSay mood="proud">今日の宿題！全部チェックしてから次へ進もう🦉</OwlSay>
+        <OwlSay mood="proud" e="今日（きょう）のしゅくだい！全部（ぜんぶ）チェックしてから次へ進もう🦉">今日の宿題！全部チェックしてから次へ進もう🦉</OwlSay>
         <TodaysHomework
           accentColor={pink}
           tasks={[
@@ -8584,7 +8757,7 @@ function Episode6({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i === 0 ? rose : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
-        <OwlSay mood="excited">正解するまで次に進めないよ🦉</OwlSay>
+        <OwlSay mood="excited" e="正解するまで次に進めないよ🦉">正解するまで次に進めないよ🦉</OwlSay>
         <MandatoryQuiz
           question="ゲームで知り合った相手から「顔写真を送って」と言われた。正しい対応は？"
           choices={[
@@ -8634,7 +8807,7 @@ function Episode6({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= 2 ? rose : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
-        <OwlSay mood="proud">今日の宿題！全部チェックしてから次へ進もう🦉</OwlSay>
+        <OwlSay mood="proud" e="今日（きょう）のしゅくだい！全部（ぜんぶ）チェックしてから次へ進もう🦉">今日の宿題！全部チェックしてから次へ進もう🦉</OwlSay>
         <TodaysHomework
           accentColor={rose}
           tasks={[
@@ -8655,7 +8828,7 @@ function Episode6({ onComplete, onExit }) {
   if (phase === "keywords") return (
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fff1f2,#ffe4e8)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
-        <OwlSay mood="worried">このエピソードの言葉は特に大切。ニュースでも頻繁に出てくるよ🦉</OwlSay>
+        <OwlSay mood="worried" e="このおはなしの言葉（ことば）はとくに大切（たいせつ）。ニュースでもよく出てくるよ🦉">このエピソードの言葉は特に大切。ニュースでも頻繁に出てくるよ🦉</OwlSay>
         <KeywordPhase epKey="ep6" accentColor="#f43f5e" onComplete={() => setPhase("dialogue")} />
         <ParentExpertCard epKey="ep6" accentColor="#f43f5e" />
       </div>
@@ -9249,7 +9422,7 @@ function Episode7({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i === 0 ? cyan : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
-        <OwlSay mood="excited">正解するまで次に進めないよ🦉</OwlSay>
+        <OwlSay mood="excited" e="正解するまで次に進めないよ🦉">正解するまで次に進めないよ🦉</OwlSay>
         <MandatoryQuiz
           question="「Amazonからアカウント停止の通知。今すぐURLから確認を」というSMSが届いた。正しい行動は？"
           choices={[
@@ -9324,7 +9497,7 @@ function Episode7({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= 3 ? cyan : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
-        <OwlSay mood="proud">今日の宿題！全部チェックしてから次へ進もう🦉</OwlSay>
+        <OwlSay mood="proud" e="今日（きょう）のしゅくだい！全部（ぜんぶ）チェックしてから次へ進もう🦉">今日の宿題！全部チェックしてから次へ進もう🦉</OwlSay>
         <TodaysHomework
           accentColor={cyan}
           tasks={[
@@ -10098,6 +10271,14 @@ export default function App() {
     } catch { return "ja"; }
   });
 
+  const [ageMode, setAgeModeState] = useState(() => {
+    try { return localStorage.getItem(AGE_MODE_KEY) || "middle"; } catch { return "middle"; }
+  });
+  const setAgeMode = (mode) => {
+    try { localStorage.setItem(AGE_MODE_KEY, mode); } catch {}
+    setAgeModeState(mode);
+  };
+
   // オープニング：初回のみ表示
   const [showOpening, setShowOpening] = useState(() => {
     try { return !localStorage.getItem(ONBOARDING_KEY); } catch { return false; }
@@ -10124,30 +10305,34 @@ export default function App() {
 
   // 初回起動時はオープニングを表示
   if (showOpening) return (
-    <LangContext.Provider value={{ lang, setLang }}>
-      <GlobalStyle />
-      <Opening onComplete={() => setShowOpening(false)} />
-    </LangContext.Provider>
+    <AgeModeContext.Provider value={{ ageMode, setAgeMode }}>
+      <LangContext.Provider value={{ lang, setLang }}>
+        <GlobalStyle />
+        <Opening onComplete={() => setShowOpening(false)} />
+      </LangContext.Provider>
+    </AgeModeContext.Provider>
   );
 
   return (
-    <LangContext.Provider value={{ lang, setLang }}>
-      <GlobalStyle />
-      {screen === "home" && <HomeScreen onNavigate={navigate} progress={progress} />}
-      {screen === "report" && <ParentReport onBack={() => navigate("home")} />}
-      {screen === "keywordnote" && <KeywordNoteScreen onBack={() => navigate("home")} />}
-      {screen === "weekly" && <WeeklyChallengeScreen onBack={() => navigate("home")} />}
-      {screen === "info" && <InfoScreen onBack={() => navigate("home")} />}
-      {screen === "opening" && <Opening onComplete={() => navigate("home")} />}
-      {screen === "ep1" && <Episode1 onComplete={(s) => finish("ep1", s)} onExit={() => navigate("home")} />}
-      {screen === "ep2" && <Episode2 onComplete={(s) => finish("ep2", s)} onExit={() => navigate("home")} />}
-      {screen === "ep3" && <Episode3 onComplete={(s) => finish("ep3", s)} onExit={() => navigate("home")} />}
-      {screen === "ep4" && <Episode4 onComplete={(s) => finish("ep4", s)} onExit={() => navigate("home")} />}
-      {screen === "ep5" && <Episode5 onComplete={(s) => finish("ep5", s)} onExit={() => navigate("home")} />}
-      {screen === "ep6" && <Episode6 onComplete={(s) => finish("ep6", s)} onExit={() => navigate("home")} />}
-      {screen === "ep7" && <Episode7 onComplete={(s) => finish("ep7", s)} onExit={() => navigate("home")} />}
-      {screen === "twodevice" && <TwoDeviceMode onComplete={() => finish("twodevice", 3)} />}
-      {screen === "attacker" && <AttackerMode onComplete={() => finish("attacker", 3)} />}
-    </LangContext.Provider>
+    <AgeModeContext.Provider value={{ ageMode, setAgeMode }}>
+      <LangContext.Provider value={{ lang, setLang }}>
+        <GlobalStyle />
+        {screen === "home" && <HomeScreen onNavigate={navigate} progress={progress} />}
+        {screen === "report" && <ParentReport onBack={() => navigate("home")} />}
+        {screen === "keywordnote" && <KeywordNoteScreen onBack={() => navigate("home")} />}
+        {screen === "weekly" && <WeeklyChallengeScreen onBack={() => navigate("home")} />}
+        {screen === "info" && <InfoScreen onBack={() => navigate("home")} />}
+        {screen === "opening" && <Opening onComplete={() => navigate("home")} />}
+        {screen === "ep1" && <Episode1 onComplete={(s) => finish("ep1", s)} onExit={() => navigate("home")} />}
+        {screen === "ep2" && <Episode2 onComplete={(s) => finish("ep2", s)} onExit={() => navigate("home")} />}
+        {screen === "ep3" && <Episode3 onComplete={(s) => finish("ep3", s)} onExit={() => navigate("home")} />}
+        {screen === "ep4" && <Episode4 onComplete={(s) => finish("ep4", s)} onExit={() => navigate("home")} />}
+        {screen === "ep5" && <Episode5 onComplete={(s) => finish("ep5", s)} onExit={() => navigate("home")} />}
+        {screen === "ep6" && <Episode6 onComplete={(s) => finish("ep6", s)} onExit={() => navigate("home")} />}
+        {screen === "ep7" && <Episode7 onComplete={(s) => finish("ep7", s)} onExit={() => navigate("home")} />}
+        {screen === "twodevice" && <TwoDeviceMode onComplete={() => finish("twodevice", 3)} />}
+        {screen === "attacker" && <AttackerMode onComplete={() => finish("attacker", 3)} />}
+      </LangContext.Provider>
+    </AgeModeContext.Provider>
   );
 }
