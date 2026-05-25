@@ -3695,6 +3695,29 @@ function Opening({ onComplete }) {
         </button>
       </div>
 
+      {/* プライバシー安心カード */}
+      <div style={{
+        width: "100%", maxWidth: 360,
+        background: "rgba(255,255,255,.04)", border: "1px solid rgba(100,255,180,.2)",
+        borderRadius: 16, padding: "14px 16px", marginBottom: 20,
+        animation: "slideUp .5s .3s both ease",
+      }}>
+        <div style={{ fontSize: 12, fontWeight: 900, color: "rgba(100,255,180,.8)", marginBottom: 10, display: "flex", alignItems: "center", gap: 6 }}>
+          🔒 個人情報・プライバシーについて
+        </div>
+        {[
+          { icon: "📵", text: "入力した内容は外部に送信されません" },
+          { icon: "📱", text: "すべてのデータはこの端末にのみ保存されます" },
+          { icon: "🚫", text: "広告なし・個人情報の収集なし" },
+          { icon: "🤖", text: "一部のコンテンツはAIを使って作成されています" },
+        ].map((item, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "5px 0", borderBottom: i < 3 ? "1px solid rgba(255,255,255,.05)" : "none" }}>
+            <span style={{ fontSize: 14 }}>{item.icon}</span>
+            <span style={{ fontSize: 11, color: "rgba(255,255,255,.55)", lineHeight: 1.5 }}>{item.text}</span>
+          </div>
+        ))}
+      </div>
+
       {/* スタートボタン */}
       <button onClick={() => {
         feedback("complete");
@@ -4169,6 +4192,7 @@ function KeywordCard({ kw, onLearn, isLearned }) {
 // エピソード内キーワード学習フェーズコンポーネント
 function KeywordPhase({ epKey, accentColor, onComplete }) {
   const keywords = EP_KEYWORDS[epKey] || [];
+  const ageMode = useAgeMode();
   const [learned, setLearned] = useState(() => {
     const saved = loadKeywords();
     return new Set(saved.map(k => k.word));
@@ -4183,12 +4207,20 @@ function KeywordPhase({ epKey, accentColor, onComplete }) {
 
   return (
     <div style={{ animation: "slideUp .4s ease" }}>
+      {ageMode === "elementary" && (
+        <div style={{ display: "flex", alignItems: "center", gap: 8, background: "#fef9c3", border: "1px solid #fcd34d", borderRadius: 10, padding: "7px 12px", marginBottom: 12 }}>
+          <span style={{ fontSize: 14 }}>🏫</span>
+          <span style={{ fontSize: 11, color: "#92400e", fontWeight: 700 }}>小学生モード：やさしい言葉（ことば）でひょうじしています</span>
+        </div>
+      )}
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
         <div style={{ width: 40, height: 40, borderRadius: 12, background: `${accentColor}18`, border: `1px solid ${accentColor}33`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>📖</div>
         <div>
-          <div style={{ fontSize: 15, fontWeight: 900, color: "#1e293b" }}>覚えておきたいキーワード</div>
+          <div style={{ fontSize: 15, fontWeight: 900, color: "#1e293b" }}>
+            {ageMode === "elementary" ? "おぼえておきたいことば" : "覚えておきたいキーワード"}
+          </div>
           <div style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}>
-            全て「ノートに記録する」を押してから次へ
+            {ageMode === "elementary" ? "全部「ノートに記録する」をおして次へ" : "全て「ノートに記録する」を押してから次へ"}
           </div>
         </div>
         <div style={{ marginLeft: "auto", fontFamily: "'DotGothic16',monospace", fontSize: 12, color: accentColor, fontWeight: 900 }}>
@@ -4218,6 +4250,15 @@ function KeywordPhase({ epKey, accentColor, onComplete }) {
 }
 
 // ホーム用キーワードノート画面
+// EP_KEYWORDS からマスターデータを逆引きするヘルパー
+function lookupMasterKw(kw) {
+  for (const list of Object.values(EP_KEYWORDS)) {
+    const found = list.find(k => k.word === kw.word);
+    if (found) return found;
+  }
+  return null;
+}
+
 function KeywordNoteScreen({ onBack }) {
   const [keywords, setKeywords] = useState(loadKeywords);
   const [selectedEp, setSelectedEp] = useState("all");
@@ -4280,7 +4321,9 @@ function KeywordNoteScreen({ onBack }) {
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {filtered.map((kw, i) => {
-              const d = (ageMode === "elementary" && kw.el) ? { ...kw, ...kw.el } : kw;
+              const master = lookupMasterKw(kw);
+              const elData = kw.el || master?.el;
+              const d = (ageMode === "elementary" && elData) ? { ...kw, ...elData } : kw;
               return (
                 <button key={i} onClick={() => setDetail(kw)}
                   style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 16, padding: "14px 16px", cursor: "pointer", fontFamily: "inherit", textAlign: "left", display: "flex", alignItems: "center", gap: 12, boxShadow: "0 2px 8px rgba(0,0,0,.04)", animation: `slideUp .3s ${i * .05}s both ease` }}>
@@ -4300,7 +4343,9 @@ function KeywordNoteScreen({ onBack }) {
 
       {/* Detail modal */}
       {detail && (() => {
-        const dd = (ageMode === "elementary" && detail.el) ? { ...detail, ...detail.el } : detail;
+        const masterD = lookupMasterKw(detail);
+        const elDataD = detail.el || masterD?.el;
+        const dd = (ageMode === "elementary" && elDataD) ? { ...detail, ...elDataD } : detail;
         return (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.5)", display: "flex", alignItems: "flex-end", zIndex: 200, padding: 0 }} onClick={() => setDetail(null)}>
           <div style={{ background: "#fff", borderRadius: "24px 24px 0 0", padding: "24px 20px 40px", width: "100%", maxHeight: "85vh", overflowY: "auto", animation: "slideUp .3s ease" }} onClick={e => e.stopPropagation()}>
@@ -5341,6 +5386,22 @@ function HomeScreen({ onNavigate, progress }) {
 
       {/* Content */}
       <div style={{ padding: "0 20px 48px", maxWidth: 440, margin: "0 auto" }}>
+
+        {/* 小学生モードバナー */}
+        {ageMode === "elementary" && (
+          <div style={{ display: "flex", alignItems: "center", gap: 10, background: "linear-gradient(135deg,#fef9c3,#fde68a)", border: "1.5px solid #fcd34d", borderRadius: 14, padding: "10px 14px", marginBottom: 12, animation: "slideUp .4s ease" }}>
+            <span style={{ fontSize: 20 }}>🏫</span>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 12, fontWeight: 900, color: "#92400e" }}>小学生モードでひょうじ中</div>
+              <div style={{ fontSize: 11, color: "#b45309" }}>むずかしい言葉（ことば）はやさしくしています</div>
+            </div>
+            <button onClick={() => { if (window.confirm("中学生以上モードに変更しますか？")) setAgeMode("middle"); }}
+              style={{ fontSize: 10, color: "#92400e", background: "rgba(0,0,0,.08)", border: "none", borderRadius: 8, padding: "4px 8px", cursor: "pointer", fontFamily: "inherit", fontWeight: 700 }}>
+              変更
+            </button>
+          </div>
+        )}
+
         {/* はじめての方へ（保護者向け）バナー */}
         <button onClick={() => onNavigate("opening")}
           style={{
