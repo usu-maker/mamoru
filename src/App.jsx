@@ -6745,6 +6745,7 @@ const CONVO_STEPS = [
       { label: "無視してスクロール", emoji: "👆", safe: true, next: "safe_end" },
     ],
     owlMsg: "「日払い・高収入・スマホだけ」…気になる？でもちょっと待って🦉",
+    owlMsgEl: "「{日払|ひばら}い・{高収入|こうしゅうにゅう}・スマホだけ」…{気|き}になる？でもちょっと{待|ま}って🦉",
   },
   {
     id: 1,
@@ -6758,6 +6759,7 @@ const CONVO_STEPS = [
       { label: "やっぱりやめておく", emoji: "🚪", safe: true, next: "safe_end" },
     ],
     owlMsg: "最初は「ニックネームでOK」。でも次第に本名を求めてくるよ🦉",
+    owlMsgEl: "{最初|さいしょ}は「ニックネームでOK」。でも{次第|しだい}に{本名|ほんみょう}を{求|もと}めてくるよ🦉",
     dangerLevel: 1,
   },
   {
@@ -6772,6 +6774,7 @@ const CONVO_STEPS = [
       { label: "やっぱりやめる", emoji: "🚪", safe: true, next: "safe_end" },
     ],
     owlMsg: "LINEに移ると履歴が追いにくくなる。これは意図的な誘導だよ🦉",
+    owlMsgEl: "LINEに{移|うつ}ると{記録|きろく}が{追|お}いにくくなる。わざとそうしてるんだよ🦉",
     dangerLevel: 2,
   },
   {
@@ -6786,6 +6789,7 @@ const CONVO_STEPS = [
       { label: "断ってブロックする", emoji: "🚫", safe: true, next: "safe_end" },
     ],
     owlMsg: "ここが一番重要！顔写真＋学校名＋LINEは脅迫の材料になる🦉",
+    owlMsgEl: "ここが{一番|いちばん}{大切|たいせつ}！{顔写真|かおじゃしん}＋{学校|がっこう}{名|めい}＋LINEは{脅迫|きょうはく}の{材料|ざいりょう}になる🦉",
     dangerLevel: 3,
     warning: "⚠️ ここで個人情報を渡すと、あとで脅迫に使われます",
   },
@@ -6806,16 +6810,19 @@ const PRESSURE_MSGS = {
     msg: "名前は連絡用だよ😅 疑うならいいけど、他にやりたい人はたくさんいるから〜。もし本気なら教えてね",
     backTo: 1,
     owlMsg: "断ろうとすると「他にいる」と焦らせてくる。これも手口だよ🦉",
+    owlMsgEl: "{断|ことわ}ろうとすると「{他|ほか}にいる」と{焦|あせ}らせてくる。これも{手口|てぐち}だよ🦉",
   },
   pressure_2: {
     msg: "LINEの方が詳しく話せるんだよね。DM見られたくないし。不安なら無理にとは言わないけど…本当にもったいないよ？",
     backTo: 2,
     owlMsg: "「もったいない」「不安なら」という言葉で罪悪感を植え付けてくる🦉",
+    owlMsgEl: "「もったいない」「{不安|ふあん}なら」という{言葉|ことば}で{悪|わる}いことをしたと{感|かん}じさせてくる🦉",
   },
   pressure_3: {
     msg: "身分確認は法的に必要なんだよ。それもできないなら詐欺師だと思われるよ？こっちだって怖いし。証明してくれないなら仕事頼めない",
     backTo: 3,
     owlMsg: "今度は「お前が信用されていない」と逆転させてくる。巧みな心理操作だよ🦉",
+    owlMsgEl: "{今度|こんど}は「{自分|じぶん}が{信用|しんよう}されていない」と{逆|ぎゃく}にしてくる。うまい{心|こころ}の{操作|そうさ}だよ🦉",
   },
 };
 
@@ -7239,13 +7246,13 @@ function Episode3({ onComplete, onExit }) {
             <div style={{ background: "rgba(255,255,255,.05)", borderRadius: "14px 14px 14px 4px", padding: "10px 14px", fontSize: 13, color: "rgba(255,255,255,.85)", lineHeight: 1.7, marginBottom: 10 }}>
               <Typewriter text={pressure.msg} speed={50} />
             </div>
-            <OwlSay mood="worried">{pressure.owlMsg}</OwlSay>
+            <OwlSay mood="worried" e={pressure.owlMsgEl}>{pressure.owlMsg}</OwlSay>
             <button onClick={resumeFromPressure} style={{ width: "100%", padding: 12, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.12)", borderRadius: 12, color: "rgba(255,255,255,.7)", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>もう一度選択する</button>
           </div>
         )}
 
         {/* Owl advice */}
-        {!pressure && step.owlMsg && <OwlSay mood={step.dangerLevel >= 3 ? "worried" : "happy"}>{step.owlMsg}</OwlSay>}
+        {!pressure && step.owlMsg && <OwlSay mood={step.dangerLevel >= 3 ? "worried" : "happy"} e={step.owlMsgEl}>{step.owlMsg}</OwlSay>}
 
         {/* Choices */}
         {!pressure && (
@@ -8393,6 +8400,7 @@ const GROOMING_STAGES = [
       { from: "kai", text: "中1？同い年だ！どのくらいやってる？", time: "20:15" },
     ],
     owlMsg: "ゲームで知り合った相手。年齢・名前はわからない。「同い年」と言っているけど、本当かな？",
+    owlMsgEl: "ゲームで{知|し}り{合|あ}った{相手|あいて}。{年齢|ねんれい}・{名前|なまえ}はわからない。「{同|おな}い{年|どし}」と{言|い}っているけど、{本当|ほんとう}かな？",
     choices: [
       { label: "普通に返信する", emoji: "💬", next: 1 },
       { label: "無視する", emoji: "🚫", safe: true, nextSafe: true },
@@ -8406,6 +8414,7 @@ const GROOMING_STAGES = [
       { from: "kai", text: "俺のID：kai_game_0412 ね😊", time: "20:32" },
     ],
     owlMsg: "LINEへの誘導。「ゲームの中だけ」から「外のSNS」に移る瞬間。",
+    owlMsgEl: "LINEへの{誘導|ゆうどう}。「ゲームの{中|なか}だけ」から「{外|そと}のSNS」に{移|うつ}るとき。",
     choices: [
       { label: "LINEを教える", emoji: "📱", next: 2 },
       { label: "ゲーム内でだけ話す", emoji: "🎮", safe: true, nextSafe: true },
@@ -8420,6 +8429,7 @@ const GROOMING_STAGES = [
       { from: "kai", text: "レアアイテム余ってるから送るよ！課金したやつ", time: "21:10" },
     ],
     owlMsg: "「プレゼント」で心理的な借りを作らせる手口。「もらったから」断りにくくなる。",
+    owlMsgEl: "「プレゼント」で「もらったから{断|ことわ}れない」という{気持|きも}ちにさせる{手口|てぐち}。",
     choices: [
       { label: "ありがとうと受け取る", emoji: "🎁", next: 3 },
       { label: "断る", emoji: "🚫", safe: true, nextSafe: true },
@@ -8433,6 +8443,7 @@ const GROOMING_STAGES = [
       { from: "kai", text: "俺も送るから！信用できる仲じゃん", time: "22:18" },
     ],
     owlMsg: "⚠️ ここが分岐点。「信用できる仲」という言葉で正当化している。",
+    owlMsgEl: "⚠️ ここが{大切|たいせつ}な{場面|ばめん}。「{信用|しんよう}できる{仲|なか}」という{言葉|ことば}でいいわけしている。",
     dangerWarn: true,
     choices: [
       { label: "写真を送る", emoji: "📸", next: "trap" },
@@ -8560,7 +8571,7 @@ function Episode6({ onComplete, onExit }) {
             <span style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: rose, letterSpacing: ".08em", marginLeft: 4 }}>STAGE {stageIdx + 1}：{stage.label}</span>
           </div>
 
-          <OwlSay mood={stage.dangerWarn ? "worried" : "happy"}>
+          <OwlSay mood={stage.dangerWarn ? "worried" : "happy"} e={stage.owlMsgEl}>
             {stage.owlMsg}
           </OwlSay>
 
