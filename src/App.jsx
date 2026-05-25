@@ -448,6 +448,31 @@ function useET() {
   return (std, el) => (ageMode === "elementary" && el !== undefined) ? el : std;
 }
 
+// ルビテキストコンポーネント：{漢字|よみ} 記法を <ruby> タグに変換
+// 例: "{設定|せってい}→プライバシー" → <ruby>設定<rt>せってい</rt></ruby>→プライバシー
+function RubyText({ text, style }) {
+  if (!text && text !== 0) return null;
+  const str = String(text);
+  // {漢字|よみ} パターンで分割
+  const parts = str.split(/(\{[^|{}]+\|[^|{}]+\})/g);
+  return (
+    <span style={style}>
+      {parts.map((part, i) => {
+        const m = part.match(/^\{([^|]+)\|([^}]+)\}$/);
+        if (m) {
+          return (
+            <ruby key={i}>
+              {m[1]}
+              <rt style={{ fontSize: "0.6em", letterSpacing: 0 }}>{m[2]}</rt>
+            </ruby>
+          );
+        }
+        return <span key={i}>{part}</span>;
+      })}
+    </span>
+  );
+}
+
 // 翻訳取得関数：t("home.title") → 現在の言語の値を返す
 function useT() {
   const { lang } = useContext(LangContext);
@@ -3770,12 +3795,12 @@ const EP_KEYWORDS = {
       scary: "毎日の登下校ルートが丸裸になる",
       action: "設定→プライバシー→カメラ→位置情報：「許可しない」に変更",
       el: {
-        word: "いち情報タグ（じおたぐ）",
-        short: "しゃしんに自動（じどう）で記録（きろく）されるGPS情報",
-        detail: "スマホでとったしゃしんには「どこでとったか」のGPS座標（ざひょう）が自動で記録されます。SNSにのせると、その情報も一緒（いっしょ）に公開（こうかい）されます。自宅（じたく）や学校の場所がわかってしまいます。",
-        news: "2019年、しゃしんのいち情報から歌手（かしゅ）のファンが家（いえ）の場所を特定（とくてい）した事件（じけん）がありました。目（め）のひとみへのはんしゃから場所を特定したれいもあります。",
-        scary: "毎日（まいにち）の通学（つうがく）ルートが全部（ぜんぶ）バレてしまう",
-        action: "設定（せってい）→プライバシー→カメラ→いち情報：「きょかしない」にかえる",
+        word: "{位置|いち}{情報|じょうほう}タグ（ジオタグ）",
+        short: "{写真|しゃしん}に{自動|じどう}で{記録|きろく}されるGPS{情報|じょうほう}",
+        detail: "スマホでとった{写真|しゃしん}には「どこでとったか」のGPS{座標|ざひょう}が{自動|じどう}で{記録|きろく}されます。SNSにのせると、その{情報|じょうほう}も{一緒|いっしょ}に{公開|こうかい}されます。{自宅|じたく}や{学校|がっこう}の{場所|ばしょ}がわかってしまいます。",
+        news: "2019{年|ねん}、{写真|しゃしん}の{位置|いち}{情報|じょうほう}から{歌手|かしゅ}のファンが{家|いえ}の{場所|ばしょ}を{特定|とくてい}した{事件|じけん}がありました。{目|め}のひとみへの{反射|はんしゃ}から{場所|ばしょ}を{特定|とくてい}したれいもあります。",
+        scary: "{毎日|まいにち}の{通学|つうがく}ルートが{全部|ぜんぶ}バレてしまう",
+        action: "{設定|せってい}→プライバシー→カメラ→{位置|いち}{情報|じょうほう}：「きょかしない」にかえる",
       },
       epKey: "ep1",
     },
@@ -3789,12 +3814,12 @@ const EP_KEYWORDS = {
       scary: "削除したつもりでも情報が残り続ける",
       action: "重要ファイルを送る前にメタデータ削除ツールで確認する",
       el: {
-        word: "メタデータ（かくれた情報（じょうほう））",
-        short: "ファイルにかくれている「見えない情報（じょうほう）」",
-        detail: "しゃしん・動画（どうが）・文書（ぶんしょ）ファイルには「いつ・どこで・どのカメラで」という情報が自動（じどう）で記録（きろく）されます。中身（なかみ）は見えないけど、知っている人には全部（ぜんぶ）読めます。",
-        news: "メタデータから作った人の名前や会社（かいしゃ）の名前がバレた事件（じけん）が国内外（こくないがい）で起きました。",
-        scary: "消（け）したつもりでも情報（じょうほう）が残（のこ）り続（つづ）ける",
-        action: "大切（たいせつ）なファイルをおくる前（まえ）にメタデータを消（け）すツールで確認（かくにん）する",
+        word: "メタデータ（かくれた{情報|じょうほう}）",
+        short: "ファイルにかくれている「{見|み}えない{情報|じょうほう}」",
+        detail: "{写真|しゃしん}・{動画|どうが}・{文書|ぶんしょ}ファイルには「いつ・どこで・どのカメラで」という{情報|じょうほう}が{自動|じどう}で{記録|きろく}されます。{中身|なかみ}は{見|み}えないけど、{知|し}っている{人|ひと}には{全部|ぜんぶ}{読|よ}めます。",
+        news: "メタデータから{作|つく}った{人|ひと}の{名前|なまえ}や{会社|かいしゃ}の{名前|なまえ}がバレた{事件|じけん}が{国内外|こくないがい}で{起|お}きました。",
+        scary: "{消|け}したつもりでも{情報|じょうほう}が{残|のこ}り{続|つづ}ける",
+        action: "{大切|たいせつ}なファイルをおくる{前|まえ}にメタデータを{消|け}すツールで{確認|かくにん}する",
       },
       epKey: "ep1",
     },
@@ -3810,12 +3835,12 @@ const EP_KEYWORDS = {
       scary: "あなたも知らずにデマを広める加害者になる",
       action: "NHK・気象庁・市区町村の公式サイトで必ず確認する",
       el: {
-        word: "フェイクニュース（うそのニュース）",
-        short: "わざとつくられたうその情報（じょうほう）",
-        detail: "本当（ほんとう）じゃないことを本物（ほんもの）のニュースに見せかけて広（ひろ）める情報のこと。SNSでは「きんきゅう」「しょうげき」「拡散（かくさん）希望（きぼう）」などの言葉（ことば）がよく使（つか）われます。",
-        news: "2024年の地震（じしん）のとき「クマが出た」「市長（しちょう）がにげた」などのデマが広まりました。助（たす）けるじゃまになりました。",
-        scary: "あなたも知らずにデマを広める加害者（かがいしゃ）になることがある",
-        action: "NHK・気象庁（きしょうちょう）・市区町村（しくちょうそん）の公式（こうしき）サイトで必（かなら）ずかくにんする",
+        word: "フェイクニュース（うその{情報|じょうほう}）",
+        short: "わざとつくられたうその{情報|じょうほう}",
+        detail: "{本当|ほんとう}じゃないことを{本物|ほんもの}のニュースに{見|み}せかけて{広|ひろ}める{情報|じょうほう}のこと。SNSでは「きんきゅう」「しょうげき」「{拡散|かくさん}{希望|きぼう}」などの{言葉|ことば}がよく{使|つか}われます。",
+        news: "2024{年|ねん}の{地震|じしん}のとき「クマが{出|で}た」「{市長|しちょう}がにげた」などのデマが{広|ひろ}まりました。{助|たす}けるじゃまになりました。",
+        scary: "あなたも{知|し}らずにデマを{広|ひろ}める{加害者|かがいしゃ}になることがある",
+        action: "NHK・{気象庁|きしょうちょう}・{市区町村|しくちょうそん}の{公式|こうしき}サイトで{必|かなら}ずかくにんする",
       },
       epKey: "ep2",
     },
@@ -3829,12 +3854,12 @@ const EP_KEYWORDS = {
       scary: "何も考えずシェアした1人が加害者になれる",
       action: "怪しい情報はfact-check.org・Snopes・FactCheck.orgで確認",
       el: {
-        word: "ファクトチェック（情報（じょうほう）かくにん）",
-        short: "情報（じょうほう）がほんとうかどうかをたしかめること",
-        detail: "ニュースや投稿（とうこう）が本当（ほんとう）かどうかを、もとの情報・専門家（せんもんか）・いくつかの情報元（じょうほうもと）でたしかめること。日本ではファクトチェック・イニシアティブ（FIJ）が活動（かつどう）しています。",
-        news: "2023年のしゅしょうあんさつみすいデマ、2024年の有名人（ゆうめいじん）のにせコメントなど、ファクトチェックで多くのフェイクがバレました。",
-        scary: "なにも考えずシェアした1人が加害者（かがいしゃ）になれる",
-        action: "あやしい情報はNHKのファクトチェックサイトや信頼（しんらい）できるニュースサイトでかくにんする",
+        word: "ファクトチェック（{情報|じょうほう}かくにん）",
+        short: "{情報|じょうほう}がほんとうかどうかをたしかめること",
+        detail: "ニュースや{投稿|とうこう}が{本当|ほんとう}かどうかを、もとの{情報|じょうほう}・{専門家|せんもんか}・いくつかの{情報|じょうほう}{元|もと}でたしかめること。{日本|にほん}ではファクトチェック・イニシアティブ（FIJ）が{活動|かつどう}しています。",
+        news: "2023{年|ねん}のしゅしょうあんさつみすいデマ、2024{年|ねん}の{有名人|ゆうめいじん}のにせコメントなど、ファクトチェックで{多|おお}くのフェイクがバレました。",
+        scary: "なにも{考|かんが}えずシェアした1{人|ひと}が{加害者|かがいしゃ}になれる",
+        action: "あやしい{情報|じょうほう}はNHKのファクトチェックサイトや{信頼|しんらい}できるニュースサイトでかくにんする",
       },
       epKey: "ep2",
     },
@@ -3848,12 +3873,12 @@ const EP_KEYWORDS = {
       scary: "気づかないうちに極端な考えに染まっていく",
       action: "あえて反対意見や別の立場のニュースも読んでみる",
       el: {
-        word: "エコーチェンバー（おなじ意見（いけん）だけが広がる場所（ばしょ））",
-        short: "おなじ意見（いけん）だけがひびく、とじた情報空間（じょうほうくうかん）",
-        detail: "SNSのしくみが「自分が見たいもの」だけを見せ続けることで、おなじ意見しか目に入らなくなる現象（げんしょう）。かたよった考え方がどんどん強まっていきます。",
-        news: "いんぼうろんや特定（とくてい）の政治（せいじ）思想（しそう）が過激（かげき）化するのにエコーチェンバーが関係していることがわかっています。",
-        scary: "気（き）づかないうちにかたよった考えになっていく",
-        action: "あえてちがう意見（いけん）やべつの立場（たちば）のニュースも読んでみる",
+        word: "エコーチェンバー（おなじ{意見|いけん}だけが{広|ひろ}がる{場所|ばしょ}）",
+        short: "おなじ{意見|いけん}だけがひびく、とじた{情報|じょうほう}{空間|くうかん}",
+        detail: "SNSのしくみが「{自分|じぶん}が{見|み}たいもの」だけを{見|み}せ{続|つづ}けることで、おなじ{意見|いけん}しか{目|め}に{入|はい}らなくなる{現象|げんしょう}。かたよった{考|かんが}え{方|かた}がどんどん{強|つよ}まっていきます。",
+        news: "いんぼうろんや{特定|とくてい}の{政治|せいじ}{思想|しそう}が{過激|かげき}{化|か}するのにエコーチェンバーが{関係|かんけい}していることがわかっています。",
+        scary: "{気|き}づかないうちにかたよった{考|かんが}えになっていく",
+        action: "あえてちがう{意見|いけん}やべつの{立場|たちば}のニュースも{読|よ}んでみる",
       },
       epKey: "ep2",
     },
@@ -3869,12 +3894,12 @@ const EP_KEYWORDS = {
       scary: "スカウトされた時点で既に犯罪に組み込まれている",
       action: "「高収入・簡単・スマホだけ」の募集は即ブロック＋通報",
       el: {
-        word: "トクリュウ（とくめい・りゅうどうがた犯罪（はんざい）グループ）",
-        short: "SNSで集（あつ）められたとくめいの実行犯（じっこうはん）集団（しゅうだん）",
-        detail: "グループのリーダーがSNSなどでとくめいの実行役（じっこうやく）を集め、つかい捨て（す）にする犯罪（はんざい）組織（そしき）のかたちです。2023〜2024年にとうなんや詐欺（さぎ）で急（きゅう）に増（ふ）えました。仲間（なかま）どうしがおたがいを知りません。",
-        news: "2024年に相次（あいつ）いだ「強盗指示（ごうとうしじ）」事件（じけん）の多（おお）くがトクリュウです。「仕事（しごと）」として集められた若者（わかもの）が逮捕（たいほ）されました。",
-        scary: "スカウトされた時点（じてん）で、もう犯罪（はんざい）に組（く）み込まれている",
-        action: "「高収入（こうしゅうにゅう）・かんたん・スマホだけ」のぼしゅうはすぐブロック＋通報（つうほう）",
+        word: "トクリュウ（とくめい・りゅうどうがた{犯罪|はんざい}グループ）",
+        short: "SNSで{集|あつ}められたとくめいの{実行犯|じっこうはん}{集団|しゅうだん}",
+        detail: "グループのリーダーがSNSなどでとくめいの{実行役|じっこうやく}を{集|あつ}め、つかい{捨|す}てにする{犯罪|はんざい}{組織|そしき}のかたちです。2023〜2024{年|ねん}にとうなんや{詐欺|さぎ}で{急|きゅう}に{増|ふ}えました。{仲間|なかま}どうしがおたがいを{知|し}りません。",
+        news: "2024{年|ねん}に{相次|あいつ}いだ「{強盗|ごうとう}{指示|しじ}」{事件|じけん}の{多|おお}くがトクリュウです。「{仕事|しごと}」として{集|あつ}められた{若者|わかもの}が{逮捕|たいほ}されました。",
+        scary: "スカウトされた{時点|じてん}で、もう{犯罪|はんざい}に{組|く}み{込|こ}まれている",
+        action: "「{高収入|こうしゅうにゅう}・かんたん・スマホだけ」のぼしゅうはすぐブロック＋{通報|つうほう}",
       },
       epKey: "ep3",
     },
@@ -3888,12 +3913,12 @@ const EP_KEYWORDS = {
       scary: "「知らなかった」は裁判で通用しない",
       action: "知らない人から頼まれた「荷物受け取り」「ATM操作」は絶対に断る",
       el: {
-        word: "受（う）け子・出（だ）し子・かけ子（さぎの役割（やくわり））",
-        short: "特殊詐欺（とくしゅさぎ）の三役（さんやく）の実行犯（じっこうはん）",
-        detail: "かけ子＝でんわで被害者（ひがいしゃ）をだます役（やく） / 受（う）け子＝お金やカードを受け取る役 / 出（だ）し子＝ATMでお金を引き出す役。どの役でも詐欺（さぎ）のきょうはんとして逮捕（たいほ）されます。",
-        news: "2023年、受け子として逮捕（たいほ）された18才（さい）が「バイトだと思っていた」と話しました。懲役（ちょうえき）3年になりました。一生（いっしょう）記録（きろく）が残（のこ）ります。",
-        scary: "「知らなかった」は裁判（さいばん）で通用（つうよう）しない",
-        action: "知らない人にたのまれた「荷物（にもつ）受け取り」「ATMそうさ」は絶対（ぜったい）に断（ことわ）る",
+        word: "{受|う}け子・{出|だ}し子・かけ子（さぎの{役割|やくわり}）",
+        short: "{特殊|とくしゅ}{詐欺|さぎ}の三{役|やく}の{実行犯|じっこうはん}",
+        detail: "かけ子＝でんわで{被害者|ひがいしゃ}をだます{役|やく}／{受|う}け子＝お{金|かね}やカードを{受|う}け{取|と}る{役|やく}／{出|だ}し子＝ATMでお{金|かね}を{引|ひ}き{出|だ}す{役|やく}。どの{役|やく}でも{詐欺|さぎ}のきょうはんとして{逮捕|たいほ}されます。",
+        news: "2023{年|ねん}、{受|う}け子として{逮捕|たいほ}された18{才|さい}が「バイトだと{思|おも}っていた」と{話|はな}しました。{懲役|ちょうえき}3{年|ねん}になりました。{一生|いっしょう}{記録|きろく}が{残|のこ}ります。",
+        scary: "「{知|し}らなかった」は{裁判|さいばん}で{通用|つうよう}しない",
+        action: "{知|し}らない{人|ひと}にたのまれた「{荷物|にもつ}{受|う}け{取|と}り」「ATMそうさ」は{絶対|ぜったい}に{断|ことわ}る",
       },
       epKey: "ep3",
     },
@@ -3907,12 +3932,12 @@ const EP_KEYWORDS = {
       scary: "一度足を踏み入れると自力では抜け出せない",
       action: "#9110（警察相談）・弁護士ドットコムに相談。家族にも話す",
       el: {
-        word: "闇（やみ）バイト（犯罪（はんざい）をバイトとよそおった仕事（しごと））",
-        short: "犯罪（はんざい）行為（こうい）を「バイト」とうそついてぼしゅうするもの",
-        detail: "SNSなどで「高日給（こうにっきゅう）・即日払（そくじつばら）い・スマホだけ」とぼしゅうし、実際（じっさい）には詐欺（さぎ）・強盗（ごうとう）・薬物（やくぶつ）運搬（うんぱん）などの犯罪（はんざい）をやらせます。一度（いちど）個人情報（こじんじょうほう）を送ると「やめたら家族（かぞく）にバラす」とおどされます。",
-        news: "2024年、全国（ぜんこく）で150件（けん）以上の強盗（ごうとう）事件（じけん）がこの手口（てぐち）でした。高校生・大学生の逮捕者（たいほしゃ）が急（きゅう）に増（ふ）えました。",
-        scary: "一度（いちど）足を踏（ふ）み入れると自力（じりき）では抜（ぬ）け出せない",
-        action: "#9110（けいさつ相談（そうだん））・弁護士（べんごし）ドットコムに相談（そうだん）。家族（かぞく）にも話（はな）す",
+        word: "{闇|やみ}バイト（{犯罪|はんざい}をバイトとよそおった{仕事|しごと}）",
+        short: "{犯罪|はんざい}{行為|こうい}を「バイト」とうそついてぼしゅうするもの",
+        detail: "SNSなどで「{高|こう}{日給|にっきゅう}・{即日払|そくじつばら}い・スマホだけ」とぼしゅうし、{実際|じっさい}には{詐欺|さぎ}・{強盗|ごうとう}・{薬物|やくぶつ}{運搬|うんぱん}などの{犯罪|はんざい}をやらせます。{一度|いちど}{個人情報|こじんじょうほう}を{送|おく}ると「やめたら{家族|かぞく}にバラす」とおどされます。",
+        news: "2024{年|ねん}、{全国|ぜんこく}で150{件|けん}{以上|いじょう}の{強盗|ごうとう}{事件|じけん}がこの{手口|てぐち}でした。{高校生|こうこうせい}・{大学生|だいがくせい}の{逮捕者|たいほしゃ}が{急|きゅう}に{増|ふ}えました。",
+        scary: "{一度|いちど}{足|あし}を{踏|ふ}み{入|い}れると{自力|じりき}では{抜|ぬ}け{出|だ}せない",
+        action: "#9110（けいさつ{相談|そうだん}）・{弁護士|べんごし}ドットコムに{相談|そうだん}。{家族|かぞく}にも{話|はな}す",
       },
       epKey: "ep3",
     },
@@ -3928,12 +3953,12 @@ const EP_KEYWORDS = {
       scary: "友達のLINEから来たメッセージも疑わなければならない",
       action: "お金や個人情報を求めるLINEは必ず電話で本人確認",
       el: {
-        word: "なりすまし（他人（たにん）のふりをすること）",
-        short: "ほかの人のふりをして詐欺（さぎ）をすること",
-        detail: "乗（の）っ取（と）ったSNSアカウントやにせアカウントで、本人の家族（かぞく）・友人（ゆうじん）・公式（こうしき）きかんになりすまして、お金や個人情報（こじんじょうほう）をだまし取ること。",
-        news: "2024年、有名人（ゆうめいじん）のSNSアカウントになりすましたにせ広告（こうこく）詐欺（さぎ）が急（きゅう）に増（ふ）えました。",
-        scary: "友達（ともだち）のLINEから来たメッセージも疑（うたが）わなければならない",
-        action: "お金や個人情報（こじんじょうほう）を求（もと）めるLINEは必（かなら）ずでんわで本人（ほんにん）かくにん",
+        word: "なりすまし（{他人|たにん}のふりをすること）",
+        short: "ほかの{人|ひと}のふりをして{詐欺|さぎ}をすること",
+        detail: "{乗|の}っ{取|と}ったSNSアカウントやにせアカウントで、{本人|ほんにん}の{家族|かぞく}・{友人|ゆうじん}・{公式|こうしき}きかんになりすまして、お{金|かね}や{個人情報|こじんじょうほう}をだまし{取|と}ること。",
+        news: "2024{年|ねん}、{有名人|ゆうめいじん}のSNSアカウントになりすましたにせ{広告|こうこく}{詐欺|さぎ}が{急|きゅう}に{増|ふ}えました。",
+        scary: "{友達|ともだち}のLINEから{来|き}たメッセージも{疑|うたが}わなければならない",
+        action: "お{金|かね}や{個人情報|こじんじょうほう}を{求|もと}めるLINEは{必|かなら}ずでんわで{本人|ほんにん}かくにん",
       },
       epKey: "ep4",
     },
@@ -3947,12 +3972,12 @@ const EP_KEYWORDS = {
       scary: "設定していないと5秒でアカウントが奪われる",
       action: "LINE・Instagram・Gmail全てで今日中に設定する",
       el: {
-        word: "二段階（にだんかい）にんしょう（2FA）",
-        short: "パスワード＋もう一（ひと）つのかくにんで守（まも）るしくみ",
-        detail: "ログインするとき、パスワードのほかに、スマホに届（とど）くSMSコードや認証（にんしょう）アプリの番号（ばんごう）を入力（にゅうりょく）します。パスワードがぬすまれても、コードがないとログインできません。",
-        news: "二段階（にだんかい）にんしょうを設定（せってい）していなかったために乗（の）っ取（と）られたケースが国内（こくない）で年（ねん）に何万（なんまん）件（けん）も報告（ほうこく）されています。",
-        scary: "設定（せってい）していないと5秒（びょう）でアカウントがうばわれる",
-        action: "LINE・Instagram・Gmail全（すべ）てで今日（きょう）中に設定（せってい）する",
+        word: "{二段階|にだんかい}にんしょう（2FA）",
+        short: "パスワード＋もう{一|ひと}つのかくにんで{守|まも}るしくみ",
+        detail: "ログインするとき、パスワードのほかに、スマホに{届|とど}くSMSコードや{認証|にんしょう}アプリの{番号|ばんごう}を{入力|にゅうりょく}します。パスワードがぬすまれても、コードがないとログインできません。",
+        news: "{二段階|にだんかい}にんしょうを{設定|せってい}していなかったために{乗|の}っ{取|と}られたケースが{国内|こくない}で{年|ねん}に{何万|なんまん}{件|けん}も{報告|ほうこく}されています。",
+        scary: "{設定|せってい}していないと5{秒|びょう}でアカウントがうばわれる",
+        action: "LINE・Instagram・Gmail{全|すべ}てで{今日|きょう}{中|じゅう}に{設定|せってい}する",
       },
       epKey: "ep4",
     },
@@ -3966,12 +3991,12 @@ const EP_KEYWORDS = {
       scary: "「友達」が犯人であることに気づく前に全てが終わる",
       action: "ワンタイムパスワードは「誰にも・何があっても」教えない",
       el: {
-        word: "ワンタイムパスワード（一度（いちど）だけつかえるかくにん番号（ばんごう））",
-        short: "一度（いちど）しかつかえないつかい捨（す）てのかくにんコード",
-        detail: "SMS・メール・認証（にんしょう）アプリで届（とど）く6けたくらいの数字（すうじ）です。30秒（びょう）〜数分（すうふん）でつかえなくなり、一度（いちど）つかったらもうつかえません。これをほかの人に教（おし）えると、すぐにアカウントをうばわれます。",
-        news: "「友達（ともだち）にたのまれてSMSコードを教えた」という口実（こうじつ）でアカウントを乗（の）っ取（と）る手口（てぐち）が急（きゅう）に増（ふ）えています。",
-        scary: "「友達（ともだち）」が犯人（はんにん）だと気（き）づく前（まえ）に全部（ぜんぶ）終（お）わる",
-        action: "ワンタイムパスワードは「だれにも・どんな時（とき）でも」教（おし）えない",
+        word: "ワンタイムパスワード（{一度|いちど}だけつかえるかくにん{番号|ばんごう}）",
+        short: "{一度|いちど}しかつかえないつかい{捨|す}てのかくにんコード",
+        detail: "SMS・メール・{認証|にんしょう}アプリで{届|とど}く6けたくらいの{数字|すうじ}です。30{秒|びょう}〜{数分|すうふん}でつかえなくなり、{一度|いちど}つかったらもうつかえません。これをほかの{人|ひと}に{教|おし}えると、すぐにアカウントをうばわれます。",
+        news: "「{友達|ともだち}にたのまれてSMSコードを{教|おし}えた」という{口実|こうじつ}でアカウントを{乗|の}っ{取|と}る{手口|てぐち}が{急|きゅう}に{増|ふ}えています。",
+        scary: "「{友達|ともだち}」が{犯人|はんにん}だと{気|き}づく{前|まえ}に{全部|ぜんぶ}{終|お}わる",
+        action: "ワンタイムパスワードは「だれにも・どんな{時|とき}でも」{教|おし}えない",
       },
       epKey: "ep4",
     },
@@ -3988,11 +4013,11 @@ const EP_KEYWORDS = {
       action: "証拠スクショを保存→学校・スクールカウンセラー・#9110に相談",
       el: {
         word: "ネットいじめ（サイバーいじめ）",
-        short: "SNS・ゲームなどを通（とお）じたいじめ",
-        detail: "LINEのグループはずし・わるぐちの拡散（かくさん）・ゲームの中（なか）のいやがらせ・にせアカウントでの悪口（あっこう）など。24時間（じかん）・365日（にち）にげる場所（ばしょ）がなく、スクリーンショットで証拠（しょうこ）が残（のこ）って広まります。",
-        news: "文科省（もんかしょう）2023年調査（ちょうさ）：ネットいじめのにんちけん数（すう）が初（はじ）めて2万件（まんけん）をこえて過去最多（かこさいた）になりました。",
-        scary: "家（いえ）に帰（かえ）っても学校（がっこう）が続（つづ）く。ねむれない夜（よる）が続く",
-        action: "証拠（しょうこ）スクショを保存（ほぞん）→学校・スクールカウンセラー・#9110に相談（そうだん）",
+        short: "SNS・ゲームなどを{通|とお}じたいじめ",
+        detail: "LINEのグループはずし・わるぐちの{拡散|かくさん}・ゲームの{中|なか}のいやがらせ・にせアカウントでの{悪口|あっこう}など。24{時間|じかん}・365{日|にち}にげる{場所|ばしょ}がなく、スクリーンショットで{証拠|しょうこ}が{残|のこ}って{広|ひろ}まります。",
+        news: "{文科省|もんかしょう}2023{年|ねん}{調査|ちょうさ}：ネットいじめのにんちけん{数|すう}が{初|はじ}めて2{万件|まんけん}をこえて{過去最多|かこさいた}になりました。",
+        scary: "{家|いえ}に{帰|かえ}っても{学校|がっこう}が{続|つづ}く。ねむれない{夜|よる}が{続|つづ}く",
+        action: "{証拠|しょうこ}スクショを{保存|ほぞん}→{学校|がっこう}・スクールカウンセラー・#9110に{相談|そうだん}",
       },
       epKey: "ep5",
     },
@@ -4006,12 +4031,12 @@ const EP_KEYWORDS = {
       scary: "あなたの沈黙が、誰かの最後の希望を消すかもしれない",
       action: "「それはどうかな」の一言、それだけでいい。完璧でなくていい",
       el: {
-        word: "ぼうかんしゃこうか（バイスタンダーこうか）",
-        short: "人が多（おお）いほど助（たす）けない心理（しんり）",
-        detail: "「だれかが助（たす）けるだろう」という気持（きも）ちが働（はたら）き、まわりに人が多いほどだれも行動（こうどう）しなくなる現象（げんしょう）。ネットではさらに強（つよ）く働き、「自分（じぶん）一人（ひとり）が言っても」という考えで全員（ぜんいん）がだまってしまいます。",
-        news: "いじめ被害者（ひがいしゃ）の92%が「だれかに気（き）づいてほしかった」と答（こた）えました。ぼうかんしゃの一言（ひとこと）で状況（じょうきょう）が変わったれいが多く報告（ほうこく）されています。",
-        scary: "あなたのちんもくが、だれかの最後（さいご）の希望（きぼう）を消（け）すかもしれない",
-        action: "「それはどうかな」の一言（ひとこと）、それだけでいい。かんぺきでなくていい",
+        word: "{傍観者|ぼうかんしゃ}こうか（バイスタンダーこうか）",
+        short: "{人|ひと}が{多|おお}いほど{助|たす}けない{心理|しんり}",
+        detail: "「だれかが{助|たす}けるだろう」という{気持|きも}ちが{働|はたら}き、まわりに{人|ひと}が{多|おお}いほどだれも{行動|こうどう}しなくなる{現象|げんしょう}。ネットではさらに{強|つよ}く{働|はたら}き、「{自分|じぶん}{一人|ひとり}が{言|い}っても」という{考|かんが}えで{全員|ぜんいん}がだまってしまいます。",
+        news: "いじめ{被害者|ひがいしゃ}の92%が「だれかに{気|き}づいてほしかった」と{答|こた}えました。{傍観者|ぼうかんしゃ}の{一言|ひとこと}で{状況|じょうきょう}が{変|か}わったれいが{多|おお}く{報告|ほうこく}されています。",
+        scary: "あなたのちんもくが、だれかの{最後|さいご}の{希望|きぼう}を{消|け}すかもしれない",
+        action: "「それはどうかな」の{一言|ひとこと}、それだけでいい。かんぺきでなくていい",
       },
       epKey: "ep5",
     },
@@ -4027,12 +4052,12 @@ const EP_KEYWORDS = {
       scary: "「信頼できる」と感じた瞬間が一番危ない",
       action: "ゲーム・SNSで知り合った人とのLINE交換は断る。プレゼントは受け取らない",
       el: {
-        word: "グルーミング（だましてなかよくなる手口（てぐち））",
-        short: "時間（じかん）をかけて信頼（しんらい）関係（かんけい）を作り、被害（ひがい）に誘（さそ）う手口（てぐち）",
-        detail: "加害者（かがいしゃ）が相手（あいて）に「友達（ともだち）」「わかってくれる人（ひと）」として時間（じかん）をかけて信頼（しんらい）を作り、少しずつ要求（ようきゅう）をエスカレートさせて性的被害（せいてきひがい）に誘（さそ）う手口（てぐち）。ゲーム・SNSがよく使（つか）われます。",
-        news: "2024年けいさつちょう：子どもの性的被害（せいてきひがい）のうち約（やく）65%がSNS経由（けいゆ）。最初（さいしょ）の接触（せっしょく）からしゃしんを求められるまでの平均（へいきん）は約（やく）3週間（しゅうかん）。",
-        scary: "「信頼（しんらい）できる」と感（かん）じた瞬間（しゅんかん）が一番（いちばん）あぶない",
-        action: "ゲーム・SNSで知り合った人とのLINE交換（こうかん）は断（ことわ）る。プレゼントは受（う）け取（と）らない",
+        word: "グルーミング（だましてなかよくなる{手口|てぐち}）",
+        short: "{時間|じかん}をかけて{信頼|しんらい}{関係|かんけい}を{作|つく}り、{被害|ひがい}に{誘|さそ}う{手口|てぐち}",
+        detail: "{加害者|かがいしゃ}が{相手|あいて}に「{友達|ともだち}」「わかってくれる{人|ひと}」として{時間|じかん}をかけて{信頼|しんらい}を{作|つく}り、{少|すこ}しずつ{要求|ようきゅう}をエスカレートさせて{性的被害|せいてきひがい}に{誘|さそ}う{手口|てぐち}。ゲーム・SNSがよく{使|つか}われます。",
+        news: "2024{年|ねん}けいさつちょう：{子|こ}どもの{性的被害|せいてきひがい}のうち{約|やく}65%がSNS{経由|けいゆ}。{最初|さいしょ}の{接触|せっしょく}からしゃしんを{求|もと}められるまでの{平均|へいきん}は{約|やく}3{週間|しゅうかん}。",
+        scary: "「{信頼|しんらい}できる」と{感|かん}じた{瞬間|しゅんかん}が{一番|いちばん}あぶない",
+        action: "ゲーム・SNSで{知|し}り{合|あ}った{人|ひと}とのLINE{交換|こうかん}は{断|ことわ}る。プレゼントは{受|う}け{取|と}らない",
       },
       epKey: "ep6",
     },
@@ -4046,12 +4071,12 @@ const EP_KEYWORDS = {
       scary: "ネット上の画像は完全削除が不可能に近い",
       action: "デジタル性暴力ホットライン：0120-437-104。送ってしまっても必ず相談を",
       el: {
-        word: "デジタル性暴力（せいぼうりょく）（画像（がぞう）などをつかった性的（せいてき）な暴力（ぼうりょく））",
-        short: "画像（がぞう）・動画（どうが）をつかった性的（せいてき）な暴力（ぼうりょく）・おどし",
-        detail: "同意（どうい）なく性的（せいてき）な画像（がぞう）・動画（どうが）をとる・保存（ほぞん）する・広めること。「送（おく）らないともとの画像（がぞう）をバラまく」というおどし（セクストーション）もふくみます。被害者（ひがいしゃ）にはぜんぜん責任（せきにん）がありません。",
-        news: "2023年、日本でセクストーション被害（ひがい）が急（きゅう）に増（ふ）えました。10〜20才（さい）の被害者が全体（ぜんたい）の70%をしめます。",
-        scary: "ネット上（じょう）の画像（がぞう）は完全（かんぜん）にけすことがほぼできない",
-        action: "デジタル性暴力（せいぼうりょく）ホットライン：0120-437-104。送（おく）ってしまっても必（かなら）ず相談（そうだん）を",
+        word: "デジタル{性暴力|せいぼうりょく}（{画像|がぞう}などをつかった{性的|せいてき}な{暴力|ぼうりょく}）",
+        short: "{画像|がぞう}・{動画|どうが}をつかった{性的|せいてき}な{暴力|ぼうりょく}・おどし",
+        detail: "{同意|どうい}なく{性的|せいてき}な{画像|がぞう}・{動画|どうが}をとる・{保存|ほぞん}する・{広|ひろ}めること。「{送|おく}らないともとの{画像|がぞう}をバラまく」というおどし（セクストーション）もふくみます。{被害者|ひがいしゃ}にはぜんぜん{責任|せきにん}がありません。",
+        news: "2023{年|ねん}、{日本|にほん}でセクストーション{被害|ひがい}が{急|きゅう}に{増|ふ}えました。10〜20{才|さい}の{被害者|ひがいしゃ}が{全体|ぜんたい}の70%をしめます。",
+        scary: "ネット{上|じょう}の{画像|がぞう}は{完全|かんぜん}にけすことがほぼできない",
+        action: "デジタル{性暴力|せいぼうりょく}ホットライン：0120-437-104。{送|おく}ってしまっても{必|かなら}ず{相談|そうだん}を",
       },
       epKey: "ep6",
     },
@@ -4067,12 +4092,12 @@ const EP_KEYWORDS = {
       scary: "入力した0.1秒後にはもう犯罪者の手元に届いている",
       action: "SMSのURLは踏まない。公式アプリを直接開く。URLのドメインを必ず確認",
       el: {
-        word: "フィッシング詐欺（さぎ）",
-        short: "本物（ほんもの）そっくりのにせサイトでIDをだまし取る詐欺（さぎ）",
-        detail: "銀行（ぎんこう）・Amazon・LINE・クレジットカード会社（がいしゃ）などになりすましたにせメール・SMSを送り、本物（ほんもの）そっくりのにせログインページに誘導（ゆうどう）してIDとパスワードをぬすむ手口（てぐち）。",
-        news: "2024年、フィッシング被害（ひがい）のひがいがくが過去最高（かこさいこう）の1000億円（おくえん）以上（いじょう）になりました（けいさつちょう）。銀行（ぎんこう）・Amazon・ゆうちょをかたるにせSMSが急（きゅう）に増（ふ）えています。",
-        scary: "入力（にゅうりょく）した0.1秒後（びょうご）にはもう犯罪者（はんざいしゃ）の手元（てもと）に届（とど）いている",
-        action: "SMSのURLはふまない。公式（こうしき）アプリを直接（ちょくせつ）開（ひら）く。URLのドメインを必（かなら）ずかくにんする",
+        word: "フィッシング{詐欺|さぎ}",
+        short: "{本物|ほんもの}そっくりのにせサイトでIDをだまし{取|と}る{詐欺|さぎ}",
+        detail: "{銀行|ぎんこう}・Amazon・LINE・クレジットカード{会社|かいしゃ}などになりすましたにせメール・SMSを{送|おく}り、{本物|ほんもの}そっくりのにせログインページに{誘導|ゆうどう}してIDとパスワードをぬすむ{手口|てぐち}。",
+        news: "2024{年|ねん}、フィッシング{被害|ひがい}のひがいがくが{過去最高|かこさいこう}の1000{億円|おくえん}{以上|いじょう}になりました（けいさつちょう）。{銀行|ぎんこう}・Amazon・ゆうちょをかたるにせSMSが{急|きゅう}に{増|ふ}えています。",
+        scary: "{入力|にゅうりょく}した0.1{秒後|びょうご}にはもう{犯罪者|はんざいしゃ}の{手元|てもと}に{届|とど}いている",
+        action: "SMSのURLはふまない。{公式|こうしき}アプリを{直接|ちょくせつ}{開|ひら}く。URLのドメインを{必|かなら}ずかくにんする",
       },
       epKey: "ep7",
     },
@@ -4086,12 +4111,12 @@ const EP_KEYWORDS = {
       scary: "携帯番号さえあれば誰にでも届く。番号の流出は防げない",
       action: "宅配・銀行からのSMSにあるURLは絶対に踏まない。公式アプリで確認",
       el: {
-        word: "スミッシング（SMSをつかったフィッシング詐欺（さぎ））",
-        short: "SMS（ショートメッセージ）をつかったフィッシング詐欺（さぎ）",
-        detail: "SMS（ショートメッセージ）でにせのリンクを送りつけ、個人情報（こじんじょうほう）をぬすむ手口（てぐち）。「たくはいびんの再配達（さいはいたつ）」「銀行（ぎんこう）こうざの異常（いじょう）」「ETCみばらい」などの内容（ないよう）が多い。",
-        news: "2024年、たくはいぎょうしゃをかたるスミッシングが国内（こくない）で月（つき）200万件（まんけん）以上（いじょう）送信（そうしん）された月（つき）もありました。",
-        scary: "けいたい番号（ばんごう）さえあればだれにでも届（とど）く。番号（ばんごう）のろうしゅつはふせげない",
-        action: "たくはい・銀行（ぎんこう）からのSMSにあるURLは絶対（ぜったい）にふまない。公式（こうしき）アプリでかくにん",
+        word: "スミッシング（SMSをつかったフィッシング{詐欺|さぎ}）",
+        short: "SMS（ショートメッセージ）をつかったフィッシング{詐欺|さぎ}",
+        detail: "SMS（ショートメッセージ）でにせのリンクを{送|おく}りつけ、{個人情報|こじんじょうほう}をぬすむ{手口|てぐち}。「たくはいびんの{再配達|さいはいたつ}」「{銀行|ぎんこう}こうざの{異常|いじょう}」「ETCみばらい」などの{内容|ないよう}が{多|おお}い。",
+        news: "2024{年|ねん}、たくはいぎょうしゃをかたるスミッシングが{国内|こくない}で{月|つき}200{万件|まんけん}{以上|いじょう}{送信|そうしん}された{月|つき}もありました。",
+        scary: "けいたい{番号|ばんごう}さえあればだれにでも{届|とど}く。{番号|ばんごう}のろうしゅつはふせげない",
+        action: "たくはい・{銀行|ぎんこう}からのSMSにあるURLは{絶対|ぜったい}にふまない。{公式|こうしき}アプリでかくにん",
       },
       epKey: "ep7",
     },
@@ -4105,12 +4130,12 @@ const EP_KEYWORDS = {
       scary: "パッと見ただけでは本物と区別がつかない",
       action: "URLは最後の「.co.jp」「.ne.jp」など一番右のドメインだけを確認する",
       el: {
-        word: "ドメイン詐称（さしょう）（にせURLで人をだます手口（てぐち））",
-        short: "本物（ほんもの）に似（に）せたにせURLで人（ひと）をだます手口（てぐち）",
-        detail: "amaz0n（oをゼロに）・amazon-secure.jp など、本物（ほんもの）のドメインに似（に）せたにせURLをつかってフィッシングサイトに誘導（ゆうどう）します。",
-        news: "「.com」より右（みぎ）に有名（ゆうめい）な会社（かいしゃ）の名前（なまえ）がある場合（ばあい）（例（れい）：jp-amazon.com）は全部（ぜんぶ）詐欺（さぎ）。本物（ほんもの）のAmazonは必（かなら）ず「amazon.co.jp」で終（お）わります。",
-        scary: "パッと見（み）ただけでは本物（ほんもの）と区別（くべつ）がつかない",
-        action: "URLは一番（いちばん）右（みぎ）の「.co.jp」「.ne.jp」など、一番（いちばん）みぎのドメインだけかくにんする",
+        word: "ドメイン{詐称|さしょう}（にせURLで{人|ひと}をだます{手口|てぐち}）",
+        short: "{本物|ほんもの}に{似|に}せたにせURLで{人|ひと}をだます{手口|てぐち}",
+        detail: "amaz0n（oをゼロに）・amazon-secure.jp など、{本物|ほんもの}のドメインに{似|に}せたにせURLをつかってフィッシングサイトに{誘導|ゆうどう}します。",
+        news: "「.com」より{右|みぎ}に{有名|ゆうめい}な{会社|かいしゃ}の{名前|なまえ}がある{場合|ばあい}（{例|れい}：jp-amazon.com）は{全部|ぜんぶ}{詐欺|さぎ}。{本物|ほんもの}のAmazonは{必|かなら}ず「amazon.co.jp」で{終|お}わります。",
+        scary: "パッと{見|み}ただけでは{本物|ほんもの}と{区別|くべつ}がつかない",
+        action: "URLは{一番|いちばん}{右|みぎ}の「.co.jp」「.ne.jp」など、{一番|いちばん}みぎのドメインだけかくにんする",
       },
       epKey: "ep7",
     },
@@ -4135,8 +4160,8 @@ function KeywordCard({ kw, onLearn, isLearned }) {
         style={{ width: "100%", padding: "14px 16px", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit", textAlign: "left", display: "flex", alignItems: "center", gap: 12 }}>
         <div style={{ fontSize: 28, flexShrink: 0 }}>{d.emoji}</div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 14, fontWeight: 900, color: "#1e293b", marginBottom: 2 }}>{d.word}</div>
-          <div style={{ fontSize: 11, color: "#64748b", lineHeight: 1.5 }}>{d.short}</div>
+          <div style={{ fontSize: 14, fontWeight: 900, color: "#1e293b", marginBottom: 2 }}><RubyText text={d.word} /></div>
+          <div style={{ fontSize: 11, color: "#64748b", lineHeight: 1.85 }}><RubyText text={d.short} /></div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
           {isLearned && <span style={{ fontSize: 14 }}>✅</span>}
@@ -4151,25 +4176,25 @@ function KeywordCard({ kw, onLearn, isLearned }) {
 
           {/* Detail */}
           <div style={{ fontSize: 13, color: "#334155", lineHeight: 1.85, marginBottom: 12 }}>
-            {d.detail}
+            <RubyText text={d.detail} />
           </div>
 
           {/* News example */}
           <div style={{ background: "#fff7ed", border: "1px solid #fed7aa", borderRadius: 12, padding: "12px 14px", marginBottom: 12 }}>
             <div style={{ fontSize: 10, fontWeight: 900, color: "#c2410c", marginBottom: 6, letterSpacing: ".05em" }}>📰 実際に起きたこと</div>
-            <div style={{ fontSize: 12, color: "#7c2d12", lineHeight: 1.75 }}>{d.news}</div>
+            <div style={{ fontSize: 12, color: "#7c2d12", lineHeight: 1.85 }}><RubyText text={d.news} /></div>
           </div>
 
           {/* Scary point */}
           <div style={{ background: "#fef2f2", border: "1px solid #fecaca", borderRadius: 12, padding: "10px 14px", marginBottom: 12, display: "flex", alignItems: "flex-start", gap: 8 }}>
             <span style={{ fontSize: 16, flexShrink: 0 }}>⚠️</span>
-            <div style={{ fontSize: 12, color: "#991b1b", fontWeight: 700, lineHeight: 1.65 }}>{d.scary}</div>
+            <div style={{ fontSize: 12, color: "#991b1b", fontWeight: 700, lineHeight: 1.85 }}><RubyText text={d.scary} /></div>
           </div>
 
           {/* Action */}
           <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 12, padding: "10px 14px", marginBottom: 14, display: "flex", alignItems: "flex-start", gap: 8 }}>
             <span style={{ fontSize: 16, flexShrink: 0 }}>🛡️</span>
-            <div style={{ fontSize: 12, color: "#166534", lineHeight: 1.65 }}>{d.action}</div>
+            <div style={{ fontSize: 12, color: "#166534", lineHeight: 1.85 }}><RubyText text={d.action} /></div>
           </div>
 
           {/* Learn button */}
@@ -4329,8 +4354,8 @@ function KeywordNoteScreen({ onBack }) {
                   style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 16, padding: "14px 16px", cursor: "pointer", fontFamily: "inherit", textAlign: "left", display: "flex", alignItems: "center", gap: 12, boxShadow: "0 2px 8px rgba(0,0,0,.04)", animation: `slideUp .3s ${i * .05}s both ease` }}>
                   <div style={{ fontSize: 28, flexShrink: 0 }}>{d.emoji}</div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 14, fontWeight: 900, color: "#1e293b", marginBottom: 2 }}>{d.word}</div>
-                    <div style={{ fontSize: 11, color: "#64748b", lineHeight: 1.5 }}>{d.short}</div>
+                    <div style={{ fontSize: 14, fontWeight: 900, color: "#1e293b", marginBottom: 2 }}><RubyText text={d.word} /></div>
+                    <div style={{ fontSize: 11, color: "#64748b", lineHeight: 1.85 }}><RubyText text={d.short} /></div>
                     <div style={{ fontSize: 10, color: "#94a3b8", marginTop: 4 }}>記録日：{kw.learnedAt}</div>
                   </div>
                   <div style={{ fontSize: 16, color: "#cbd5e1" }}>›</div>
@@ -4351,21 +4376,21 @@ function KeywordNoteScreen({ onBack }) {
           <div style={{ background: "#fff", borderRadius: "24px 24px 0 0", padding: "24px 20px 40px", width: "100%", maxHeight: "85vh", overflowY: "auto", animation: "slideUp .3s ease" }} onClick={e => e.stopPropagation()}>
             <div style={{ width: 40, height: 4, borderRadius: 2, background: "#e2e8f0", margin: "0 auto 20px" }} />
             <div style={{ fontSize: 36, textAlign: "center", marginBottom: 8 }}>{dd.emoji}</div>
-            <h2 style={{ fontSize: 20, fontWeight: 900, color: "#1e293b", textAlign: "center", margin: "0 0 4px" }}>{dd.word}</h2>
+            <h2 style={{ fontSize: 20, fontWeight: 900, color: "#1e293b", textAlign: "center", margin: "0 0 4px" }}><RubyText text={dd.word} /></h2>
             <div style={{ fontSize: 12, color: "#94a3b8", textAlign: "center", marginBottom: 16 }}>{detail.reading}</div>
             <div style={{ background: "#f8fafc", borderRadius: 14, padding: "14px 16px", marginBottom: 14 }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: "#1e293b", marginBottom: 8 }}>📌 {dd.short}</div>
-              <div style={{ fontSize: 13, color: "#334155", lineHeight: 1.85 }}>{dd.detail}</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: "#1e293b", marginBottom: 8 }}>📌 <RubyText text={dd.short} /></div>
+              <div style={{ fontSize: 13, color: "#334155", lineHeight: 1.85 }}><RubyText text={dd.detail} /></div>
             </div>
             <div style={{ background: "#fff7ed", border: "1px solid #fed7aa", borderRadius: 12, padding: "12px 14px", marginBottom: 12 }}>
               <div style={{ fontSize: 10, fontWeight: 900, color: "#c2410c", marginBottom: 6 }}>📰 実際に起きたこと</div>
-              <div style={{ fontSize: 12, color: "#7c2d12", lineHeight: 1.75 }}>{dd.news}</div>
+              <div style={{ fontSize: 12, color: "#7c2d12", lineHeight: 1.85 }}><RubyText text={dd.news} /></div>
             </div>
             <div style={{ background: "#fef2f2", borderRadius: 12, padding: "10px 14px", marginBottom: 12 }}>
-              <div style={{ fontSize: 12, color: "#991b1b", fontWeight: 700 }}>⚠️ {dd.scary}</div>
+              <div style={{ fontSize: 12, color: "#991b1b", fontWeight: 700 }}>⚠️ <RubyText text={dd.scary} /></div>
             </div>
             <div style={{ background: "#f0fdf4", borderRadius: 12, padding: "10px 14px", marginBottom: 20 }}>
-              <div style={{ fontSize: 12, color: "#166534" }}>🛡️ {dd.action}</div>
+              <div style={{ fontSize: 12, color: "#166534" }}>🛡️ <RubyText text={dd.action} /></div>
             </div>
             <button onClick={() => setDetail(null)}
               style={{ width: "100%", padding: 14, background: "#1e293b", border: "none", borderRadius: 14, color: "#fff", fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
@@ -5153,7 +5178,8 @@ function Typewriter({ text, speed = 60, style: s = {}, onDone }) {
 // ─────────────────────────────────────────────
 function OwlSay({ children, mood = "happy", e }) {
   const ageMode = useAgeMode();
-  const content = (ageMode === "elementary" && e !== undefined) ? e : children;
+  const useEl = ageMode === "elementary" && e !== undefined;
+  const content = useEl ? <RubyText text={e} /> : children;
   const moodStyles = {
     happy:   { bg: "#fff",                  border: "#f4d4a8", text: "#3d2817", anim: "float2 3s ease-in-out infinite" },
     worried: { bg: "#fff8f8",               border: "#ffaaaa", text: "#7a1a1a", anim: "shake .5s ease" },
@@ -5669,7 +5695,7 @@ function Episode1({ onComplete, onExit }) {
 
       <div style={{ maxWidth: 480, margin: "0 auto", padding: "0 0 20px" }}>
         <div style={{ background: "#fff8f0", borderRadius: 14, margin: "12px 16px", padding: "12px 14px", border: "1px solid #ffa94033" }}>
-          <OwlSay mood="worried">{t("ep1.normalOwl")}</OwlSay>
+          <OwlSay mood="worried" e="まずは、ミナちゃんのいつものSNSをみてみよう🦉">{t("ep1.normalOwl")}</OwlSay>
         </div>
 
         {/* プロフィールヘッダー */}
@@ -5799,7 +5825,7 @@ function Episode1({ onComplete, onExit }) {
           <span style={{ marginLeft: "auto", fontSize: 12, color: "#ffd28a" }}>{postIdx + 1}/{POSTS.length}</span>
         </div>
 
-        <OwlSay mood="worried">
+        <OwlSay mood="worried" e={`{投稿|とうこう}の{中|なか}から「{危険|きけん}なポイント」をタップして{見|み}つけよう。${dangerN}{個|こ}あるよ。`}>
           <FormattedText text={t("ep1.investigateOwl", { n: dangerN })} style={{ color: "inherit" }} />
         </OwlSay>
 
@@ -5913,7 +5939,7 @@ function Episode1({ onComplete, onExit }) {
           <h2 style={{ fontSize: 20, color: "#3d2817", margin: "0 0 10px", fontWeight: 900 }}>{t("ep1.problemTitle")}</h2>
           <div style={{ fontSize: 34, color: "#ff4343", fontWeight: 900, fontFamily: "'DotGothic16',monospace" }}>{Object.values(found).reduce((a, b) => a + b.length, 0)}<span style={{ fontSize: 14, color: "#a08060" }}>{t("ep1.dangersFound")}</span></div>
         </div>
-        <OwlSay>
+        <OwlSay e="これだけの{情報|じょうほう}があれば、{悪|わる}い{人|ひと}は{家|いえ}まで{場所|ばしょ}をつきとめられるんだよ…">
           <FormattedText text={t("ep1.explanationOwl")} style={{ color: "inherit" }} />
         </OwlSay>
         <div style={{ background: "rgba(255,67,67,.08)", border: "1px solid rgba(255,67,67,.3)", borderRadius: 16, padding: "14px 16px", marginBottom: 14 }}>
@@ -5948,7 +5974,7 @@ function Episode1({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i === 0 ? "#ffa940" : "rgba(0,0,0,.1)" }} />
           ))}
         </div>
-        <OwlSay mood="excited" e="ちゃんとりかいできたかかくにんしよう！正解するまで次に進めないよ🦉">理解できたか確認しよう！正解するまで次に進めないよ🦉</OwlSay>
+        <OwlSay mood="excited" e="ちゃんとりかいできたかかくにんしよう！{正解|せいかい}するまで{次|つぎ}に{進|すす}めないよ🦉">理解できたか確認しよう！正解するまで次に進めないよ🦉</OwlSay>
         <MandatoryQuiz
           mode="light"
           question="投稿写真から個人情報が漏れるのを防ぐために、最も効果的な方法はどれ？"
@@ -5976,7 +6002,7 @@ function Episode1({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= 1 ? "#ffa940" : "rgba(0,0,0,.1)" }} />
           ))}
         </div>
-        <OwlSay mood="worried" e="もしいちばん悪い選択（せんたく）をしていたら、何が起きていたか見てみよう🦉">もし最悪の選択をしていたら、何が起きていたか見てみよう🦉</OwlSay>
+        <OwlSay mood="worried" e="もしいちばん{悪|わる}い{選択|せんたく}をしていたら、{何|なに}が{起|お}きていたかみてみよう🦉">もし最悪の選択をしていたら、何が起きていたか見てみよう🦉</OwlSay>
         <ChoiceComparison
           mode="light"
           myChoice="危険ポイントを見つけた"
@@ -6004,7 +6030,7 @@ function Episode1({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= 2 ? "#ffa940" : "rgba(0,0,0,.1)" }} />
           ))}
         </div>
-        <OwlSay mood="proud" e="最後（さいご）に今日（きょう）のしゅくだいをかくにんしよう！全部（ぜんぶ）チェックしてから次へ進もう🦉">最後に今日の宿題を確認しよう！全部チェックしてから次へ進もう🦉</OwlSay>
+        <OwlSay mood="proud" e="{最後|さいご}に{今日|きょう}のしゅくだいをかくにんしよう！{全部|ぜんぶ}チェックしてから{次|つぎ}へ{進|すす}もう🦉">最後に今日の宿題を確認しよう！全部チェックしてから次へ進もう🦉</OwlSay>
         <TodaysHomework
           mode="light"
           accentColor="#ffa940"
@@ -6025,7 +6051,7 @@ function Episode1({ onComplete, onExit }) {
     <EpisodeShell onExit={onExit}>
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fff8f0,#ffeed6)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
-        <OwlSay mood="excited" e="このおはなしにでてきた大切な言葉（ことば）をおぼえよう！ニュースでも出てくるよ🦉">このエピソードで出てきた大事なワードを一緒に覚えよう！ニュースでも出てくるよ🦉</OwlSay>
+        <OwlSay mood="excited" e="このおはなしにでてきた{大切|たいせつ}な{言葉|ことば}をおぼえよう！ニュースでも{出|で}てくるよ🦉">このエピソードで出てきた大事なワードを一緒に覚えよう！ニュースでも出てくるよ🦉</OwlSay>
         <KeywordPhase epKey="ep1" accentColor="#ffa940" onComplete={() => setPhase("dialogue")} />
         <ParentExpertCard epKey="ep1" accentColor="#ffa940" />
       </div>
@@ -6249,7 +6275,7 @@ function Episode2({ onComplete, onExit }) {
         SNSには<strong style={{ color: "#a78bfa" }}>本物と偽物の情報</strong>が混ざっています。<br /><br />
         4つの投稿を見て「本物か・フェイクか」を見分ける<strong style={{ color: "#a78bfa" }}>情報鑑定士</strong>になろう。
       </div>
-      <OwlSay mood="happy">生成AIが作った偽画像も増えてるよ。騙されないようにしようね🦉</OwlSay>
+      <OwlSay mood="happy" e="AIが{作|つく}ったにせの{画像|がぞう}も{増|ふ}えてるよ。だまされないようにしようね🦉">生成AIが作った偽画像も増えてるよ。騙されないようにしようね🦉</OwlSay>
       <button onClick={() => setPhase("swipe")} style={{ background: "linear-gradient(135deg,#7c3aed,#4f46e5)", border: "none", borderRadius: 50, padding: "15px 44px", fontSize: 16, fontWeight: 900, color: "#fff", cursor: "pointer", fontFamily: "inherit", boxShadow: "0 8px 24px rgba(124,58,237,.4)", marginTop: 8 }}>鑑定スタート 🔎</button>
     </div>
     </EpisodeShell>
@@ -6264,7 +6290,7 @@ function Episode2({ onComplete, onExit }) {
           <h2 style={{ fontSize: 20, fontWeight: 900, color: "#fff", margin: 0 }}>まず直感で判定してみよう</h2>
           <p style={{ fontSize: 12, color: "rgba(255,255,255,.45)", marginTop: 6, lineHeight: 1.6 }}>「✅ 本物」か「❌ フェイク」を素早く選ぼう</p>
         </div>
-        <OwlSay mood="excited">理由は後で教えるから、今は直感だけで判断してみて！🦉</OwlSay>
+        <OwlSay mood="excited" e="{理由|りゆう}はあとで{教|おし}えるから、{今|いま}は{直感|ちょっかん}だけで{判断|はんだん}してみて！🦉">理由は後で教えるから、今は直感だけで判断してみて！🦉</OwlSay>
         <SwipeJudge
           posts={FAKE_POSTS}
           accentColor="#7c3aed"
@@ -6288,7 +6314,7 @@ function Episode2({ onComplete, onExit }) {
           <div style={{ fontSize: 12, color: "#c4b5fd" }}>{postIdx + 1} / {FAKE_POSTS.length}</div>
         </div>
 
-        {!showResult && <OwlSay mood="worried">この投稿、<strong style={{ color: "#a78bfa" }}>本物？フェイク？</strong>まず直感で判断してみよう。</OwlSay>}
+        {!showResult && <OwlSay mood="worried" e="この{投稿|とうこう}、{本物|ほんもの}？フェイク？まず{直感|ちょっかん}で{判断|はんだん}してみよう。">この投稿、<strong style={{ color: "#a78bfa" }}>本物？フェイク？</strong>まず直感で判断してみよう。</OwlSay>}
 
         {/* Fake SNS post card */}
         <div style={{ background: "#0d1117", borderRadius: 18, padding: 16, marginBottom: 14, border: `1px solid ${post.accountColor}30`, boxShadow: `0 8px 32px rgba(0,0,0,.5)` }}>
@@ -6409,7 +6435,7 @@ function Episode2({ onComplete, onExit }) {
           </div>
         </div>
 
-        <OwlSay mood={swipeScore.correct >= 3 ? "happy" : "worried"}>
+        <OwlSay mood={swipeScore.correct >= 3 ? "happy" : "worried"} e={swipeScore.correct >= 3 ? "すごい！{情報|じょうほう}{鑑定|かんてい}しの{才能|さいのう}があるね🦉" : "フェイクニュースはたくみだね…{次|つぎ}は{見抜|みぬ}けるようになろう🦉"}>
           {swipeScore.correct >= 3 ? "すごい！情報鑑定士の才能があるね🦉" : "フェイクニュースは巧妙だね…次は見抜けるようになろう🦉"}
         </OwlSay>
 
@@ -6529,7 +6555,7 @@ function Episode2({ onComplete, onExit }) {
         <div style={{ textAlign: "center", marginBottom: 16 }}>
           <OwlMolly size={90} mood="happy" style={{ margin: "0 auto" }} />
         </div>
-        <OwlSay>情報を見たときに、この5つを確認する習慣をつけよう🦉</OwlSay>
+        <OwlSay e="{情報|じょうほう}を{見|み}たときに、この5つを{確認|かくにん}する{習慣|しゅうかん}をつけよう🦉">情報を見たときに、この5つを確認する習慣をつけよう🦉</OwlSay>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
           {checklist.slice(0, checkStep + 1).map((item, i) => (
@@ -6566,7 +6592,7 @@ function Episode2({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i === 0 ? "#7c3aed" : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
-        <OwlSay mood="excited" e="正解するまで次に進めないよ！よく考えてえらんでね🦉">正解するまで次に進めないよ！よく考えて選んでね🦉</OwlSay>
+        <OwlSay mood="excited" e="{正解|せいかい}するまで{次|つぎ}に{進|すす}めないよ！よく{考|かんが}えてえらんでね🦉">正解するまで次に進めないよ！よく考えて選んでね🦉</OwlSay>
         <MandatoryQuiz
           question="「緊急拡散希望」という言葉を見たとき、最初にすべき行動は？"
           choices={[
@@ -6591,7 +6617,7 @@ function Episode2({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= 1 ? "#7c3aed" : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
-        <OwlSay mood="worried">よくある反応と正しい反応を体験してみよう🦉</OwlSay>
+        <OwlSay mood="worried" e="よくある{反応|はんのう}と{正|ただ}しい{反応|はんのう}を{体験|たいけん}してみよう🦉">よくある反応と正しい反応を体験してみよう🦉</OwlSay>
         <NgFirstExperience
           situation="「○○市で大地震！今すぐ避難して！」というツイートを見た。フォロワーが多いアカウントだ。"
           ngChoice={{ emoji: "🔁", label: "すぐリツイートする（よくある反応）" }}
@@ -6614,7 +6640,7 @@ function Episode2({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= 2 ? "#7c3aed" : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
-        <OwlSay mood="proud" e="今日（きょう）のしゅくだい！全部（ぜんぶ）チェックしてから次へ進もう🦉">今日の宿題！全部チェックしてから次へ進もう🦉</OwlSay>
+        <OwlSay mood="proud" e="{今日|きょう}のしゅくだい！{全部|ぜんぶ}チェックしてから{次|つぎ}へ{進|すす}もう🦉">今日の宿題！全部チェックしてから次へ進もう🦉</OwlSay>
         <TodaysHomework
           accentColor="#7c3aed"
           tasks={[
@@ -6635,7 +6661,7 @@ function Episode2({ onComplete, onExit }) {
   if (phase === "keywords") return (
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#f0eeff,#e0d9ff)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
-        <OwlSay mood="excited">フェイクニュースを見抜くための重要ワードを覚えよう！🦉</OwlSay>
+        <OwlSay mood="excited" e="フェイクニュースを{見抜|みぬ}くための{重要|じゅうよう}なことばをおぼえよう！🦉">フェイクニュースを見抜くための重要ワードを覚えよう！🦉</OwlSay>
         <KeywordPhase epKey="ep2" accentColor="#7c3aed" onComplete={() => setPhase("dialogue")} />
         <ParentExpertCard epKey="ep2" accentColor="#7c3aed" />
       </div>
@@ -6868,7 +6894,7 @@ function Episode3({ onComplete, onExit }) {
       <div style={{ background: "rgba(220,38,38,.08)", border: "1px solid rgba(220,38,38,.3)", borderRadius: 14, padding: "12px 18px", maxWidth: 320, marginBottom: 24, fontSize: 12, color: "#fca5a5", lineHeight: 1.75, textAlign: "center" }}>
         ⚠️ 実際の被害事例をもとにした教育コンテンツです。<br />登場人物はすべてフィクションです。
       </div>
-      <OwlSay mood="worried">気をつけて。断れなくなる「罠」がどこにあるか、一緒に見ていこう🦉</OwlSay>
+      <OwlSay mood="worried" e="{気|き}をつけて。{断|ことわ}れなくなる「わな」がどこにあるか、いっしょに{見|み}ていこう🦉">気をつけて。断れなくなる「罠」がどこにあるか、一緒に見ていこう🦉</OwlSay>
       <button onClick={() => setPhase("convo")} style={{ background: "linear-gradient(135deg,#16a34a,#15803d)", border: "none", borderRadius: 50, padding: "15px 44px", fontSize: 16, fontWeight: 900, color: "#fff", cursor: "pointer", fontFamily: "inherit", boxShadow: "0 8px 24px rgba(22,163,74,.4)", marginTop: 8 }}>体験スタート</button>
     </div>
     </EpisodeShell>
@@ -6885,7 +6911,7 @@ function Episode3({ onComplete, onExit }) {
             {choiceHistory.length <= 1 ? "最初から疑ってかかれた。完璧な判断です。" : "途中で気づいて断れた。勇気ある行動です。"}
           </p>
         </div>
-        <OwlSay mood="happy">「断る」のが一番正しい選択。断ることは全然悪くないよ🦉</OwlSay>
+        <OwlSay mood="happy" e="「{断|ことわ}る」のが{一番|いちばん}{正|ただ}しい{選択|せんたく}。{断|ことわ}ることは{全然|ぜんぜん}{悪|わる}くないよ🦉">「断る」のが一番正しい選択。断ることは全然悪くないよ🦉</OwlSay>
         <div style={{ background: "#fff", borderRadius: 18, padding: "18px 16px", border: "2px solid #86efac", marginBottom: 14, boxShadow: "0 6px 20px rgba(22,163,74,.12)" }}>
           <h3 style={{ fontSize: 15, fontWeight: 900, color: "#166534", margin: "0 0 12px" }}>🛑 断るための3つの言葉</h3>
           {[
@@ -6993,7 +7019,7 @@ function Episode3({ onComplete, onExit }) {
         <div style={{ textAlign: "center", marginBottom: 16 }}>
           <OwlMolly size={90} mood="happy" style={{ margin: "0 auto" }} />
         </div>
-        <OwlSay mood="happy">この5つのサインが出たら、即座に離れよう🦉</OwlSay>
+        <OwlSay mood="happy" e="この5つのサインが{出|で}たら、すぐに{離|はな}れよう🦉">この5つのサインが出たら、即座に離れよう🦉</OwlSay>
         <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
           {checkpoints.map((cp, i) => (
             <div key={i} style={{ background: "rgba(74,222,128,.05)", border: "1px solid rgba(74,222,128,.2)", borderRadius: 16, padding: "14px 16px", display: "flex", gap: 14, alignItems: "flex-start", animation: `slideUp .4s ${i * .08}s both ease` }}>
@@ -7033,7 +7059,7 @@ function Episode3({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i === 0 ? "#16a34a" : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
-        <OwlSay mood="excited">正解するまで次に進めないよ！よく考えてね🦉</OwlSay>
+        <OwlSay mood="excited" e="{正解|せいかい}するまで{次|つぎ}に{進|すす}めないよ！よく{考|かんが}えてね🦉">正解するまで次に進めないよ！よく考えてね🦉</OwlSay>
         <MandatoryQuiz
           question="「荷物の受け取りだけ」という仕事を頼まれた。これは何？"
           choices={[
@@ -7058,7 +7084,7 @@ function Episode3({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= 1 ? "#16a34a" : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
-        <OwlSay mood="scared">実際にこんなメッセージが来たら…どうする？体験してみよう🦉</OwlSay>
+        <OwlSay mood="scared" e="{実際|じっさい}にこんなメッセージが{来|き}たら…どうする？{体験|たいけん}してみよう🦉">実際にこんなメッセージが来たら…どうする？体験してみよう🦉</OwlSay>
         <div style={{ fontSize: 12, color: "rgba(255,255,255,.5)", marginBottom: 10, fontStyle: "italic", textAlign: "center" }}>
           — 焦らせる圧力に負けない練習 —
         </div>
@@ -7086,7 +7112,7 @@ function Episode3({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= 2 ? "#16a34a" : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
-        <OwlSay mood="proud" e="今日（きょう）のしゅくだい！全部（ぜんぶ）チェックしてから次へ進もう🦉">今日の宿題！全部チェックしてから次へ進もう🦉</OwlSay>
+        <OwlSay mood="proud" e="{今日|きょう}のしゅくだい！{全部|ぜんぶ}チェックしてから{次|つぎ}へ{進|すす}もう🦉">今日の宿題！全部チェックしてから次へ進もう🦉</OwlSay>
         <TodaysHomework
           accentColor="#16a34a"
           tasks={[
@@ -7107,7 +7133,7 @@ function Episode3({ onComplete, onExit }) {
   if (phase === "keywords") return (
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#f0fdf4,#dcfce7)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
-        <OwlSay mood="excited">ニュースにも出てくる重要ワードを一緒に覚えよう！🦉</OwlSay>
+        <OwlSay mood="excited" e="ニュースにも{出|で}てくる{重要|じゅうよう}なことばをいっしょにおぼえよう！🦉">ニュースにも出てくる重要ワードを一緒に覚えよう！🦉</OwlSay>
         <KeywordPhase epKey="ep3" accentColor="#16a34a" onComplete={() => setPhase("dialogue")} />
         <ParentExpertCard epKey="ep3" accentColor="#16a34a" />
       </div>
@@ -7391,7 +7417,7 @@ function Episode4({ onComplete, onExit }) {
       <div style={{ background: "rgba(220,38,38,.08)", border: "1px solid rgba(220,38,38,.3)", borderRadius: 14, padding: "12px 18px", maxWidth: 320, marginBottom: 22, fontSize: 12, color: "#fca5a5", lineHeight: 1.75, textAlign: "center" }}>
         ⚠️ 実際の被害事例をもとにした教育コンテンツです
       </div>
-      <OwlSay mood="worried">「友達から」というだけで信じてしまうのが、この手口の怖さだよ🦉</OwlSay>
+      <OwlSay mood="worried" e="「{友達|ともだち}から」というだけで{信|しん}じてしまうのが、この{手口|てぐち}のこわさだよ🦉">「友達から」というだけで信じてしまうのが、この手口の怖さだよ🦉</OwlSay>
       <button onClick={() => setPhase("story1")} style={{ background: `linear-gradient(135deg,${sky},${skyDark})`, border: "none", borderRadius: 50, padding: "15px 44px", fontSize: 16, fontWeight: 900, color: "#fff", cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${sky}44`, marginTop: 8 }}>体験スタート</button>
     </div>
     </EpisodeShell>
@@ -7406,7 +7432,7 @@ function Episode4({ onComplete, onExit }) {
           <span style={{ fontSize: 11, color: "rgba(255,255,255,.35)" }}>今日 14:22</span>
         </div>
 
-        <OwlSay>ハルキくんからLINEが来たよ。どんな内容？</OwlSay>
+        <OwlSay e="ハルキくんからLINEが{来|き}たよ。どんな{内容|ないよう}？">ハルキくんからLINEが来たよ。どんな内容？</OwlSay>
 
         <PhoneFrame header={
           <div style={{ background: "#0a1628", padding: "12px 16px", display: "flex", alignItems: "center", gap: 10, borderBottom: `1px solid ${sky}22` }}>
@@ -7430,7 +7456,7 @@ function Episode4({ onComplete, onExit }) {
           </button>
         ) : (
           <div style={{ animation: "slideUp .4s ease" }}>
-            <OwlSay mood="worried">「認証コードを教えて」…あなたはどうする？🦉</OwlSay>
+            <OwlSay mood="worried" e="「{認証|にんしょう}コードを{教|おし}えて」…あなたはどうする？🦉">「認証コードを教えて」…あなたはどうする？🦉</OwlSay>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               <button onClick={() => { setChoseCode(false); setPhase("safe_call"); }}
                 style={{ width: "100%", padding: "14px 16px", background: "rgba(74,222,128,.08)", border: "1.5px solid rgba(74,222,128,.3)", borderRadius: 14, color: "#86efac", fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 12, textAlign: "left" }}>
@@ -7487,7 +7513,7 @@ function Episode4({ onComplete, onExit }) {
           </div>
         </div>
 
-        <OwlSay mood="happy">「コードは絶対に教えない」と「別の方法で本人確認」の2つを覚えておこう🦉</OwlSay>
+        <OwlSay mood="happy" e="「コードは{絶対|ぜったい}に{教|おし}えない」と「{別|べつ}の{方法|ほうほう}で{本人|ほんにん}{確認|かくにん}」の2つをおぼえておこう🦉">「コードは絶対に教えない」と「別の方法で本人確認」の2つを覚えておこう🦉</OwlSay>
 
         <button onClick={() => setPhase("spotdiff")}
           style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${sky},${skyDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${sky}33` }}>
@@ -7576,7 +7602,7 @@ function Episode4({ onComplete, onExit }) {
           <LineMsg from="fake" text="届いてる？6桁のやつ。教えてくれたら助かる🙏" time="14:23" />
         </PhoneFrame>
 
-        <OwlSay mood="worried">このメッセージ、どこかおかしい。タップして見つけよう🦉 <strong style={{ color: sky }}>（{foundSpots.length}/{suspiciousPoints.length}個）</strong></OwlSay>
+        <OwlSay mood="worried" e={`このメッセージ、どこかおかしい。タップして{見|み}つけよう🦉（${foundSpots.length}/${suspiciousPoints.length}{個|こ}）`}>このメッセージ、どこかおかしい。タップして見つけよう🦉 <strong style={{ color: sky }}>（{foundSpots.length}/{suspiciousPoints.length}個）</strong></OwlSay>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 14 }}>
           {suspiciousPoints.map((pt) => {
@@ -7621,7 +7647,7 @@ function Episode4({ onComplete, onExit }) {
         <div style={{ textAlign: "center", marginBottom: 14 }}>
           <OwlMolly size={90} mood="happy" style={{ margin: "0 auto" }} />
         </div>
-        <OwlSay>2段階認証を設定すると、コードを盗まれても乗っ取られにくくなるよ🦉</OwlSay>
+        <OwlSay e="2{段階|だんかい}{認証|にんしょう}を{設定|せってい}すると、コードを{盗|ぬす}まれても{乗|の}っ{取|と}られにくくなるよ🦉">2段階認証を設定すると、コードを盗まれても乗っ取られにくくなるよ🦉</OwlSay>
 
         <div style={{ background: `${sky}0a`, border: `1px solid ${sky}22`, borderRadius: 18, padding: "16px", marginBottom: 14 }}>
           <div style={{ fontSize: 13, fontWeight: 900, color: sky, marginBottom: 14 }}>📱 LINEの2段階認証設定方法</div>
@@ -7677,7 +7703,7 @@ function Episode4({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i === 0 ? sky : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
-        <OwlSay mood="excited" e="正解するまで次に進めないよ🦉">正解するまで次に進めないよ🦉</OwlSay>
+        <OwlSay mood="excited" e="{正解|せいかい}するまで{次|つぎ}に{進|すす}めないよ🦉">正解するまで次に進めないよ🦉</OwlSay>
         <MandatoryQuiz
           question="友達から「LINEの認証コードを教えて」と来た。正しい対応は？"
           choices={[
@@ -7702,7 +7728,7 @@ function Episode4({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= 1 ? sky : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
-        <OwlSay mood="worried">もし最悪の選択をしていたら何が起きていたか見てみよう🦉</OwlSay>
+        <OwlSay mood="worried" e="もし{最悪|さいあく}の{選択|せんたく}をしていたら{何|なに}が{起|お}きていたかみてみよう🦉">もし最悪の選択をしていたら何が起きていたか見てみよう🦉</OwlSay>
         <ChoiceComparison
           myChoice="電話で本人確認した"
           myResult="1本の電話で乗っ取りを完全に防いだ。被害ゼロ"
@@ -7727,7 +7753,7 @@ function Episode4({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= 2 ? sky : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
-        <OwlSay mood="proud" e="今日（きょう）のしゅくだい！全部（ぜんぶ）チェックしてから次へ進もう🦉">今日の宿題！全部チェックしてから次へ進もう🦉</OwlSay>
+        <OwlSay mood="proud" e="{今日|きょう}のしゅくだい！{全部|ぜんぶ}チェックしてから{次|つぎ}へ{進|すす}もう🦉">今日の宿題！全部チェックしてから次へ進もう🦉</OwlSay>
         <TodaysHomework
           accentColor={sky}
           tasks={[
@@ -7748,7 +7774,7 @@ function Episode4({ onComplete, onExit }) {
   if (phase === "keywords") return (
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#e0f2fe,#bae6fd)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
-        <OwlSay mood="excited">アカウントを守るための重要ワードを覚えよう！🦉</OwlSay>
+        <OwlSay mood="excited" e="アカウントを{守|まも}るための{重要|じゅうよう}なことばをおぼえよう！🦉">アカウントを守るための重要ワードを覚えよう！🦉</OwlSay>
         <KeywordPhase epKey="ep4" accentColor="#0ea5e9" onComplete={() => setPhase("dialogue")} />
         <ParentExpertCard epKey="ep4" accentColor="#0ea5e9" />
       </div>
@@ -7982,7 +8008,7 @@ function Episode5({ onComplete, onExit }) {
       <div style={{ background: "rgba(220,38,38,.08)", border: "1px solid rgba(220,38,38,.3)", borderRadius: 14, padding: "12px 18px", maxWidth: 320, marginBottom: 24, fontSize: 12, color: "#fca5a5", lineHeight: 1.75, textAlign: "center" }}>
         ⚠️ 実際のいじめ事例をもとにした教育コンテンツです
       </div>
-      <OwlSay mood="worried">「自分はいじめていない」と思っている子が、実は加害者になっていることがある。一緒に見ていこう🦉</OwlSay>
+      <OwlSay mood="worried" e="「{自分|じぶん}はいじめていない」と{思|おも}っている{子|こ}が、じつは{加害者|かがいしゃ}になっていることがある。いっしょに{見|み}ていこう🦉">「自分はいじめていない」と思っている子が、実は加害者になっていることがある。一緒に見ていこう🦉</OwlSay>
       <button onClick={() => setPhase("group_normal")} style={{ background: `linear-gradient(135deg,${pink},${pinkDark})`, border: "none", borderRadius: 50, padding: "15px 44px", fontSize: 16, fontWeight: 900, color: "#fff", cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${pink}44`, marginTop: 8 }}>体験スタート</button>
     </div>
     </EpisodeShell>
@@ -7996,7 +8022,7 @@ function Episode5({ onComplete, onExit }) {
           <span style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: pink, letterSpacing: ".1em" }}>SIMULATION</span>
           <span style={{ fontSize: 11, color: "rgba(255,255,255,.4)" }}>放課後 16:42</span>
         </div>
-        <OwlSay>クラスのLINEグループを見てみよう。最初は普通のやり取りだったけど…🦉</OwlSay>
+        <OwlSay e="クラスのLINEグループを{見|み}てみよう。{最初|さいしょ}は{普通|ふつう}の{やり取|やりと}りだったけど…🦉">クラスのLINEグループを見てみよう。最初は普通のやり取りだったけど…🦉</OwlSay>
 
         <Ep5GroupChat messages={GROUP_MSGS_1.slice(0, msgStep + 1)} />
 
@@ -8007,7 +8033,7 @@ function Episode5({ onComplete, onExit }) {
           </button>
         ) : (
           <div style={{ animation: "slideUp .4s ease" }}>
-            <OwlSay mood="worried">サキさんが○○さんの悪口を言い始めた。あなたならどうする？🦉</OwlSay>
+            <OwlSay mood="worried" e="サキさんが○○さんの{悪口|わるくち}を{言|い}い{始|はじ}めた。あなたならどうする？🦉">サキさんが○○さんの悪口を言い始めた。あなたならどうする？🦉</OwlSay>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {[
                 { key: "a", label: "一緒に笑う・同意する", emoji: "😂", sub: "「わかる」と返信する", color: "rgba(220,38,38,.08)", border: "rgba(220,38,38,.3)" },
@@ -8076,7 +8102,7 @@ function Episode5({ onComplete, onExit }) {
           <span style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: pink }}>PERSPECTIVE SWITCH</span>
           <span style={{ fontSize: 10, color: "rgba(255,255,255,.4)" }}>→ ○○さん視点</span>
         </div>
-        <OwlSay mood="worried">今度は○○さんの視点に切り替わります。次の日…🦉</OwlSay>
+        <OwlSay mood="worried" e="{今度|こんど}は○○さんの{視点|してん}に{切|き}り{替|か}わります。{次|つぎ}の{日|ひ}…🦉">今度は○○さんの視点に切り替わります。次の日…🦉</OwlSay>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 16 }}>
           {VICTIM_MSGS.slice(0, victimStep + 1).map((m, i) => {
@@ -8136,7 +8162,7 @@ function Episode5({ onComplete, onExit }) {
           ))}
         </div>
 
-        <OwlSay mood="worried">「笑わなかった」「スルーした」だけでも、止めなかった事実は残るよ。傍観者も、いじめを続かせている原因の一つなんだ🦉</OwlSay>
+        <OwlSay mood="worried" e="「{笑|わら}わなかった」「スルーした」だけでも、{止|と}めなかった{事実|じじつ}は{残|のこ}るよ。{傍観者|ぼうかんしゃ}も、いじめを{続|つづ}かせている{原因|げんいん}の{一|ひと}つなんだ🦉">「笑わなかった」「スルーした」だけでも、止めなかった事実は残るよ。傍観者も、いじめを続かせている原因の一つなんだ🦉</OwlSay>
 
         <div style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.08)", borderRadius: 14, padding: "14px 16px", marginBottom: 14 }}>
           <div style={{ fontSize: 12, fontWeight: 900, color: pink, marginBottom: 10 }}>📱 ネットいじめが「リアル」より深刻な理由</div>
@@ -8167,7 +8193,7 @@ function Episode5({ onComplete, onExit }) {
         <div style={{ textAlign: "center", marginBottom: 14 }}>
           <OwlMolly size={90} mood="happy" style={{ margin: "0 auto" }} />
         </div>
-        <OwlSay>難しいのはわかってる。でも知っているだけで、選択肢が増えるよ🦉</OwlSay>
+        <OwlSay e="{難|むずか}しいのはわかってる。でも{知|し}っているだけで、{選択肢|せんたくし}が{増|ふ}えるよ🦉">難しいのはわかってる。でも知っているだけで、選択肢が増えるよ🦉</OwlSay>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 16 }}>
           {safeSteps.slice(0, checkStep + 1).map((s, i) => (
@@ -8219,7 +8245,7 @@ function Episode5({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i === 0 ? pink : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
-        <OwlSay mood="excited" e="正解するまで次に進めないよ🦉">正解するまで次に進めないよ🦉</OwlSay>
+        <OwlSay mood="excited" e="{正解|せいかい}するまで{次|つぎ}に{進|すす}めないよ🦉">正解するまで次に進めないよ🦉</OwlSay>
         <MandatoryQuiz
           question="グループLINEでクラスメートの悪口が流れてきた。最も正しい行動は？"
           choices={[
@@ -8244,7 +8270,7 @@ function Episode5({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= 1 ? pink : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
-        <OwlSay mood="worried">よくある反応と正しい反応の違いを体験してみよう🦉</OwlSay>
+        <OwlSay mood="worried" e="よくある{反応|はんのう}と{正|ただ}しい{反応|はんのう}の{違|ちが}いを{体験|たいけん}してみよう🦉">よくある反応と正しい反応の違いを体験してみよう🦉</OwlSay>
         <NgFirstExperience
           situation="グループに悪口が流れてきた。みんな笑っている。"
           ngChoice={{ emoji: "👁️", label: "既読スルーして何もしない（よくある反応）" }}
@@ -8267,7 +8293,7 @@ function Episode5({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= 2 ? pink : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
-        <OwlSay mood="proud" e="今日（きょう）のしゅくだい！全部（ぜんぶ）チェックしてから次へ進もう🦉">今日の宿題！全部チェックしてから次へ進もう🦉</OwlSay>
+        <OwlSay mood="proud" e="{今日|きょう}のしゅくだい！{全部|ぜんぶ}チェックしてから{次|つぎ}へ{進|すす}もう🦉">今日の宿題！全部チェックしてから次へ進もう🦉</OwlSay>
         <TodaysHomework
           accentColor={pink}
           tasks={[
@@ -8288,7 +8314,7 @@ function Episode5({ onComplete, onExit }) {
   if (phase === "keywords") return (
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fdf2f8,#fce7f3)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
-        <OwlSay mood="excited">ネットいじめを理解するための重要ワードを覚えよう！🦉</OwlSay>
+        <OwlSay mood="excited" e="ネットいじめを{理解|りかい}するための{重要|じゅうよう}なことばをおぼえよう！🦉">ネットいじめを理解するための重要ワードを覚えよう！🦉</OwlSay>
         <KeywordPhase epKey="ep5" accentColor="#ec4899" onComplete={() => setPhase("dialogue")} />
         <ParentExpertCard epKey="ep5" accentColor="#ec4899" />
       </div>
@@ -8510,7 +8536,7 @@ function Episode6({ onComplete, onExit }) {
         ⚠️ 保護者の方へ：このエピソードは性的画像要求の被害経路を教育目的で描写します。<br />お子さんと一緒に体験することをお勧めします。
       </div>
 
-      <OwlSay mood="worried">実際の被害の70%は「信頼できると思った相手」から始まっているんだよ🦉</OwlSay>
+      <OwlSay mood="worried" e="{実際|じっさい}の{被害|ひがい}の70%は「{信頼|しんらい}できると{思|おも}った{相手|あいて}」から{始|はじ}まっているんだよ🦉">実際の被害の70%は「信頼できると思った相手」から始まっているんだよ🦉</OwlSay>
       <button onClick={() => setPhase("story")} style={{ background: `linear-gradient(135deg,${rose},${roseDark})`, border: "none", borderRadius: 50, padding: "15px 44px", fontSize: 16, fontWeight: 900, color: "#fff", cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${rose}44`, marginTop: 8 }}>体験スタート</button>
     </div>
     </EpisodeShell>
@@ -8596,7 +8622,7 @@ function Episode6({ onComplete, onExit }) {
           <h2 style={{ fontSize: 22, fontWeight: 900, color: "#166534", margin: "0 0 6px" }}>正しく断れました！</h2>
           <p style={{ fontSize: 13, color: "#15803d", lineHeight: 1.7 }}>その「断る」という判断が、あなたを守った。</p>
         </div>
-        <OwlSay mood="happy">「なんか変だな」という感覚を信じて正解！その直感はとても大切だよ🦉</OwlSay>
+        <OwlSay mood="happy" e="「なんか{変|へん}だな」という{感覚|かんかく}を{信|しん}じて{正解|せいかい}！その{直感|ちょっかん}はとても{大切|たいせつ}だよ🦉">「なんか変だな」という感覚を信じて正解！その直感はとても大切だよ🦉</OwlSay>
 
         <div style={{ background: "#fff", borderRadius: 18, padding: "18px 16px", border: "2px solid #86efac", marginBottom: 14, boxShadow: "0 6px 20px rgba(22,163,74,.12)" }}>
           <h3 style={{ fontSize: 14, fontWeight: 900, color: "#166534", margin: "0 0 12px" }}>✅ あなたが正しかった理由</h3>
@@ -8782,7 +8808,7 @@ function Episode6({ onComplete, onExit }) {
         <div style={{ textAlign: "center", marginBottom: 14 }}>
           <OwlMolly size={90} mood="happy" style={{ margin: "0 auto" }} />
         </div>
-        <OwlSay>難しい状況だからこそ、あらかじめ知っておくことが大切だよ🦉</OwlSay>
+        <OwlSay e="{難|むずか}しい{状況|じょうきょう}だからこそ、あらかじめ{知|し}っておくことが{大切|たいせつ}だよ🦉">難しい状況だからこそ、あらかじめ知っておくことが大切だよ🦉</OwlSay>
         <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 14 }}>
           {safetyCPs.slice(0, safetyStep + 1).map((s, i) => (
             <div key={i} style={{ background: `${rose}08`, border: `1px solid ${rose}20`, borderRadius: 16, padding: "14px 16px", display: "flex", gap: 14, alignItems: "flex-start", animation: "slideUp .4s ease" }}>
@@ -8818,7 +8844,7 @@ function Episode6({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i === 0 ? rose : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
-        <OwlSay mood="excited" e="正解するまで次に進めないよ🦉">正解するまで次に進めないよ🦉</OwlSay>
+        <OwlSay mood="excited" e="{正解|せいかい}するまで{次|つぎ}に{進|すす}めないよ🦉">正解するまで次に進めないよ🦉</OwlSay>
         <MandatoryQuiz
           question="ゲームで知り合った相手から「顔写真を送って」と言われた。正しい対応は？"
           choices={[
@@ -8843,7 +8869,7 @@ function Episode6({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= 1 ? rose : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
-        <OwlSay mood="scared">もし最悪の選択をしていたら何が起きていたか見てみよう🦉</OwlSay>
+        <OwlSay mood="scared" e="もし{最悪|さいあく}の{選択|せんたく}をしていたら{何|なに}が{起|お}きていたかみてみよう🦉">もし最悪の選択をしていたら何が起きていたか見てみよう🦉</OwlSay>
         <ChoiceComparison
           myChoice="断った・送らなかった"
           myResult="被害ゼロ。勇気ある判断。怪しいと感じた直感は正しかった"
@@ -8868,7 +8894,7 @@ function Episode6({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= 2 ? rose : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
-        <OwlSay mood="proud" e="今日（きょう）のしゅくだい！全部（ぜんぶ）チェックしてから次へ進もう🦉">今日の宿題！全部チェックしてから次へ進もう🦉</OwlSay>
+        <OwlSay mood="proud" e="{今日|きょう}のしゅくだい！{全部|ぜんぶ}チェックしてから{次|つぎ}へ{進|すす}もう🦉">今日の宿題！全部チェックしてから次へ進もう🦉</OwlSay>
         <TodaysHomework
           accentColor={rose}
           tasks={[
@@ -8889,7 +8915,7 @@ function Episode6({ onComplete, onExit }) {
   if (phase === "keywords") return (
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fff1f2,#ffe4e8)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
-        <OwlSay mood="worried" e="このおはなしの言葉（ことば）はとくに大切（たいせつ）。ニュースでもよく出てくるよ🦉">このエピソードの言葉は特に大切。ニュースでも頻繁に出てくるよ🦉</OwlSay>
+        <OwlSay mood="worried" e="このおはなしの{言葉|ことば}はとくに{大切|たいせつ}。ニュースでもよく{出|で}てくるよ🦉">このエピソードの言葉は特に大切。ニュースでも頻繁に出てくるよ🦉</OwlSay>
         <KeywordPhase epKey="ep6" accentColor="#f43f5e" onComplete={() => setPhase("dialogue")} />
         <ParentExpertCard epKey="ep6" accentColor="#f43f5e" />
       </div>
@@ -9168,7 +9194,7 @@ function Episode7({ onComplete, onExit }) {
       <div style={{ background: "rgba(74,222,128,.07)", border: "1px solid rgba(74,222,128,.2)", borderRadius: 14, padding: "12px 18px", maxWidth: 320, marginBottom: 22, fontSize: 12, color: "#86efac", lineHeight: 1.75, textAlign: "center" }}>
         ✅ 架空のメールアドレスとパスワードを入力してください<br />（例：test@test.com / password123）
       </div>
-      <OwlSay mood="worried">世界中で毎日何百万通も送られているフィッシングメール。あなたは見抜けるかな？🦉</OwlSay>
+      <OwlSay mood="worried" e="{世界中|せかいじゅう}で{毎日|まいにち}{何百万|なんびゃくまん}{通|つう}も{送|おく}られているフィッシングメール。あなたは{見抜|みぬ}けるかな？🦉">世界中で毎日何百万通も送られているフィッシングメール。あなたは見抜けるかな？🦉</OwlSay>
       <button onClick={() => setPhase("sms")} style={{ background: `linear-gradient(135deg,${cyan},${cyanDark})`, border: "none", borderRadius: 50, padding: "15px 44px", fontSize: 16, fontWeight: 900, color: "#fff", cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${cyan}44`, marginTop: 8 }}>体験スタート</button>
     </div>
     </EpisodeShell>
@@ -9247,7 +9273,7 @@ function Episode7({ onComplete, onExit }) {
           <h2 style={{ fontSize: 22, fontWeight: 900, color: "#166534", margin: "0 0 6px" }}>完璧な判断！</h2>
           <p style={{ fontSize: 13, color: "#15803d", lineHeight: 1.7 }}>URLを踏まなかった、それだけで被害ゼロです。</p>
         </div>
-        <OwlSay mood="happy">「公式アプリで確認する」習慣があれば、フィッシングは100%防げるよ🦉</OwlSay>
+        <OwlSay mood="happy" e="「{公式|こうしき}アプリで{確認|かくにん}する」{習慣|しゅうかん}があれば、フィッシングは100%{防|ふせ}げるよ🦉">「公式アプリで確認する」習慣があれば、フィッシングは100%防げるよ🦉</OwlSay>
         <div style={{ background: "#fff", borderRadius: 16, padding: "16px", border: "2px solid #86efac", marginBottom: 14 }}>
           <h3 style={{ fontSize: 14, fontWeight: 900, color: "#166534", margin: "0 0 10px" }}>✅ なぜ踏まなかった？理由を確認しよう</h3>
           {[
@@ -9447,7 +9473,7 @@ function Episode7({ onComplete, onExit }) {
         <div style={{ textAlign: "center", marginBottom: 14 }}>
           <OwlMolly size={90} mood="happy" style={{ margin: "0 auto" }} />
         </div>
-        <OwlSay>この5つを知っているだけで、フィッシング詐欺はほぼ完全に防げるよ🦉</OwlSay>
+        <OwlSay e="この5つを{知|し}っているだけで、フィッシング{詐欺|さぎ}はほぼ{完全|かんぜん}に{防|ふせ}げるよ🦉">この5つを知っているだけで、フィッシング詐欺はほぼ完全に防げるよ🦉</OwlSay>
         <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 14 }}>
           {safetyChecks.slice(0, safetyStep + 1).map((s, i) => (
             <div key={i} style={{ background: `${cyan}08`, border: `1px solid ${cyan}22`, borderRadius: 16, padding: "14px 16px", display: "flex", gap: 14, alignItems: "flex-start", animation: "slideUp .4s ease" }}>
@@ -9483,7 +9509,7 @@ function Episode7({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i === 0 ? cyan : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
-        <OwlSay mood="excited" e="正解するまで次に進めないよ🦉">正解するまで次に進めないよ🦉</OwlSay>
+        <OwlSay mood="excited" e="{正解|せいかい}するまで{次|つぎ}に{進|すす}めないよ🦉">正解するまで次に進めないよ🦉</OwlSay>
         <MandatoryQuiz
           question="「Amazonからアカウント停止の通知。今すぐURLから確認を」というSMSが届いた。正しい行動は？"
           choices={[
@@ -9508,7 +9534,7 @@ function Episode7({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= 1 ? cyan : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
-        <OwlSay mood="scared">焦らせる演出に負けない練習をしよう！🦉</OwlSay>
+        <OwlSay mood="scared" e="{焦|あせ}らせる{演出|えんしゅつ}に{負|ま}けない{練習|れんしゅう}をしよう！🦉">焦らせる演出に負けない練習をしよう！🦉</OwlSay>
         <TimerChoice
           prompt='「24時間以内に確認しないとアカウント永久停止」のSMSが来た。どうする？'
           seconds={10}
@@ -9533,7 +9559,7 @@ function Episode7({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= 2 ? cyan : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
-        <OwlSay mood="worried">もし最悪の選択をしていたら何が起きていたか見てみよう🦉</OwlSay>
+        <OwlSay mood="worried" e="もし{最悪|さいあく}の{選択|せんたく}をしていたら{何|なに}が{起|お}きていたかみてみよう🦉">もし最悪の選択をしていたら何が起きていたか見てみよう🦉</OwlSay>
         <ChoiceComparison
           myChoice="URLを踏まず公式アプリで確認した"
           myResult="被害ゼロ。偽サイトへのアクセスなし。この習慣1つで生涯フィッシング被害を防げる"
@@ -9558,7 +9584,7 @@ function Episode7({ onComplete, onExit }) {
             <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= 3 ? cyan : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
-        <OwlSay mood="proud" e="今日（きょう）のしゅくだい！全部（ぜんぶ）チェックしてから次へ進もう🦉">今日の宿題！全部チェックしてから次へ進もう🦉</OwlSay>
+        <OwlSay mood="proud" e="{今日|きょう}のしゅくだい！{全部|ぜんぶ}チェックしてから{次|つぎ}へ{進|すす}もう🦉">今日の宿題！全部チェックしてから次へ進もう🦉</OwlSay>
         <TodaysHomework
           accentColor={cyan}
           tasks={[
@@ -9579,7 +9605,7 @@ function Episode7({ onComplete, onExit }) {
   if (phase === "keywords") return (
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#ecfeff,#cffafe)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
-        <OwlSay mood="excited">フィッシング詐欺の専門用語を覚えて、詐欺師の手口を見抜こう！🦉</OwlSay>
+        <OwlSay mood="excited" e="フィッシング{詐欺|さぎ}の{専門|せんもん}{用語|ようご}をおぼえて、{詐欺師|さぎし}の{手口|てぐち}を{見抜|みぬ}こう！🦉">フィッシング詐欺の専門用語を覚えて、詐欺師の手口を見抜こう！🦉</OwlSay>
         <KeywordPhase epKey="ep7" accentColor="#06b6d4" onComplete={() => setPhase("dialogue")} />
         <ParentExpertCard epKey="ep7" accentColor="#06b6d4" />
       </div>
@@ -9841,7 +9867,7 @@ function RoundFeedback({ scenario, kidChoice, onNext, isLast }) {
           <div style={{ fontSize: 13, color: "rgba(255,255,255,.7)", lineHeight: 1.8 }}>{scenario.kidInsight}</div>
         </div>
 
-        <OwlSay mood={kidCorrect ? "happy" : "worried"}>
+        <OwlSay mood={kidCorrect ? "happy" : "worried"} e={kidCorrect ? "ナイス{判断|はんだん}！{実際|じっさい}にこういうメッセージが{来|き}ても{同|おな}じように{行動|こうどう}できるといいね🦉" : "{難|むずか}しかったよね。でも{今日|きょう}{体験|たいけん}したから、{次|つぎ}は{気|き}づけるよ🦉"}>
           {kidCorrect
             ? "ナイス判断！実際にこういうメッセージが来ても同じように行動できるといいね🦉"
             : "難しかったよね。でも今日体験したから、次は気づけるよ🦉"
@@ -9939,7 +9965,7 @@ function TwoDeviceMode({ onComplete }) {
         ⚠️ 体験中は「これはゲームだよ」と<br />子どもに教えないでください。<br />終わった後に必ず種明かしをします。
       </div>
 
-      <OwlSay mood="happy">「騙す側の気持ち」を知ることが、最強のリテラシー教育だよ🦉</OwlSay>
+      <OwlSay mood="happy" e="「{騙|だま}す{側|がわ}の{気持|きも}ち」を{知|し}ることが、{最強|さいきょう}のリテラシー{教育|きょういく}だよ🦉">「騙す側の気持ち」を知ることが、最強のリテラシー教育だよ🦉</OwlSay>
       <button onClick={() => setPhase("play")}
         style={{ background: `linear-gradient(135deg,${amber},#d97706)`, border: "none", borderRadius: 50, padding: "15px 44px", fontSize: 16, fontWeight: 900, color: "#fff", cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${amber}44`, marginTop: 8 }}>
         保護者から開始する
