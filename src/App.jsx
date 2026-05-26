@@ -112,6 +112,19 @@ const I18N = {
       duration: { ja: "約8分", el: "{約|やく}8{分|ふん}", en: "About 8 min", ko: "약 8분", zh: "约8分钟" },
       audience: { ja: "中学生〜・親子で", el: "{中学生|ちゅうがくせい}〜・{親子|おやこ}で", en: "Ages 12+ / With parents", ko: "중학생~ · 부모와 함께", zh: "初中~ · 亲子" },
     },
+    ep32: {
+      tag: { ja: "EPISODE 03-2 · 断る練習", el: "EPISODE 03-2 · {断|ことわ}る{練習|れんしゅう}", en: "EPISODE 03-2 · Refusal Practice", ko: "EPISODE 03-2 · 거절 연습", zh: "第03-2话 · 拒绝练习" },
+      title: { ja: "その「おねがい」、だいじょうぶ？", el: "その「おねがい」、だいじょうぶ？", en: "Is That \"Request\" OK?", ko: "그 \"부탁\", 괜찮은 건가?", zh: "那个\"请求\"，没问题吗？" },
+      desc: {
+        ja: "ゲームで知り合った相手から、少しずつ個人情報を求められる。断れる？",
+        el: "ゲームで{知|し}り{合|あ}った{相手|あいて}から、{少|すこ}しずつ{個人情報|こじんじょうほう}を{求|もと}められる。{断|ことわ}れる？",
+        en: "Someone you met in a game asks for more and more personal info. Can you say no?",
+        ko: "게임에서 만난 상대가 조금씩 개인정보를 요구한다. 거절할 수 있어?",
+        zh: "游戏中认识的人一点点要求个人信息，你能拒绝吗？",
+      },
+      duration: { ja: "約5分", el: "{約|やく}5{分|ふん}", en: "About 5 min", ko: "약 5분", zh: "约5分钟" },
+      audience: { ja: "小学生〜・親子で", el: "{小学生|しょうがくせい}〜・{親子|おやこ}で", en: "Ages 8+ / With parents", ko: "초등학생~ · 부모와 함께", zh: "小学生~ · 亲子" },
+    },
     ep4: {
       tag: { ja: "EPISODE 04 · なりすまし体験", el: "EPISODE 04 · なりすまし{体験|たいけん}", en: "EPISODE 04 · Impersonation", ko: "EPISODE 04 · 사칭 체험", zh: "第04话 · 假冒身份" },
       title: { ja: "友達のふりをした罠", el: "{友達|ともだち}のふりをした{罠|わな}", en: "The Friend Who Wasn't", ko: "친구를 가장한 함정", zh: "假装是朋友的陷阱" },
@@ -5641,6 +5654,7 @@ function HomeScreen({ onNavigate, progress }) {
       accent: "#dc2626", bg1: "#1a0505", bg2: "#0f0303", done: progress.ep12, locked: !ep12Unlocked },
     { id: "ep2", tag: t("modes.ep2.tag"), title: t("modes.ep2.title"), icon: "🔎", desc: t("modes.ep2.desc"), duration: t("modes.ep2.duration"), audience: t("modes.ep2.audience"), accent: "#7c3aed", bg1: "#0f0a1e", bg2: "#07041a", done: progress.ep2 },
     { id: "ep3", tag: t("modes.ep3.tag"), title: t("modes.ep3.title"), icon: "⚠️", desc: t("modes.ep3.desc"), duration: t("modes.ep3.duration"), audience: t("modes.ep3.audience"), accent: "#16a34a", bg1: "#0a1a0a", bg2: "#041004", done: progress.ep3 },
+    { id: "ep32", tag: t("modes.ep32.tag"), title: t("modes.ep32.title"), icon: "💬", desc: t("modes.ep32.desc"), duration: t("modes.ep32.duration"), audience: t("modes.ep32.audience"), accent: "#06c755", bg1: "#041210", bg2: "#020c08", done: progress.ep32 },
     { id: "ep4", tag: t("modes.ep4.tag"), title: t("modes.ep4.title"), icon: "🔐", desc: t("modes.ep4.desc"), duration: t("modes.ep4.duration"), audience: t("modes.ep4.audience"), accent: "#0ea5e9", bg1: "#031220", bg2: "#020c18", done: progress.ep4 },
     { id: "ep5",
       tag: ageMode === "elementary" ? "EPISODE 05 · {傍観者|ぼうかんしゃ}{体験|たいけん}" : "EPISODE 05 · 傍観者体験",
@@ -6868,23 +6882,146 @@ const FAKE_POSTS = [
     accountIcon: "🏛️",
     accountColor: "#1d4ed8",
     verified: true,
-    time: "45分前",
-    text: "【速報】内閣府は15日、2025年度の実質GDP成長率が前年比プラス1.2%になったと発表しました。輸出の回復が主な要因としています。詳細はNHKニュースウェブでご覧ください。",
-    likes: 4200, rts: 1800, replies: 890,
+    time: "32分前",
+    text: "【注意】警察庁は14日、SNS型詐欺の被害が今年に入り前年比2倍以上に急増していると発表しました。「フォロワーを増やせる」「副業で月10万円」などの勧誘DM・投稿に注意するよう呼びかけています。▶詳細はNHKウェブニュースへ",
+    likes: 3200, rts: 1400, replies: 280,
     photoBg: "linear-gradient(135deg,#0a1628,#0d2142)",
-    photoIcon: "📊",
+    photoIcon: "🛡️",
     dangerPoints: [
-      { x: 18, y: 22, emoji: "✅", label: "認証済みアカウント", elLabel: "{認証|にんしょう}{済|す}みアカウント", info: "青い認証バッジ（✓）がついている。これはプラットフォームが本物であることを確認したアカウント。", elInfo: "{青|あお}い{認証|にんしょう}バッジ（✓）がついている。これはプラットフォームが{本物|ほんもの}であることを{確認|かくにん}したアカウント。" },
-      { x: 75, y: 22, emoji: "📅", label: "具体的な日付", elLabel: "{具体的|ぐたいてき}な{日付|ひづけ}", info: "「15日」と具体的な日付が明記されている。信頼できる情報は「いつ」が明確。", elInfo: "「15{日|にち}」と{具体的|ぐたいてき}な{日付|ひづけ}が{明記|めいき}されている。{信頼|しんらい}できる{情報|じょうほう}は「いつ」が{明確|めいかく}。" },
-      { x: 50, y: 72, emoji: "🔗", label: "公式サイトへのリンク", elLabel: "{公式|こうしき}サイトへのリンク", info: "「NHKニュースウェブで詳細を」と一次情報源への誘導がある。信頼できる情報源は詳細確認手段を提示する。", elInfo: "「NHKニュースウェブで{詳細|しょうさい}を」と{一次情報源|いちじじょうほうげん}への{誘導|ゆうどう}がある。{信頼|しんらい}できる{情報源|じょうほうげん}は{詳細|しょうさい}{確認|かくにん}{手段|しゅだん}を{提示|ていじ}する。" },
+      { x: 18, y: 22, emoji: "✅", label: "認証済みアカウント", elLabel: "{認証|にんしょう}{済|す}みアカウント", info: "青い認証バッジ（✓）がついている。これはプラットフォームが本物の公式アカウントと確認したもの。偽物のNHKアカウントには✓がない。", elInfo: "{青|あお}い{認証|にんしょう}バッジ（✓）がついている。これはプラットフォームが{本物|ほんもの}の{公式|こうしき}アカウントと{確認|かくにん}したもの。{偽物|にせもの}のNHKアカウントには✓がない。" },
+      { x: 75, y: 22, emoji: "🏛️", label: "発表機関が明確", elLabel: "{発表|はっぴょう}{機関|きかん}が{明確|めいかく}", info: "「警察庁は14日」と具体的な公的機関と日付が明記されている。信頼できる情報は「誰が・いつ」が明確。", elInfo: "「{警察庁|けいさつちょう}は14{日|にち}」と{具体的|ぐたいてき}な{公的|こうてき}{機関|きかん}と{日付|ひづけ}が{明記|めいき}されている。" },
+      { x: 50, y: 70, emoji: "🔗", label: "一次情報源への誘導", elLabel: "{一次|いちじ}{情報源|じょうほうげん}への{誘導|ゆうどう}", info: "「NHKウェブニュースへ」と一次情報源の確認手段を示している。本物の情報発信は必ず確認先を提示する。", elInfo: "「NHKウェブニュースへ」と{一次|いちじ}{情報源|じょうほうげん}の{確認|かくにん}{手段|しゅだん}を{示|しめ}している。" },
     ],
-    whyFake: "これは本物です。認証バッジ・具体的な発表機関・一次情報源へのリンクが揃っている。",
-    elWhyFake: "これは{本物|ほんもの}です。{認証|にんしょう}バッジ・{具体的|ぐたいてき}な{発表|はっぴょう}{機関|きかん}・{一次|いちじ}{情報源|じょうほうげん}へのリンクが{揃|そろ}っている。",
-    checkMethod: "✓ このニュースは信頼できます。NHKニュースの公式アカウントからの正確な情報です。",
-    elCheckMethod: "✓ このニュースは{信頼|しんらい}できます。NHKニュースの{公式|こうしき}アカウントからの{正確|せいかく}な{情報|じょうほう}です。",
+    whyFake: "これは本物です。①認証バッジ ②具体的な発表機関（警察庁）と日付 ③一次情報源への誘導 — 信頼できる3条件が揃っています。",
+    elWhyFake: "これは{本物|ほんもの}です。①{認証|にんしょう}バッジ ②{具体的|ぐたいてき}な{発表|はっぴょう}{機関|きかん}（{警察庁|けいさつちょう}）と{日付|ひづけ} ③{一次|いちじ}{情報源|じょうほうげん}への{誘導|ゆうどう} — {信頼|しんらい}できる3{条件|じょうけん}が{揃|そろ}っています。",
+    checkMethod: "✓ このニュースは信頼できます。NHK公式アカウント（✓）から警察庁発表を正確に伝える本物のニュースです。",
+    elCheckMethod: "✓ このニュースは{信頼|しんらい}できます。NHK{公式|こうしき}アカウント（✓）から{警察庁|けいさつちょう}{発表|はっぴょう}を{正確|せいかく}に{伝|つた}える{本物|ほんもの}のニュースです。",
     isReal: true,
   },
 ];
+
+// ── 拡散パニックアニメーション ──
+function SpreadAnimPage({ ageMode, spreadData, spreadStep, setSpreadStep, onComplete }) {
+  const [counter, setCounter] = useState(0);
+  const [showReveal, setShowReveal] = useState(false);
+  const targetCount = spreadData[spreadStep]?.rts || 0;
+
+  useEffect(() => {
+    if (targetCount === 0) { setCounter(0); return; }
+    let current = counter;
+    const increment = Math.ceil(targetCount / 40);
+    const interval = setInterval(() => {
+      current += increment;
+      if (current >= targetCount) { setCounter(targetCount); clearInterval(interval); }
+      else setCounter(current);
+    }, 30);
+    return () => clearInterval(interval);
+  }, [spreadStep, targetCount]);
+
+  const currentData = spreadData[spreadStep];
+  const isLastStep = spreadStep >= spreadData.length - 1;
+  const isPanic = spreadStep >= 3;
+
+  return (
+    <div style={{ minHeight: "100vh", background: isPanic ? "radial-gradient(ellipse at center,#1a0000,#000)" : "linear-gradient(180deg,#0f0a2e,#07041a)", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff", display: "flex", flexDirection: "column", padding: "20px 16px", position: "relative", overflow: "hidden" }}>
+      {isPanic && <div style={{ position: "absolute", inset: 0, backgroundImage: "repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(255,0,0,.015) 3px,rgba(255,0,0,.015) 4px)", pointerEvents: "none" }} />}
+
+      <div style={{ maxWidth: 440, margin: "0 auto", width: "100%", flex: 1 }}>
+        {/* タイトル */}
+        <div style={{ textAlign: "center", marginBottom: 20, padding: "10px 0" }}>
+          <div style={{ fontSize: 9, fontFamily: "'DotGothic16',monospace", color: isPanic ? "#ef4444" : "#a78bfa", letterSpacing: ".3em", marginBottom: 6 }}>📱 RETWEET CHAIN SIMULATION</div>
+          <h2 style={{ fontSize: 18, fontWeight: 900, color: "#fff", margin: 0, lineHeight: 1.3 }}>
+            <RubyText text={ageMode === "elementary" ? "デマが{世界中|せかいじゅう}に{広|ひろ}がるまで" : "デマが世界中に広がるまで"} />
+          </h2>
+        </div>
+
+        {/* RTオリジナル投稿 */}
+        <div style={{ background: "#0d1117", borderRadius: 14, padding: "12px 14px", marginBottom: 14, border: "1px solid rgba(239,68,68,.3)", position: "relative", overflow: "hidden" }}>
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: "linear-gradient(90deg,#ef4444,#f97316)" }} />
+          <div style={{ fontSize: 10, color: "#f87171", marginBottom: 6, display: "flex", alignItems: "center", gap: 4 }}>
+            <span>🔁</span> <RubyText text={ageMode === "elementary" ? "あなたがリツイートした{投稿|とうこう}" : "あなたがリツイートした投稿"} />
+          </div>
+          <div style={{ display: "flex", gap: 8, marginBottom: 6 }}>
+            <div style={{ width: 28, height: 28, borderRadius: "50%", background: "rgba(239,68,68,.2)", border: "1px solid rgba(239,68,68,.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, flexShrink: 0 }}>⚡</div>
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "#fff" }}>緊急速報_bot</div>
+              <div style={{ fontSize: 9, color: "rgba(255,255,255,.35)" }}>認証バッジなし · フォロワー 1,842</div>
+            </div>
+          </div>
+          <p style={{ fontSize: 12, color: "rgba(255,255,255,.8)", lineHeight: 1.6, margin: 0 }}>【緊急】○○市で大規模地震発生！今すぐ高台へ避難！#拡散希望</p>
+          <div style={{ background: "rgba(239,68,68,.15)", border: "1px solid rgba(239,68,68,.3)", borderRadius: 8, padding: "4px 10px", marginTop: 8, fontSize: 9, color: "#fca5a5", display: "inline-block", animation: "blink 1.5s infinite" }}>
+            ⚠️ <RubyText text={ageMode === "elementary" ? "{実際|じっさい}は{別|べつ}の{国|くに}の{古|ふる}い{写真|しゃしん}でした" : "実際は別の国の古い写真でした"} />
+          </div>
+        </div>
+
+        {/* メインカウンター */}
+        <div style={{ background: isPanic ? "rgba(239,68,68,.12)" : "rgba(167,139,250,.08)", border: `1px solid ${isPanic ? "rgba(239,68,68,.4)" : "rgba(167,139,250,.3)"}`, borderRadius: 18, padding: "22px 16px", marginBottom: 14, textAlign: "center", position: "relative", overflow: "hidden" }}>
+          {isPanic && <div style={{ position: "absolute", inset: 0, animation: "redFlash 1s infinite", pointerEvents: "none" }} />}
+          <div style={{ fontSize: 11, color: isPanic ? "#ef4444" : "#a78bfa", fontFamily: "'DotGothic16',monospace", letterSpacing: ".2em", marginBottom: 6 }}>{currentData?.time}</div>
+          <div style={{ fontSize: isPanic ? 52 : 42, fontWeight: 900, color: isPanic ? "#ef4444" : "#c4b5fd", fontFamily: "'DotGothic16',monospace", animation: isPanic ? "shake .2s infinite" : "none", lineHeight: 1 }}>
+            {counter > 0 ? counter.toLocaleString() : "—"}
+          </div>
+          <div style={{ fontSize: 12, color: "rgba(255,255,255,.5)", marginTop: 4 }}>
+            <RubyText text={ageMode === "elementary" ? "🔁 リツイート{件数|けんすう}" : "🔁 リツイート件数"} />
+          </div>
+          <div style={{ marginTop: 10, fontSize: 14, fontWeight: 900, color: isPanic ? "#fca5a5" : "#c4b5fd" }}>
+            <RubyText text={ageMode === "elementary" ? currentData?.label : currentData?.label} />
+          </div>
+        </div>
+
+        {/* タイムライン */}
+        <div style={{ background: "rgba(255,255,255,.03)", border: "1px solid rgba(255,255,255,.06)", borderRadius: 14, padding: "12px 14px", marginBottom: 14 }}>
+          {spreadData.slice(0, spreadStep + 1).map((d, i) => (
+            <div key={i} style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: i < spreadStep ? 10 : 0, animation: "slideUp .3s ease" }}>
+              <div style={{ width: 52, flexShrink: 0, fontSize: 10, color: "rgba(255,255,255,.35)", fontFamily: "'DotGothic16',monospace" }}>{d.time}</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ height: 6, background: "rgba(255,255,255,.05)", borderRadius: 3, overflow: "hidden", marginBottom: 3 }}>
+                  <div style={{ height: "100%", width: i === 4 ? "0%" : `${Math.min((d.rts / 92000) * 100, 100)}%`, background: i >= 3 ? "#ef4444" : i >= 2 ? "#f97316" : "#a78bfa", borderRadius: 3, transition: "width .8s ease" }} />
+                </div>
+                <div style={{ fontSize: 10, color: i >= 3 ? "#fca5a5" : i === spreadStep ? "#e0d9ff" : "rgba(255,255,255,.4)" }}>
+                  {d.rts > 0 ? `RT ${d.rts.toLocaleString()}件 — ` : "— "}{d.label}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* 最終段階：デマ判明 */}
+        {isLastStep && !showReveal && (
+          <button onClick={() => setShowReveal(true)}
+            style={{ width: "100%", padding: 14, background: "rgba(34,197,94,.12)", border: "1.5px solid rgba(34,197,94,.4)", borderRadius: 14, color: "#86efac", fontSize: 14, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", marginBottom: 12, animation: "slideUp .5s ease" }}>
+            <RubyText text={ageMode === "elementary" ? "📰 {翌日|よくじつ}…{続|つづ}きを{見|み}る →" : "📰 翌日…続きを見る →"} />
+          </button>
+        )}
+
+        {showReveal && (
+          <div style={{ background: "rgba(34,197,94,.08)", border: "1px solid rgba(34,197,94,.3)", borderRadius: 16, padding: "16px", marginBottom: 14, animation: "slideUp .5s ease" }}>
+            <div style={{ fontSize: 24, textAlign: "center", marginBottom: 8 }}>😱</div>
+            <div style={{ fontSize: 14, fontWeight: 900, color: "#86efac", textAlign: "center", marginBottom: 8 }}>
+              <RubyText text={ageMode === "elementary" ? "「{実|じつ}はデマでした」{訂正|ていせい}{記事|きじ}が{出|で}ました" : "「実はデマでした」訂正記事が出ました"} />
+            </div>
+            <p style={{ fontSize: 12, color: "rgba(255,255,255,.65)", lineHeight: 1.75, margin: "0 0 12px", textAlign: "center" }}>
+              <RubyText text={ageMode === "elementary"
+                ? "でも…92,100{件|けん}のRTは{消|き}えません。{拡散|かくさん}した{人|ひと}の{名前|なまえ}も{記録|きろく}に{残|のこ}ります。"
+                : "でも…92,100件のRTは消えません。拡散した人の名前も記録に残ります。"} />
+            </p>
+            <button onClick={onComplete}
+              style={{ width: "100%", padding: 14, background: "linear-gradient(135deg,#7c3aed,#4f46e5)", border: "none", borderRadius: 14, color: "#fff", fontSize: 14, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
+              <RubyText text={ageMode === "elementary" ? "フェイクの{見抜|みぬ}き{方|かた}を{学|まな}ぶ →" : "フェイクの見抜き方を学ぶ →"} />
+            </button>
+          </div>
+        )}
+
+        {!isLastStep && (
+          <button onClick={() => setSpreadStep(s => s + 1)}
+            style={{ width: "100%", padding: 14, background: "rgba(239,68,68,.15)", border: "1px solid rgba(239,68,68,.35)", borderRadius: 14, color: "#fca5a5", fontSize: 14, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", animation: "pulse 2s infinite" }}>
+            <RubyText text={ageMode === "elementary" ? "{続|つづ}きを{見|み}る →" : "続きを見る →"} />
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
 
 function Episode2({ onComplete, onExit }) {
   const ageMode = useAgeMode();
@@ -6907,6 +7044,7 @@ function Episode2({ onComplete, onExit }) {
   const handleVerdict = (v) => {
     setVerdicts(prev => ({ ...prev, [post.id]: v }));
     setShowResult(true);
+    if (v === post.verdict) feedback("correct"); else feedback("wrong");
   };
 
   const handlePointTap = (pt) => {
@@ -6981,6 +7119,47 @@ function Episode2({ onComplete, onExit }) {
     </EpisodeShell>
   );
 
+  // 各投稿のビジュアルイメージ（スクリーンショット風）
+  const POST_IMAGES = {
+    1: (
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", gap: 6, background: "linear-gradient(180deg,#1a0000,#3d0000)" }}>
+        <div style={{ animation: "shake .3s infinite", fontSize: 32 }}>🚨</div>
+        <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 18, color: "#ff4343", fontWeight: 900, letterSpacing: ".1em", animation: "blink .6s infinite" }}>緊急地震速報</div>
+        <div style={{ fontSize: 11, color: "#fca5a5", textAlign: "center", lineHeight: 1.5 }}>○○市 / マグニチュード7.8<br />震度6強</div>
+        <div style={{ background: "rgba(255,67,67,.2)", border: "1px solid rgba(255,67,67,.5)", borderRadius: 8, padding: "4px 12px", fontSize: 10, color: "#fca5a5", animation: "pulse 1s infinite" }}>#拡散希望 #緊急</div>
+      </div>
+    ),
+    2: (
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", gap: 6, background: "linear-gradient(180deg,#1a0a00,#3d2000)" }}>
+        <div style={{ fontSize: 28 }}>📰</div>
+        <div style={{ background: "#ff8c00", color: "#fff", padding: "2px 10px", fontSize: 9, fontWeight: 900, borderRadius: 4, letterSpacing: ".05em" }}>独自入手情報</div>
+        <div style={{ fontSize: 14, color: "#fff", fontWeight: 900, textAlign: "center", lineHeight: 1.4 }}>有名芸能人○○<br />詐欺で逮捕か!?</div>
+        <div style={{ fontSize: 10, color: "rgba(255,255,255,.4)" }}>関係者「口を閉ざす」</div>
+        <div style={{ fontSize: 9, color: "rgba(255,140,0,.6)", marginTop: 2 }}>※出典・認証バッジなし</div>
+      </div>
+    ),
+    3: (
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", gap: 6, background: "linear-gradient(180deg,#0a0a2e,#1a1a4e)" }}>
+        <div style={{ fontSize: 30 }}>🌍</div>
+        <div style={{ fontSize: 13, color: "#fff", fontWeight: 900, textAlign: "center", lineHeight: 1.5 }}>子どもたちが<br />危険にさらされています</div>
+        <div style={{ background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.2)", borderRadius: 8, padding: "4px 10px", fontSize: 9, color: "rgba(255,255,255,.5)", textAlign: "center" }}>📷 写真の日時・場所は？<br />出典が記載されていない</div>
+        <div style={{ fontSize: 9, color: "#f87171", animation: "blink 1.2s infinite" }}>今すぐシェアして！</div>
+      </div>
+    ),
+    4: (
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", gap: 6, background: "linear-gradient(180deg,#0a1628,#0d2142)" }}>
+        <div style={{ background: "#1d4ed8", borderRadius: 6, padding: "3px 10px", fontSize: 9, fontWeight: 900, color: "#fff", letterSpacing: ".05em" }}>NHK NEWS WEB</div>
+        <div style={{ fontSize: 22, color: "#fff", fontWeight: 900, textAlign: "center", lineHeight: 1.4 }}>SNS詐欺<br />前年比 <span style={{ color: "#60a5fa" }}>2倍以上</span></div>
+        <div style={{ display: "flex", gap: 4, alignItems: "flex-end", height: 36 }}>
+          {[30, 50, 72, 100].map((h, i) => (
+            <div key={i} style={{ width: 12, height: `${h}%`, background: i === 3 ? "#ef4444" : "#3b82f6", borderRadius: "2px 2px 0 0", opacity: .8 }} />
+          ))}
+        </div>
+        <div style={{ fontSize: 9, color: "rgba(255,255,255,.5)" }}>警察庁発表 / 2025年</div>
+      </div>
+    ),
+  };
+
   // ── Swipe ── （⑤ SwipeJudgeミニゲーム）
   if (phase === "swipe") return (
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0f0a2e,#07041a)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
@@ -7035,8 +7214,8 @@ function Episode2({ onComplete, onExit }) {
           <p style={{ fontSize: 14, color: "rgba(255,255,255,.9)", lineHeight: 1.75, margin: "0 0 12px" }}>{post.text}</p>
 
           {/* Photo */}
-          <div style={{ position: "relative", background: post.photoBg, borderRadius: 12, height: 120, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12, overflow: "hidden" }}>
-            <div style={{ fontSize: 48, opacity: 0.4 }}>{post.photoIcon}</div>
+          <div style={{ position: "relative", background: post.photoBg, borderRadius: 12, height: 140, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12, overflow: "hidden" }}>
+            {POST_IMAGES[post.id] || <div style={{ fontSize: 48, opacity: 0.4 }}>{post.photoIcon}</div>}
             {/* Scan line */}
             <div style={{ position: "absolute", left: 0, right: 0, height: 2, background: "linear-gradient(90deg,transparent,#a78bfa,transparent)", animation: "scanDown 3s linear infinite", opacity: 0.5 }} />
             {/* Tappable danger points — shown only after verdict */}
@@ -7069,7 +7248,7 @@ function Episode2({ onComplete, onExit }) {
             </button>
             <button onClick={() => handleVerdict("fake")}
               style={{ padding: "16px 12px", background: "rgba(239,68,68,.1)", border: "2px solid rgba(239,68,68,.4)", borderRadius: 14, color: "#fca5a5", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", transition: "all .15s" }}>
-              ❌ フェイク
+              <RubyText text={ageMode === "elementary" ? "❌ {偽物|にせもの}" : "❌ 偽物"} />
             </button>
           </div>
         )}
@@ -7079,9 +7258,14 @@ function Episode2({ onComplete, onExit }) {
           <div style={{ animation: "slideUp .4s ease" }}>
             {/* Correct/Wrong banner */}
             <div style={{ background: isCorrect ? "rgba(34,197,94,.12)" : "rgba(239,68,68,.12)", border: `2px solid ${isCorrect ? "#22c55e" : "#ef4444"}`, borderRadius: 16, padding: "14px 16px", marginBottom: 12, textAlign: "center" }}>
-              <div style={{ fontSize: 28, marginBottom: 6 }}>{isCorrect ? "🎯" : "😅"}</div>
-              <div style={{ fontSize: 16, fontWeight: 900, color: isCorrect ? "#86efac" : "#fca5a5", marginBottom: 6 }}>
-                <RubyText text={isCorrect ? (ageMode === "elementary" ? "{正解|せいかい}！その{通|とお}り！" : "正解！その通り！") : (ageMode === "elementary" ? `{不正解|ふせいかい}。これは${post.verdict === "fake" ? "フェイク" : "{本物|ほんもの}"}でした` : `不正解。これは${post.verdict === "fake" ? "フェイク" : "本物"}でした`)} />
+              <div style={{ fontSize: 36, marginBottom: 6, animation: isCorrect ? "celebrate .6s ease" : "shake .4s ease" }}>{isCorrect ? "🎉" : "😢"}</div>
+              <div style={{ fontSize: 22, fontWeight: 900, color: isCorrect ? "#86efac" : "#fca5a5", marginBottom: 6 }}>
+                {isCorrect ? (ageMode === "elementary" ? <RubyText text="{正解|せいかい}！" /> : "正解！") : (ageMode === "elementary" ? <RubyText text="はずれ…" /> : "はずれ…")}
+              </div>
+              <div style={{ fontSize: 12, color: isCorrect ? "#86efac" : "#fca5a5", marginBottom: 4, fontWeight: 700 }}>
+                <RubyText text={ageMode === "elementary"
+                  ? (post.verdict === "fake" ? "この{投稿|とうこう}は「{偽物|にせもの}」でした" : "この{投稿|とうこう}は「{本物|ほんもの}」でした")
+                  : (post.verdict === "fake" ? "この投稿は「偽物」でした" : "この投稿は「本物」でした")} />
               </div>
               <div style={{ fontSize: 12, color: "rgba(255,255,255,.6)", lineHeight: 1.7 }}><RubyText text={ageMode === "elementary" ? (post.elWhyFake || post.whyFake) : post.whyFake} /></div>
             </div>
@@ -7123,16 +7307,17 @@ function Episode2({ onComplete, onExit }) {
     </div>
   );
 
-  // ── Spread simulation ──
+  // ── Spread（スコア表示） ──
   if (phase === "spread") return (
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0f0a2e,#07041a)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 16 }}>
-          <div style={{ fontSize: 48, marginBottom: 8 }}>📊</div>
+          <div style={{ fontSize: 56, marginBottom: 8 }}>📊</div>
           <h2 style={{ fontSize: 22, fontWeight: 900, color: "#fff", margin: "0 0 4px" }}><RubyText text={ageMode === "elementary" ? "クイック{鑑定|かんてい}{結果|けっか}" : "クイック鑑定結果"} /></h2>
-          <div style={{ fontSize: 28, fontWeight: 900, color: swipeScore.correct >= 3 ? "#86efac" : "#fca5a5", fontFamily: "'DotGothic16',monospace" }}>
-            {swipeScore.correct} / {swipeScore.total || FAKE_POSTS.length} <RubyText text={ageMode === "elementary" ? "{正解|せいかい}" : "正解"} />
+          <div style={{ fontSize: 36, fontWeight: 900, color: swipeScore.correct >= 3 ? "#86efac" : "#fca5a5", fontFamily: "'DotGothic16',monospace", animation: "popIn .5s ease" }}>
+            {swipeScore.correct} / {swipeScore.total || FAKE_POSTS.length}
           </div>
+          <div style={{ fontSize: 14, color: "rgba(255,255,255,.5)", marginTop: 4 }}><RubyText text={ageMode === "elementary" ? "{正解|せいかい}" : "正解"} /></div>
         </div>
 
         <OwlSay mood={swipeScore.correct >= 3 ? "happy" : "worried"} e={swipeScore.correct >= 3 ? "すごい！{情報|じょうほう}{鑑定|かんてい}しの{才能|さいのう}があるね🦉" : "フェイクニュースはたくみだね…{次|つぎ}は{見抜|みぬ}けるようになろう🦉"}>
@@ -7150,138 +7335,167 @@ function Episode2({ onComplete, onExit }) {
           </div>
         )}
 
-        {/* ── ビジュアル：もしRTしていたら（SNS投稿モック） ── */}
-        <div style={{ marginBottom: 16 }}>
-          <div style={{ fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,.5)", marginBottom: 10, letterSpacing: ".05em" }}>
-            <RubyText text={ageMode === "elementary" ? "📱 もしこの{投稿|とうこう}をRTしていたら…" : "📱 もしこの投稿をRTしていたら…"} />
-          </div>
-
-          {/* あなたのRT */}
-          <div style={{ background: "#0d1117", borderRadius: 16, padding: "12px 14px", marginBottom: 8, border: "1px solid rgba(239,68,68,.3)", position: "relative", overflow: "hidden" }}>
-            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: "linear-gradient(90deg,#ef4444,#f97316)" }} />
-            {/* RT badge */}
-            <div style={{ fontSize: 10, color: "#f87171", marginBottom: 8, display: "flex", alignItems: "center", gap: 4 }}>
-              <span>🔁</span> <RubyText text={ageMode === "elementary" ? "あなたがリツイートしました" : "あなたがリツイートしました"} />
-            </div>
-            {/* Original post */}
-            <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
-              <div style={{ width: 32, height: 32, borderRadius: "50%", background: "rgba(239,68,68,.2)", border: "1px solid rgba(239,68,68,.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, flexShrink: 0 }}>⚡</div>
-              <div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: "#fff" }}>緊急速報_bot</div>
-                <div style={{ fontSize: 10, color: "rgba(255,255,255,.35)" }}>フォロワー 1,842 · 2分前</div>
-              </div>
-            </div>
-            <p style={{ fontSize: 13, color: "rgba(255,255,255,.85)", lineHeight: 1.7, margin: "0 0 10px" }}>
-              【緊急】○○市で大規模地震発生！今すぐ高台へ避難！ライフライン完全停止中 #拡散希望 #緊急
-            </p>
-            {/* Fake photo */}
-            <div style={{ background: "linear-gradient(135deg,#1a0a00,#2a1400)", borderRadius: 10, height: 90, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 8, position: "relative", overflow: "hidden", border: "1px solid rgba(239,68,68,.2)" }}>
-              <div style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 32, marginBottom: 4 }}>🏚️</div>
-                <div style={{ fontSize: 10, color: "#f87171", fontWeight: 700 }}><RubyText text={ageMode === "elementary" ? "※ {実際|じっさい}は{別|べつ}の{国|くに}の{古|ふる}い{写真|しゃしん}でした" : "※ 実際は別の国の古い写真でした"} /></div>
-                <div style={{ fontSize: 9, color: "rgba(255,255,255,.35)", marginTop: 2 }}><RubyText text={ageMode === "elementary" ? "Googleレンズで{逆検索|ぎゃくけんさく}すると{判明|はんめい}" : "Googleレンズで逆検索すると判明"} /></div>
-              </div>
-              {/* Overlay warning */}
-              <div style={{ position: "absolute", top: 6, right: 6, background: "rgba(239,68,68,.9)", borderRadius: 6, padding: "2px 8px", fontSize: 9, color: "#fff", fontWeight: 700 }}><RubyText text={ageMode === "elementary" ? "⚠️ デマ{画像|がぞう}" : "⚠️ デマ画像"} /></div>
-            </div>
-            <div style={{ display: "flex", gap: 14, fontSize: 11, color: "rgba(255,255,255,.4)" }}>
-              <span>❤️ 48,200</span><span style={{ color: "#f87171", fontWeight: 700 }}>🔁 92,100</span><span>💬 3,400</span>
-            </div>
-          </div>
-
-          {/* Retweet chain */}
-          <div style={{ display: "flex", gap: 8, alignItems: "flex-start", padding: "8px 0 0 16px" }}>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
-              <div style={{ width: 1, height: 16, background: "rgba(239,68,68,.3)" }} />
-              <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#ef4444" }} />
-            </div>
-            <div style={{ fontSize: 11, color: "#f87171" }}>
-              <RubyText text={ageMode === "elementary" ? "あなたのフォロワー240{人|にん}{全員|ぜんいん}に{届|とど}きました" : "あなたのフォロワー240人全員に届きました"} />
-            </div>
-          </div>
-          <div style={{ display: "flex", gap: 8, alignItems: "flex-start", padding: "4px 0 0 16px" }}>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
-              <div style={{ width: 1, height: 16, background: "rgba(239,68,68,.2)" }} />
-              <div style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(239,68,68,.5)" }} />
-            </div>
-            <div style={{ fontSize: 11, color: "rgba(255,255,255,.45)" }}>
-              <RubyText text={ageMode === "elementary" ? "さらにそのフォロワーへ…デマは{止|と}まらない" : "さらにそのフォロワーへ…デマは止まらない"} />
-            </div>
-          </div>
-        </div>
-
-        {/* Spread simulation */}
-        <div style={{ background: "rgba(239,68,68,.06)", border: "1px solid rgba(239,68,68,.25)", borderRadius: 18, padding: "18px 16px", marginBottom: 16 }}>
-          <div style={{ fontSize: 13, fontWeight: 900, color: "#fca5a5", marginBottom: 14 }}>
-            <RubyText text={ageMode === "elementary" ? "⚠️ 1{件|けん}のRTが{引|ひ}き{起|お}こす{連鎖|れんさ}" : "⚠️ 1件のRTが引き起こす連鎖"} />
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {spreadData.slice(0, spreadStep + 1).map((d, i) => (
-              <div key={i} style={{ display: "flex", gap: 12, alignItems: "center", animation: "slideUp .3s ease" }}>
-                <div style={{ width: 60, flexShrink: 0, fontSize: 11, color: "rgba(255,255,255,.4)", fontFamily: "'DotGothic16',monospace" }}>{d.time}</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ height: 8, background: "rgba(255,255,255,.06)", borderRadius: 4, overflow: "hidden" }}>
-                    <div style={{ height: "100%", width: i === 4 ? "0%" : `${Math.min((d.rts / 92000) * 100, 100)}%`, background: i >= 3 ? "#ef4444" : i >= 2 ? "#f97316" : "#a78bfa", borderRadius: 4, transition: "width .8s ease" }} />
-                  </div>
-                  <div style={{ fontSize: 11, color: i >= 3 ? "#fca5a5" : "rgba(255,255,255,.55)", marginTop: 3 }}>
-                    {d.rts > 0 ? `RT ${d.rts.toLocaleString()}件` : "−"} {d.label}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          {spreadStep < spreadData.length - 1 && (
-            <button onClick={() => setSpreadStep(s => s + 1)}
-              style={{ width: "100%", marginTop: 14, padding: "10px", background: "rgba(239,68,68,.15)", border: "1px solid rgba(239,68,68,.3)", borderRadius: 12, color: "#fca5a5", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
-              <RubyText text={ageMode === "elementary" ? "{続|つづ}きを{見|み}る →" : "続きを見る →"} />
-            </button>
-          )}
-        </div>
-
-        {spreadStep >= spreadData.length - 1 && (
-          <button onClick={() => setPhase("checklist")}
-            style={{ width: "100%", padding: 15, background: "linear-gradient(135deg,#7c3aed,#4f46e5)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", animation: "slideUp .5s ease" }}>
-            <RubyText text={ageMode === "elementary" ? "フェイクの{見抜|みぬ}き{方|かた}を{学|まな}ぶ →" : "フェイクの見抜き方を学ぶ →"} />
+        {/* もし拡散していたらボタン */}
+        <div style={{ background: "rgba(239,68,68,.08)", border: "1px solid rgba(239,68,68,.3)", borderRadius: 18, padding: "18px 16px", marginBottom: 16 }}>
+          <div style={{ fontSize: 28, textAlign: "center", marginBottom: 8, animation: "blink 2s infinite" }}>📱</div>
+          <h3 style={{ fontSize: 16, fontWeight: 900, color: "#fca5a5", textAlign: "center", margin: "0 0 8px" }}>
+            <RubyText text={ageMode === "elementary" ? "もしこの{投稿|とうこう}を{拡散|かくさん}していたら…" : "もしこの投稿を拡散していたら…"} />
+          </h3>
+          <p style={{ fontSize: 12, color: "rgba(255,255,255,.5)", lineHeight: 1.7, textAlign: "center", margin: "0 0 14px" }}>
+            <RubyText text={ageMode === "elementary" ? "1{件|けん}のRTが{世界中|せかいじゅう}に{広|ひろ}がるまでの{連鎖|れんさ}を{体験|たいけん}しよう" : "1件のRTが世界中に広がるまでの連鎖を体験しよう"} />
+          </p>
+          <button onClick={() => { setSpreadStep(0); setPhase("spread_anim"); }}
+            style={{ width: "100%", padding: 14, background: "linear-gradient(135deg,#ef4444,#dc2626)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", animation: "pulse 2s infinite" }}>
+            <RubyText text={ageMode === "elementary" ? "😱 {拡散|かくさん}シミュレーションを{見|み}る →" : "😱 拡散シミュレーションを見る →"} />
           </button>
-        )}
+        </div>
       </div>
     </div>
   );
 
-  // ── Checklist ──
-  if (phase === "checklist") return (
-    <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0f0a2e,#07041a)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
-      <div style={{ maxWidth: 440, margin: "0 auto" }}>
-        <div style={{ textAlign: "center", marginBottom: 16 }}>
-          <OwlMolly size={90} mood="happy" style={{ margin: "0 auto" }} />
-        </div>
-        <OwlSay e="{情報|じょうほう}を{見|み}たときに、この5つを{確認|かくにん}する{習慣|しゅうかん}をつけよう🦉">情報を見たときに、この5つを確認する習慣をつけよう🦉</OwlSay>
+  // ── Spread Animation（パニック拡散アニメーション） ──
+  if (phase === "spread_anim") return (
+    <SpreadAnimPage
+      ageMode={ageMode}
+      spreadData={spreadData}
+      spreadStep={spreadStep}
+      setSpreadStep={setSpreadStep}
+      onComplete={() => setPhase("checklist")}
+    />
+  );
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
-          {checklist.slice(0, checkStep + 1).map((item, i) => (
-            <div key={i} style={{ background: "rgba(167,139,250,.06)", border: "1px solid rgba(167,139,250,.2)", borderRadius: 16, padding: "14px 16px", display: "flex", gap: 14, alignItems: "flex-start", animation: "slideUp .4s ease" }}>
-              <div style={{ width: 40, height: 40, borderRadius: 12, background: "rgba(167,139,250,.15)", border: "1px solid rgba(167,139,250,.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>{item.icon}</div>
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 900, color: "#e0d9ff", marginBottom: 4 }}>{i + 1}. <RubyText text={item.title} /></div>
-                <div style={{ fontSize: 12, color: "rgba(255,255,255,.55)", lineHeight: 1.7 }}><RubyText text={item.desc} /></div>
-              </div>
+  // ── Checklist（フェイクの見抜き方 1項目ずつ） ──
+  if (phase === "checklist") {
+    const item = checklist[checkStep];
+    // 各項目のビジュアル
+    const checklistVisuals = [
+      // 1. 誰が発信しているか
+      <div style={{ background: "#0d1117", borderRadius: 12, padding: "12px 14px", border: "1px solid rgba(29,155,240,.3)", marginBottom: 4 }}>
+        <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 8 }}>
+          <div style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(29,155,240,.2)", border: "2px solid #1d9bf0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>🏛️</div>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+              <span style={{ fontSize: 13, fontWeight: 900, color: "#fff" }}>NHKニュース</span>
+              <span style={{ background: "#1d9bf0", borderRadius: "50%", width: 16, height: 16, display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 9, color: "#fff" }}>✓</span>
             </div>
+            <div style={{ fontSize: 10, color: "#22c55e" }}>✅ 認証済みアカウント</div>
+          </div>
+        </div>
+        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+          <div style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(239,68,68,.2)", border: "2px dashed rgba(239,68,68,.5)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>⚡</div>
+          <div>
+            <span style={{ fontSize: 13, color: "rgba(255,255,255,.7)" }}>緊急速報_bot</span>
+            <div style={{ fontSize: 10, color: "#ef4444" }}>❌ 認証なし — 誰でも作れる</div>
+          </div>
+        </div>
+      </div>,
+      // 2. いつの情報か
+      <div style={{ background: "#0d1117", borderRadius: 12, padding: "12px 14px", border: "1px solid rgba(167,139,250,.3)", marginBottom: 4 }}>
+        <div style={{ fontSize: 11, color: "#a78bfa", fontWeight: 700, marginBottom: 8 }}>📅 投稿の日付チェック</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <div style={{ background: "rgba(34,197,94,.1)", border: "1px solid rgba(34,197,94,.3)", borderRadius: 8, padding: "8px 12px" }}>
+            <div style={{ fontSize: 11, color: "#86efac", marginBottom: 2 }}>✅ 本物の例</div>
+            <div style={{ fontSize: 12, color: "#fff" }}>「警察庁は<strong style={{ color: "#86efac" }}>14日</strong>、…と発表しました。」</div>
+          </div>
+          <div style={{ background: "rgba(239,68,68,.1)", border: "1px solid rgba(239,68,68,.3)", borderRadius: 8, padding: "8px 12px" }}>
+            <div style={{ fontSize: 11, color: "#fca5a5", marginBottom: 2 }}>❌ 偽物の例</div>
+            <div style={{ fontSize: 12, color: "#fff" }}>「<strong style={{ color: "#fca5a5" }}>衝撃</strong>！○○さんが…」<span style={{ fontSize: 10, color: "rgba(255,255,255,.4)" }}>→ 日付なし</span></div>
+          </div>
+        </div>
+      </div>,
+      // 3. 一次情報源があるか
+      <div style={{ background: "#0d1117", borderRadius: 12, padding: "12px 14px", border: "1px solid rgba(167,139,250,.3)", marginBottom: 4 }}>
+        <div style={{ fontSize: 11, color: "#a78bfa", fontWeight: 700, marginBottom: 8 }}>🔍 公式サイトで確認する手順</div>
+        {[
+          { num: "①", text: "気象庁 jma.go.jp を開く", sub: "地震・台風・天気の公式情報" },
+          { num: "②", text: "NHKニュース nhk.or.jp を開く", sub: "社会・政治・経済ニュース" },
+          { num: "③", text: "同じ情報が出ているか検索", sub: "出ていなければフェイクの可能性が高い" },
+        ].map((s, i) => (
+          <div key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start", marginBottom: 8 }}>
+            <div style={{ width: 22, height: 22, borderRadius: "50%", background: "rgba(167,139,250,.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "#c4b5fd", fontWeight: 900, flexShrink: 0 }}>{s.num}</div>
+            <div>
+              <div style={{ fontSize: 12, color: "#e0d9ff", fontWeight: 700 }}>{s.text}</div>
+              <div style={{ fontSize: 10, color: "rgba(255,255,255,.4)" }}>{s.sub}</div>
+            </div>
+          </div>
+        ))}
+      </div>,
+      // 4. 写真の出典確認（Googleレンズ）
+      <div style={{ background: "#0d1117", borderRadius: 12, padding: "12px 14px", border: "1px solid rgba(167,139,250,.3)", marginBottom: 4 }}>
+        <div style={{ fontSize: 11, color: "#a78bfa", fontWeight: 700, marginBottom: 10 }}>📷 Googleレンズの使い方</div>
+        {[
+          { step: "①", icon: "👆", action: "怪しい写真を長押し", result: "→ メニューが出る" },
+          { step: "②", icon: "🔍", action: "「Googleで検索」を選ぶ", result: "→ 画像検索が始まる" },
+          { step: "③", icon: "📅", action: "結果で「いつ使われたか」確認", result: "→ 古い写真・別の国ならデマ" },
+        ].map((s, i) => (
+          <div key={i} style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 8 }}>
+            <div style={{ width: 30, height: 30, borderRadius: 8, background: "rgba(167,139,250,.15)", border: "1px solid rgba(167,139,250,.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }}>{s.icon}</div>
+            <div>
+              <div style={{ fontSize: 11, color: "#c4b5fd", fontWeight: 700 }}>{s.step} {s.action}</div>
+              <div style={{ fontSize: 10, color: "rgba(255,255,255,.4)" }}>{s.result}</div>
+            </div>
+          </div>
+        ))}
+        <div style={{ background: "rgba(239,68,68,.1)", border: "1px solid rgba(239,68,68,.3)", borderRadius: 8, padding: "6px 10px", marginTop: 4, fontSize: 10, color: "#fca5a5" }}>
+          💡 <RubyText text={ageMode === "elementary" ? "{古|ふる}い{写真|しゃしん}が「{今|いま}の{事件|じけん}」として{使|つか}い{回|まわ}されているケースが{多|おお}い" : "古い写真が「今の事件」として使い回されているケースが多い"} />
+        </div>
+      </div>,
+      // 5. 感情を煽っていないか
+      <div style={{ background: "#0d1117", borderRadius: 12, padding: "12px 14px", border: "1px solid rgba(167,139,250,.3)", marginBottom: 4 }}>
+        <div style={{ fontSize: 11, color: "#a78bfa", fontWeight: 700, marginBottom: 8 }}>⚠️ 危険なキーワード一覧</div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 10 }}>
+          {["拡散希望", "今すぐ", "衝撃", "緊急", "シェアして", "みんなに教えて"].map((word, i) => (
+            <div key={i} style={{ background: "rgba(239,68,68,.15)", border: "1px solid rgba(239,68,68,.4)", borderRadius: 99, padding: "3px 10px", fontSize: 11, color: "#fca5a5", fontWeight: 700 }}>⚠️ {word}</div>
           ))}
         </div>
+        <div style={{ fontSize: 12, color: "rgba(255,255,255,.6)", lineHeight: 1.7 }}>
+          <RubyText text={ageMode === "elementary" ? "これらの{言葉|ことば}を{見|み}たら「{一呼吸|ひといきいれ}おいて{確認|かくにん}」。{焦|あせ}りを{感|かん}じたら、それが{狙|ねら}い。" : "これらの言葉を見たら「一呼吸おいて確認」。焦りを感じたら、それが狙い。"} />
+        </div>
+      </div>,
+    ];
 
-        {checkStep < checklist.length - 1
-          ? <button onClick={() => setCheckStep(s => s + 1)}
-            style={{ width: "100%", padding: 14, background: "rgba(167,139,250,.15)", border: "1px solid rgba(167,139,250,.3)", borderRadius: 14, color: "#c4b5fd", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>
-            <RubyText text={ageMode === "elementary" ? "{次|つぎ}のポイント →" : "次のポイント →"} />
-          </button>
-          : <button onClick={() => setPhase("quiz")}
-            style={{ width: "100%", padding: 15, background: "linear-gradient(135deg,#7c3aed,#4f46e5)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
-            <RubyText text={ageMode === "elementary" ? "{理解度|りかいど}チェック →" : "理解度チェック →"} />
-          </button>
-        }
+    return (
+      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0f0a2e,#07041a)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
+        <div style={{ maxWidth: 440, margin: "0 auto" }}>
+          {/* 進捗バー */}
+          <div style={{ display: "flex", gap: 4, marginBottom: 18 }}>
+            {checklist.map((_, i) => (
+              <div key={i} style={{ flex: 1, height: 4, borderRadius: 2, background: i <= checkStep ? "#7c3aed" : "rgba(255,255,255,.1)", transition: "background .3s" }} />
+            ))}
+          </div>
+
+          <OwlSay mood="happy" e={ageMode === "elementary" ? `{情報|じょうほう}を{見|み}たときのポイント ${checkStep + 1}/${checklist.length}🦉` : `情報を見たときのポイント ${checkStep + 1}/${checklist.length}🦉`}>
+            {ageMode === "elementary" ? `情報を見たときのポイント ${checkStep + 1}/${checklist.length}🦉` : `情報を見たときのポイント ${checkStep + 1}/${checklist.length}🦉`}
+          </OwlSay>
+
+          {/* 項目カード */}
+          <div style={{ background: "rgba(167,139,250,.08)", border: "1px solid rgba(167,139,250,.25)", borderRadius: 18, padding: "18px 16px", marginBottom: 16, animation: "slideUp .4s ease" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
+              <div style={{ width: 46, height: 46, borderRadius: 14, background: "rgba(167,139,250,.2)", border: "1px solid rgba(167,139,250,.4)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>{item.icon}</div>
+              <div>
+                <div style={{ fontSize: 11, color: "rgba(167,139,250,.7)", fontFamily: "'DotGothic16',monospace", letterSpacing: ".1em" }}>CHECK {checkStep + 1}</div>
+                <div style={{ fontSize: 15, fontWeight: 900, color: "#e0d9ff" }}><RubyText text={item.title} /></div>
+              </div>
+            </div>
+            <p style={{ fontSize: 13, color: "rgba(255,255,255,.7)", lineHeight: 1.75, margin: "0 0 14px" }}><RubyText text={item.desc} /></p>
+            {/* ビジュアル */}
+            {checklistVisuals[checkStep]}
+          </div>
+
+          {checkStep < checklist.length - 1
+            ? <button onClick={() => setCheckStep(s => s + 1)}
+                style={{ width: "100%", padding: 15, background: "rgba(167,139,250,.2)", border: "1px solid rgba(167,139,250,.4)", borderRadius: 14, color: "#e0d9ff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
+                <RubyText text={ageMode === "elementary" ? "{次|つぎ}のポイント →" : "次のポイント →"} /> ({checkStep + 2}/{checklist.length})
+              </button>
+            : <button onClick={() => setPhase("quiz")}
+                style={{ width: "100%", padding: 15, background: "linear-gradient(135deg,#7c3aed,#4f46e5)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
+                <RubyText text={ageMode === "elementary" ? "{理解度|りかいど}チェック →" : "理解度チェック →"} />
+              </button>
+          }
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 
   // ── Quiz (EP2) ──
   if (phase === "quiz") return (
@@ -8140,6 +8354,360 @@ function PhoneFrame({ children, header }) {
   );
 }
 
+// ═══════════════════════════════════════════════════════════════
+// EPISODE 03-2 — その「おねがい」、だいじょうぶ？
+// ═══════════════════════════════════════════════════════════════
+function Episode3_2({ onComplete, onExit }) {
+  const ageMode = useAgeMode();
+  const [phase, setPhase] = useState("intro");
+  const [stepIdx, setStepIdx] = useState(0);
+  const [choices, setChoices] = useState([]);
+
+  const el = ageMode === "elementary";
+  const lineGreen = "#06c755";
+
+  const STEPS = [
+    {
+      step: 1,
+      senderMsg: el
+        ? "ゲームのつよい{武器|ぶき}、もってるよね？いっしょに{使|つか}いたいな〜。アカウント{教|おし}えてくれる？"
+        : "ゲームの強い武器、もってるよね？一緒に使いたいな〜。アカウント教えてくれる？",
+      dangerBadge: el ? "アカウント{情報|じょうほう}の{要求|ようきゅう}" : "アカウント情報の要求",
+      okConsequence: el
+        ? "アカウントをわたしてしまった…「ありがとう！じゃあもうひとつ{聞|き}いていい？」"
+        : "アカウントを渡してしまった…「ありがとう！じゃあもうひとつ聞いていい？」",
+      okDanger: el
+        ? "アカウントをわたすと、{不正|ふせい}ログインや{乗|の}っとりのきけんがあるよ。ゲームの{友達|ともだち}でも、{本当|ほんとう}に{信|しん}じていい{人|ひと}かはわからない！"
+        : "アカウントを渡すと不正ログインや乗っ取りの危険があります。ゲームの友達でも本当に信頼できるかは確認できません。",
+      refusePraise: el
+        ? "えらい！アカウントはだれにも{教|おし}えてはいけないよ。ゲームの{友達|ともだち}でも{例外|れいがい}なし！"
+        : "正解！アカウント情報は誰にも教えないこと。ゲームの友達でも例外ではありません。",
+    },
+    {
+      step: 2,
+      senderMsg: el
+        ? "もっとなかよくなりたい！LINEのID{教|おし}えてくれない？"
+        : "もっと仲よくなりたい！LINEのID教えてくれない？",
+      dangerBadge: "LINE ID の要求",
+      okConsequence: el
+        ? "LINEのIDをわたしてしまった…すぐに{友達|ともだち}{申請|しんせい}が{来|き}た。「{実|じつ}はもうひとつ{聞|き}いていい？」"
+        : "LINE IDを教えてしまった…すぐに友達申請が来た。「実はもうひとつ聞いていい？」",
+      okDanger: el
+        ? "LINE IDをわたすと、ゲームの{外|そと}でれんらくされるようになるよ。{知|し}らない{人|ひと}と{個人的|こじんてき}につながるのはきけん！"
+        : "LINE IDを教えるとゲームの外での連絡が始まります。見知らぬ人物と個人的なつながりを作るリスクがあります。",
+      refusePraise: el
+        ? "ナイス！ゲームの{友達|ともだち}のLINEをいきなり{交換|こうかん}するひつようはないよ。{断|ことわ}れた{君|きみ}はすごい！"
+        : "正しい判断！ゲームの友達と外部SNSでつながる必要はありません。",
+    },
+    {
+      step: 3,
+      senderMsg: el
+        ? "ねえ、どこにすんでるの？うちのちかくかも！"
+        : "ねえ、どこに住んでるの？うちの近くかもしれないから教えて！",
+      dangerBadge: el ? "{住所|じゅうしょ}・{場所|ばしょ}の{要求|ようきゅう}" : "住所・居場所の要求",
+      okConsequence: el
+        ? "「○○くに{住|す}んでる」と{教|おし}えてしまった…「えっちかい！{放課後|ほうかご}{会|あ}えない？」とメッセージが{来|き}た。"
+        : "「○○区に住んでる」と教えてしまった…「えっ近い！放課後に会えない？」とメッセージが届いた。",
+      okDanger: el
+        ? "{住|す}んでいる{場所|ばしょ}を{教|おし}えると、{直接|ちょくせつ}{会|あ}いに{来|こ}られるきけんがあるよ。ネットで{知|し}り{合|あ}った{人|ひと}に{住所|じゅうしょ}を{教|おし}えるのは{絶対|ぜったい}ダメ！"
+        : "居場所を伝えると直接会いに来られる危険があります。ネットで知り合った人に住所・場所を教えるのは絶対に避けること。",
+      refusePraise: el
+        ? "よく{断|ことわ}れた！{住|す}んでいる{場所|ばしょ}はひみつにしてね。{学校|がっこう}や{近所|きんじょ}のじょうほうもダメだよ！"
+        : "よく断れました！住んでいる場所・学校・近所の情報は教えないことが大切です。",
+    },
+    {
+      step: 4,
+      senderMsg: el
+        ? "{顔|かお}がみたいな〜。{写真|しゃしん}1{枚|まい}{送|おく}って！"
+        : "顔が見たいなぁ。写真1枚だけ送ってよ。",
+      dangerBadge: el ? "{写真|しゃしん}の{要求|ようきゅう}" : "顔写真の要求",
+      okConsequence: el
+        ? "{写真|しゃしん}をおくってしまった…「もっと{送|おく}って」「{送|おく}らないと{友達|ともだち}にみせる」と{言|い}われた…"
+        : "写真を送ってしまった…「もっと送って」「送らないと友達に見せる」という返信が来た…",
+      okDanger: el
+        ? "{写真|しゃしん}を{一度|いちど}{送|おく}ると、「もっとおくらないとバラす」とおどされることがある。これはとてもこわいことにつながるよ。"
+        : "写真を一度送ると脅迫に使われる可能性があります。「もっと送らないと公開する」という脅しに発展することがあります。",
+      refusePraise: el
+        ? "{完璧|かんぺき}！{写真|しゃしん}は{絶対|ぜったい}におくってはいけない！これが{一番|いちばん}{危|あぶ}ないステップだったよ。{君|きみ}は{自分|じぶん}を{守|まも}れた！"
+        : "完璧な判断！写真は絶対に送ってはいけません。これが最も危険なステップでした。",
+    },
+  ];
+
+  const currentStep = STEPS[stepIdx];
+  const safeCount = choices.filter(c => c === "refuse").length;
+
+  const handleRefuse = () => {
+    setChoices(prev => [...prev, "refuse"]);
+    setPhase("result_refuse");
+  };
+
+  const handleOK = () => {
+    setChoices(prev => [...prev, "ok"]);
+    setPhase("result_ok");
+  };
+
+  const handleNext = () => {
+    if (stepIdx < STEPS.length - 1) {
+      setStepIdx(i => i + 1);
+      setPhase("step");
+    } else {
+      setPhase("complete");
+    }
+  };
+
+  // ── Intro ──
+  if (phase === "intro") return (
+    <EpisodeShell onExit={onExit}>
+    <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#041210,#020c08)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 20px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden" }}>
+      {[...Array(20)].map((_, i) => <div key={i} style={{ position: "absolute", width: Math.random() * 2 + 1, height: Math.random() * 2 + 1, background: "#06c755", borderRadius: "50%", left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%`, opacity: Math.random() * 0.3 + 0.05, animation: `blink ${Math.random() * 4 + 2}s infinite` }} />)}
+      <div style={{ maxWidth: 360, width: "100%", position: "relative", zIndex: 2, animation: "slideUp .6s ease" }}>
+        <div style={{ textAlign: "center", marginBottom: 16 }}>
+          <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: "#06c755", letterSpacing: ".3em", marginBottom: 10 }}>EPISODE 03-2</div>
+          <div style={{ fontSize: 64, marginBottom: 10, animation: "float 3s ease-in-out infinite" }}>💬</div>
+          <h1 style={{ fontSize: 22, fontWeight: 900, color: "#fff", margin: "0 0 8px", lineHeight: 1.3, textAlign: "center" }}>
+            {el ? "その「おねがい」、\nだいじょうぶ？" : "その「おねがい」、\nだいじょうぶ？"}
+          </h1>
+          <p style={{ color: "rgba(255,255,255,.45)", fontSize: 12, margin: "0 0 20px", lineHeight: 1.7 }}>
+            <RubyText text={el ? "ゲームで{知|し}り{合|あ}った{相手|あいて}からのお{願|ねが}い" : "ゲームで知り合った相手からのお願い"} />
+          </p>
+        </div>
+        <div style={{ background: "rgba(6,199,85,.08)", border: "1px solid rgba(6,199,85,.25)", borderRadius: 16, padding: "16px 18px", marginBottom: 20, color: "rgba(255,255,255,.82)", fontSize: 13, lineHeight: 1.9 }}>
+          <RubyText text={el
+            ? "ゲームで{仲|なか}よくなった「ユウキ」から、{少|すこ}しずつお{願|ねが}いをされます。\n\n{全部|ぜんぶ}で4{段階|だんかい}。どこで「{断|ことわ}る」を{選|えら}べるかためしてみよう！"
+            : "ゲームで仲よくなった「ユウキ」から、少しずつお願いをされます。\n\n全部で4段階。どこで「断る」を選べるか試してみよう！"
+          } />
+        </div>
+        <button onClick={() => setPhase("step")} style={{ width: "100%", background: lineGreen, color: "#fff", border: "none", borderRadius: 14, padding: "15px 0", fontSize: 16, fontWeight: 800, cursor: "pointer", fontFamily: "'Zen Maru Gothic',sans-serif", animation: "pulse 2s infinite" }}>
+          <RubyText text={el ? "スタート →" : "スタート →"} />
+        </button>
+      </div>
+    </div>
+    </EpisodeShell>
+  );
+
+  // ── Step (LINE chat UI) ──
+  if (phase === "step") {
+    const step = currentStep;
+    return (
+      <EpisodeShell onExit={onExit}>
+      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0d1b2a 0%,#0a1520 100%)", display: "flex", flexDirection: "column", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        {/* Status bar */}
+        <div style={{ background: "rgba(0,0,0,.5)", padding: "10px 18px 10px", display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid rgba(255,255,255,.06)" }}>
+          <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: "#06c755", letterSpacing: ".15em" }}>STEP {step.step} / 4</div>
+          <div style={{ display: "flex", gap: 7 }}>
+            {STEPS.map((_, i) => (
+              <div key={i} style={{ width: 10, height: 10, borderRadius: "50%", background: i < stepIdx ? "#06c755" : i === stepIdx ? "#fbbf24" : "rgba(255,255,255,.15)" }} />
+            ))}
+          </div>
+        </div>
+
+        {/* Chat area */}
+        <div style={{ flex: 1, padding: "16px 14px", overflowY: "auto" }}>
+          {/* Sender info header */}
+          <div style={{ textAlign: "center", marginBottom: 16 }}>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(255,255,255,.05)", border: "1px solid rgba(255,255,255,.08)", borderRadius: 20, padding: "6px 14px" }}>
+              <div style={{ width: 30, height: 30, borderRadius: "50%", background: "linear-gradient(135deg,#7c3aed,#4f46e5)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, flexShrink: 0 }}>🎮</div>
+              <div style={{ textAlign: "left" }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "#fff" }}>ユウキ</div>
+                <div style={{ fontSize: 10, color: "rgba(255,255,255,.38)" }}><RubyText text={el ? "ゲームで{知|し}り{合|あ}った{人|ひと}" : "ゲームで知り合った人"} /></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Sender message bubble */}
+          <div style={{ display: "flex", alignItems: "flex-end", gap: 8, marginBottom: 14 }}>
+            <div style={{ width: 38, height: 38, borderRadius: "50%", background: "linear-gradient(135deg,#7c3aed,#4f46e5)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>🎮</div>
+            <div style={{ maxWidth: "74%" }}>
+              <div style={{ fontSize: 10, color: "rgba(255,255,255,.32)", marginBottom: 4, paddingLeft: 4 }}>ユウキ</div>
+              <div style={{ background: "rgba(255,255,255,.11)", borderRadius: "4px 14px 14px 14px", padding: "11px 14px", fontSize: 14, color: "#fff", lineHeight: 1.75 }}>
+                <RubyText text={step.senderMsg} />
+              </div>
+              <div style={{ fontSize: 10, color: "rgba(255,255,255,.22)", marginTop: 4 }}><RubyText text={el ? "たった{今|いま}" : "たった今"} /></div>
+            </div>
+          </div>
+
+          {/* Danger badge */}
+          <div style={{ display: "flex", justifyContent: "center", marginTop: 4 }}>
+            <div style={{ background: "rgba(239,68,68,.13)", border: "1px solid rgba(239,68,68,.38)", borderRadius: 20, padding: "4px 13px", fontSize: 11, color: "#fca5a5", display: "flex", alignItems: "center", gap: 5 }}>
+              ⚠️ <RubyText text={step.dangerBadge} />
+            </div>
+          </div>
+        </div>
+
+        {/* Choice buttons */}
+        <div style={{ padding: "14px 16px 32px", background: "rgba(0,0,0,.35)", borderTop: "1px solid rgba(255,255,255,.07)" }}>
+          <div style={{ fontSize: 12, color: "rgba(255,255,255,.42)", textAlign: "center", marginBottom: 12 }}>
+            <RubyText text={el ? "どうする？" : "どうする？"} />
+          </div>
+          <div style={{ display: "flex", gap: 10 }}>
+            <button onClick={handleRefuse} style={{ flex: 1, background: lineGreen, color: "#fff", border: "none", borderRadius: 12, padding: "15px 0", fontSize: 15, fontWeight: 800, cursor: "pointer", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+              <RubyText text={el ? "✋ {断|ことわ}る" : "✋ 断る"} />
+            </button>
+            <button onClick={handleOK} style={{ flex: 1, background: "rgba(239,68,68,.18)", color: "#fca5a5", border: "1.5px solid rgba(239,68,68,.38)", borderRadius: 12, padding: "15px 0", fontSize: 15, fontWeight: 800, cursor: "pointer", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+              ✅ OK
+            </button>
+          </div>
+        </div>
+      </div>
+      </EpisodeShell>
+    );
+  }
+
+  // ── Result: Refuse (praise) ──
+  if (phase === "result_refuse") {
+    const step = currentStep;
+    const isLast = stepIdx === STEPS.length - 1;
+    return (
+      <EpisodeShell onExit={onExit}>
+      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0a1a0a 0%,#041004 100%)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "32px 20px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ maxWidth: 360, width: "100%", animation: "slideUp .5s ease" }}>
+          {/* User bubble (refuse) */}
+          <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 18 }}>
+            <div style={{ background: lineGreen, borderRadius: "14px 4px 14px 14px", padding: "12px 16px", fontSize: 14, color: "#fff", fontWeight: 700 }}>
+              <RubyText text={el ? "{断|ことわ}る！" : "断る！"} />
+            </div>
+          </div>
+
+          {/* Molly praise */}
+          <div style={{ textAlign: "center", marginBottom: 8 }}>
+            <div style={{ fontSize: 54, animation: "celebrate .6s ease" }}>🦉</div>
+          </div>
+          <div style={{ background: "rgba(74,222,128,.08)", border: "1.5px solid rgba(74,222,128,.3)", borderRadius: 18, padding: "16px 18px", marginBottom: 20, color: "#dcfce7", fontSize: 13, lineHeight: 1.9 }}>
+            <div style={{ fontSize: 16, fontWeight: 900, color: "#4ade80", marginBottom: 8 }}>
+              <RubyText text={el ? "すごい！よく{断|ことわ}れたね！🎉" : "すごい！よく断れたね！🎉"} />
+            </div>
+            <RubyText text={step.refusePraise} />
+          </div>
+
+          <button onClick={handleNext} style={{ width: "100%", background: lineGreen, color: "#fff", border: "none", borderRadius: 14, padding: "15px 0", fontSize: 15, fontWeight: 800, cursor: "pointer", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+            <RubyText text={isLast ? (el ? "{結果|けっか}を{見|み}る →" : "結果を見る →") : (el ? "つぎのステップへ →" : "次のステップへ →")} />
+          </button>
+        </div>
+      </div>
+      </EpisodeShell>
+    );
+  }
+
+  // ── Result: OK (danger) ──
+  if (phase === "result_ok") {
+    const step = currentStep;
+    const isLast = stepIdx === STEPS.length - 1;
+    return (
+      <EpisodeShell onExit={onExit}>
+      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#1a0505 0%,#0f0303 100%)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "32px 20px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ maxWidth: 360, width: "100%", animation: "slideUp .5s ease" }}>
+          {/* User bubble (ok) */}
+          <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 18 }}>
+            <div style={{ background: "rgba(239,68,68,.28)", borderRadius: "14px 4px 14px 14px", padding: "12px 16px", fontSize: 14, color: "#fca5a5", fontWeight: 700, border: "1px solid rgba(239,68,68,.38)" }}>
+              OK…
+            </div>
+          </div>
+
+          {/* Consequence */}
+          <div style={{ background: "rgba(239,68,68,.07)", border: "1.5px solid rgba(239,68,68,.3)", borderRadius: 16, padding: "16px 18px", marginBottom: 14 }}>
+            <div style={{ fontSize: 13, color: "rgba(255,255,255,.85)", lineHeight: 1.85, marginBottom: 12 }}>
+              <RubyText text={step.okConsequence} />
+            </div>
+            <div style={{ background: "rgba(239,68,68,.13)", borderRadius: 10, padding: "10px 12px", fontSize: 12, color: "#fca5a5", lineHeight: 1.75 }}>
+              <div style={{ fontWeight: 800, marginBottom: 4 }}>⚠️ <RubyText text={el ? "なぜ{危|あぶ}ないの？" : "なぜ危ないの？"} /></div>
+              <RubyText text={step.okDanger} />
+            </div>
+          </div>
+
+          {/* Molly advice */}
+          <div style={{ display: "flex", gap: 10, alignItems: "flex-start", marginBottom: 20 }}>
+            <div style={{ fontSize: 30, flexShrink: 0 }}>🦉</div>
+            <div style={{ background: "rgba(251,191,36,.07)", border: "1px solid rgba(251,191,36,.28)", borderRadius: 14, padding: "11px 13px", fontSize: 12, color: "#fde68a", lineHeight: 1.8 }}>
+              <RubyText text={el
+                ? "{次|つぎ}のステップでは{断|ことわ}ってみよう！{断|ことわ}り{方|かた}を{練習|れんしゅう}すれば{大丈夫|だいじょうぶ}！"
+                : "次のステップでは断ってみよう！断り方を練習すれば大丈夫！"
+              } />
+            </div>
+          </div>
+
+          <button onClick={handleNext} style={{ width: "100%", background: "rgba(239,68,68,.22)", color: "#fca5a5", border: "1.5px solid rgba(239,68,68,.45)", borderRadius: 14, padding: "15px 0", fontSize: 15, fontWeight: 800, cursor: "pointer", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+            <RubyText text={isLast ? (el ? "{結果|けっか}を{見|み}る →" : "結果を見る →") : (el ? "つぎのステップへ →" : "次のステップへ →")} />
+          </button>
+        </div>
+      </div>
+      </EpisodeShell>
+    );
+  }
+
+  // ── Complete ──
+  if (phase === "complete") {
+    const allSafe = safeCount === STEPS.length;
+    const mostSafe = safeCount >= 3;
+    return (
+      <EpisodeShell onExit={onExit}>
+      <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#041210,#020c08)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "32px 20px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ maxWidth: 360, width: "100%", animation: "slideUp .6s ease" }}>
+          {/* Score display */}
+          <div style={{ textAlign: "center", marginBottom: 22 }}>
+            <div style={{ fontSize: 64, marginBottom: 10, animation: allSafe ? "celebrate .6s ease" : "" }}>
+              {allSafe ? "🏆" : mostSafe ? "⭐" : "🔒"}
+            </div>
+            <div style={{ fontSize: 20, fontWeight: 900, color: "#fff", marginBottom: 10 }}>
+              <RubyText text={el
+                ? allSafe ? "{全部|ぜんぶ}{断|ことわ}れた！" : `4{問|もん}のうち${safeCount}{問|もん}{断|ことわ}れた！`
+                : allSafe ? "全部断れた！" : `4問のうち${safeCount}問断れた！`
+              } />
+            </div>
+            <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: 4 }}>
+              {choices.map((c, i) => (
+                <div key={i} style={{ width: 38, height: 38, borderRadius: "50%", background: c === "refuse" ? "rgba(74,222,128,.18)" : "rgba(239,68,68,.18)", border: `2px solid ${c === "refuse" ? "#4ade80" : "#f87171"}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>
+                  {c === "refuse" ? "✅" : "❌"}
+                </div>
+              ))}
+            </div>
+            <div style={{ fontSize: 11, color: "rgba(255,255,255,.4)", marginTop: 6 }}>
+              <RubyText text={el ? "✅ = {断|ことわ}れた　❌ = OKしてしまった" : "✅ = 断れた　❌ = OKしてしまった"} />
+            </div>
+          </div>
+
+          {/* Key lessons */}
+          <div style={{ background: "rgba(6,199,85,.07)", border: "1px solid rgba(6,199,85,.22)", borderRadius: 16, padding: "16px 18px", marginBottom: 16, fontSize: 13, color: "rgba(255,255,255,.85)", lineHeight: 1.85 }}>
+            <div style={{ fontWeight: 900, color: "#4ade80", marginBottom: 10, fontSize: 14 }}>
+              🔐 <RubyText text={el ? "{覚|おぼ}えておこう！" : "覚えておこう！"} />
+            </div>
+            {[
+              { icon: "🎮", text: el ? "ゲームの{相手|あいて}はリアルの{友達|ともだち}じゃない" : "ゲームの相手はリアルの友達ではない" },
+              { icon: "🔗", text: el ? "アカウント・LINE IDは{絶対|ぜったい}に{教|おし}えない" : "アカウント・LINE IDは絶対に教えない" },
+              { icon: "📍", text: el ? "{住所|じゅうしょ}や{学校|がっこう}を{教|おし}えない" : "住所・学校・場所は教えない" },
+              { icon: "📸", text: el ? "{写真|しゃしん}は{絶対|ぜったい}に{送|おく}らない" : "写真は絶対に送らない" },
+              { icon: "💬", text: el ? "{変|へん}だと{思|おも}ったら{大人|おとな}に{相談|そうだん}する" : "変だと思ったら大人に相談する" },
+            ].map((item, i) => (
+              <div key={i} style={{ display: "flex", gap: 8, marginBottom: 6, alignItems: "flex-start" }}>
+                <span style={{ fontSize: 14, flexShrink: 0, marginTop: 2 }}>{item.icon}</span>
+                <span style={{ fontSize: 12 }}><RubyText text={item.text} /></span>
+              </div>
+            ))}
+          </div>
+
+          {/* Molly closing */}
+          <div style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.09)", borderRadius: 14, padding: "14px 16px", marginBottom: 22, display: "flex", gap: 10, alignItems: "flex-start" }}>
+            <div style={{ fontSize: 28, flexShrink: 0 }}>🦉</div>
+            <div style={{ fontSize: 12, color: "rgba(255,255,255,.72)", lineHeight: 1.85 }}>
+              <RubyText text={el
+                ? "{断|ことわ}ることは、{悪|わる}いことじゃない！{自分|じぶん}を{守|まも}るために「いや」と{言|い}える{勇気|ゆうき}をもってね。{心配|しんぱい}なことがあったら、{必|かなら}ずおうちの{人|ひと}や{先生|せんせい}に{話|はな}してね！"
+                : "断ることは悪いことではありません。自分を守るために「いや」と言える勇気を持ってください。心配なことがあれば、必ず大人に相談してください。"
+              } />
+            </div>
+          </div>
+
+          <button onClick={() => onComplete(safeCount)} style={{ width: "100%", background: lineGreen, color: "#fff", border: "none", borderRadius: 14, padding: "15px 0", fontSize: 16, fontWeight: 800, cursor: "pointer", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+            <RubyText text={el ? "{完了|かんりょう}！ホームへ 🏠" : "完了！ホームへ 🏠"} />
+          </button>
+        </div>
+      </div>
+      </EpisodeShell>
+    );
+  }
+
+  return null;
+}
+
+// ═══════════════════════════════════════════════════════════════
 function Episode4({ onComplete, onExit }) {
   const ageMode = useAgeMode();
   const [phase, setPhase] = useState("parent_intro");
@@ -11373,7 +11941,8 @@ export default function App() {
     const rec = loadRecord();
     return {
       ep1: !!rec.ep1?.completed, ep2: !!rec.ep2?.completed,
-      ep3: !!rec.ep3?.completed, ep4: !!rec.ep4?.completed,
+      ep3: !!rec.ep3?.completed, ep32: !!rec.ep32?.completed,
+      ep4: !!rec.ep4?.completed,
       ep5: !!rec.ep5?.completed, ep6: !!rec.ep6?.completed,
       ep7: !!rec.ep7?.completed,
       ep12: !!rec.ep12?.completed,
@@ -11412,6 +11981,7 @@ export default function App() {
         {screen === "ep12" && <Episode1_2 onComplete={(s) => finish("ep12", s)} onExit={() => navigate("home")} />}
         {screen === "ep2" && <Episode2 onComplete={(s) => finish("ep2", s)} onExit={() => navigate("home")} />}
         {screen === "ep3" && <Episode3 onComplete={(s) => finish("ep3", s)} onExit={() => navigate("home")} />}
+        {screen === "ep32" && <Episode3_2 onComplete={(s) => finish("ep32", s)} onExit={() => navigate("home")} />}
         {screen === "ep4" && <Episode4 onComplete={(s) => finish("ep4", s)} onExit={() => navigate("home")} />}
         {screen === "ep5" && <Episode5 onComplete={(s) => finish("ep5", s)} onExit={() => navigate("home")} />}
         {screen === "ep6" && <Episode6 onComplete={(s) => finish("ep6", s)} onExit={() => navigate("home")} />}
