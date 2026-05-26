@@ -1917,95 +1917,115 @@ const CHALLENGE_STOCK = [
     id: "s01", week: null, theme: "個人情報", emoji: "📍", color: "#ffa940",
     unsplashQuery: "smartphone photo location",
     question: "SNSに旅行写真を投稿した。翌日「昨日○○にいたんだね」と知らない人からDMが来た。どこから居場所がバレた？",
-    choices: [{ id:"a", text:"フォロワーが教えた" }, { id:"b", text:"写真の位置情報タグとランドマークが写っていた" }, { id:"c", text:"スマホがハッキングされた" }],
+    choices: [{ id:"a", text:"フォロワーが教えた", elText:"フォロワーが{教|おし}えた" }, { id:"b", text:"写真の位置情報タグとランドマークが写っていた", elText:"{写真|しゃしん}の{位置|いち}{情報|じょうほう}タグとランドマークが{写|うつ}っていた" }, { id:"c", text:"スマホがハッキングされた" }],
     correct: "b",
     explanation: "写真には撮影場所のGPS座標（位置情報タグ）が埋め込まれており、背景のランドマークとあわせて場所が特定される。投稿前にメタデータを削除する習慣を。",
     parentNote: "子どもの写真投稿を定期的に一緒に確認しましょう。スマホ設定→カメラ→位置情報をオフに。",
+    elQuestion: "SNSに{旅行|りょこう}{写真|しゃしん}を{投稿|とうこう}した。{翌日|よくじつ}「{昨日|きのう}○○にいたんだね」と{知|し}らない{人|ひと}からDMが{来|き}た。どこから{居場所|いばしょ}がバレた？",
+    elExplanation: "{写真|しゃしん}には{撮影|さつえい}{場所|ばしょ}のGPS{座標|ざひょう}（{位置|いち}{情報|じょうほう}タグ）が{埋|う}め{込|こ}まれており、{背景|はいけい}のランドマークとあわせて{場所|ばしょ}が{特定|とくてい}される。{投稿|とうこう}{前|まえ}にメタデータを{削除|さくじょ}する{習慣|しゅうかん}を。",
   },
   {
     id: "s02", week: null, theme: "個人情報", emoji: "🏫", color: "#ffa940",
     unsplashQuery: "school uniform student",
     question: "制服姿の写真をSNSに投稿した。住所を教えていないのに学校名を当てられた。なぜ？",
-    choices: [{ id:"a", text:"制服のデザインや校章から特定された" }, { id:"b", text:"友達が教えた" }, { id:"c", text:"偶然" }],
+    choices: [{ id:"a", text:"制服のデザインや校章から特定された", elText:"{制服|せいふく}のデザインや{校章|こうしょう}から{特定|とくてい}された" }, { id:"b", text:"友達が教えた", elText:"{友達|ともだち}が{教|おし}えた" }, { id:"c", text:"偶然", elText:"{偶然|ぐうぜん}" }],
     correct: "a",
     explanation: "制服・校章・スクールバッグのロゴは画像検索で簡単に学校が特定できる。制服での投稿は学校名を公開していることと同じ。",
     parentNote: "「制服姿の写真はNG」を家族ルールに。卒業アルバムや学校行事写真も同様のリスクがあります。",
+    elQuestion: "{制服|せいふく}{姿|すがた}の{写真|しゃしん}をSNSに{投稿|とうこう}した。{住所|じゅうしょ}を{教|おし}えていないのに{学校|がっこう}{名|めい}を{当|あ}てられた。なぜ？",
+    elExplanation: "{制服|せいふく}・{校章|こうしょう}・スクールバッグのロゴは{画像|がぞう}{検索|けんさく}で{簡単|かんたん}に{学校|がっこう}が{特定|とくてい}できる。{制服|せいふく}での{投稿|とうこう}は{学校|がっこう}{名|めい}を{公開|こうかい}していることと{同|おな}じ。",
   },
   // フェイクニュース
   {
     id: "s03", week: null, theme: "フェイクニュース", emoji: "📰", color: "#7c3aed",
     unsplashQuery: "news media smartphone misinformation",
     question: "「○○市で水道水が危険！今すぐミネラルウォーターを備蓄して」というLINEが回ってきた。まず何をする？",
-    choices: [{ id:"a", text:"すぐ家族グループに転送する" }, { id:"b", text:"○○市の公式サイトや公式Xで確認する" }, { id:"c", text:"スーパーに急ぐ" }],
+    choices: [{ id:"a", text:"すぐ家族グループに転送する", elText:"すぐ{家族|かぞく}グループに{転送|てんそう}する" }, { id:"b", text:"○○市の公式サイトや公式Xで確認する", elText:"○○{市|し}の{公式|こうしき}サイトや{公式|こうしき}Xで{確認|かくにん}する" }, { id:"c", text:"スーパーに急ぐ", elText:"スーパーに{急|いそ}ぐ" }],
     correct: "b",
     explanation: "公式情報源で確認するのが大原則。こうした「緊急備蓄」デマは定期的に拡散される。転送する前に必ず1次情報を確認。",
     parentNote: "家族グループLINEはデマの温床になりやすい。「確認してから転送」を家族全員の習慣に。",
+    elQuestion: "「○○{市|し}で{水道水|すいどうすい}が{危険|きけん}！{今|いま}すぐミネラルウォーターを{備蓄|びちく}して」というLINEが{回|まわ}ってきた。まず{何|なに}をする？",
+    elExplanation: "{公式|こうしき}{情報|じょうほう}{源|げん}で{確認|かくにん}するのが{大原則|だいげんそく}。こうした「{緊急|きんきゅう}{備蓄|びちく}」デマは{定期的|ていきてき}に{拡散|かくさん}される。{転送|てんそう}する{前|まえ}に{必|かなら}ず1{次|じ}{情報|じょうほう}を{確認|かくにん}。",
   },
   {
     id: "s04", week: null, theme: "フェイクニュース", emoji: "🎥", color: "#7c3aed",
     unsplashQuery: "deepfake video technology",
     question: "有名人が「投資で必ず儲かる」と話す動画広告を見た。どうすれば本物かフェイクか確認できる？",
-    choices: [{ id:"a", text:"再生回数が多いので信頼する" }, { id:"b", text:"その有名人の公式SNSや公式サイトで確認する" }, { id:"c", text:"コメント欄を見る" }],
+    choices: [{ id:"a", text:"再生回数が多いので信頼する", elText:"{再生|さいせい}{回数|かいすう}が{多|おお}いので{信頼|しんらい}する" }, { id:"b", text:"その有名人の公式SNSや公式サイトで確認する", elText:"その{有名人|ゆうめいじん}の{公式|こうしき}SNSや{公式|こうしき}サイトで{確認|かくにん}する" }, { id:"c", text:"コメント欄を見る", elText:"コメント{欄|らん}を{見|み}る" }],
     correct: "b",
     explanation: "AIによるディープフェイク動画が急増している。有名人が投資を勧める動画は99%詐欺。本人の公式チャンネルで同じ動画が存在するか確認する。",
     parentNote: "2024年、著名人のディープフェイク投資詐欺の被害が急増。子どもだけでなく大人も被害に遭っています。",
+    elQuestion: "{有名人|ゆうめいじん}が「{投資|とうし}で{必|かなら}ず{儲|もう}かる」と{話|はな}す{動画|どうが}{広告|こうこく}を{見|み}た。どうすれば{本物|ほんもの}かフェイクか{確認|かくにん}できる？",
+    elExplanation: "AIによるディープフェイク{動画|どうが}が{急増|きゅうぞう}している。{有名人|ゆうめいじん}が{投資|とうし}を{勧|すす}める{動画|どうが}は99%{詐欺|さぎ}。{本人|ほんにん}の{公式|こうしき}チャンネルで{同|おな}じ{動画|どうが}が{存在|そんざい}するか{確認|かくにん}する。",
   },
   // 闇バイト・詐欺
   {
     id: "s05", week: null, theme: "闇バイト", emoji: "⚠️", color: "#16a34a",
     unsplashQuery: "suspicious envelope money package",
     question: "「荷物の受け取りをするだけで日払い3万円」というXの募集を見た。応募したらどうなる？",
-    choices: [{ id:"a", text:"普通のアルバイトとして働ける" }, { id:"b", text:"詐欺グループの「受け子」として使われ、逮捕されるリスクがある" }, { id:"c", text:"断ればリスクはない" }],
+    choices: [{ id:"a", text:"普通のアルバイトとして働ける", elText:"{普通|ふつう}のアルバイトとして{働|はたら}ける" }, { id:"b", text:"詐欺グループの「受け子」として使われ、逮捕されるリスクがある", elText:"{詐欺|さぎ}グループの「{受|う}け{子|こ}」として{使|つか}われ、{逮捕|たいほ}されるリスクがある" }, { id:"c", text:"断ればリスクはない", elText:"{断|ことわ}ればリスクはない" }],
     correct: "b",
     explanation: "「受け子」は特殊詐欺の実行犯。知らなかったでは済まず、逮捕・起訴される。一度個人情報を送ると脅されて抜け出せなくなる。",
     parentNote: "2024年の強盗・詐欺事件の多くで10〜20代が逮捕。子どものSNSフォロー状況を時々一緒に確認しましょう。",
+    elQuestion: "「{荷物|にもつ}の{受|う}け{取|と}りをするだけで{日払|ひばら}い3{万円|まんえん}」というXの{募集|ぼしゅう}を{見|み}た。{応募|おうぼ}したらどうなる？",
+    elExplanation: "「{受|う}け{子|こ}」は{特殊|とくしゅ}{詐欺|さぎ}の{実行犯|じっこうはん}。{知|し}らなかったでは{済|す}まず、{逮捕|たいほ}・{起訴|きそ}される。{一度|いちど}{個人|こじん}{情報|じょうほう}を{送|おく}ると{脅|おど}されて{抜|ぬ}け{出|だ}せなくなる。",
   },
   {
     id: "s06", week: null, theme: "闇バイト", emoji: "💰", color: "#16a34a",
     unsplashQuery: "ATM cash withdrawal suspicious",
     question: "「ATMで指定の口座に振り込むだけ。5万円もらえる」と頼まれた。これは何の犯罪に関わる？",
-    choices: [{ id:"a", text:"問題ない正当な業務" }, { id:"b", text:"マネーロンダリング（資金洗浄）の共犯" }, { id:"c", text:"民事上の問題だけで逮捕されない" }],
+    choices: [{ id:"a", text:"問題ない正当な業務", elText:"{問題|もんだい}ない{正当|せいとう}な{業務|ぎょうむ}" }, { id:"b", text:"マネーロンダリング（資金洗浄）の共犯", elText:"マネーロンダリング（{資金|しきん}{洗浄|せんじょう}）の{共犯|きょうはん}" }, { id:"c", text:"民事上の問題だけで逮捕されない", elText:"{民事|みんじ}{上|じょう}の{問題|もんだい}だけで{逮捕|たいほ}されない" }],
     correct: "b",
     explanation: "出し子・キャッシュアウト役は詐欺・マネロンの共犯として逮捕される。「自分は知らなかった」は裁判で通用しない。",
     parentNote: "SNSで「楽して高収入」を謳う募集は全て疑うよう家族で共有を。#9110（警察相談）を連絡先に追加しておくと安心。",
+    elQuestion: "「ATMで{指定|してい}の{口座|こうざ}に{振|ふ}り{込|こ}むだけ。5{万円|まんえん}もらえる」と{頼|たの}まれた。これは{何|なん}の{犯罪|はんざい}に{関|かか}わる？",
+    elExplanation: "{出|だ}し{子|こ}・キャッシュアウト{役|やく}は{詐欺|さぎ}・マネロンの{共犯|きょうはん}として{逮捕|たいほ}される。「{自分|じぶん}は{知|し}らなかった」は{裁判|さいばん}で{通用|つうよう}しない。",
   },
   // なりすまし
   {
     id: "s07", week: null, theme: "なりすまし", emoji: "🎭", color: "#0ea5e9",
     unsplashQuery: "hacker identity theft phone",
     question: "急に「LINE乗っ取られた！新しいアカウントで連絡してるけど急いでギフトカード買ってほしい」とDMが来た。どうする？",
-    choices: [{ id:"a", text:"急いでコンビニでギフトカードを買う" }, { id:"b", text:"必ず電話して本人確認してから判断する" }, { id:"c", text:"既読スルーする" }],
+    choices: [{ id:"a", text:"急いでコンビニでギフトカードを買う", elText:"{急|いそ}いでコンビニでギフトカードを{買|か}う" }, { id:"b", text:"必ず電話して本人確認してから判断する", elText:"{必|かなら}ず{電話|でんわ}して{本人|ほんにん}{確認|かくにん}してから{判断|はんだん}する" }, { id:"c", text:"既読スルーする", elText:"{既読|きどく}スルーする" }],
     correct: "b",
     explanation: "ギフトカード詐欺の典型的な手口。電話で声を聞くまで絶対に行動しない。本物の友達なら電話に出られるはず。",
     parentNote: "この手口で親が被害に遭うケースも多い。「電話確認なしにギフトカードは絶対買わない」を家族ルールに。",
+    elQuestion: "{急|きゅう}に「LINE{乗|の}っ{取|と}られた！{新|あたら}しいアカウントで{連絡|れんらく}してるけど{急|いそ}いでギフトカード{買|か}ってほしい」とDMが{来|き}た。どうする？",
+    elExplanation: "ギフトカード{詐欺|さぎ}の{典型的|てんけいてき}な{手口|てぐち}。{電話|でんわ}で{声|こえ}を{聞|き}くまで{絶対|ぜったい}に{行動|こうどう}しない。{本物|ほんもの}の{友達|ともだち}なら{電話|でんわ}に{出|で}られるはず。",
   },
   {
     id: "s08", week: null, theme: "なりすまし", emoji: "🔒", color: "#0ea5e9",
     unsplashQuery: "two factor authentication security phone",
     question: "Instagramから「ログイン通知。心当たりがない場合はこちら」というメールが来てURLをタップした。どうすべきだった？",
-    choices: [{ id:"a", text:"URLをタップして正しい対処をした" }, { id:"b", text:"URLは踏まずにInstagramアプリを直接開いて確認すべきだった" }, { id:"c", text:"メールを無視すれば良かった" }],
+    choices: [{ id:"a", text:"URLをタップして正しい対処をした", elText:"URLをタップして{正|ただ}しい{対処|たいしょ}をした" }, { id:"b", text:"URLは踏まずにInstagramアプリを直接開いて確認すべきだった", elText:"URLは{踏|ふ}まずにInstagramアプリを{直接|ちょくせつ}{開|ひら}いて{確認|かくにん}すべきだった" }, { id:"c", text:"メールを無視すれば良かった", elText:"メールを{無視|むし}すれば{良|よ}かった" }],
     correct: "b",
     explanation: "公式を装ったフィッシングメールの典型。URLは踏まずに、常にアプリを直接開いて確認する習慣が大切。",
     parentNote: "子どものSNSアカウントに2段階認証が設定されているか一緒に確認しましょう。設定→セキュリティ→2要素認証から。",
+    elQuestion: "Instagramから「ログイン{通知|つうち}。{心当|こころあ}たりがない{場合|ばあい}はこちら」というメールが{来|き}てURLをタップした。どうすべきだった？",
+    elExplanation: "{公式|こうしき}を{装|よそお}ったフィッシングメールの{典型|てんけい}。URLは{踏|ふ}まずに、{常|つね}にアプリを{直接|ちょくせつ}{開|ひら}いて{確認|かくにん}する{習慣|しゅうかん}が{大切|たいせつ}。",
   },
   // ネットいじめ
   {
     id: "s09", week: null, theme: "ネットいじめ", emoji: "💬", color: "#ec4899",
     unsplashQuery: "cyberbullying teenager smartphone sad",
     question: "クラスのグループから突然退出させられた。既読がついても返信が来なくなった。これは何と呼ばれる行為？",
-    choices: [{ id:"a", text:"グループ管理の問題" }, { id:"b", text:"ネットいじめ（グループ外し・無視）" }, { id:"c", text:"スマホの不具合" }],
+    choices: [{ id:"a", text:"グループ管理の問題", elText:"グループ{管理|かんり}の{問題|もんだい}" }, { id:"b", text:"ネットいじめ（グループ外し・無視）", elText:"ネットいじめ（グループ{外|はず}し・{無視|むし}）" }, { id:"c", text:"スマホの不具合", elText:"スマホの{不具合|ふぐあい}" }],
     correct: "b",
     explanation: "グループ外しと集団無視は立派なネットいじめ。24時間逃げ場がなく、精神的ダメージが大きい。一人で抱え込まず大人に相談を。",
     parentNote: "子どもがスマホを頻繁に確認したり、食事中に元気がない様子の時はLINEグループの状況を確認してみましょう。",
+    elQuestion: "クラスのグループから{突然|とつぜん}{退出|たいしゅつ}させられた。{既読|きどく}がついても{返信|へんしん}が{来|こ}なくなった。これは{何|なん}と{呼|よ}ばれる{行為|こうい}？",
+    elExplanation: "グループ{外|はず}しと{集団|しゅうだん}{無視|むし}は{立派|りっぱ}なネットいじめ。24{時間|じかん}{逃|に}げ{場|ば}がなく、{精神的|せいしんてき}ダメージが{大|おお}きい。{一人|ひとり}で{抱|かか}え{込|こ}まず{大人|おとな}に{相談|そうだん}を。",
   },
   {
     id: "s10", week: null, theme: "ネットいじめ", emoji: "📸", color: "#ec4899",
     unsplashQuery: "screenshot phone sharing privacy",
     question: "友達の失敗した写真を「笑えるから見て」とグループでシェアした。これは問題ある？",
-    choices: [{ id:"a", text:"みんなで楽しめるので問題ない" }, { id:"b", text:"本人の同意なく写真を拡散することは名誉毀損・プライバシー侵害になりうる" }, { id:"c", text:"悪意がなければ問題ない" }],
+    choices: [{ id:"a", text:"みんなで楽しめるので問題ない", elText:"みんなで{楽|たの}しめるので{問題|もんだい}ない" }, { id:"b", text:"本人の同意なく写真を拡散することは名誉毀損・プライバシー侵害になりうる", elText:"{本人|ほんにん}の{同意|どうい}なく{写真|しゃしん}を{拡散|かくさん}することは{名誉|めいよ}{毀損|きそん}・プライバシー{侵害|しんがい}になりうる" }, { id:"c", text:"悪意がなければ問題ない", elText:"{悪意|あくい}がなければ{問題|もんだい}ない" }],
     correct: "b",
     explanation: "「笑える」と思ってのシェアも、本人が傷つけばいじめになる。意図に関係なく結果として相手が傷つく行為は問題。",
     parentNote: "「悪意がなければOK」という認識は危険。子どもにとってネットでの行動の影響の大きさを具体的に伝えましょう。",
+    elQuestion: "{友達|ともだち}の{失敗|しっぱい}した{写真|しゃしん}を「{笑|わら}えるから{見|み}て」とグループでシェアした。これは{問題|もんだい}ある？",
+    elExplanation: "「{笑|わら}える」と{思|おも}ってのシェアも、{本人|ほんにん}が{傷|きず}つけばいじめになる。{意図|いと}に{関係|かんけい}なく{結果|けっか}として{相手|あいて}が{傷|きず}つく{行為|こうい}は{問題|もんだい}。",
   },
   // フィッシング
   {
@@ -2564,7 +2584,7 @@ function WeeklyChallengeScreen({ onBack }) {
 
         {/* 問題 */}
         <div style={{ background: "rgba(255,255,255,.05)", border: "1px solid rgba(255,255,255,.08)", borderRadius: 16, padding: "16px 15px", marginBottom: 14 }}>
-          <div style={{ fontSize: 15, fontWeight: 700, color: "#fff", lineHeight: 1.75 }}>{current.question}</div>
+          <div style={{ fontSize: 15, fontWeight: 700, color: "#fff", lineHeight: 1.75 }}><RubyText text={ageMode === "elementary" ? (current.elQuestion || current.question) : current.question} /></div>
         </div>
 
         {/* 選択肢 */}
@@ -2582,7 +2602,7 @@ function WeeklyChallengeScreen({ onBack }) {
                 <div style={{ width: 24, height: 24, borderRadius: "50%", background: answered && isOk ? "#22c55e" : answered && isSel ? "#ef4444" : isSel ? current.color : "rgba(255,255,255,.12)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "#fff", fontWeight: 900, flexShrink: 0 }}>
                   {answered && isOk ? "✓" : answered && isSel && !isOk ? "✗" : ch.id.toUpperCase()}
                 </div>
-                {ch.text}
+                <RubyText text={ageMode === "elementary" ? (ch.elText || ch.text) : ch.text} />
               </button>
             );
           })}
@@ -2595,7 +2615,7 @@ function WeeklyChallengeScreen({ onBack }) {
               <div style={{ fontSize: 11, fontWeight: 900, color: selected === current.correct ? "#4ade80" : "#f87171", marginBottom: 6 }}>
                 {selected === current.correct ? <RubyText text={ageMode === "elementary" ? "✅ {正解|せいかい}！" : "✅ 正解！"} /> : <RubyText text={ageMode === "elementary" ? "❌ {不正解|ふせいかい}" : "❌ 不正解"} />}
               </div>
-              <div style={{ fontSize: 13, color: "rgba(255,255,255,.8)", lineHeight: 1.8 }}>{current.explanation}</div>
+              <div style={{ fontSize: 13, color: "rgba(255,255,255,.8)", lineHeight: 1.8 }}><RubyText text={ageMode === "elementary" ? (current.elExplanation || current.explanation) : current.explanation} /></div>
             </div>
             <div style={{ background: "rgba(99,102,241,.06)", border: "1px solid rgba(99,102,241,.2)", borderRadius: 12, padding: "10px 13px", marginBottom: 12, fontSize: 12, color: "#a5b4fc", lineHeight: 1.7 }}>
               <span style={{ fontWeight: 700 }}>👨‍👩‍👧 <RubyText text={ageMode === "elementary" ? "{保護者|ほごしゃ}メモ：" : "保護者メモ："} /></span>{current.parentNote}
