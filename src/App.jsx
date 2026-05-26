@@ -2323,7 +2323,13 @@ const PARENT_CARDS = {
       "子どもの投稿を月に一度一緒に確認する習慣を",
       "「投稿前チェックリスト」を家族で決める",
     ],
+    elActions: [
+      "カメラアプリの{位置情報|いちじょうほう}{設定|せってい}をオフに（{設定|せってい}→プライバシー→カメラ）",
+      "{子|こ}どもの{投稿|とうこう}を{月|つき}に{一度|いちど}{一緒|いっしょ}に{確認|かくにん}する{習慣|しゅうかん}を",
+      "「{投稿前|とうこうまえ}チェックリスト」を{家族|かぞく}で{決|き}める",
+    ],
     contacts: [{ name: "警察相談専用電話", tel: "#9110" }, { name: "子どもの人権110番", tel: "0120-007-110" }],
+    elContacts: [{ name: "{警察|けいさつ}{相談|そうだん}{専用|せんよう}{電話|でんわ}", tel: "#9110" }, { name: "{子|こ}どもの{人権|じんけん}110{番|ばん}", tel: "0120-007-110" }],
   },
   ep2: {
     title: "📰 フェイクニュース — 保護者の方へ",
@@ -2338,7 +2344,13 @@ const PARENT_CARDS = {
       "ファクトチェックサイトをブックマーク（FIJ: fij.info）",
       "Googleレンズの画像逆検索を家族で練習する",
     ],
+    elActions: [
+      "{家族|かぞく}のLINEグループで「{転送|てんそう}{前|まえ}{確認|かくにん}ルール」を{設|もう}ける",
+      "ファクトチェックサイトをブックマーク（FIJ: fij.info）",
+      "Googleレンズの{画像|がぞう}{逆検索|ぎゃくけんさく}を{家族|かぞく}で{練習|れんしゅう}する",
+    ],
     contacts: [{ name: "ファクトチェック・イニシアティブ", tel: "fij.info" }, { name: "総務省 違法情報通報窓口", tel: "ihaho.jp" }],
+    elContacts: [{ name: "ファクトチェック・イニシアティブ", tel: "fij.info" }, { name: "{総務省|そうむしょう} {違法|いほう}{情報|じょうほう}{通報|つうほう}{窓口|まどぐち}", tel: "ihaho.jp" }],
   },
   ep3: {
     title: "⚠️ 闇バイト・トクリュウ — 保護者の方へ",
@@ -2353,7 +2365,13 @@ const PARENT_CARDS = {
       "#9110を家族全員の連絡先に登録する",
       "「困ったら絶対相談して」という信頼関係を作る",
     ],
+    elActions: [
+      "「{日払|ひばら}い・{高収入|こうしゅうにゅう}・スマホだけ」の{募集|ぼしゅう}は{即|そく}ブロック・{報告|ほうこく}を{約束|やくそく}する",
+      "#9110を{家族|かぞく}{全員|ぜんいん}の{連絡先|れんらくさき}に{登録|とうろく}する",
+      "「{困|こま}ったら{絶対|ぜったい}{相談|そうだん}して」という{信頼|しんらい}{関係|かんけい}を{作|つく}る",
+    ],
     contacts: [{ name: "警察相談専用電話", tel: "#9110" }, { name: "法務省 子どもの人権110番", tel: "0120-007-110" }],
+    elContacts: [{ name: "{警察|けいさつ}{相談|そうだん}{専用|せんよう}{電話|でんわ}", tel: "#9110" }, { name: "{法務省|ほうむしょう} {子|こ}どもの{人権|じんけん}110{番|ばん}", tel: "0120-007-110" }],
   },
   ep4: {
     title: "🔐 なりすまし・アカウント乗っ取り — 保護者の方へ",
@@ -2368,7 +2386,13 @@ const PARENT_CARDS = {
       "「認証コードは誰にも教えない」を家族の約束にする",
       "パスワードマネージャーを家族で導入する",
     ],
+    elActions: [
+      "LINE・Instagram・Gmail{全|すべ}ての2{段階|だんかい}{認証|にんしょう}を{今日|きょう}{設定|せってい}する",
+      "「{認証|にんしょう}コードは{誰|だれ}にも{教|おし}えない」を{家族|かぞく}の{約束|やくそく}にする",
+      "パスワードマネージャーを{家族|かぞく}で{導入|どうにゅう}する",
+    ],
     contacts: [{ name: "LINE公式 乗っ取り対処", tel: "line.me/ja/safety" }, { name: "警察相談専用電話", tel: "#9110" }],
+    elContacts: [{ name: "LINE{公式|こうしき} {乗|の}っ{取|と}り{対処|たいしょ}", tel: "line.me/ja/safety" }, { name: "{警察|けいさつ}{相談|そうだん}{専用|せんよう}{電話|でんわ}", tel: "#9110" }],
   },
   ep5: {
     title: "👥 ネットいじめ — 保護者の方へ",
@@ -2383,7 +2407,13 @@ const PARENT_CARDS = {
       "証拠はスクショで保存してから報告・相談",
       "「いじめを見たら大人に伝えていい」と繰り返し伝える",
     ],
+    elActions: [
+      "{子|こ}どもが「スマホを{気|き}にしている・{食欲|しょくよく}がない」{時|とき}は{状況|じょうきょう}{確認|かくにん}を",
+      "{証拠|しょうこ}はスクショで{保存|ほぞん}してから{報告|ほうこく}・{相談|そうだん}",
+      "「いじめを{見|み}たら{大人|おとな}に{伝|つた}えていい」と{繰|く}り{返|かえ}し{伝|つた}える",
+    ],
     contacts: [{ name: "子どもの人権110番", tel: "0120-007-110" }, { name: "24時間子どもSOSダイヤル", tel: "0120-0-78310" }],
+    elContacts: [{ name: "{子|こ}どもの{人権|じんけん}110{番|ばん}", tel: "0120-007-110" }, { name: "24{時間|じかん}{子|こ}どもSOSダイヤル", tel: "0120-0-78310" }],
   },
   ep6: {
     title: "📸 自画撮り被害・グルーミング — 保護者の方へ",
@@ -2398,7 +2428,13 @@ const PARENT_CARDS = {
       "ゲームアプリのプライバシー設定を一緒に確認する",
       "デジタル性暴力ホットライン（0120-437-104）を覚えておく",
     ],
+    elActions: [
+      "「{送|おく}ってしまっても{怒|おこ}らないから{話|はな}して」という{信頼|しんらい}{関係|かんけい}が{最大|さいだい}の{防御|ぼうぎょ}",
+      "ゲームアプリのプライバシー{設定|せってい}を{一緒|いっしょ}に{確認|かくにん}する",
+      "デジタル{性暴力|せいぼうりょく}ホットライン（0120-437-104）を{覚|おぼ}えておく",
+    ],
     contacts: [{ name: "デジタル性暴力ホットライン", tel: "0120-437-104" }, { name: "子どもの人権110番", tel: "0120-007-110" }],
+    elContacts: [{ name: "デジタル{性暴力|せいぼうりょく}ホットライン", tel: "0120-437-104" }, { name: "{子|こ}どもの{人権|じんけん}110{番|ばん}", tel: "0120-007-110" }],
   },
   ep7: {
     title: "🎣 フィッシング詐欺 — 保護者の方へ",
@@ -2413,15 +2449,24 @@ const PARENT_CARDS = {
       "よく使うサービスのアプリをホーム画面に追加する",
       "クレジットカードの利用通知メールを必ず設定する",
     ],
+    elActions: [
+      "「SMSのURLは{絶対|ぜったい}に{踏|ふ}まない」を{家族|かぞく}{全員|ぜんいん}の{鉄則|てっそく}に",
+      "よく{使|つか}うサービスのアプリをホーム{画面|がめん}に{追加|ついか}する",
+      "クレジットカードの{利用|りよう}{通知|つうち}メールを{必|かなら}ず{設定|せってい}する",
+    ],
     contacts: [{ name: "警察 サイバー犯罪相談", tel: "#9110" }, { name: "消費者ホットライン", tel: "188" }],
+    elContacts: [{ name: "{警察|けいさつ} サイバー{犯罪|はんざい}{相談|そうだん}", tel: "#9110" }, { name: "{消費者|しょうひしゃ}ホットライン", tel: "188" }],
   },
 };
 
 // 保護者向け解説カードコンポーネント
 function ParentExpertCard({ epKey, accentColor }) {
+  const ageMode = useAgeMode();
   const [open, setOpen] = useState(false);
   const card = PARENT_CARDS[epKey];
   if (!card) return null;
+  const dispActions  = ageMode === "elementary" ? (card.elActions  || card.actions)  : card.actions;
+  const dispContacts = ageMode === "elementary" ? (card.elContacts || card.contacts) : card.contacts;
 
   return (
     <div style={{ marginTop: 16, animation: "slideUp .4s ease" }}>
@@ -2437,8 +2482,8 @@ function ParentExpertCard({ epKey, accentColor }) {
         }}>
         <div style={{ width: 38, height: 38, borderRadius: 10, background: `${accentColor}18`, border: `1px solid ${accentColor}33`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>👨‍👩‍👧</div>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 13, fontWeight: 900, color: open ? "#1e293b" : accentColor }}>保護者向け詳細情報</div>
-          <div style={{ fontSize: 11, color: open ? "#64748b" : `${accentColor}88`, marginTop: 2 }}>統計・法律・今すぐできること</div>
+          <div style={{ fontSize: 13, fontWeight: 900, color: open ? "#1e293b" : accentColor }}><RubyText text={ageMode === "elementary" ? "{保護者|ほごしゃ}{向|む}け{詳細|しょうさい}{情報|じょうほう}" : "保護者向け詳細情報"} /></div>
+          <div style={{ fontSize: 11, color: open ? "#64748b" : `${accentColor}88`, marginTop: 2 }}><RubyText text={ageMode === "elementary" ? "{統計|とうけい}・{法律|ほうりつ}・{今|いま}すぐできること" : "統計・法律・今すぐできること"} /></div>
         </div>
         <div style={{ fontSize: 18, color: accentColor, transform: open ? "rotate(180deg)" : "none", transition: "transform .2s" }}>▾</div>
       </button>
@@ -2459,27 +2504,27 @@ function ParentExpertCard({ epKey, accentColor }) {
 
           {/* 法律 */}
           <div style={{ background: "#fef2f2", border: "1px solid #fecaca", borderRadius: 10, padding: "10px 12px", marginBottom: 12 }}>
-            <div style={{ fontSize: 10, fontWeight: 900, color: "#dc2626", marginBottom: 4, letterSpacing: ".05em" }}>⚖️ 法律・制度</div>
+            <div style={{ fontSize: 10, fontWeight: 900, color: "#dc2626", marginBottom: 4, letterSpacing: ".05em" }}><RubyText text={ageMode === "elementary" ? "⚖️ {法律|ほうりつ}・{制度|せいど}" : "⚖️ 法律・制度"} /></div>
             <div style={{ fontSize: 12, color: "#7f1d1d", lineHeight: 1.7 }}>{card.law}</div>
           </div>
 
           {/* アクション */}
           <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 10, padding: "10px 12px", marginBottom: 12 }}>
-            <div style={{ fontSize: 10, fontWeight: 900, color: "#166534", marginBottom: 6, letterSpacing: ".05em" }}>✅ 今すぐできること</div>
-            {card.actions.map((a, i) => (
+            <div style={{ fontSize: 10, fontWeight: 900, color: "#166534", marginBottom: 6, letterSpacing: ".05em" }}><RubyText text={ageMode === "elementary" ? "✅ {今|いま}すぐできること" : "✅ 今すぐできること"} /></div>
+            {dispActions.map((a, i) => (
               <div key={i} style={{ display: "flex", gap: 6, alignItems: "flex-start", marginBottom: 5 }}>
                 <span style={{ color: "#16a34a", fontWeight: 900, flexShrink: 0, marginTop: 1 }}>▸</span>
-                <span style={{ fontSize: 12, color: "#166534", lineHeight: 1.6 }}>{a}</span>
+                <span style={{ fontSize: 12, color: "#166534", lineHeight: 1.6 }}><RubyText text={a} /></span>
               </div>
             ))}
           </div>
 
           {/* 相談先 */}
           <div style={{ background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: 10, padding: "10px 12px" }}>
-            <div style={{ fontSize: 10, fontWeight: 900, color: "#1d4ed8", marginBottom: 6, letterSpacing: ".05em" }}>📞 相談窓口</div>
-            {card.contacts.map((c, i) => (
-              <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "5px 0", borderBottom: i < card.contacts.length - 1 ? "1px solid #dbeafe" : "none" }}>
-                <span style={{ fontSize: 12, color: "#1e40af" }}>{c.name}</span>
+            <div style={{ fontSize: 10, fontWeight: 900, color: "#1d4ed8", marginBottom: 6, letterSpacing: ".05em" }}><RubyText text={ageMode === "elementary" ? "📞 {相談|そうだん}{窓口|まどぐち}" : "📞 相談窓口"} /></div>
+            {dispContacts.map((c, i) => (
+              <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "5px 0", borderBottom: i < dispContacts.length - 1 ? "1px solid #dbeafe" : "none" }}>
+                <span style={{ fontSize: 12, color: "#1e40af" }}><RubyText text={c.name} /></span>
                 <span style={{ fontSize: 13, fontWeight: 900, color: "#1d4ed8" }}>{c.tel}</span>
               </div>
             ))}
@@ -2843,6 +2888,10 @@ const EP_INTRO_META = {
     hook: "スマホで撮った写真から、自宅や学校の場所が特定される——そんな事件が実際に起きています。",
     talkPoints: ["写真から何がわかるか", "位置情報タグって何？", "投稿前にどう確認するか"],
     parentNote: "制服・校章・表札・ランドマークが写り込んだ写真から、住所が特定された事例があります。",
+    elTheme: "{個人情報|こじんじょうほう}・{位置情報|いちじょうほう}",
+    elHook: "スマホで{撮|と}った{写真|しゃしん}から、{自宅|じたく}や{学校|がっこう}の{場所|ばしょ}が{特定|とくてい}される——そんな{事件|じけん}が{実際|じっさい}に{起|お}きています。",
+    elTalkPoints: ["{写真|しゃしん}から{何|なに}がわかるか", "{位置情報|いちじょうほう}タグって{何|なん}？", "{投稿|とうこう}{前|まえ}にどう{確認|かくにん}するか"],
+    elParentNote: "{制服|せいふく}・{校章|こうしょう}・{表札|ひょうさつ}・ランドマークが{写|うつ}り{込|こ}んだ{写真|しゃしん}から、{住所|じゅうしょ}が{特定|とくてい}された{事例|じれい}があります。",
     accentColor: "#ffa940",
   },
   ep2: {
@@ -2850,6 +2899,10 @@ const EP_INTRO_META = {
     hook: "「緊急拡散希望」——その情報、本当ですか？デマを広めた側も責任を問われる時代です。",
     talkPoints: ["フェイクニュースを見分ける方法", "シェアする前にすること", "公式情報源とは？"],
     parentNote: "災害時のデマ拡散で混乱が起きた事例が多数あります。子どもは特に拡散しやすい傾向があります。",
+    elTheme: "フェイクニュース・{情報|じょうほう}リテラシー",
+    elHook: "「{緊急|きんきゅう}{拡散|かくさん}{希望|きぼう}」——その{情報|じょうほう}、{本当|ほんとう}ですか？デマを{広|ひろ}めた{側|がわ}も{責任|せきにん}を{問|と}われる{時代|じだい}です。",
+    elTalkPoints: ["フェイクニュースを{見分|みわ}ける{方法|ほうほう}", "シェアする{前|まえ}にすること", "{公式|こうしき}{情報源|じょうほうげん}とは？"],
+    elParentNote: "{災害|さいがい}{時|じ}のデマ{拡散|かくさん}で{混乱|こんらん}が{起|お}きた{事例|じれい}が{多数|たすう}あります。{子|こ}どもは{特|とく}に{拡散|かくさん}しやすい{傾向|けいこう}があります。",
     accentColor: "#7c3aed",
   },
   ep3: {
@@ -2857,6 +2910,10 @@ const EP_INTRO_META = {
     hook: "「スマホだけで日払い5万円」——その求人広告は、犯罪グループの入口です。",
     talkPoints: ["闇バイトの断り方", "トクリュウって何？", "困ったら誰に相談するか"],
     parentNote: "2024年、高校・大学生の逮捕者が急増。「知らなかった」は裁判で通用しません。",
+    elTheme: "{闇|やみ}バイト・トクリュウ",
+    elHook: "「スマホだけで{日払|ひばら}い5{万円|まんえん}」——その{求人|きゅうじん}{広告|こうこく}は、{犯罪|はんざい}グループの{入口|いりぐち}です。",
+    elTalkPoints: ["{闇|やみ}バイトの{断|ことわ}り{方|かた}", "トクリュウって{何|なん}？", "{困|こま}ったら{誰|だれ}に{相談|そうだん}するか"],
+    elParentNote: "2024{年|ねん}、{高校|こうこう}・{大学生|だいがくせい}の{逮捕者|たいほしゃ}が{急増|きゅうぞう}。「{知|し}らなかった」は{裁判|さいばん}で{通用|つうよう}しません。",
     accentColor: "#16a34a",
   },
   ep4: {
@@ -2864,6 +2921,10 @@ const EP_INTRO_META = {
     hook: "「友達からLINEが来た。でも本当に友達だった？」——乗っ取られたアカウントが次の被害者を生みます。",
     talkPoints: ["2段階認証の設定", "ワンタイムパスワードは誰にも教えない", "怪しいLINEが来たら電話確認"],
     parentNote: "LINE乗っ取りは年間数万件。設定→アカウント→2段階認証を今日一緒に確認しましょう。",
+    elTheme: "なりすまし・アカウント{乗|の}っ{取|と}り",
+    elHook: "「{友達|ともだち}からLINEが{来|き}た。でも{本当|ほんとう}に{友達|ともだち}だった？」——{乗|の}っ{取|と}られたアカウントが{次|つぎ}の{被害者|ひがいしゃ}を{生|う}みます。",
+    elTalkPoints: ["2{段階|だんかい}{認証|にんしょう}の{設定|せってい}", "ワンタイムパスワードは{誰|だれ}にも{教|おし}えない", "{怪|あや}しいLINEが{来|き}たら{電話|でんわ}{確認|かくにん}"],
+    elParentNote: "LINE{乗|の}っ{取|と}りは{年間|ねんかん}{数万|すうまん}{件|けん}。{設定|せってい}→アカウント→2{段階|だんかい}{認証|にんしょう}を{今日|きょう}{一緒|いっしょ}に{確認|かくにん}しましょう。",
     accentColor: "#0ea5e9",
   },
   ep5: {
@@ -2871,6 +2932,10 @@ const EP_INTRO_META = {
     hook: "グループLINEで悪口が流れていた。「自分は書いていない」——でも、それはいじめに加担していることになります。",
     talkPoints: ["傍観者効果とは何か", "一言どう声をかけるか", "いじめを見たら誰に言うか"],
     parentNote: "ネットいじめは24時間逃げ場がありません。子どもの様子の変化に気づいたら、まず聴いてあげましょう。",
+    elTheme: "ネットいじめ・{傍観者|ぼうかんしゃ}",
+    elHook: "グループLINEで{悪口|わるくち}が{流|なが}れていた。「{自分|じぶん}は{書|か}いていない」——でも、それはいじめに{加担|かたん}していることになります。",
+    elTalkPoints: ["{傍観者|ぼうかんしゃ}{効果|こうか}とは{何|なに}か", "{一言|ひとこと}どう{声|こえ}をかけるか", "いじめを{見|み}たら{誰|だれ}に{言|い}うか"],
+    elParentNote: "ネットいじめは24{時間|じかん}{逃|に}げ{場|ば}がありません。{子|こ}どもの{様子|ようす}の{変化|へんか}に{気|き}づいたら、まず{聴|き}いてあげましょう。",
     accentColor: "#ec4899",
   },
   ep6: {
@@ -2878,6 +2943,10 @@ const EP_INTRO_META = {
     hook: "ゲームで知り合った「同い年の子」。でも本当に同い年ですか？",
     talkPoints: ["グルーミングの手口", "写真を送ってしまったら", "信頼できる大人に話す大切さ"],
     parentNote: "「怒らないから話して」という信頼関係が最大の防御です。被害は子どもの責任ではありません。",
+    elTheme: "{自画撮|じがど}り{被害|ひがい}・グルーミング",
+    elHook: "ゲームで{知|し}り{合|あ}った「{同|おな}い{年|とし}の{子|こ}」。でも{本当|ほんとう}に{同|おな}い{年|とし}ですか？",
+    elTalkPoints: ["グルーミングの{手口|てぐち}", "{写真|しゃしん}を{送|おく}ってしまったら", "{信頼|しんらい}できる{大人|おとな}に{話|はな}す{大切|たいせつ}さ"],
+    elParentNote: "「{怒|おこ}らないから{話|はな}して」という{信頼|しんらい}{関係|かんけい}が{最大|さいだい}の{防御|ぼうぎょ}です。{被害|ひがい}は{子|こ}どもの{責任|せきにん}ではありません。",
     accentColor: "#f43f5e",
   },
   ep7: {
@@ -2885,14 +2954,24 @@ const EP_INTRO_META = {
     hook: "「Amazonから重要なお知らせ」——そのSMSのURLを、タップしていませんか？",
     talkPoints: ["SMSのURLは踏まない", "本物のURLの見分け方", "公式アプリを直接開く習慣"],
     parentNote: "2024年、フィッシング被害額が初めて1000億円を超えました。家族全員で「SMSのURLは踏まない」を徹底しましょう。",
+    elTheme: "フィッシング{詐欺|さぎ}・スミッシング",
+    elHook: "「Amazonから{重要|じゅうよう}なお{知|し}らせ」——そのSMSのURLを、タップしていませんか？",
+    elTalkPoints: ["SMSのURLは{踏|ふ}まない", "{本物|ほんもの}のURLの{見分|みわ}け{方|かた}", "{公式|こうしき}アプリを{直接|ちょくせつ}{開|ひら}く{習慣|しゅうかん}"],
+    elParentNote: "2024{年|ねん}、フィッシング{被害|ひがい}{額|がく}が{初|はじ}めて1000{億円|おくえん}を{超|こ}えました。{家族|かぞく}{全員|ぜんいん}で「SMSのURLは{踏|ふ}まない」を{徹底|てってい}しましょう。",
     accentColor: "#06b6d4",
   },
 };
 
 function EpisodeIntroCard({ epKey, onStart }) {
+  const ageMode = useAgeMode();
   const meta = EP_INTRO_META[epKey];
   if (!meta) { onStart(); return null; }
-  const { theme, hook, talkPoints, parentNote, accentColor } = meta;
+  const { theme, hook, talkPoints, parentNote, accentColor,
+          elTheme, elHook, elTalkPoints, elParentNote } = meta;
+  const dispTheme = ageMode === "elementary" ? (elTheme || theme) : theme;
+  const dispHook  = ageMode === "elementary" ? (elHook  || hook)  : hook;
+  const dispTalkPoints = ageMode === "elementary" ? (elTalkPoints || talkPoints) : talkPoints;
+  const dispParentNote = ageMode === "elementary" ? (elParentNote || parentNote) : parentNote;
 
   return (
     <div style={{
@@ -2906,35 +2985,35 @@ function EpisodeIntroCard({ epKey, onStart }) {
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 22 }}>
           <div style={{ width: 40, height: 40, borderRadius: 11, background: `${accentColor}20`, border: `1px solid ${accentColor}44`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>👨‍👩‍👧</div>
           <div>
-            <div style={{ fontSize: 10, fontFamily: "'DotGothic16',monospace", color: accentColor, letterSpacing: ".15em", marginBottom: 3 }}>このエピソードを始める前に</div>
-            <div style={{ fontSize: 15, fontWeight: 900 }}>{theme}</div>
+            <div style={{ fontSize: 10, fontFamily: "'DotGothic16',monospace", color: accentColor, letterSpacing: ".15em", marginBottom: 3 }}><RubyText text={ageMode === "elementary" ? "このエピソードを{始|はじ}める{前|まえ}に" : "このエピソードを始める前に"} /></div>
+            <div style={{ fontSize: 15, fontWeight: 900 }}><RubyText text={dispTheme} /></div>
           </div>
         </div>
 
         {/* フック文 */}
         <div style={{ background: `${accentColor}0a`, border: `1px solid ${accentColor}33`, borderRadius: 16, padding: "18px 16px", marginBottom: 14 }}>
           <div style={{ fontSize: 15, fontWeight: 700, color: "#fff", lineHeight: 1.8 }}>
-            {hook}
+            <RubyText text={dispHook} />
           </div>
         </div>
 
         {/* 話し合いポイント */}
         <div style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.08)", borderRadius: 14, padding: "16px", marginBottom: 14 }}>
           <div style={{ fontSize: 11, fontWeight: 900, color: "rgba(255,255,255,.5)", marginBottom: 12, letterSpacing: ".1em" }}>
-            💬 このエピソードの話し合いポイント
+            <RubyText text={ageMode === "elementary" ? "💬 このエピソードの{話|はな}し{合|あ}いポイント" : "💬 このエピソードの話し合いポイント"} />
           </div>
-          {talkPoints.map((p, i) => (
+          {dispTalkPoints.map((p, i) => (
             <div key={i} style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 8 }}>
               <div style={{ width: 20, height: 20, borderRadius: "50%", background: `${accentColor}22`, border: `1px solid ${accentColor}44`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, color: accentColor, fontWeight: 900, flexShrink: 0 }}>{i + 1}</div>
-              <div style={{ fontSize: 13, color: "rgba(255,255,255,.8)" }}>{p}</div>
+              <div style={{ fontSize: 13, color: "rgba(255,255,255,.8)" }}><RubyText text={p} /></div>
             </div>
           ))}
         </div>
 
         {/* 保護者メモ */}
         <div style={{ background: "rgba(99,102,241,.06)", border: "1px solid rgba(99,102,241,.2)", borderRadius: 12, padding: "12px 14px", marginBottom: 24 }}>
-          <div style={{ fontSize: 10, fontWeight: 900, color: "#818cf8", marginBottom: 6, letterSpacing: ".05em" }}>📊 保護者の方へ</div>
-          <div style={{ fontSize: 12, color: "rgba(255,255,255,.65)", lineHeight: 1.75 }}>{parentNote}</div>
+          <div style={{ fontSize: 10, fontWeight: 900, color: "#818cf8", marginBottom: 6, letterSpacing: ".05em" }}><RubyText text={ageMode === "elementary" ? "📊 {保護者|ほごしゃ}の{方|かた}へ" : "📊 保護者の方へ"} /></div>
+          <div style={{ fontSize: 12, color: "rgba(255,255,255,.65)", lineHeight: 1.75 }}><RubyText text={dispParentNote} /></div>
         </div>
 
         {/* スタートボタン */}
@@ -2946,11 +3025,11 @@ function EpisodeIntroCard({ epKey, onStart }) {
             fontSize: 16, fontWeight: 900, cursor: "pointer", fontFamily: "inherit",
             boxShadow: `0 8px 28px ${accentColor}44`,
           }}>
-          🛡️ 子どもと一緒に体験する →
+          <RubyText text={ageMode === "elementary" ? "🛡️ {子|こ}どもと{一緒|いっしょ}に{体験|たいけん}する →" : "🛡️ 子どもと一緒に体験する →"} />
         </button>
 
         <div style={{ marginTop: 12, fontSize: 11, color: "rgba(255,255,255,.2)", textAlign: "center" }}>
-          ⏱ 所要時間 約8〜10分 · 話し合いポイント {talkPoints.length}つ
+          <RubyText text={ageMode === "elementary" ? `⏱ {所要時間|しょようじかん} {約|やく}8〜10{分|ふん} · {話|はな}し{合|あ}いポイント ${dispTalkPoints.length}つ` : `⏱ 所要時間 約8〜10分 · 話し合いポイント ${talkPoints.length}つ`} />
         </div>
       </div>
     </div>
@@ -3497,6 +3576,7 @@ function ParentSecretDashboard({ onClose }) {
 }
 
 function Opening({ onComplete }) {
+  const ageMode = useAgeMode();
   const [screen, setScreen] = useState(0);
   const [tutIdx, setTutIdx] = useState(0);
   const [ageSelected, setAgeSelected] = useState(null);
@@ -3542,10 +3622,9 @@ function Opening({ onComplete }) {
           fontSize: 14, color: "rgba(255,255,255,.8)", lineHeight: 1.85,
           textAlign: "center",
         }}>
-          お子さまの<strong style={{ color: "#ffa940" }}>スマホ・SNS</strong>が<br />
-          心配になったことはありませんか？<br />
+          <RubyText text={ageMode === "elementary" ? "お{子|こ}さまの" : "お子さまの"} /><strong style={{ color: "#ffa940" }}>スマホ・SNS</strong><RubyText text={ageMode === "elementary" ? "が<br />{心配|しんぱい}になったことはありませんか？" : "が<br />心配になったことはありませんか？"} /><br />
           <span style={{ fontSize: 12, color: "rgba(255,255,255,.5)" }}>
-            親子で5〜10分、一緒に体験するアプリです
+            <RubyText text={ageMode === "elementary" ? "{親子|おやこ}で5〜10{分|ふん}、{一緒|いっしょ}に{体験|たいけん}するアプリです" : "親子で5〜10分、一緒に体験するアプリです"} />
           </span>
         </div>
       </div>
@@ -3558,7 +3637,7 @@ function Opening({ onComplete }) {
           color: "#fff", cursor: "pointer", fontFamily: "inherit",
           boxShadow: "0 8px 28px rgba(255,169,64,.45)",
         }}>
-          保護者の方へ →
+          <RubyText text={ageMode === "elementary" ? "{保護者|ほごしゃ}の{方|かた}へ →" : "保護者の方へ →"} />
         </button>
       </div>
     </div>
@@ -3582,10 +3661,10 @@ function Opening({ onComplete }) {
       <div style={{ flex: 1, padding: "24px 24px 0" }}>
         <div style={{ animation: "slideUp .5s ease", marginBottom: 24 }}>
           <div style={{ fontSize: 12, color: "#ffa940", fontWeight: 700, marginBottom: 8, letterSpacing: ".05em" }}>
-            なぜ今、必要なのか
+            <RubyText text={ageMode === "elementary" ? "なぜ{今|いま}、{必要|ひつよう}なのか" : "なぜ今、必要なのか"} />
           </div>
           <div style={{ fontSize: 24, fontWeight: 900, color: "#fff", lineHeight: 1.3 }}>
-            子どものSNS被害は<br />急増しています
+            <RubyText text={ageMode === "elementary" ? "{子|こ}どものSNS{被害|ひがい}は<br />{急増|きゅうぞう}しています" : "子どものSNS被害は<br />急増しています"} />
           </div>
         </div>
 
@@ -3634,7 +3713,7 @@ function Opening({ onComplete }) {
           fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit",
           boxShadow: "0 8px 24px rgba(255,169,64,.35)",
         }}>
-          このアプリの使い方 →
+          <RubyText text={ageMode === "elementary" ? "このアプリの{使|つか}い{方|かた} →" : "このアプリの使い方 →"} />
         </button>
       </div>
     </div>
@@ -3648,18 +3727,27 @@ function Opening({ onComplete }) {
         title: "親子で隣に座る",
         body: "お子さまと一緒に同じ画面を見ながら進めてください。\n一人で進めても構いませんが、隣に座ることで「話し合い」が自然に生まれます。",
         tip: "💡 所要時間は1エピソード約8〜10分",
+        elTitle: "{親子|おやこ}で{隣|となり}に{座|すわ}る",
+        elBody: "お{子|こ}さまと{一緒|いっしょ}に{同|おな}じ{画面|がめん}を{見|み}ながら{進|すす}めてください。<br />{一人|ひとり}で{進|すす}めても{構|かま}いませんが、{隣|となり}に{座|すわ}ることで「{話|はな}し{合|あ}い」が{自然|しぜん}に{生|う}まれます。",
+        elTip: "💡 {所要時間|しょようじかん}は1エピソード{約|やく}8〜10{分|ふん}",
       },
       {
         num: "02", icon: "😱", color: "#ec4899",
         title: "体験→驚く→話し合う",
         body: "各エピソードにはリアルな「疑似体験」があります。\n体験後に「怖かった？」「どう思う？」と話しかけてみてください。",
         tip: "💡 大人が見ても「知らなかった」と驚く内容です",
+        elTitle: "{体験|たいけん}→{驚|おどろ}く→{話|はな}し{合|あ}う",
+        elBody: "{各|かく}エピソードにはリアルな「{疑似体験|ぎじたいけん}」があります。<br />{体験後|たいけんご}に「{怖|こわ}かった？」「どう{思|おも}う？」と{話|はな}しかけてみてください。",
+        elTip: "💡 {大人|おとな}が{見|み}ても「{知|し}らなかった」と{驚|おどろ}く{内容|ないよう}です",
       },
       {
         num: "03", icon: "📖", color: "#7c3aed",
         title: "キーワードを一緒に覚える",
         body: "トクリュウ・グルーミング・スミッシング…\nニュースに出てくる言葉を親子で覚えて、日常の話題にしましょう。",
         tip: "💡 キーワードノートに記録して後から見返せます",
+        elTitle: "キーワードを{一緒|いっしょ}に{覚|おぼ}える",
+        elBody: "トクリュウ・グルーミング・スミッシング…<br />ニュースに{出|で}てくる{言葉|ことば}を{親子|おやこ}で{覚|おぼ}えて、{日常|にちじょう}の{話題|わだい}にしましょう。",
+        elTip: "💡 キーワードノートに{記録|きろく}して{後|あと}から{見返|みかえ}せます",
       },
     ];
     const step = steps[tutIdx];
@@ -3709,18 +3797,20 @@ function Opening({ onComplete }) {
                 <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: step.color, letterSpacing: ".15em", marginBottom: 4 }}>
                   STEP {step.num}
                 </div>
-                <div style={{ fontSize: 18, fontWeight: 900, color: "#fff" }}>{step.title}</div>
+                <div style={{ fontSize: 18, fontWeight: 900, color: "#fff" }}><RubyText text={ageMode === "elementary" ? (step.elTitle || step.title) : step.title} /></div>
               </div>
             </div>
 
             <div style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.08)", borderRadius: 16, padding: "18px 16px", marginBottom: 14 }}>
               <p style={{ fontSize: 14, color: "rgba(255,255,255,.8)", lineHeight: 1.9, margin: 0, whiteSpace: "pre-line" }}>
-                {step.body}
+                {ageMode === "elementary" && (step.elBody || step.body)
+                  ? <RubyText text={step.elBody || step.body} />
+                  : step.body}
               </p>
             </div>
 
             <div style={{ background: `${step.color}0a`, border: `1px solid ${step.color}22`, borderRadius: 12, padding: "11px 14px", fontSize: 12, color: `${step.color}cc`, lineHeight: 1.7 }}>
-              {step.tip}
+              <RubyText text={ageMode === "elementary" ? (step.elTip || step.tip) : step.tip} />
             </div>
           </div>
         </div>
@@ -3735,7 +3825,7 @@ function Opening({ onComplete }) {
           )}
           <button onClick={() => { feedback("tap"); isLast ? next() : setTutIdx(t => t + 1); }}
             style={{ flex: 2, padding: 15, background: `linear-gradient(135deg,${step.color},${step.color}cc)`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${step.color}44` }}>
-            {isLast ? "さっそくはじめる →" : "次へ →"}
+            <RubyText text={isLast ? (ageMode === "elementary" ? "さっそく{始|はじ}める →" : "さっそくはじめる →") : "次へ →"} />
           </button>
         </div>
       </div>
@@ -3763,17 +3853,19 @@ function Opening({ onComplete }) {
         <div style={{ animation: "popIn .6s ease", textAlign: "center", marginBottom: 32 }}>
           <div style={{ fontSize: 52, marginBottom: 14 }}>🎓</div>
           <div style={{ fontSize: 22, fontWeight: 900, color: "#fff", lineHeight: 1.35, marginBottom: 10 }}>
-            お子さんの学年を<br />教えてください
+            <RubyText text={ageMode === "elementary" ? "お{子|こ}さんの{学年|がくねん}を<br />{教|おし}えてください" : "お子さんの学年を<br />教えてください"} />
           </div>
           <div style={{ fontSize: 13, color: "rgba(255,255,255,.5)", lineHeight: 1.8 }}>
-            学年に合わせた表示に調整します
+            <RubyText text={ageMode === "elementary" ? "{学年|がくねん}に{合|あ}わせた{表示|ひょうじ}に{調整|ちょうせい}します" : "学年に合わせた表示に調整します"} />
           </div>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 14, width: "100%", maxWidth: 360 }}>
           {[
-            { id: "elementary", icon: "🏫", label: "小学4〜6年生", desc: "やさしい言葉で説明します" },
-            { id: "middle", icon: "📱", label: "中学生以上", desc: "より詳しい内容で学べます" },
+            { id: "elementary", icon: "🏫", label: "小学4〜6年生", desc: "やさしい言葉で説明します",
+              elLabel: "{小学|しょうがく}4〜6{年生|ねんせい}", elDesc: "やさしい{言葉|ことば}で{説明|せつめい}します" },
+            { id: "middle", icon: "📱", label: "中学生以上", desc: "より詳しい内容で学べます",
+              elLabel: "{中学生|ちゅうがくせい}{以上|いじょう}", elDesc: "より{詳|くわ}しい{内容|ないよう}で{学|まな}べます" },
           ].map((opt) => (
             <button key={opt.id}
               onClick={() => {
@@ -3792,8 +3884,12 @@ function Opening({ onComplete }) {
               }}>
               <div style={{ fontSize: 36, flexShrink: 0 }}>{opt.icon}</div>
               <div style={{ textAlign: "left" }}>
-                <div style={{ fontSize: 17, fontWeight: 900, color: "#fff", marginBottom: 4 }}>{opt.label}</div>
-                <div style={{ fontSize: 12, color: "rgba(255,255,255,.5)" }}>{opt.desc}</div>
+                <div style={{ fontSize: 17, fontWeight: 900, color: "#fff", marginBottom: 4 }}>
+                  <RubyText text={ageMode === "elementary" ? (opt.elLabel || opt.label) : opt.label} />
+                </div>
+                <div style={{ fontSize: 12, color: "rgba(255,255,255,.5)" }}>
+                  <RubyText text={ageMode === "elementary" ? (opt.elDesc || opt.desc) : opt.desc} />
+                </div>
               </div>
               <div style={{ marginLeft: "auto", color: "#ffa940", fontSize: 18 }}>→</div>
             </button>
@@ -3823,10 +3919,10 @@ function Opening({ onComplete }) {
       <div style={{ animation: "popIn .6s ease", textAlign: "center", marginBottom: 32 }}>
         <div style={{ fontSize: 56, marginBottom: 14 }}>🚀</div>
         <div style={{ fontSize: 24, fontWeight: 900, color: "#fff", lineHeight: 1.35, marginBottom: 10 }}>
-          準備完了！<br />お子さまと一緒に<br />始めましょう
+          <RubyText text={ageMode === "elementary" ? "{準備|じゅんび}{完了|かんりょう}！<br />お{子|こ}さまと{一緒|いっしょ}に<br />{始|はじ}めましょう" : "準備完了！<br />お子さまと一緒に<br />始めましょう"} />
         </div>
         <div style={{ fontSize: 13, color: "rgba(255,255,255,.5)", lineHeight: 1.8 }}>
-          全7エピソード · 完全無料 · 広告なし
+          <RubyText text={ageMode === "elementary" ? "{全|ぜん}7エピソード · {完全|かんぜん}{無料|むりょう} · {広告|こうこく}なし" : "全7エピソード · 完全無料 · 広告なし"} />
         </div>
       </div>
 
@@ -3837,12 +3933,12 @@ function Opening({ onComplete }) {
         marginBottom: 20, animation: "slideUp .5s .2s both ease",
       }}>
         <div style={{ fontSize: 13, fontWeight: 900, color: "rgba(255,255,255,.7)", marginBottom: 12, display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{ fontSize: 18 }}>📢</span>同じ悩みを持つ親御さんに
+          <span style={{ fontSize: 18 }}>📢</span><RubyText text={ageMode === "elementary" ? "{同|おな}じ{悩|なや}みを{持|も}つ{親御|おやご}さんに" : "同じ悩みを持つ親御さんに"} />
         </div>
         {[
-          { emoji: "👩‍👧", text: "子育てグループのLINEでシェアする" },
-          { emoji: "🏫", text: "PTAや学校の先生に紹介する" },
-          { emoji: "👴👵", text: "祖父母にも教えてあげる（振り込め詐欺対策にも）" },
+          { emoji: "👩‍👧", text: "子育てグループのLINEでシェアする", elText: "{子育|こそだ}てグループのLINEでシェアする" },
+          { emoji: "🏫", text: "PTAや学校の先生に紹介する", elText: "PTAや{学校|がっこう}の{先生|せんせい}に{紹介|しょうかい}する" },
+          { emoji: "👴👵", text: "祖父母にも教えてあげる（振り込め詐欺対策にも）", elText: "{祖父母|そふぼ}にも{教|おし}えてあげる（{振|ふ}り{込|こ}め{詐欺|さぎ}{対策|たいさく}にも）" },
         ].map((tip, i) => (
           <div key={i} style={{
             display: "flex", alignItems: "center", gap: 10,
@@ -3850,7 +3946,9 @@ function Opening({ onComplete }) {
             borderBottom: i < 2 ? "1px solid rgba(255,255,255,.06)" : "none",
           }}>
             <span style={{ fontSize: 18 }}>{tip.emoji}</span>
-            <span style={{ fontSize: 12, color: "rgba(255,255,255,.6)" }}>{tip.text}</span>
+            <span style={{ fontSize: 12, color: "rgba(255,255,255,.6)" }}>
+              <RubyText text={ageMode === "elementary" ? (tip.elText || tip.text) : tip.text} />
+            </span>
           </div>
         ))}
         <button onClick={() => navigator.share?.({
@@ -3877,17 +3975,19 @@ function Opening({ onComplete }) {
         animation: "slideUp .5s .3s both ease",
       }}>
         <div style={{ fontSize: 12, fontWeight: 900, color: "rgba(100,255,180,.8)", marginBottom: 10, display: "flex", alignItems: "center", gap: 6 }}>
-          🔒 個人情報・プライバシーについて
+          🔒 <RubyText text={ageMode === "elementary" ? "{個人情報|こじんじょうほう}・プライバシーについて" : "個人情報・プライバシーについて"} />
         </div>
         {[
-          { icon: "📵", text: "入力した内容は外部に送信されません" },
-          { icon: "📱", text: "すべてのデータはこの端末にのみ保存されます" },
-          { icon: "🚫", text: "広告なし・個人情報の収集なし" },
-          { icon: "🤖", text: "一部のコンテンツはAIを使って作成されています" },
+          { icon: "📵", text: "入力した内容は外部に送信されません", elText: "{入力|にゅうりょく}した{内容|ないよう}は{外部|がいぶ}に{送信|そうしん}されません" },
+          { icon: "📱", text: "すべてのデータはこの端末にのみ保存されます", elText: "すべてのデータはこの{端末|たんまつ}にのみ{保存|ほぞん}されます" },
+          { icon: "🚫", text: "広告なし・個人情報の収集なし", elText: "{広告|こうこく}なし・{個人情報|こじんじょうほう}の{収集|しゅうしゅう}なし" },
+          { icon: "🤖", text: "一部のコンテンツはAIを使って作成されています", elText: "{一部|いちぶ}のコンテンツはAIを{使|つか}って{作成|さくせい}されています" },
         ].map((item, i) => (
           <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "5px 0", borderBottom: i < 3 ? "1px solid rgba(255,255,255,.05)" : "none" }}>
             <span style={{ fontSize: 14 }}>{item.icon}</span>
-            <span style={{ fontSize: 11, color: "rgba(255,255,255,.55)", lineHeight: 1.5 }}>{item.text}</span>
+            <span style={{ fontSize: 11, color: "rgba(255,255,255,.55)", lineHeight: 1.5 }}>
+              <RubyText text={ageMode === "elementary" ? (item.elText || item.text) : item.text} />
+            </span>
           </div>
         ))}
       </div>
@@ -3905,11 +4005,11 @@ function Opening({ onComplete }) {
         boxShadow: "0 8px 32px rgba(255,169,64,.5)",
         animation: "glowPulse 2s ease-in-out infinite",
       }}>
-        🛡️ 子どもと一緒に始める
+        🛡️ <RubyText text={ageMode === "elementary" ? "{子|こ}どもと{一緒|いっしょ}に{始|はじ}める" : "子どもと一緒に始める"} />
       </button>
 
       <div style={{ marginTop: 14, fontSize: 11, color: "rgba(255,255,255,.2)" }}>
-        完全無料 · インストール不要 · 広告なし
+        <RubyText text={ageMode === "elementary" ? "{完全|かんぜん}{無料|むりょう} · インストール{不要|ふよう} · {広告|こうこく}なし" : "完全無料 · インストール不要 · 広告なし"} />
       </div>
     </div>
   );
@@ -4602,113 +4702,73 @@ function clearRecord() {
 // ℹ️ 情報ページ（運営者情報・プライバシーポリシー・利用規約）
 // ═══════════════════════════════════════════════
 function InfoScreen({ onBack }) {
+  const ageMode = useAgeMode();
   const [tab, setTab] = useState("privacy"); // privacy | operator | terms
 
   const sections = {
     privacy: {
       label: "プライバシーポリシー",
+      elLabel: "プライバシーポリシー",
       emoji: "🔒",
       content: [
-        {
-          title: "収集する情報について",
-          body: "マモルは、お客様の個人情報を収集・送信しません。学習記録・キーワードノート・進捗データは、すべてお使いの端末のブラウザ内（localStorage）にのみ保存されます。外部サーバーへの送信は行いません。",
-        },
-        {
-          title: "外部APIの利用について",
-          body: "マモルは学習コンテンツの生成に Anthropic社（Claude API）を利用しています。週次チャレンジ問題・保護者向けニュースの生成時にのみ、入力したプロンプト（質問内容）がサーバーを経由します。お子様の氏名・住所・学校名などの個人情報は一切送信されません。",
-        },
-        {
-          title: "Cookieについて",
-          body: "マモルはCookieを使用しません。学習データの保存にはブラウザのlocalStorageを使用しています。",
-        },
-        {
-          title: "第三者への提供",
-          body: "収集した情報を第三者に販売・提供することはありません。",
-        },
-        {
-          title: "データの削除について",
-          body: "保護者レポート画面内の「データをリセット」ボタンから、端末内の全学習データを削除できます。また、ブラウザの設定からlocalStorageをクリアすることでも削除できます。",
-        },
-        {
-          title: "お問い合わせ",
-          body: "プライバシーポリシーに関するご質問は、下記の運営者情報に記載のメールアドレスまでお問い合わせください。",
-        },
-        {
-          title: "改定について",
-          body: "本ポリシーは予告なく改定する場合があります。重要な変更がある場合はアプリ内でお知らせします。最終更新：2026年5月",
-        },
+        { title: "収集する情報について", elTitle: "{収集|しゅうしゅう}する{情報|じょうほう}について",
+          body: "マモルは、お客様の個人情報を収集・送信しません。学習記録・キーワードノート・進捗データは、すべてお使いの端末のブラウザ内（localStorage）にのみ保存されます。外部サーバーへの送信は行いません。" },
+        { title: "外部APIの利用について", elTitle: "{外部|がいぶ}APIの{利用|りよう}について",
+          body: "マモルは学習コンテンツの生成に Anthropic社（Claude API）を利用しています。週次チャレンジ問題・保護者向けニュースの生成時にのみ、入力したプロンプト（質問内容）がサーバーを経由します。お子様の氏名・住所・学校名などの個人情報は一切送信されません。" },
+        { title: "Cookieについて", elTitle: "Cookieについて",
+          body: "マモルはCookieを使用しません。学習データの保存にはブラウザのlocalStorageを使用しています。" },
+        { title: "第三者への提供", elTitle: "{第三者|だいさんしゃ}への{提供|ていきょう}",
+          body: "収集した情報を第三者に販売・提供することはありません。" },
+        { title: "データの削除について", elTitle: "データの{削除|さくじょ}について",
+          body: "保護者レポート画面内の「データをリセット」ボタンから、端末内の全学習データを削除できます。また、ブラウザの設定からlocalStorageをクリアすることでも削除できます。" },
+        { title: "お問い合わせ", elTitle: "お{問|と}い{合|あ}わせ",
+          body: "プライバシーポリシーに関するご質問は、下記の運営者情報に記載のメールアドレスまでお問い合わせください。" },
+        { title: "改定について", elTitle: "{改定|かいてい}について",
+          body: "本ポリシーは予告なく改定する場合があります。重要な変更がある場合はアプリ内でお知らせします。最終更新：2026年5月" },
       ],
     },
     operator: {
       label: "運営者情報",
+      elLabel: "{運営者|うんえいしゃ}{情報|じょうほう}",
       emoji: "👤",
       content: [
-        {
-          title: "サービス名",
-          body: "マモル（Mamoru）— SNSリテラシー教育アプリ",
-        },
-        {
-          title: "運営者",
-          body: "個人運営（詳細はお問い合わせください）",
-        },
-        {
-          title: "所在地",
-          body: "日本",
-        },
-        {
-          title: "お問い合わせ",
-          body: "mamoru-app-info@gmail.com\n※ ご返信に数日かかる場合があります",
-        },
-        {
-          title: "公開URL",
-          body: "https://mamoru-xi.vercel.app",
-        },
-        {
-          title: "対象年齢",
-          body: "小学校高学年〜中学生とその保護者",
-        },
-        {
-          title: "利用料金",
-          body: "完全無料（広告なし・課金なし）",
-        },
+        { title: "サービス名", elTitle: "サービス{名|めい}",
+          body: "マモル（Mamoru）— SNSリテラシー教育アプリ" },
+        { title: "運営者", elTitle: "{運営者|うんえいしゃ}",
+          body: "個人運営（詳細はお問い合わせください）" },
+        { title: "所在地", elTitle: "{所在地|しょざいち}",
+          body: "日本" },
+        { title: "お問い合わせ", elTitle: "お{問|と}い{合|あ}わせ",
+          body: "mamoru-app-info@gmail.com\n※ ご返信に数日かかる場合があります" },
+        { title: "公開URL", elTitle: "{公開|こうかい}URL",
+          body: "https://mamoru-xi.vercel.app" },
+        { title: "対象年齢", elTitle: "{対象|たいしょう}{年齢|ねんれい}",
+          body: "小学校高学年〜中学生とその保護者" },
+        { title: "利用料金", elTitle: "{利用|りよう}{料金|りょうきん}",
+          body: "完全無料（広告なし・課金なし）" },
       ],
     },
     terms: {
       label: "利用規約",
+      elLabel: "{利用|りよう}{規約|きやく}",
       emoji: "📋",
       content: [
-        {
-          title: "利用について",
-          body: "マモルは、子どものSNSリテラシー教育を目的とした無料サービスです。個人・教育機関での非商用利用に限り、自由にご利用いただけます。",
-        },
-        {
-          title: "禁止事項",
-          body: "・本サービスの無断複製・改変・再配布\n・商業目的での利用（事前許可なし）\n・サービスへの不正アクセス・妨害行為\n・法令に違反する利用",
-        },
-        {
-          title: "免責事項",
-          body: "本アプリのコンテンツは教育目的で作成されており、情報の正確性に努めていますが、完全性・最新性を保証するものではありません。本サービスの利用により生じたいかなる損害についても、運営者は責任を負いません。",
-        },
-        {
-          title: "知的財産権",
-          body: "マモルのコンテンツ・デザイン・コードの著作権は運営者に帰属します。学校の授業・家庭での教育目的での利用・印刷は許可します。",
-        },
-        {
-          title: "サービスの変更・終了",
-          body: "運営者は予告なくサービスの内容を変更・終了する場合があります。",
-        },
-        {
-          title: "準拠法",
-          body: "本規約は日本国法に準拠します。",
-        },
-        {
-          title: "AIの利用について",
-          body: "一部のコンテンツはAI（人工知能）を使って作成されています。",
-        },
-        {
-          title: "データの取り扱い",
-          body: "利用者が入力した内容は外部に送信されません。すべてのデータはお使いの端末にのみ保存されます。",
-        },
+        { title: "利用について", elTitle: "{利用|りよう}について",
+          body: "マモルは、子どものSNSリテラシー教育を目的とした無料サービスです。個人・教育機関での非商用利用に限り、自由にご利用いただけます。" },
+        { title: "禁止事項", elTitle: "{禁止|きんし}{事項|じこう}",
+          body: "・本サービスの無断複製・改変・再配布\n・商業目的での利用（事前許可なし）\n・サービスへの不正アクセス・妨害行為\n・法令に違反する利用" },
+        { title: "免責事項", elTitle: "{免責|めんせき}{事項|じこう}",
+          body: "本アプリのコンテンツは教育目的で作成されており、情報の正確性に努めていますが、完全性・最新性を保証するものではありません。本サービスの利用により生じたいかなる損害についても、運営者は責任を負いません。" },
+        { title: "知的財産権", elTitle: "{知的|ちてき}{財産権|ざいさんけん}",
+          body: "マモルのコンテンツ・デザイン・コードの著作権は運営者に帰属します。学校の授業・家庭での教育目的での利用・印刷は許可します。" },
+        { title: "サービスの変更・終了", elTitle: "サービスの{変更|へんこう}・{終了|しゅうりょう}",
+          body: "運営者は予告なくサービスの内容を変更・終了する場合があります。" },
+        { title: "準拠法", elTitle: "{準拠|じゅんきょ}{法|ほう}",
+          body: "本規約は日本国法に準拠します。" },
+        { title: "AIの利用について", elTitle: "AIの{利用|りよう}について",
+          body: "一部のコンテンツはAI（人工知能）を使って作成されています。" },
+        { title: "データの取り扱い", elTitle: "データの{取|と}り{扱|あつか}い",
+          body: "利用者が入力した内容は外部に送信されません。すべてのデータはお使いの端末にのみ保存されます。" },
       ],
     },
   };
@@ -4720,7 +4780,9 @@ function InfoScreen({ onBack }) {
       {/* ヘッダー */}
       <div style={{ background: "#fff", borderBottom: "1px solid #e2e8f0", padding: "16px 20px", display: "flex", alignItems: "center", gap: 12, position: "sticky", top: 0, zIndex: 10 }}>
         <button onClick={onBack} style={{ width: 36, height: 36, borderRadius: 10, background: "#f1f5f9", border: "1px solid #e2e8f0", cursor: "pointer", fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center" }}>←</button>
-        <div style={{ fontSize: 16, fontWeight: 900, color: "#1e293b" }}>ℹ️ アプリ情報</div>
+        <div style={{ fontSize: 16, fontWeight: 900, color: "#1e293b" }}>
+          ℹ️ <RubyText text={ageMode === "elementary" ? "アプリ{情報|じょうほう}" : "アプリ情報"} />
+        </div>
       </div>
 
       {/* タブ */}
@@ -4728,7 +4790,7 @@ function InfoScreen({ onBack }) {
         {Object.entries(sections).map(([key, sec]) => (
           <button key={key} onClick={() => setTab(key)}
             style={{ padding: "12px 14px", background: "none", border: "none", borderBottom: tab === key ? "2px solid #1e293b" : "2px solid transparent", color: tab === key ? "#1e293b" : "#64748b", fontSize: 12, fontWeight: tab === key ? 900 : 400, cursor: "pointer", fontFamily: "inherit", whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: 5 }}>
-            {sec.emoji} {sec.label}
+            {sec.emoji} <RubyText text={ageMode === "elementary" ? (sec.elLabel || sec.label) : sec.label} />
           </button>
         ))}
       </div>
@@ -4739,7 +4801,7 @@ function InfoScreen({ onBack }) {
           <div key={i} style={{ background: "#fff", borderRadius: 14, padding: "16px", marginBottom: 10, boxShadow: "0 2px 8px rgba(0,0,0,.04)", animation: `slideUp .3s ${i * .05}s both ease` }}>
             <div style={{ fontSize: 13, fontWeight: 900, color: "#1e293b", marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
               <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#ffa940", flexShrink: 0 }} />
-              {item.title}
+              <RubyText text={ageMode === "elementary" ? (item.elTitle || item.title) : item.title} />
             </div>
             <div style={{ fontSize: 12, color: "#475569", lineHeight: 1.85, whiteSpace: "pre-line" }}>
               {item.body}
@@ -4896,6 +4958,7 @@ function ParentNewsTab() {
 }
 
 function ParentReport({ onBack }) {
+  const ageMode = useAgeMode();
   const [record, setRecord] = useState(loadRecord());
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [tab, setTab] = useState("summary"); // summary | detail | advice | badges
@@ -4907,10 +4970,10 @@ function ParentReport({ onBack }) {
   const masteryPct = maxScore > 0 ? Math.round((totalScore / maxScore) * 100) : 0;
 
   const getMasteryLabel = (pct) => {
-    if (pct >= 80) return { label: "リテラシーマスター 🏆", color: "#ffa940" };
-    if (pct >= 50) return { label: "順調に成長中 ✨", color: "#22c55e" };
-    if (pct >= 20) return { label: "学習スタート 🌱", color: "#0ea5e9" };
-    return { label: "これから始めよう", color: "#6b7280" };
+    if (pct >= 80) return { label: "リテラシーマスター 🏆", elLabel: "リテラシーマスター 🏆", color: "#ffa940" };
+    if (pct >= 50) return { label: "順調に成長中 ✨", elLabel: "{順調|じゅんちょう}に{成長|せいちょう}中 ✨", color: "#22c55e" };
+    if (pct >= 20) return { label: "学習スタート 🌱", elLabel: "{学習|がくしゅう}スタート 🌱", color: "#0ea5e9" };
+    return { label: "これから始めよう", elLabel: "これから{始|はじ}めよう", color: "#6b7280" };
   };
 
   const mastery = getMasteryLabel(masteryPct);
@@ -4926,6 +4989,7 @@ function ParentReport({ onBack }) {
         type: "next",
         icon: "▶️",
         title: "次にやるべきエピソード",
+        elTitle: "{次|つぎ}にやるべきエピソード",
         body: `「${EP_META[notDone[0]]?.title}」がまだ未プレイです。テーマは「${EP_META[notDone[0]]?.theme}」。一緒にやってみましょう。`,
         color: "#0ea5e9",
       });
@@ -4935,6 +4999,7 @@ function ParentReport({ onBack }) {
         type: "retry",
         icon: "🔄",
         title: "もう一度やると効果的なエピソード",
+        elTitle: "もう{一度|いちど}やると{効果的|こうかてき}なエピソード",
         body: `「${EP_META[weak[0]]?.title}」のスコアが低めです。「${EP_META[weak[0]]?.theme}」について、日常会話でも話し合ってみてください。`,
         color: "#f97316",
       });
@@ -4944,6 +5009,7 @@ function ParentReport({ onBack }) {
         type: "talk",
         icon: "💬",
         title: "今日の話題にしてほしいこと",
+        elTitle: "{今日|きょう}の{話題|わだい}にしてほしいこと",
         body: "「SNSに投稿する前に、一度考える習慣はついてきた？」と聞いてみましょう。正解を求めず、子どもの言葉を聞くことが大切です。",
         color: "#a78bfa",
       });
@@ -4952,6 +5018,7 @@ function ParentReport({ onBack }) {
       type: "setting",
       icon: "📱",
       title: "家庭でできる具体的な設定",
+      elTitle: "{家庭|かてい}でできる{具体的|ぐたいてき}な{設定|せってい}",
       body: "LINEの2段階認証・カメラの位置情報オフ・プライベートアカウント設定。お子さんのスマホで一緒に確認しましょう。",
       color: "#16a34a",
     });
@@ -4979,15 +5046,24 @@ function ParentReport({ onBack }) {
             <button onClick={onBack} style={{ background: "rgba(255,255,255,.12)", border: "none", borderRadius: 10, padding: "8px 12px", color: "#fff", fontSize: 14, cursor: "pointer", fontFamily: "inherit" }}>← 戻る</button>
             <div>
               <div style={{ fontSize: 11, color: "rgba(255,255,255,.5)", letterSpacing: ".2em", fontFamily: "'DotGothic16',monospace" }}>PARENT DASHBOARD</div>
-              <div style={{ fontSize: 20, fontWeight: 900, color: "#fff" }}>保護者レポート 👨‍👩‍👧</div>
+              <div style={{ fontSize: 20, fontWeight: 900, color: "#fff" }}>
+                <RubyText text={ageMode === "elementary" ? "{保護者|ほごしゃ}レポート 👨‍👩‍👧" : "保護者レポート 👨‍👩‍👧"} />
+              </div>
             </div>
           </div>
           {/* Tab bar */}
           <div style={{ display: "flex", gap: 6 }}>
-            {[["summary","サマリー"],["detail","詳細"],["advice","アドバイス"],["badges","バッジ🏅"],["words","言葉📝"],["news","ニュース📰"]].map(([t,l]) => (
+            {([
+              ["summary", "サマリー", "サマリー"],
+              ["detail", "詳細", "{詳細|しょうさい}"],
+              ["advice", "アドバイス", "アドバイス"],
+              ["badges", "バッジ🏅", "バッジ🏅"],
+              ["words", "言葉📝", "{言葉|ことば}📝"],
+              ["news", "ニュース📰", "ニュース📰"],
+            ]).map(([t, l, el]) => (
               <button key={t} onClick={() => setTab(t)}
                 style={{ flex: 1, padding: "8px 4px", background: tab === t ? "#fff" : "rgba(255,255,255,.1)", border: "none", borderRadius: 10, color: tab === t ? "#1e1b4b" : "rgba(255,255,255,.7)", fontSize: 12, fontWeight: tab === t ? 900 : 500, cursor: "pointer", fontFamily: "inherit", transition: "all .2s" }}>
-                {l}
+                <RubyText text={ageMode === "elementary" ? el : l} />
               </button>
             ))}
           </div>
@@ -5002,11 +5078,15 @@ function ParentReport({ onBack }) {
             {/* Mastery card */}
             <div style={{ background: "linear-gradient(135deg,#1e1b4b,#4c1d95)", borderRadius: 22, padding: "24px 20px", marginBottom: 16, color: "#fff", textAlign: "center", boxShadow: "0 8px 32px rgba(30,27,75,.3)" }}>
               <div style={{ fontSize: 52, marginBottom: 8 }}>🛡️</div>
-              <div style={{ fontSize: 13, color: "rgba(255,255,255,.5)", marginBottom: 4 }}>習熟度</div>
+              <div style={{ fontSize: 13, color: "rgba(255,255,255,.5)", marginBottom: 4 }}>
+                <RubyText text={ageMode === "elementary" ? "{習熟度|しゅうじゅくど}" : "習熟度"} />
+              </div>
               <div style={{ fontSize: 44, fontWeight: 900, fontFamily: "'DotGothic16',monospace", marginBottom: 4 }}>
                 {masteryPct}<span style={{ fontSize: 18 }}>%</span>
               </div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: mastery.color }}>{mastery.label}</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: mastery.color }}>
+                <RubyText text={ageMode === "elementary" ? (mastery.elLabel || mastery.label) : mastery.label} />
+              </div>
               {/* Progress bar */}
               <div style={{ background: "rgba(255,255,255,.1)", borderRadius: 99, height: 8, margin: "14px 0 0", overflow: "hidden" }}>
                 <div style={{ width: `${masteryPct}%`, height: "100%", background: "linear-gradient(90deg,#ffa940,#ff6b6b)", borderRadius: 99, transition: "width 1s ease" }} />
@@ -5016,21 +5096,25 @@ function ParentReport({ onBack }) {
             {/* Stats grid */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 10, marginBottom: 16 }}>
               {[
-                { icon: "✅", val: `${completed.length}/${epKeys.length}`, label: "クリア済み" },
-                { icon: "⭐", val: `${totalScore}/${maxScore}`, label: "総スコア" },
-                { icon: "📅", val: completed.length > 0 ? `${Math.round(completed.length / epKeys.length * 100)}%` : "0%", label: "進捗率" },
+                { icon: "✅", val: `${completed.length}/${epKeys.length}`, label: "クリア済み", elLabel: "クリア{済|ず}み" },
+                { icon: "⭐", val: `${totalScore}/${maxScore}`, label: "総スコア", elLabel: "{総|そう}スコア" },
+                { icon: "📅", val: completed.length > 0 ? `${Math.round(completed.length / epKeys.length * 100)}%` : "0%", label: "進捗率", elLabel: "{進捗|しんちょく}{率|りつ}" },
               ].map((s, i) => (
                 <div key={i} style={{ background: "#fff", borderRadius: 16, padding: "16px 10px", textAlign: "center", boxShadow: "0 2px 12px rgba(0,0,0,.06)", border: "1px solid #f1f5f9" }}>
                   <div style={{ fontSize: 24, marginBottom: 6 }}>{s.icon}</div>
                   <div style={{ fontSize: 20, fontWeight: 900, color: "#1e1b4b", fontFamily: "'DotGothic16',monospace" }}>{s.val}</div>
-                  <div style={{ fontSize: 10, color: "#94a3b8", marginTop: 3 }}>{s.label}</div>
+                  <div style={{ fontSize: 10, color: "#94a3b8", marginTop: 3 }}>
+                    <RubyText text={ageMode === "elementary" ? (s.elLabel || s.label) : s.label} />
+                  </div>
                 </div>
               ))}
             </div>
 
             {/* Episode quick status */}
             <div style={{ background: "#fff", borderRadius: 18, padding: "18px 16px", boxShadow: "0 2px 12px rgba(0,0,0,.06)", border: "1px solid #f1f5f9", marginBottom: 16 }}>
-              <div style={{ fontSize: 12, fontWeight: 900, color: "#64748b", letterSpacing: ".1em", marginBottom: 14 }}>エピソード進捗</div>
+              <div style={{ fontSize: 12, fontWeight: 900, color: "#64748b", letterSpacing: ".1em", marginBottom: 14 }}>
+                <RubyText text={ageMode === "elementary" ? "エピソード{進捗|しんちょく}" : "エピソード進捗"} />
+              </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {epKeys.map(k => {
                   const meta = EP_META[k];
@@ -5058,7 +5142,9 @@ function ParentReport({ onBack }) {
             {/* Last played */}
             {completed.length > 0 && (
               <div style={{ background: "#fff", borderRadius: 14, padding: "12px 16px", boxShadow: "0 2px 8px rgba(0,0,0,.04)", border: "1px solid #f1f5f9" }}>
-                <div style={{ fontSize: 11, color: "#94a3b8", marginBottom: 4 }}>最終プレイ</div>
+                <div style={{ fontSize: 11, color: "#94a3b8", marginBottom: 4 }}>
+                <RubyText text={ageMode === "elementary" ? "{最終|さいしゅう}プレイ" : "最終プレイ"} />
+              </div>
                 <div style={{ fontSize: 13, color: "#475569", fontWeight: 600 }}>
                   {formatDate(Math.max(...epKeys.map(k => record[k]?.updatedAt || 0)))}
                 </div>
@@ -5068,8 +5154,12 @@ function ParentReport({ onBack }) {
             {completed.length === 0 && (
               <div style={{ background: "#f8fafc", borderRadius: 16, padding: "24px 20px", textAlign: "center", border: "2px dashed #e2e8f0" }}>
                 <div style={{ fontSize: 32, marginBottom: 8 }}>🌱</div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: "#64748b", marginBottom: 6 }}>まだプレイ記録がありません</div>
-                <div style={{ fontSize: 12, color: "#94a3b8", lineHeight: 1.7 }}>お子さんとエピソードをプレイすると<br />ここに記録が表示されます</div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: "#64748b", marginBottom: 6 }}>
+                  <RubyText text={ageMode === "elementary" ? "まだプレイ{記録|きろく}がありません" : "まだプレイ記録がありません"} />
+                </div>
+                <div style={{ fontSize: 12, color: "#94a3b8", lineHeight: 1.7 }}>
+                  <RubyText text={ageMode === "elementary" ? "お{子|こ}さんとエピソードをプレイすると<br />ここに{記録|きろく}が{表示|ひょうじ}されます" : "お子さんとエピソードをプレイすると<br />ここに記録が表示されます"} />
+                </div>
               </div>
             )}
           </div>
@@ -5091,27 +5181,33 @@ function ParentReport({ onBack }) {
                       <div style={{ fontSize: 11, color: "#94a3b8", marginTop: 2 }}>テーマ：{meta.theme}</div>
                     </div>
                     <div style={{ background: done ? `${meta.color}18` : "#f1f5f9", borderRadius: 99, padding: "4px 10px", fontSize: 11, fontWeight: 700, color: done ? meta.color : "#94a3b8" }}>
-                      {done ? "✓ クリア" : "未プレイ"}
+                      {done
+                        ? <RubyText text="✓ クリア" />
+                        : <RubyText text={ageMode === "elementary" ? "{未|み}プレイ" : "未プレイ"} />}
                     </div>
                   </div>
                   {done && (
                     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
                         {[
-                          { label: "スコア", val: `${rec.score || 0}/3`, icon: "⭐" },
-                          { label: "プレイ時間", val: rec.playTime ? `${Math.round(rec.playTime / 60)}分` : "−", icon: "⏱️" },
-                          { label: "リトライ", val: `${rec.retries || 0}回`, icon: "🔄" },
+                          { label: "スコア", val: `${rec.score || 0}/3`, icon: "⭐", elLabel: "スコア" },
+                          { label: "プレイ時間", val: rec.playTime ? `${Math.round(rec.playTime / 60)}分` : "−", icon: "⏱️", elLabel: "プレイ{時間|じかん}" },
+                          { label: "リトライ", val: `${rec.retries || 0}回`, icon: "🔄", elLabel: "リトライ" },
                         ].map((s, i) => (
                           <div key={i} style={{ background: "#f8fafc", borderRadius: 10, padding: "10px 8px", textAlign: "center" }}>
                             <div style={{ fontSize: 14, marginBottom: 4 }}>{s.icon}</div>
                             <div style={{ fontSize: 14, fontWeight: 900, color: "#1e293b" }}>{s.val}</div>
-                            <div style={{ fontSize: 9, color: "#94a3b8", marginTop: 2 }}>{s.label}</div>
+                            <div style={{ fontSize: 9, color: "#94a3b8", marginTop: 2 }}>
+                              <RubyText text={ageMode === "elementary" ? (s.elLabel || s.label) : s.label} />
+                            </div>
                           </div>
                         ))}
                       </div>
                       {rec.wrongChoices && rec.wrongChoices.length > 0 && (
                         <div style={{ background: "#fff7ed", borderRadius: 10, padding: "10px 12px", border: "1px solid #fed7aa" }}>
-                          <div style={{ fontSize: 11, fontWeight: 700, color: "#c2410c", marginBottom: 4 }}>⚠️ 間違えた選択肢</div>
+                          <div style={{ fontSize: 11, fontWeight: 700, color: "#c2410c", marginBottom: 4 }}>
+                            ⚠️ <RubyText text={ageMode === "elementary" ? "{間違|まちが}えた{選択肢|せんたくし}" : "間違えた選択肢"} />
+                          </div>
                           {rec.wrongChoices.map((w, i) => (
                             <div key={i} style={{ fontSize: 11, color: "#9a3412", lineHeight: 1.6 }}>・{w}</div>
                           ))}
@@ -5124,7 +5220,7 @@ function ParentReport({ onBack }) {
                   )}
                   {!done && (
                     <div style={{ marginTop: 10, fontSize: 12, color: "#94a3b8", lineHeight: 1.6 }}>
-                      まだプレイしていません。「{meta.theme}」について一緒に学びましょう。
+                      <RubyText text={ageMode === "elementary" ? `まだプレイしていません。「${meta.theme}」について{一緒|いっしょ}に{学|まな}びましょう。` : `まだプレイしていません。「${meta.theme}」について一緒に学びましょう。`} />
                     </div>
                   )}
                 </div>
@@ -5137,9 +5233,11 @@ function ParentReport({ onBack }) {
         {tab === "advice" && (
           <div style={{ animation: "slideUp .4s ease" }}>
             <div style={{ background: "linear-gradient(135deg,#fef9c3,#fef08a)", borderRadius: 18, padding: "16px 18px", marginBottom: 16, border: "1px solid #fde047" }}>
-              <div style={{ fontSize: 13, fontWeight: 900, color: "#713f12", marginBottom: 6 }}>💡 保護者の方へ</div>
+              <div style={{ fontSize: 13, fontWeight: 900, color: "#713f12", marginBottom: 6 }}>
+                💡 <RubyText text={ageMode === "elementary" ? "{保護者|ほごしゃ}の{方|かた}へ" : "保護者の方へ"} />
+              </div>
               <div style={{ fontSize: 12, color: "#92400e", lineHeight: 1.8 }}>
-                このアドバイスはお子さんのプレイ記録をもとに自動生成されます。答えを教えるよりも、<strong>「どう思う？」と問いかけること</strong>が最も効果的な教育です。
+                <RubyText text={ageMode === "elementary" ? "このアドバイスはお{子|こ}さんのプレイ{記録|きろく}をもとに{自動生成|じどうせいせい}されます。{答|こた}えを{教|おし}えるよりも、" : "このアドバイスはお子さんのプレイ記録をもとに自動生成されます。答えを教えるよりも、"} /><strong>「どう{思|おも}う？」と{問|と}いかけること</strong><RubyText text={ageMode === "elementary" ? "が{最|もっと}も{効果的|こうかてき}な{教育|きょういく}です。" : "が最も効果的な教育です。"} />
               </div>
             </div>
 
@@ -5147,7 +5245,9 @@ function ParentReport({ onBack }) {
               <div key={i} style={{ background: "#fff", borderRadius: 18, padding: "18px 16px", marginBottom: 12, borderLeft: `4px solid ${a.color}`, boxShadow: "0 2px 12px rgba(0,0,0,.06)", animation: `slideUp .4s ${i * .1}s both ease` }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                   <span style={{ fontSize: 20 }}>{a.icon}</span>
-                  <div style={{ fontSize: 13, fontWeight: 900, color: "#1e293b" }}>{a.title}</div>
+                  <div style={{ fontSize: 13, fontWeight: 900, color: "#1e293b" }}>
+                    <RubyText text={ageMode === "elementary" ? (a.elTitle || a.title) : a.title} />
+                  </div>
                 </div>
                 <div style={{ fontSize: 12, color: "#475569", lineHeight: 1.8 }}>{a.body}</div>
               </div>
@@ -5155,7 +5255,9 @@ function ParentReport({ onBack }) {
 
             {/* 話題カード */}
             <div style={{ background: "#fff", borderRadius: 18, padding: "18px 16px", marginBottom: 12, boxShadow: "0 2px 12px rgba(0,0,0,.06)", border: "1px solid #f1f5f9" }}>
-              <div style={{ fontSize: 13, fontWeight: 900, color: "#1e293b", marginBottom: 12 }}>🗣️ 今週の会話テーマ</div>
+              <div style={{ fontSize: 13, fontWeight: 900, color: "#1e293b", marginBottom: 12 }}>
+                🗣️ <RubyText text={ageMode === "elementary" ? "{今週|こんしゅう}の{会話|かいわ}テーマ" : "今週の会話テーマ"} />
+              </div>
               {[
                 "「投稿する前に、誰かに見られても大丈夫か考える？」",
                 "「怪しいDMが来たら、まず誰に相談する？」",
@@ -5170,8 +5272,12 @@ function ParentReport({ onBack }) {
 
             {/* Print hint */}
             <div style={{ background: "#f0fdf4", borderRadius: 14, padding: "14px 16px", border: "1px solid #bbf7d0", textAlign: "center" }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: "#166534", marginBottom: 4 }}>📋 このレポートを共有するには</div>
-              <div style={{ fontSize: 11, color: "#15803d", lineHeight: 1.7 }}>ブラウザの「共有」や「印刷」機能を使ってください。<br />もう一方の保護者と情報を共有しましょう。</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#166534", marginBottom: 4 }}>
+                📋 <RubyText text={ageMode === "elementary" ? "このレポートを{共有|きょうゆう}するには" : "このレポートを共有するには"} />
+              </div>
+              <div style={{ fontSize: 11, color: "#15803d", lineHeight: 1.7 }}>
+                <RubyText text={ageMode === "elementary" ? "ブラウザの「{共有|きょうゆう}」や「{印刷|いんさつ}」{機能|きのう}を{使|つか}ってください。<br />もう{一方|いっぽう}の{保護者|ほごしゃ}と{情報|じょうほう}を{共有|きょうゆう}しましょう。" : "ブラウザの「共有」や「印刷」機能を使ってください。<br />もう一方の保護者と情報を共有しましょう。"} />
+              </div>
             </div>
           </div>
         )}
@@ -5187,8 +5293,12 @@ function ParentReport({ onBack }) {
         {tab === "words" && (
           <div style={{ animation: "slideUp .4s ease" }}>
             <div style={{ background: "linear-gradient(135deg,#f0f9ff,#e0f2fe)", borderRadius: 16, padding: "14px 16px", marginBottom: 14, border: "1px solid #bae6fd" }}>
-              <div style={{ fontSize: 13, fontWeight: 900, color: "#0c4a6e", marginBottom: 6 }}>✍️ 子どもが自分の言葉で記録したこと</div>
-              <div style={{ fontSize: 12, color: "#075985", lineHeight: 1.7 }}>各エピソード終了後に入力した内容です。子どもと一緒に読み返してみましょう。</div>
+              <div style={{ fontSize: 13, fontWeight: 900, color: "#0c4a6e", marginBottom: 6 }}>
+                ✍️ <RubyText text={ageMode === "elementary" ? "{子|こ}どもが{自分|じぶん}の{言葉|ことば}で{記録|きろく}したこと" : "子どもが自分の言葉で記録したこと"} />
+              </div>
+              <div style={{ fontSize: 12, color: "#075985", lineHeight: 1.7 }}>
+                <RubyText text={ageMode === "elementary" ? "{各|かく}エピソード{終了後|しゅうりょうご}に{入力|にゅうりょく}した{内容|ないよう}です。{子|こ}どもと{一緒|いっしょ}に{読|よ}み{返|かえ}してみましょう。" : "各エピソード終了後に入力した内容です。子どもと一緒に読み返してみましょう。"} />
+              </div>
             </div>
             {Object.keys(EP_META).filter(k => !["twodevice","attacker"].includes(k)).map(k => {
               let saved = "";
@@ -5223,11 +5333,13 @@ function ParentReport({ onBack }) {
           {!showClearConfirm ? (
             <button onClick={() => setShowClearConfirm(true)}
               style={{ background: "none", border: "1px solid #e2e8f0", borderRadius: 10, padding: "8px 18px", fontSize: 11, color: "#94a3b8", cursor: "pointer", fontFamily: "inherit" }}>
-              🗑️ プレイ記録をリセット
+              🗑️ <RubyText text={ageMode === "elementary" ? "プレイ{記録|きろく}をリセット" : "プレイ記録をリセット"} />
             </button>
           ) : (
             <div style={{ background: "#fff", borderRadius: 14, padding: "14px 16px", border: "1px solid #fecaca" }}>
-              <div style={{ fontSize: 12, color: "#dc2626", fontWeight: 700, marginBottom: 10 }}>本当にリセットしますか？記録が全て消えます。</div>
+              <div style={{ fontSize: 12, color: "#dc2626", fontWeight: 700, marginBottom: 10 }}>
+                <RubyText text={ageMode === "elementary" ? "{本当|ほんとう}にリセットしますか？{記録|きろく}が{全|すべ}て{消|き}えます。" : "本当にリセットしますか？記録が全て消えます。"} />
+              </div>
               <div style={{ display: "flex", gap: 8 }}>
                 <button onClick={() => setShowClearConfirm(false)}
                   style={{ flex: 1, padding: "8px", background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: 10, fontSize: 12, cursor: "pointer", fontFamily: "inherit", color: "#475569" }}>キャンセル</button>
