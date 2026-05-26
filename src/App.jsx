@@ -67,11 +67,11 @@ const I18N = {
         zh: "第01话 · 侦探模式",
       },
       title: {
-        ja: "消えた写真の秘密",
-        el: "{消|き}えた{写真|しゃしん}の{秘密|ひみつ}",
-        en: "The Vanished Photo's Secret",
-        ko: "사라진 사진의 비밀",
-        zh: "消失照片的秘密",
+        ja: "その写真、アップロードして大丈夫？",
+        el: "その{写真|しゃしん}、アップロードして{大丈夫|だいじょうぶ}？",
+        en: "That Photo — Is It Safe to Upload?",
+        ko: "그 사진, 올려도 괜찮아?",
+        zh: "那张照片，上传没问题吗？",
       },
       desc: {
         ja: "ミナちゃんの投稿から危険なポイントを見つける探偵体験。",
@@ -1069,7 +1069,7 @@ function TodaysHomework({ tasks, accentColor = "#ffa940", mode = "dark", onCompl
 }
 
 // ⑧ 「もしこの選択なら」比較コンポーネント
-function ChoiceComparison({ myChoice, myResult, worstChoice, worstResult, accentColor = "#ffa940", mode = "dark" }) {
+function ChoiceComparison({ myChoice, myResult, worstChoice, worstResult, accentColor = "#ffa940", mode = "dark", onRevealComplete }) {
   const [showWorst, setShowWorst] = useState(false);
   const [horrorStep, setHorrorStep] = useState(0); // 0=locked, 1〜4=アニメ段階, 5=reveal
   const isLight = mode === "light";
@@ -1081,6 +1081,11 @@ function ChoiceComparison({ myChoice, myResult, worstChoice, worstResult, accent
     const delay = [0, 1800, 1800, 2200, 1800][horrorStep] || 1800;
     const t = setTimeout(() => setHorrorStep(s => s + 1), delay);
     return () => clearTimeout(t);
+  }, [horrorStep]);
+
+  // horrorStep=5 で onRevealComplete を呼ぶ
+  useEffect(() => {
+    if (horrorStep >= 5) onRevealComplete?.();
   }, [horrorStep]);
 
   const horrorScenes = ageMode === "elementary" ? [
@@ -2808,6 +2813,19 @@ function playSound(type) {
         o.start(ctx.currentTime);
         o.stop(ctx.currentTime + 1.0);
       },
+      // タイピング：ポポポポ（4連続ショートクリック）
+      typing: () => {
+        [0, 0.07, 0.14, 0.21].forEach((dt) => {
+          const o = ctx.createOscillator();
+          o.connect(gain);
+          o.frequency.setValueAtTime(1200, ctx.currentTime + dt);
+          o.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + dt + 0.04);
+          gain.gain.setValueAtTime(0.08, ctx.currentTime + dt);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dt + 0.04);
+          o.start(ctx.currentTime + dt);
+          o.stop(ctx.currentTime + dt + 0.04);
+        });
+      },
     };
 
     if (sounds[type]) sounds[type]();
@@ -2823,6 +2841,7 @@ function feedback(type = "tap") {
     found:    80,
     complete: [80, 40, 80, 40, 160],
     horror:   [200, 100, 200],
+    typing:   [20, 20, 20, 20],
   };
   playSound(type);
   vibrate(vibratePatterns[type] || 20);
@@ -3569,6 +3588,21 @@ function ParentSecretDashboard({ onClose }) {
             </div>
           </div>
         )}
+
+        {/* EP1-2 保護者限定コンテンツの合言葉 */}
+        <div style={{ background: "rgba(220,38,38,.06)", border: "1px solid rgba(220,38,38,.3)", borderRadius: 16, padding: "16px", marginBottom: 14 }}>
+          <div style={{ fontSize: 11, fontWeight: 900, color: "rgba(220,38,38,.9)", marginBottom: 10, letterSpacing: ".1em" }}>🔐 保護者限定コンテンツ</div>
+          <p style={{ fontSize: 12, color: "rgba(255,255,255,.6)", lineHeight: 1.7, margin: "0 0 10px" }}>
+            「EP1-2 個人情報の特定体験」は、悪意ある人物の視点から個人情報が特定される過程を体験するシミュレーションです。お子さんと一緒に確認する前に、まず保護者が体験してください。
+          </p>
+          <div style={{ background: "rgba(220,38,38,.12)", border: "1px solid rgba(220,38,38,.4)", borderRadius: 10, padding: "10px 14px", display: "flex", alignItems: "center", gap: 10 }}>
+            <span style={{ fontSize: 20 }}>🔑</span>
+            <div>
+              <div style={{ fontSize: 10, color: "rgba(220,38,38,.8)", fontWeight: 700, marginBottom: 2 }}>合言葉</div>
+              <div style={{ fontSize: 18, fontWeight: 900, color: "#fca5a5", letterSpacing: ".1em", fontFamily: "'DotGothic16',monospace" }}>さくら</div>
+            </div>
+          </div>
+        </div>
 
         <button onClick={onClose} style={{ width: "100%", padding: 15, background: "linear-gradient(135deg,#a78bfa,#7c3aed)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
           閉じる
@@ -5494,7 +5528,8 @@ const POSTS = [
     localImage: "/images/ep1/post1.png",
     elements: [
       // 校章マーカー削除
-      { x: 82, y: 42, emoji: "🏫", labelKey: "schoolSign",  infoKey: "schoolSignInfo",  danger: true },  // 桜花中学校の看板
+      { x: 82, y: 42, emoji: "🏫", labelKey: "schoolSign",    infoKey: "schoolSignInfo",    danger: true },  // 桜花中学校の看板
+      { x: 18, y: 18, emoji: "📍", labelKey: "locationTag",   infoKey: "locationTagInfo",   danger: true },  // GPS位置情報タグ
     ],
   },
   {
@@ -5546,6 +5581,28 @@ function HomeScreen({ onNavigate, progress }) {
   const [secret4, setSecret4] = useState(false);
   const [secretMsg, setSecretMsg] = useState("");
 
+  // EP1-2 パスワードゲート
+  const EP12_PW = "さくら";
+  const [ep12Unlocked, setEp12Unlocked] = useState(() => {
+    try { return !!localStorage.getItem("mamoru_ep12_unlocked"); } catch { return false; }
+  });
+  const [showEp12PwModal, setShowEp12PwModal] = useState(false);
+  const [ep12PwInput, setEp12PwInput] = useState("");
+  const [ep12PwError, setEp12PwError] = useState(false);
+  const handleEp12Pw = () => {
+    if (ep12PwInput.trim() === EP12_PW) {
+      try { localStorage.setItem("mamoru_ep12_unlocked", "1"); } catch {}
+      setEp12Unlocked(true);
+      setShowEp12PwModal(false);
+      setEp12PwInput("");
+      setEp12PwError(false);
+      onNavigate("ep12");
+    } else {
+      setEp12PwError(true);
+      setEp12PwInput("");
+    }
+  };
+
   // モリィタップ
   const handleOwlTap = () => {
     const next = owlTapCount + 1;
@@ -5574,6 +5631,14 @@ function HomeScreen({ onNavigate, progress }) {
   };
   const modes = [
     { id: "ep1", tag: t("modes.ep1.tag"), title: t("modes.ep1.title"), icon: "🔍", desc: t("modes.ep1.desc"), duration: t("modes.ep1.duration"), audience: t("modes.ep1.audience"), accent: "#ffa940", bg1: "#1a1000", bg2: "#0f0800", done: progress.ep1 },
+    { id: "ep12",
+      tag: ageMode === "elementary" ? "EPISODE 01-2 · {保護者|ほごしゃ}{限定|げんてい}" : "EPISODE 01-2 · 保護者限定",
+      title: ageMode === "elementary" ? "{個人情報|こじんじょうほう}の{特定|とくてい}{体験|たいけん}" : "個人情報の特定体験",
+      icon: "🕵️",
+      desc: ageMode === "elementary" ? "「{悪|わる}い{人|ひと}」の{視点|してん}で、{校章|こうしょう}→{学校名|がっこうめい}→{住所|じゅうしょ}→{通学路|つうがくろ}が{特定|とくてい}されるシミュレーション。{保護者|ほごしゃ}{向|む}け。" : "「悪い人」の視点で、校章→学校名→住所→通学路が特定されるシミュレーション。保護者向け。",
+      duration: ageMode === "elementary" ? "{約|やく}5{分|ふん}" : "約5分",
+      audience: ageMode === "elementary" ? "{保護者|ほごしゃ}{専用|せんよう}" : "保護者専用",
+      accent: "#dc2626", bg1: "#1a0505", bg2: "#0f0303", done: progress.ep12, locked: !ep12Unlocked },
     { id: "ep2", tag: t("modes.ep2.tag"), title: t("modes.ep2.title"), icon: "🔎", desc: t("modes.ep2.desc"), duration: t("modes.ep2.duration"), audience: t("modes.ep2.audience"), accent: "#7c3aed", bg1: "#0f0a1e", bg2: "#07041a", done: progress.ep2 },
     { id: "ep3", tag: t("modes.ep3.tag"), title: t("modes.ep3.title"), icon: "⚠️", desc: t("modes.ep3.desc"), duration: t("modes.ep3.duration"), audience: t("modes.ep3.audience"), accent: "#16a34a", bg1: "#0a1a0a", bg2: "#041004", done: progress.ep3 },
     { id: "ep4", tag: t("modes.ep4.tag"), title: t("modes.ep4.title"), icon: "🔐", desc: t("modes.ep4.desc"), duration: t("modes.ep4.duration"), audience: t("modes.ep4.audience"), accent: "#0ea5e9", bg1: "#031220", bg2: "#020c18", done: progress.ep4 },
@@ -5626,6 +5691,41 @@ function HomeScreen({ onNavigate, progress }) {
       {secret2 && <MatrixHack onClose={() => setSecret2(false)} />}
       {secret3 && <DarkWebMission onClose={() => setSecret3(false)} />}
       {secret4 && <ParentSecretDashboard onClose={() => setSecret4(false)} />}
+
+      {/* EP1-2 パスワードモーダル */}
+      {showEp12PwModal && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.8)", zIndex: 9998, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+          <div style={{ background: "linear-gradient(135deg,#1a0505,#0f0303)", border: "2px solid rgba(220,38,38,.5)", borderRadius: 22, padding: "28px 22px", maxWidth: 360, width: "100%", fontFamily: "'Zen Maru Gothic',sans-serif", animation: "popIn .3s ease" }}>
+            <div style={{ textAlign: "center", fontSize: 42, marginBottom: 10 }}>🔐</div>
+            <h2 style={{ color: "#fff", fontSize: 17, fontWeight: 900, textAlign: "center", margin: "0 0 6px" }}>保護者限定コンテンツ</h2>
+            <p style={{ color: "rgba(255,255,255,.6)", fontSize: 12, textAlign: "center", lineHeight: 1.7, margin: "0 0 18px" }}>
+              このエピソードは保護者向けです。<br />合言葉を入力してください。
+            </p>
+            {ep12PwError && (
+              <div style={{ background: "rgba(220,38,38,.15)", border: "1px solid rgba(220,38,38,.4)", borderRadius: 10, padding: "8px 12px", marginBottom: 12, fontSize: 12, color: "#fca5a5", textAlign: "center" }}>
+                合言葉が違います 😔
+              </div>
+            )}
+            <input
+              type="text" value={ep12PwInput}
+              onChange={e => { setEp12PwInput(e.target.value); setEp12PwError(false); }}
+              onKeyDown={e => e.key === "Enter" && handleEp12Pw()}
+              placeholder="合言葉を入力..."
+              style={{ width: "100%", padding: "12px 14px", background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.2)", borderRadius: 12, color: "#fff", fontSize: 15, fontFamily: "inherit", outline: "none", boxSizing: "border-box", marginBottom: 12 }}
+            />
+            <div style={{ display: "flex", gap: 8 }}>
+              <button onClick={() => { setShowEp12PwModal(false); setEp12PwInput(""); setEp12PwError(false); }}
+                style={{ flex: 1, padding: 12, background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.15)", borderRadius: 12, color: "rgba(255,255,255,.7)", fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
+                キャンセル
+              </button>
+              <button onClick={handleEp12Pw}
+                style={{ flex: 1, padding: 12, background: "linear-gradient(135deg,#dc2626,#991b1b)", border: "none", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
+                解除する
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Hero */}
       <div style={{ position: "relative", padding: "44px 20px 28px", overflow: "hidden" }}>
@@ -5761,17 +5861,24 @@ function HomeScreen({ onNavigate, progress }) {
                 alert("🚧 攻撃者体験は近日公開予定です！\n\nAIリアルタイム生成が必要な機能のため、準備中です。お楽しみに。");
                 return;
               }
+              // EP1-2はパスワードゲート
+              if (m.id === "ep12") {
+                if (!ep12Unlocked) { setShowEp12PwModal(true); return; }
+                onNavigate("ep12"); return;
+              }
               onNavigate(m.id);
             }}
               style={{ width: "100%", background: m.id === "attacker" && !CLAUDE_API_ENABLED ? `linear-gradient(135deg,#1a1a1a,#111)` : `linear-gradient(135deg,${m.bg1},${m.bg2})`, border: `1.5px solid ${m.accent}35`, borderRadius: 22, padding: "20px 18px", cursor: "pointer", textAlign: "left", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden", boxShadow: `0 6px 20px rgba(0,0,0,.3)`, animation: `slideUp .5s ${i * .12}s both ease`, opacity: m.id === "attacker" && !CLAUDE_API_ENABLED ? 0.6 : 1 }}>
               <div style={{ position: "absolute", width: 130, height: 130, borderRadius: "50%", background: m.accent, opacity: .06, right: -35, top: -35, filter: "blur(30px)", pointerEvents: "none" }} />
               {m.id === "attacker" && <div style={{ position: "absolute", left: 0, right: 0, height: 1, background: `linear-gradient(90deg,transparent,${m.accent}60,transparent)`, animation: "scanDown 4s linear infinite", pointerEvents: "none" }} />}
-              {/* 攻撃者体験：近日公開バッジ */}
+              {/* バッジ */}
               {m.id === "attacker" && !CLAUDE_API_ENABLED
                 ? <div style={{ position: "absolute", top: 12, right: 12, background: "#475569", color: "#fff", fontSize: 9, fontWeight: 900, padding: "3px 9px", borderRadius: 99, letterSpacing: ".1em" }}>🚧 近日公開</div>
-                : m.done
-                  ? <div style={{ position: "absolute", top: 12, right: 12, background: "#22c55e", color: "#fff", fontSize: 9, fontWeight: 900, padding: "3px 9px", borderRadius: 99, letterSpacing: ".1em" }}>{t("home.clearedBadge")}</div>
-                  : <div style={{ position: "absolute", top: 12, right: 12, background: m.accent, color: "#fff", fontSize: 9, fontWeight: 900, padding: "3px 9px", borderRadius: 99, letterSpacing: ".1em", animation: "newBadge 2s ease-in-out infinite" }}>{t("home.newBadge")}</div>
+                : m.locked
+                  ? <div style={{ position: "absolute", top: 12, right: 12, background: "#7f1d1d", color: "#fca5a5", fontSize: 9, fontWeight: 900, padding: "3px 9px", borderRadius: 99, letterSpacing: ".1em" }}>🔐 保護者限定</div>
+                  : m.done
+                    ? <div style={{ position: "absolute", top: 12, right: 12, background: "#22c55e", color: "#fff", fontSize: 9, fontWeight: 900, padding: "3px 9px", borderRadius: 99, letterSpacing: ".1em" }}>{t("home.clearedBadge")}</div>
+                    : <div style={{ position: "absolute", top: 12, right: 12, background: m.accent, color: "#fff", fontSize: 9, fontWeight: 900, padding: "3px 9px", borderRadius: 99, letterSpacing: ".1em", animation: "newBadge 2s ease-in-out infinite" }}>{t("home.newBadge")}</div>
               }
               <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
                 <div style={{ width: 52, height: 52, borderRadius: 14, background: `${m.accent}18`, border: `1.5px solid ${m.accent}35`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, flexShrink: 0 }}>{m.icon}</div>
@@ -5787,7 +5894,7 @@ function HomeScreen({ onNavigate, progress }) {
                   <span style={{ fontSize: 11, color: "rgba(255,255,255,.4)" }}>👤 <RubyText text={m.audience} /></span>
                 </div>
                 <div style={{ background: m.id === "attacker" && !CLAUDE_API_ENABLED ? "#475569" : m.accent, borderRadius: 99, width: 30, height: 30, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, color: "#fff" }}>
-                  {m.id === "attacker" && !CLAUDE_API_ENABLED ? "🔒" : "→"}
+                  {(m.id === "attacker" && !CLAUDE_API_ENABLED) ? "🔒" : m.locked ? "🔐" : "→"}
                 </div>
               </div>
             </button>
@@ -5921,6 +6028,7 @@ function Episode1({ onComplete, onExit }) {
   const [animStars, setAnimStars] = useState(false);
   const [timedHuntResult, setTimedHuntResult] = useState(null);
   const [useTimedMode, setUseTimedMode] = useState(true);
+  const [worstCaseShown, setWorstCaseShown] = useState(false);
   const [postImages, setPostImages] = useState(() => {
     // ローカル固定画像を直接セット（API不要）
     const imgs = {};
@@ -5936,7 +6044,7 @@ function Episode1({ onComplete, onExit }) {
     if (phase !== "horror") return;
     const timers = [
       setTimeout(() => { setHorrorStage(1); feedback("horror"); }, 1200),
-      setTimeout(() => setHorrorStage(2), 3000),
+      setTimeout(() => { setHorrorStage(2); feedback("typing"); }, 3000),
       setTimeout(() => setHorrorStage(3), 6500),
     ];
     return () => timers.forEach(clearTimeout);
@@ -5955,7 +6063,7 @@ function Episode1({ onComplete, onExit }) {
   const nextPost = () => {
     setDetail(null);
     if (postIdx < POSTS.length - 1) setPostIdx(postIdx + 1);
-    else setPhase("explain");
+    else { setHorrorStage(0); setPhase("horror"); }
   };
 
   // ── Parent Intro ──
@@ -5975,7 +6083,44 @@ function Episode1({ onComplete, onExit }) {
       <div style={{ background: "rgba(255,255,255,.06)", backdropFilter: "blur(10px)", border: "1px solid rgba(255,169,64,.2)", borderRadius: 18, padding: "18px 20px", maxWidth: 320, color: "#f4e4c0", fontSize: 13, lineHeight: 1.9, marginBottom: 28 }}>
         <FormattedText text={t("ep1.introDesc")} style={{ color: "inherit" }} />
       </div>
-      <button onClick={() => { feedback("tap"); setPhase("normal"); }} style={{ background: "linear-gradient(135deg,#ffa940,#ff7e20)", border: "none", borderRadius: 50, padding: "15px 44px", fontSize: 16, fontWeight: 900, color: "#fff", cursor: "pointer", fontFamily: "inherit", boxShadow: "0 8px 24px rgba(255,169,64,.4)" }}>{t("ep1.introStart")}</button>
+      <button onClick={() => { feedback("tap"); setPhase("mina_intro"); }} style={{ background: "linear-gradient(135deg,#ffa940,#ff7e20)", border: "none", borderRadius: 50, padding: "15px 44px", fontSize: 16, fontWeight: 900, color: "#fff", cursor: "pointer", fontFamily: "inherit", boxShadow: "0 8px 24px rgba(255,169,64,.4)" }}>{t("ep1.introStart")}</button>
+    </div>
+    </EpisodeShell>
+  );
+
+  // ── Mina Intro（ミナ自己紹介） ──
+  if (phase === "mina_intro") return (
+    <EpisodeShell onExit={onExit}>
+    <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fff8f0,#ffeed6)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 24px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+      <div style={{ maxWidth: 340, width: "100%", animation: "slideUp .5s ease" }}>
+        {/* ミナのアイコン */}
+        <div style={{ textAlign: "center", marginBottom: 20 }}>
+          <div style={{ width: 96, height: 96, borderRadius: "50%", overflow: "hidden", display: "inline-block", border: "3px solid #ffa940", boxShadow: "0 8px 24px rgba(255,169,64,.3)" }}>
+            <img src="/images/ep1/mina_icon.png" alt="ミナ"
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              onError={e => { e.target.style.display = "none"; e.target.parentNode.innerHTML = "<div style='width:100%;height:100%;background:#ffd6e0;display:flex;align-items:center;justify-content:center;font-size:48px'>👧</div>"; }} />
+          </div>
+        </div>
+        {/* ミナの吹き出し */}
+        <div style={{ background: "#fff", borderRadius: 20, borderTopLeftRadius: 4, padding: "18px 20px", border: "2px solid #ffa94044", boxShadow: "0 6px 20px rgba(255,169,64,.15)", marginBottom: 20, position: "relative" }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#ffa940", marginBottom: 8, letterSpacing: ".05em" }}>
+            {t("ep1.characterName")} <span style={{ color: "#ccc", fontWeight: 400 }}>{t("ep1.characterHandle")}</span>
+          </div>
+          <p style={{ fontSize: 15, color: "#3d2817", lineHeight: 1.9, margin: 0 }}>
+            <RubyText text={ageMode === "elementary"
+              ? "はじめまして！わたしはミナ。{中学|ちゅうがく}1{年生|ねんせい}。SNSが{大好|だいす}きなんだ。いつもこんな{投稿|とうこう}してるよ！"
+              : "はじめまして！わたしはミナ。中学1年生。SNSが大好きなんだ。いつもこんな投稿してるよ！"
+            } />
+          </p>
+        </div>
+        <OwlSay mood="worried" e="ミナちゃんの{投稿|とうこう}をよ〜くみてみよう🦉">
+          ミナちゃんの投稿をよ〜く見てみよう🦉
+        </OwlSay>
+        <button onClick={() => { feedback("tap"); setPhase("normal"); }}
+          style={{ width: "100%", marginTop: 14, padding: 15, background: "linear-gradient(135deg,#ffa940,#ff8c1a)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 6px 18px rgba(255,169,64,.35)" }}>
+          <RubyText text={ageMode === "elementary" ? "{投稿|とうこう}を{見|み}てみる →" : "投稿を見てみる →"} />
+        </button>
+      </div>
     </div>
     </EpisodeShell>
   );
@@ -6060,7 +6205,7 @@ function Episode1({ onComplete, onExit }) {
                 style={{ width: "100%", padding: 14, background: "#1da1f2", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
                 <RubyText text={t("ep1.nextPost")} />
               </button>
-            : <button onClick={() => setPhase("horror")}
+            : <button onClick={() => { feedback("tap"); setPhase("investigate"); setPostIdx(0); setFound({}); }}
                 style={{ width: "100%", padding: 14, background: "linear-gradient(135deg,#ffa940,#ff8c1a)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
                 <RubyText text={t("ep1.looksHappy")} />
               </button>
@@ -6105,8 +6250,7 @@ function Episode1({ onComplete, onExit }) {
       )}
       {horrorStage >= 3 && (
         <div style={{ marginTop: 28, width: "100%", maxWidth: 340, animation: "slideUp .6s 1.5s both ease" }}>
-          <div style={{ color: "#ffaaaa", fontSize: 12, marginBottom: 14, animation: "blink 1.5s infinite", textAlign: "center" }}><RubyText text={t("ep1.helpAlert")} /></div>
-          <button onClick={() => setPhase("investigate")} style={{ width: "100%", padding: 15, background: "linear-gradient(135deg,#ff4343,#cc0000)", border: "1px solid #ff8a8a", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 8px 24px rgba(255,67,67,.4)", animation: "pulse 2s infinite" }}><RubyText text={t("ep1.investigate")} /></button>
+          <button onClick={() => { feedback("tap"); setWorstCaseShown(false); setPhase("comparison"); }} style={{ width: "100%", padding: 15, background: "linear-gradient(135deg,#ff4343,#cc0000)", border: "1px solid #ff8a8a", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 8px 24px rgba(255,67,67,.4)", animation: "pulse 2s infinite" }}><RubyText text={t("ep1.investigate")} /></button>
         </div>
       )}
     </div>
@@ -6269,8 +6413,8 @@ function Episode1({ onComplete, onExit }) {
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fff8f0,#ffeed6)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
         <div style={{ display: "flex", gap: 4, marginBottom: 18 }}>
-          {["quiz","comparison","homework","keywords","dialogue"].map((s,i) => (
-            <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i === 0 ? "#ffa940" : "rgba(0,0,0,.1)" }} />
+          {["comparison","dialogue","quiz","mywords"].map((s,i) => (
+            <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i === 2 ? "#ffa940" : "rgba(0,0,0,.1)" }} />
           ))}
         </div>
         <OwlSay mood="excited" e="ちゃんとりかいできたかかくにんしよう！{正解|せいかい}するまで{次|つぎ}に{進|すす}めないよ🦉">理解できたか確認しよう！正解するまで次に進めないよ🦉</OwlSay>
@@ -6285,7 +6429,7 @@ function Episode1({ onComplete, onExit }) {
             { id: "c", label: "C", text: ageMode === "elementary" ? "フォロワーを{友達|ともだち}だけに{限定|げんてい}する" : "フォロワーを友達だけに限定する" },
           ]}
           correctId="b"
-          onPass={() => setPhase("comparison")}
+          onPass={() => setPhase("mywords")}
           accentColor="#ffa940"
         />
       </div>
@@ -6299,8 +6443,8 @@ function Episode1({ onComplete, onExit }) {
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fff8f0,#ffeed6)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
         <div style={{ display: "flex", gap: 4, marginBottom: 18 }}>
-          {["quiz","comparison","homework","keywords","dialogue"].map((s,i) => (
-            <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= 1 ? "#ffa940" : "rgba(0,0,0,.1)" }} />
+          {["comparison","dialogue","quiz","mywords"].map((s,i) => (
+            <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i === 0 ? "#ffa940" : "rgba(0,0,0,.1)" }} />
           ))}
         </div>
         <OwlSay mood="worried" e="もしいちばん{悪|わる}い{選択|せんたく}をしていたら、{何|なに}が{起|お}きていたかみてみよう🦉">もし最悪の選択をしていたら、何が起きていたか見てみよう🦉</OwlSay>
@@ -6311,9 +6455,12 @@ function Episode1({ onComplete, onExit }) {
           worstChoice={ageMode === "elementary" ? "{位置情報|いちじょうほう}タグONで{全|ぜん}{投稿|とうこう}した{場合|ばあい}" : "位置情報タグONで全投稿した場合"}
           worstResult={ageMode === "elementary" ? "{行動|こうどう}パターンが{特定|とくてい}され、{自宅|じたく}の{特定|とくてい}・ストーキング{被害|ひがい}に{遭|あ}うリスクが{現実|げんじつ}に" : "行動パターンが特定され、自宅の特定・ストーキング被害に遭うリスクが現実に"}
           accentColor="#ffa940"
+          onRevealComplete={() => setWorstCaseShown(true)}
         />
-        <button onClick={() => setPhase("homework")}
-          style={{ width: "100%", marginTop: 14, padding: 15, background: "linear-gradient(135deg,#ffa940,#ff8c1a)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
+        <button
+          onClick={() => { feedback("tap"); setPhase("dialogue"); }}
+          disabled={!worstCaseShown}
+          style={{ width: "100%", marginTop: 14, padding: 15, background: worstCaseShown ? "linear-gradient(135deg,#ffa940,#ff8c1a)" : "rgba(0,0,0,.12)", border: "none", borderRadius: 14, color: worstCaseShown ? "#fff" : "rgba(0,0,0,.3)", fontSize: 15, fontWeight: 900, cursor: worstCaseShown ? "pointer" : "default", fontFamily: "inherit", transition: "all .3s" }}>
           <RubyText text={ageMode === "elementary" ? "{次|つぎ}へ →" : "次へ →"} />
         </button>
       </div>
@@ -6400,8 +6547,32 @@ function Episode1({ onComplete, onExit }) {
       ]}
       myWordsPrompt={ageMode === "elementary" ? "{今日|きょう}のエピソードで{一番|いちばん}「{怖|こわ}い」と{思|おも}ったことを{書|か}いてみよう" : "今日のエピソードで一番「怖い」と思ったことを書いてみよう"}
       myWordsPlaceholder={ageMode === "elementary" ? "{例|れい}：{写真|しゃしん}の{背景|はいけい}から{家|いえ}がわかってしまうのが{怖|こわ}かった" : "例：写真の背景から家がわかってしまうのが怖かった"}
-      onComplete={() => { feedback("complete"); setAnimStars(true); setPhase("complete"); }}
+      onComplete={() => { feedback("tap"); setPhase("quiz"); }}
     />
+    {/* 親へのスマホ渡しタイミング — 専門家カード */}
+    <div style={{ padding: "0 16px 20px" }}>
+      <div style={{ background: "rgba(255,169,64,.08)", border: "1px solid rgba(255,169,64,.2)", borderRadius: 12, padding: "10px 14px", marginBottom: 10, fontSize: 12, color: "#a05500", fontWeight: 700 }}>
+        <RubyText text={ageMode === "elementary" ? "📱 {親|おや}にスマホを{渡|わた}すタイミング" : "📱 親にスマホを渡すタイミング"} />
+      </div>
+      <ParentExpertCard epKey="ep1" accentColor="#ffa940" />
+    </div>
+    </EpisodeShell>
+  );
+
+  // ── MyWords（キーワードノート） ──
+  if (phase === "mywords") return (
+    <EpisodeShell onExit={onExit}>
+    <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fff8f0,#ffeed6)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+      <div style={{ maxWidth: 440, margin: "0 auto" }}>
+        <div style={{ display: "flex", gap: 4, marginBottom: 18 }}>
+          {["comparison","dialogue","quiz","mywords"].map((s, i) => (
+            <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i === 3 ? "#ffa940" : "rgba(0,0,0,.1)" }} />
+          ))}
+        </div>
+        <OwlSay mood="excited" e="このおはなしにでてきた{大切|たいせつ}な{言葉|ことば}をおぼえよう！ニュースでも{出|で}てくるよ🦉">このエピソードで出てきた大事なワードを一緒に覚えよう！ニュースでも出てくるよ🦉</OwlSay>
+        <KeywordPhase epKey="ep1" accentColor="#ffa940" onComplete={() => { feedback("complete"); setAnimStars(true); setPhase("complete"); }} />
+      </div>
+    </div>
     </EpisodeShell>
   );
 
@@ -6432,6 +6603,191 @@ function Episode1({ onComplete, onExit }) {
       </div>
     </div>
   );
+}
+
+// ─────────────────────────────────────────────
+// ██ EPISODE 1-2 — 個人情報の特定体験（保護者限定）
+// ─────────────────────────────────────────────
+function Episode1_2({ onComplete, onExit }) {
+  const [phase, setPhase] = useState("intro");
+  const [step, setStep] = useState(0);
+
+  const STEPS = [
+    {
+      phase: "校章",
+      icon: "🏫",
+      clue: "制服の胸に小さな紋章がある",
+      extract: "「桜花中学校」— 特定完了",
+      detail: "制服の校章は学校名の手がかり。SNSに制服写真を投稿すると、校章から学校名が特定される。",
+      found: "学校名",
+      risk: 1,
+      nextLabel: "学校を調べる →",
+    },
+    {
+      phase: "学校名",
+      icon: "📍",
+      clue: "「桜花中学校」で検索…",
+      extract: "住所：東京都練馬区○○町3-12 — 特定完了",
+      detail: "学校名がわかれば住所は即座に判明。学校の公式サイト・地図アプリで1分以内に特定できる。",
+      found: "学校の住所",
+      risk: 2,
+      nextLabel: "通学路を割り出す →",
+    },
+    {
+      phase: "通学路",
+      icon: "🗺️",
+      clue: "投稿時間：7:50〜8:10 AM（毎日）",
+      extract: "通学路・時刻パターン — 特定完了",
+      detail: "毎朝の投稿時間＋学校の住所で、「どこを通って何時に歩くか」がわかる。待ち伏せが可能になる。",
+      found: "通学路・行動パターン",
+      risk: 3,
+      nextLabel: "結果を見る →",
+    },
+  ];
+
+  const currentStep = STEPS[step];
+
+  // ── Intro ──
+  if (phase === "intro") return (
+    <EpisodeShell onExit={onExit}>
+    <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at center,#1a0505,#000)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 20px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden" }}>
+      <div style={{ position: "absolute", inset: 0, backgroundImage: "repeating-linear-gradient(0deg,transparent 0px,transparent 3px,rgba(255,0,0,.015) 3px,rgba(255,0,0,.015) 4px)", pointerEvents: "none" }} />
+      <div style={{ maxWidth: 360, width: "100%", position: "relative", zIndex: 2, animation: "slideUp .6s ease" }}>
+        <div style={{ background: "rgba(220,38,38,.1)", border: "1.5px solid rgba(220,38,38,.5)", borderRadius: 12, padding: "10px 14px", marginBottom: 20, textAlign: "center" }}>
+          <span style={{ fontFamily: "'DotGothic16',monospace", fontSize: 9, color: "#dc2626", letterSpacing: ".3em" }}>⚠ PARENT ONLY — 教育目的シミュレーション</span>
+        </div>
+        <div style={{ textAlign: "center", fontSize: 56, marginBottom: 12 }}>🕵️</div>
+        <h1 style={{ fontSize: 22, fontWeight: 900, color: "#fff", textAlign: "center", margin: "0 0 8px", lineHeight: 1.3 }}>個人情報の<br />特定体験</h1>
+        <p style={{ color: "rgba(255,255,255,.5)", fontSize: 12, textAlign: "center", margin: "0 0 22px", lineHeight: 1.7 }}>
+          EPISODE 01-2
+        </p>
+        <div style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.1)", borderRadius: 16, padding: "16px 18px", marginBottom: 22, color: "rgba(255,255,255,.75)", fontSize: 13, lineHeight: 1.85 }}>
+          このシミュレーションでは、<strong style={{ color: "#fca5a5" }}>「悪意ある人物」の視点</strong>で、SNSの投稿から子どもの個人情報が特定される過程を体験します。<br /><br />
+          校章 → 学校名 → 住所 → 通学路…<br />
+          <strong style={{ color: "#fca5a5" }}>普通の1枚の写真から、どこまでわかるか</strong>を確認してください。
+        </div>
+        <div style={{ background: "rgba(220,38,38,.12)", border: "1px solid rgba(220,38,38,.4)", borderRadius: 12, padding: "10px 14px", marginBottom: 22, fontSize: 11, color: "#fca5a5", lineHeight: 1.7 }}>
+          ⚠ これは教育目的のシミュレーションです。実際の犯罪行為ではありません。お子さんの安全のためにご活用ください。
+        </div>
+        <button onClick={() => { feedback("tap"); setPhase("simulation"); }}
+          style={{ width: "100%", padding: 16, background: "linear-gradient(135deg,#dc2626,#991b1b)", border: "none", borderRadius: 14, color: "#fff", fontSize: 16, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 8px 24px rgba(220,38,38,.4)" }}>
+          体験を開始する →
+        </button>
+      </div>
+    </div>
+    </EpisodeShell>
+  );
+
+  // ── Simulation steps ──
+  if (phase === "simulation") return (
+    <EpisodeShell onExit={onExit}>
+    <div style={{ minHeight: "100vh", background: "#0a0f0a", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden" }}>
+      <div style={{ position: "absolute", left: 0, right: 0, height: 2, background: "linear-gradient(90deg,transparent,#ff2d2d,transparent)", animation: "scanDown 3s linear infinite", opacity: .5 }} />
+      <div style={{ position: "absolute", inset: 0, backgroundImage: "repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,0,0,.012) 2px,rgba(255,0,0,.012) 4px)", pointerEvents: "none" }} />
+      <div style={{ maxWidth: 440, margin: "0 auto", position: "relative", zIndex: 2 }}>
+        {/* ヘッダー */}
+        <div style={{ borderBottom: "1px solid rgba(255,45,45,.2)", paddingBottom: 12, marginBottom: 18 }}>
+          <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 9, color: "#ff2d2d", letterSpacing: ".2em", marginBottom: 3 }}>▶ PERSONAL INFO EXTRACTION SIMULATION</div>
+          <div style={{ display: "flex", gap: 6, marginTop: 6 }}>
+            {STEPS.map((s, i) => (
+              <div key={i} style={{ flex: 1, height: 4, borderRadius: 2, background: i <= step ? "#dc2626" : "rgba(255,255,255,.1)", transition: "background .3s" }} />
+            ))}
+          </div>
+        </div>
+
+        {/* ステップカード */}
+        <div style={{ background: "rgba(255,45,45,.05)", border: "1px solid rgba(255,45,45,.25)", borderRadius: 16, padding: "18px 16px", marginBottom: 14, animation: "slideUp .4s ease" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+            <div style={{ width: 48, height: 48, borderRadius: 12, background: "rgba(220,38,38,.15)", border: "1px solid rgba(220,38,38,.4)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, flexShrink: 0 }}>{currentStep.icon}</div>
+            <div>
+              <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 9, color: "#ff4343", letterSpacing: ".15em", marginBottom: 3 }}>STEP {step + 1} / {STEPS.length}</div>
+              <div style={{ fontSize: 15, fontWeight: 900, color: "#fff" }}>{currentStep.phase}を分析中…</div>
+            </div>
+          </div>
+
+          {/* ログライン */}
+          <div style={{ background: "#000", borderRadius: 10, padding: "12px 14px", marginBottom: 12, fontFamily: "'DotGothic16',monospace", fontSize: 11, lineHeight: 1.8 }}>
+            <div style={{ color: "#888", marginBottom: 4 }}>$ analyzing post data...</div>
+            <div style={{ color: "#ff6b6b" }}>INPUT: {currentStep.clue}</div>
+            <div style={{ color: "#4ade80", marginTop: 6, fontWeight: 700 }}>✓ OUTPUT: {currentStep.extract}</div>
+          </div>
+
+          <p style={{ color: "rgba(255,255,255,.7)", fontSize: 13, lineHeight: 1.75, margin: 0 }}>{currentStep.detail}</p>
+        </div>
+
+        {/* 危険度バー */}
+        <div style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.08)", borderRadius: 12, padding: "12px 14px", marginBottom: 16 }}>
+          <div style={{ fontSize: 11, color: "rgba(255,255,255,.4)", marginBottom: 8, fontFamily: "'DotGothic16',monospace", letterSpacing: ".1em" }}>特定済み情報</div>
+          {STEPS.slice(0, step + 1).map((s, i) => (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+              <div style={{ width: 6, height: 6, borderRadius: "50%", background: s.risk === 3 ? "#ef4444" : s.risk === 2 ? "#f97316" : "#fbbf24", flexShrink: 0 }} />
+              <div style={{ fontSize: 12, color: "#fff", fontWeight: 700 }}>{s.found}</div>
+              <div style={{ marginLeft: "auto", fontSize: 10, color: s.risk === 3 ? "#ef4444" : s.risk === 2 ? "#f97316" : "#fbbf24", fontFamily: "'DotGothic16',monospace" }}>{"█".repeat(s.risk)}{"░".repeat(3 - s.risk)} RISK</div>
+            </div>
+          ))}
+        </div>
+
+        <button onClick={() => {
+          feedback("horror");
+          if (step < STEPS.length - 1) setStep(step + 1);
+          else { setStep(0); setPhase("conclusion"); }
+        }}
+          style={{ width: "100%", padding: 15, background: "linear-gradient(135deg,#dc2626,#991b1b)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 6px 20px rgba(220,38,38,.4)", animation: "pulse 2s infinite" }}>
+          {currentStep.nextLabel}
+        </button>
+      </div>
+    </div>
+    </EpisodeShell>
+  );
+
+  // ── Conclusion ──
+  if (phase === "conclusion") return (
+    <EpisodeShell onExit={onExit}>
+    <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fff8f0,#ffeed6)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+      <div style={{ maxWidth: 440, margin: "0 auto" }}>
+        <div style={{ textAlign: "center", marginBottom: 16 }}><OwlMolly size={100} mood="worried" /></div>
+
+        <div style={{ background: "#fff", borderRadius: 20, border: "2px solid #fca5a5", padding: "20px 18px", marginBottom: 16, textAlign: "center" }}>
+          <div style={{ fontSize: 40, marginBottom: 6 }}>😱</div>
+          <h2 style={{ fontSize: 18, color: "#7f1d1d", fontWeight: 900, margin: "0 0 10px" }}>これが現実に起きること</h2>
+          <p style={{ fontSize: 13, color: "#5d4017", lineHeight: 1.85, margin: 0 }}>
+            たった1枚の制服写真から、<strong>学校・住所・通学路・行動パターン</strong>が特定されました。
+            <br /><br />
+            悪意ある人物には、これだけで十分な情報があります。
+          </p>
+        </div>
+
+        <div style={{ background: "#fff", borderRadius: 16, border: "2px solid #f4d4a8", padding: "16px 16px", marginBottom: 16 }}>
+          <div style={{ fontSize: 12, fontWeight: 900, color: "#a05500", marginBottom: 12 }}>🛡️ 保護者にできること</div>
+          {[
+            ["📸", "投稿前に確認", "校章・制服・表札が写っていないかチェック"],
+            ["📍", "位置情報タグをオフ", "スマホのカメラ設定 → 位置情報を許可しない"],
+            ["⏰", "投稿のタイミング", "「今から学校」「今帰宅」は時刻と場所を同時公開"],
+            ["💬", "子どもと話し合う", "「この写真から何がわかる？」と一緒に確認する習慣"],
+          ].map(([icon, title, desc], i) => (
+            <div key={i} style={{ display: "flex", gap: 10, marginBottom: 10, alignItems: "flex-start" }}>
+              <div style={{ width: 30, height: 30, borderRadius: "50%", background: "linear-gradient(135deg,#ffa940,#ff8c1a)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, flexShrink: 0 }}>{icon}</div>
+              <div><div style={{ fontSize: 13, fontWeight: 900, color: "#3d2817" }}>{title}</div><div style={{ fontSize: 11, color: "#a08060", marginTop: 2, lineHeight: 1.5 }}>{desc}</div></div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ background: "rgba(255,169,64,.08)", border: "1px solid rgba(255,169,64,.3)", borderRadius: 14, padding: "14px 16px", marginBottom: 16, fontSize: 12, color: "#5d4017", lineHeight: 1.75 }}>
+          <strong>💡 お子さんとの話し合いのヒント：</strong><br />
+          「今見た体験を一緒にやってみよう。この写真から何がわかるか教えてくれる？」
+          と聞いてみましょう。子どもが自分で気づくことが最大の学習効果を生みます。
+        </div>
+
+        <button onClick={() => onComplete(3)}
+          style={{ width: "100%", padding: 16, background: "linear-gradient(135deg,#ffa940,#ff8c1a)", border: "none", borderRadius: 14, color: "#fff", fontSize: 16, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 6px 20px rgba(255,169,64,.4)" }}>
+          🏠 ホームへ戻る
+        </button>
+      </div>
+    </div>
+    </EpisodeShell>
+  );
+
+  return null;
 }
 
 // ─────────────────────────────────────────────
@@ -11020,6 +11376,7 @@ export default function App() {
       ep3: !!rec.ep3?.completed, ep4: !!rec.ep4?.completed,
       ep5: !!rec.ep5?.completed, ep6: !!rec.ep6?.completed,
       ep7: !!rec.ep7?.completed,
+      ep12: !!rec.ep12?.completed,
       twodevice: !!rec.twodevice?.completed,
       attacker: !!rec.attacker?.completed,
     };
@@ -11052,6 +11409,7 @@ export default function App() {
         {screen === "info" && <InfoScreen onBack={() => navigate("home")} />}
         {screen === "opening" && <Opening onComplete={() => navigate("home")} />}
         {screen === "ep1" && <Episode1 onComplete={(s) => finish("ep1", s)} onExit={() => navigate("home")} />}
+        {screen === "ep12" && <Episode1_2 onComplete={(s) => finish("ep12", s)} onExit={() => navigate("home")} />}
         {screen === "ep2" && <Episode2 onComplete={(s) => finish("ep2", s)} onExit={() => navigate("home")} />}
         {screen === "ep3" && <Episode3 onComplete={(s) => finish("ep3", s)} onExit={() => navigate("home")} />}
         {screen === "ep4" && <Episode4 onComplete={(s) => finish("ep4", s)} onExit={() => navigate("home")} />}
