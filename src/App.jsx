@@ -495,27 +495,30 @@ function useET() {
   return (std, el) => (ageMode === "elementary" && el !== undefined) ? el : std;
 }
 
-// ルビテキストコンポーネント：{漢字|よみ} 記法を <ruby> タグに変換
+// ルビテキストコンポーネント：{漢字|よみ} 記法と <br /> を処理
 // 例: "{設定|せってい}→プライバシー" → <ruby>設定<rt>せってい</rt></ruby>→プライバシー
+// 例: "テキスト<br />続き"  → テキスト<br />続き
 function RubyText({ text, style }) {
   if (!text && text !== 0) return null;
   const str = String(text);
-  // {漢字|よみ} パターンで分割
-  const parts = str.split(/(\{[^|{}]+\|[^|{}]+\})/g);
+  // まず <br /> で分割し、次に {漢字|よみ} を処理
+  const segments = str.split(/(<br\s*\/?>)/gi);
+  const renderSeg = (seg, si) =>
+    seg.split(/(\{[^|{}]+\|[^|{}]+\})/g).map((part, i) => {
+      const m = part.match(/^\{([^|]+)\|([^}]+)\}$/);
+      if (m) return (
+        <ruby key={`${si}-${i}`}>
+          {m[1]}
+          <rt style={{ fontSize: "0.6em", letterSpacing: 0 }}>{m[2]}</rt>
+        </ruby>
+      );
+      return part ? <span key={`${si}-${i}`}>{part}</span> : null;
+    });
   return (
     <span style={style}>
-      {parts.map((part, i) => {
-        const m = part.match(/^\{([^|]+)\|([^}]+)\}$/);
-        if (m) {
-          return (
-            <ruby key={i}>
-              {m[1]}
-              <rt style={{ fontSize: "0.6em", letterSpacing: 0 }}>{m[2]}</rt>
-            </ruby>
-          );
-        }
-        return <span key={i}>{part}</span>;
-      })}
+      {segments.map((seg, i) =>
+        /^<br/i.test(seg) ? <br key={i} /> : renderSeg(seg, i)
+      )}
     </span>
   );
 }
@@ -5645,7 +5648,7 @@ function HomeScreen({ onNavigate, progress }) {
             </div>
             <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
               <LanguageSwitcher compact />
-              <div style={{ background: "rgba(255,169,64,.12)", border: "1px solid rgba(255,169,64,.3)", borderRadius: 8, padding: "4px 10px", fontSize: 10, color: "#ffa940", fontWeight: 700 }}>{t("home.beta")}</div>
+              <div style={{ background: "rgba(255,169,64,.12)", border: "1px solid rgba(255,169,64,.3)", borderRadius: 8, padding: "4px 10px", fontSize: 10, color: "#ffa940", fontWeight: 700 }}><RubyText text={t("home.beta")} /></div>
             </div>
           </div>
           {/* Owl greeting */}
@@ -5804,7 +5807,7 @@ function HomeScreen({ onNavigate, progress }) {
                 <div style={{ fontSize: 13, fontWeight: 700, color: "rgba(30,58,95,.4)" }}><RubyText text={item.title} /></div>
                 <div style={{ fontSize: 10, color: "rgba(30,58,95,.25)", marginTop: 2 }}>{item.tag}</div>
               </div>
-              <div style={{ fontSize: 10, color: "rgba(30,58,95,.25)", fontFamily: "'DotGothic16',monospace" }}>{t("home.soonLabel")}</div>
+              <div style={{ fontSize: 10, color: "rgba(30,58,95,.25)", fontFamily: "'DotGothic16',monospace" }}><RubyText text={t("home.soonLabel")} /></div>
             </div>
           ))}
         </div>
