@@ -1456,6 +1456,11 @@ const BADGES = [
   { id: "speed_demon",  icon: "⚡", label: "スピードマスター",   elLabel: "スピードマスター",                     desc: "EP1タイムアタック全発見",      elDesc: "EP1タイムアタック{全|ぜん}{発見|はっけん}",         color: "#f97316", cond: (r) => r.ep1?.speedBonus },
   { id: "fact_checker", icon: "✅", label: "完璧な鑑定士",       elLabel: "{完璧|かんぺき}な{鑑定|かんてい}{士|し}", desc: "EP2全問正解（4問）",       elDesc: "EP2{全|ぜん}{問|もん}{正解|せいかい}（4{問|もん}）", color: "#7c3aed", cond: (r) => r.ep2?.score >= 4 },
   { id: "no_miss",      icon: "💎", label: "ノーミスクリア",     elLabel: "ノーミスクリア",                       desc: "リトライなしで3EP以上",       elDesc: "リトライなしで3EP{以上|いじょう}",                 color: "#06b6d4", cond: (r) => Object.values(r).filter(v => v?.completed && !v.retries).length >= 3 },
+  // ── 隠しコマンド実績 ──
+  { id: "secret1", icon: "🎣", label: "釣られてみた",    elLabel: "{釣|つ}られてみた",               desc: "モリィを10回タップして隠しコマンドを発見",     elDesc: "モリィを10{回|かい}タップして{隠|かく}しコマンドを{発見|はっけん}", color: "#ffa940", secret: true, cond: () => { try { return !!localStorage.getItem("mamoru_secret1_found"); } catch { return false; } } },
+  { id: "secret2", icon: "💻", label: "ハッカー体験",    elLabel: "ハッカー{体験|たいけん}",         desc: "ロゴを長押しして隠しコマンドを発見",           elDesc: "ロゴを{長押|ながお}しして{隠|かく}しコマンドを{発見|はっけん}",     color: "#00e676", secret: true, cond: () => { try { return !!localStorage.getItem("mamoru_secret2_found"); } catch { return false; } } },
+  { id: "secret3", icon: "🕷️", label: "闇Web探索者",   elLabel: "{闇|やみ}Web{探索者|たんさくしゃ}", desc: "左右スワイプ5回で隠しコマンドを発見",         elDesc: "スワイプで{隠|かく}しコマンドを{発見|はっけん}",                   color: "#a78bfa", secret: true, cond: () => { try { return !!localStorage.getItem("mamoru_secret3_found"); } catch { return false; } } },
+  { id: "secret4", icon: "🔑", label: "親の目線",        elLabel: "{親|おや}の{目線|めせん}",         desc: "レポートボタンを長押しして隠しコマンドを発見", elDesc: "レポートボタン{長押|ながお}しで{隠|かく}しコマンドを{発見|はっけん}", color: "#38bdf8", secret: true, cond: () => { try { return !!localStorage.getItem("mamoru_secret4_found"); } catch { return false; } } },
 ];
 
 function getBadges(record) { return BADGES.filter(b => b.cond(record)); }
@@ -1472,16 +1477,33 @@ function getMasterTitle(record) {
 // ホーム表示用バッジストリップ
 function BadgeStrip({ record }) {
   const earned = getBadges(record);
+  const ageMode = useAgeMode();
+  const [sel, setSel] = useState(null);
   if (earned.length === 0) return null;
   return (
-    <div style={{ display: "flex", gap: 6, flexWrap: "wrap", margin: "8px 0" }}>
-      {earned.map(b => (
-        <div key={b.id} title={b.label}
-          style={{ width: 34, height: 34, borderRadius: 10, background: `${b.color}22`, border: `1.5px solid ${b.color}55`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, cursor: "default", transition: "transform .15s" }}
-          onMouseEnter={e => e.currentTarget.style.transform = "scale(1.2)"}
-          onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}>{b.icon}</div>
-      ))}
-    </div>
+    <>
+      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", margin: "8px 0" }}>
+        {earned.map(b => (
+          <div key={b.id} title={b.label}
+            onClick={() => setSel(b)}
+            style={{ width: 34, height: 34, borderRadius: 10, background: `${b.color}22`, border: `1.5px solid ${b.color}55`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, cursor: "pointer", transition: "transform .15s" }}
+            onMouseEnter={e => e.currentTarget.style.transform = "scale(1.2)"}
+            onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}>{b.icon}</div>
+        ))}
+      </div>
+      {sel && (
+        <div onClick={() => setSel(null)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.55)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: "#fff", borderRadius: 20, padding: "28px 24px", maxWidth: 280, width: "90%", textAlign: "center", boxShadow: "0 20px 60px rgba(0,0,0,.35)" }}>
+            <div style={{ width: 64, height: 64, borderRadius: 16, background: `${sel.color}18`, border: `2px solid ${sel.color}44`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 34, margin: "0 auto 14px" }}>{sel.icon}</div>
+            <div style={{ fontSize: 16, fontWeight: 900, color: "#1e293b", marginBottom: 8 }}><RubyText text={ageMode === "elementary" ? sel.elLabel : sel.label} /></div>
+            <div style={{ fontSize: 13, color: "#64748b", lineHeight: 1.6 }}><RubyText text={ageMode === "elementary" ? sel.elDesc : sel.desc} /></div>
+            <button onClick={() => setSel(null)} style={{ marginTop: 18, padding: "10px 28px", background: `linear-gradient(135deg,${sel.color},${sel.color}bb)`, border: "none", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
+              <RubyText text={ageMode === "elementary" ? "{閉|と}じる" : "閉じる"} />
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
@@ -1494,8 +1516,39 @@ function BadgeGallery({ record }) {
   const displayTitle = ageMode === "elementary" ? masterTitle.elTitle : masterTitle.title;
   const titleEmoji = displayTitle.split(" ")[0];
   const titleText = displayTitle.slice(displayTitle.indexOf(" ") + 1);
+  const [sel, setSel] = useState(null);
+
+  // 未獲得バッジ（シークレットは発見前は "？？？" 表示）
+  const unearned = BADGES.filter(b => !b.cond(record));
+
   return (
     <div style={{ animation: "slideUp .4s ease" }}>
+      {/* バッジ説明モーダル */}
+      {sel && (
+        <div onClick={() => setSel(null)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.6)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: "#fff", borderRadius: 24, padding: "32px 28px", maxWidth: 300, width: "90%", textAlign: "center", boxShadow: "0 24px 64px rgba(0,0,0,.4)" }}>
+            <div style={{ width: 72, height: 72, borderRadius: 18, background: sel.secret && !sel.cond(record) ? "#e2e8f0" : `${sel.color}1a`, border: `2px solid ${sel.secret && !sel.cond(record) ? "#94a3b8" : sel.color}44`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 38, margin: "0 auto 16px" }}>
+              {sel.secret && !sel.cond(record) ? "？" : sel.icon}
+            </div>
+            <div style={{ fontSize: 18, fontWeight: 900, color: "#1e293b", marginBottom: 10 }}>
+              {sel.secret && !sel.cond(record) ? "？？？" : <RubyText text={ageMode === "elementary" ? sel.elLabel : sel.label} />}
+            </div>
+            <div style={{ fontSize: 13, color: "#64748b", lineHeight: 1.7, marginBottom: 6 }}>
+              {sel.secret && !sel.cond(record)
+                ? <span style={{ color: "#94a3b8", fontStyle: "italic" }}>{ageMode === "elementary" ? "{隠|かく}しコマンドを{発見|はっけん}すると{解放|かいほう}されます" : "隠しコマンドを発見すると解放されます"}</span>
+                : <RubyText text={ageMode === "elementary" ? sel.elDesc : sel.desc} />
+              }
+            </div>
+            {sel.secret && !sel.cond(record) && (
+              <div style={{ fontSize: 11, color: "#c084fc", marginBottom: 4 }}>🔒 {ageMode === "elementary" ? "{秘密|ひみつ}の{実績|じっせき}" : "秘密の実績"}</div>
+            )}
+            <button onClick={() => setSel(null)} style={{ marginTop: 16, padding: "11px 32px", background: sel.secret && !sel.cond(record) ? "linear-gradient(135deg,#7c3aed,#4f46e5)" : `linear-gradient(135deg,${sel.color},${sel.color}cc)`, border: "none", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
+              <RubyText text={ageMode === "elementary" ? "{閉|と}じる" : "閉じる"} />
+            </button>
+          </div>
+        </div>
+      )}
+
       <div style={{ background: "#fff", borderRadius: 18, padding: "20px 18px", marginBottom: 14, textAlign: "center", border: `2px solid ${masterTitle.color}44`, boxShadow: `0 4px 16px ${masterTitle.color}18` }}>
         <div style={{ fontSize: 32, marginBottom: 6 }}>{titleEmoji}</div>
         <div style={{ fontSize: 17, fontWeight: 900, color: "#1e293b", marginBottom: 4 }}><RubyText text={titleText} /></div>
@@ -1506,7 +1559,9 @@ function BadgeGallery({ record }) {
           <div style={{ fontSize: 12, fontWeight: 900, color: "#64748b", marginBottom: 12, letterSpacing: ".08em" }}><RubyText text={ageMode === "elementary" ? `{獲得|かくとく}バッジ (${earned.length})` : `獲得バッジ (${earned.length})`} /></div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
             {earned.map(b => (
-              <div key={b.id} style={{ display: "flex", gap: 10, alignItems: "center", background: `${b.color}08`, border: `1px solid ${b.color}25`, borderRadius: 12, padding: "10px 12px" }}>
+              <div key={b.id} onClick={() => setSel(b)} style={{ display: "flex", gap: 10, alignItems: "center", background: `${b.color}08`, border: `1px solid ${b.color}25`, borderRadius: 12, padding: "10px 12px", cursor: "pointer", transition: "opacity .15s" }}
+                onMouseEnter={e => e.currentTarget.style.opacity = ".8"}
+                onMouseLeave={e => e.currentTarget.style.opacity = "1"}>
                 <div style={{ width: 36, height: 36, borderRadius: 10, background: `${b.color}18`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>{b.icon}</div>
                 <div>
                   <div style={{ fontSize: 12, fontWeight: 900, color: "#1e293b" }}><RubyText text={ageMode === "elementary" ? b.elLabel : b.label} /></div>
@@ -1517,15 +1572,27 @@ function BadgeGallery({ record }) {
           </div>
         </div>
       )}
-      <div style={{ background: "#f8fafc", borderRadius: 16, padding: "16px", border: "1px dashed #e2e8f0" }}>
-        <div style={{ fontSize: 12, fontWeight: 900, color: "#94a3b8", marginBottom: 10, letterSpacing: ".08em" }}><RubyText text={ageMode === "elementary" ? "{未獲得|みかくとく}バッジ" : "未獲得バッジ"} /></div>
-        {BADGES.filter(b => !b.cond(record)).map(b => (
-          <div key={b.id} style={{ display: "flex", gap: 10, alignItems: "center", opacity: .45, marginBottom: 7 }}>
-            <div style={{ width: 30, height: 30, borderRadius: 8, background: "#e2e8f0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, filter: "grayscale(1)", flexShrink: 0 }}>{b.icon}</div>
-            <div style={{ fontSize: 12, color: "#64748b" }}><RubyText text={ageMode === "elementary" ? b.elLabel : b.label} /> <span style={{ fontSize: 10, color: "#94a3b8" }}>— <RubyText text={ageMode === "elementary" ? b.elDesc : b.desc} /></span></div>
-          </div>
-        ))}
-      </div>
+      {unearned.length > 0 && (
+        <div style={{ background: "#f8fafc", borderRadius: 16, padding: "16px", border: "1px dashed #e2e8f0" }}>
+          <div style={{ fontSize: 12, fontWeight: 900, color: "#94a3b8", marginBottom: 10, letterSpacing: ".08em" }}><RubyText text={ageMode === "elementary" ? "{未獲得|みかくとく}バッジ" : "未獲得バッジ"} /></div>
+          {unearned.map(b => {
+            const isHidden = b.secret;
+            return (
+              <div key={b.id} onClick={() => setSel(b)} style={{ display: "flex", gap: 10, alignItems: "center", opacity: isHidden ? .55 : .45, marginBottom: 7, cursor: "pointer" }}>
+                <div style={{ width: 30, height: 30, borderRadius: 8, background: "#e2e8f0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: isHidden ? 14 : 16, filter: isHidden ? "none" : "grayscale(1)", flexShrink: 0 }}>
+                  {isHidden ? "？" : b.icon}
+                </div>
+                <div style={{ fontSize: 12, color: "#64748b" }}>
+                  {isHidden
+                    ? <><span style={{ fontWeight: 900, color: "#a78bfa" }}>？？？</span> <span style={{ fontSize: 10, color: "#94a3b8" }}>— {ageMode === "elementary" ? "{隠|かく}しコマンドで{解放|かいほう}" : "隠しコマンドで解放"}</span></>
+                    : <><RubyText text={ageMode === "elementary" ? b.elLabel : b.label} /> <span style={{ fontSize: 10, color: "#94a3b8" }}>— <RubyText text={ageMode === "elementary" ? b.elDesc : b.desc} /></span></>
+                  }
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
@@ -5620,7 +5687,7 @@ function HomeScreen({ onNavigate, progress }) {
   const handleOwlTap = () => {
     const next = owlTapCount + 1;
     setOwlTapCount(next);
-    if (next >= 10) { setOwlTapCount(0); setSecret1(true); }
+    if (next >= 10) { setOwlTapCount(0); setSecret1(true); try { localStorage.setItem("mamoru_secret1_found", "1"); } catch {} }
     else if (next >= 5) setSecretMsg(`あと${10 - next}回！`);
     else setSecretMsg("");
   };
@@ -5636,7 +5703,7 @@ function HomeScreen({ onNavigate, progress }) {
     const next = [...swipeSeq, dir];
     const match = next.slice(-SWIPE_SEQ.length);
     if (JSON.stringify(match) === JSON.stringify(SWIPE_SEQ)) {
-      setSwipeSeq([]); setSecret3(true);
+      setSwipeSeq([]); setSecret3(true); try { localStorage.setItem("mamoru_secret3_found", "1"); } catch {}
     } else {
       setSwipeSeq(next.slice(-5));
     }
@@ -5752,9 +5819,9 @@ function HomeScreen({ onNavigate, progress }) {
               <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 9, color: "rgba(30,58,95,.4)", letterSpacing: ".3em", marginBottom: 4 }}>{t("home.badge")}</div>
               {/* ② ロゴ長押し3秒でシークレット2 */}
               <div
-                onMouseDown={() => { const t = setTimeout(() => { setSecret2(true); setLogoHoldTimer(null); }, 3000); setLogoHoldTimer(t); }}
+                onMouseDown={() => { const t = setTimeout(() => { setSecret2(true); setLogoHoldTimer(null); try { localStorage.setItem("mamoru_secret2_found", "1"); } catch {} }, 3000); setLogoHoldTimer(t); }}
                 onMouseUp={() => { if (logoHoldTimer) { clearTimeout(logoHoldTimer); setLogoHoldTimer(null); } }}
-                onTouchStart={() => { const t = setTimeout(() => { setSecret2(true); setLogoHoldTimer(null); }, 3000); setLogoHoldTimer(t); }}
+                onTouchStart={() => { const t = setTimeout(() => { setSecret2(true); setLogoHoldTimer(null); try { localStorage.setItem("mamoru_secret2_found", "1"); } catch {} }, 3000); setLogoHoldTimer(t); }}
                 onTouchEnd={() => { if (logoHoldTimer) { clearTimeout(logoHoldTimer); setLogoHoldTimer(null); } }}
                 style={{ fontSize: 30, fontWeight: 900, color: "#1e3a5f", letterSpacing: "-.02em", cursor: "default", userSelect: "none" }}>
                 {t("home.appName")}
@@ -5986,9 +6053,9 @@ function HomeScreen({ onNavigate, progress }) {
 
           {/* Parent report button — ④ 5秒長押しでシークレットダッシュボード */}
           <button onClick={() => onNavigate("report")}
-            onMouseDown={() => { const t = setTimeout(() => { setSecret4(true); setReportHoldTimer(null); }, 5000); setReportHoldTimer(t); }}
+            onMouseDown={() => { const t = setTimeout(() => { setSecret4(true); setReportHoldTimer(null); try { localStorage.setItem("mamoru_secret4_found", "1"); } catch {} }, 5000); setReportHoldTimer(t); }}
             onMouseUp={() => { if (reportHoldTimer) { clearTimeout(reportHoldTimer); setReportHoldTimer(null); } }}
-            onTouchStart={() => { const t = setTimeout(() => { setSecret4(true); setReportHoldTimer(null); }, 5000); setReportHoldTimer(t); }}
+            onTouchStart={() => { const t = setTimeout(() => { setSecret4(true); setReportHoldTimer(null); try { localStorage.setItem("mamoru_secret4_found", "1"); } catch {} }, 5000); setReportHoldTimer(t); }}
             onTouchEnd={() => { if (reportHoldTimer) { clearTimeout(reportHoldTimer); setReportHoldTimer(null); } }}
             style={{ width: "100%", padding: "14px 16px", background: "rgba(255,255,255,.8)", border: "1.5px solid rgba(100,180,255,.2)", borderRadius: 16, cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 12, boxShadow: "0 2px 8px rgba(100,180,255,.1)" }}>
             <div style={{ width: 40, height: 40, borderRadius: 11, background: "rgba(99,102,241,.15)", border: "1px solid rgba(99,102,241,.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>👨‍👩‍👧</div>
@@ -7652,7 +7719,7 @@ function Episode2({ onComplete, onExit }) {
         </div>
         <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
           <button onClick={() => navigator.share?.({ title: "マモル EP2 クリア！", text: `フェイクニュースを${swipeScore.correct}/${swipeScore.total || FAKE_POSTS.length}問正解！SNSリテラシーアプリ「マモル」🔎` }).catch(() => {})} style={{ flex: 1, padding: 14, background: "#fff", border: "2px solid #7c3aed", borderRadius: 14, color: "#6d28d9", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>📤 シェア</button>
-          <button onClick={() => onComplete(swipeScore.correct)} style={{ flex: 1, padding: 14, background: "linear-gradient(135deg,#7c3aed,#4f46e5)", border: "none", borderRadius: 14, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>🏠 ホームへ</button>
+          <button onClick={() => { feedback("complete"); onComplete(swipeScore.correct); }} style={{ flex: 1, padding: 14, background: "linear-gradient(135deg,#7c3aed,#4f46e5)", border: "none", borderRadius: 14, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>🏠 ホームへ</button>
         </div>
       </div>
     </div>
@@ -8482,7 +8549,7 @@ function Episode3({ onComplete, onExit }) {
         </div>
         <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
           <button onClick={() => navigator.share?.({ title: "マモル EP3 クリア！", text: "闇バイト勧誘シミュレーターを体験！SNSリテラシーアプリ「マモル」🛡️" }).catch(() => {})} style={{ flex: 1, padding: 14, background: "#fff", border: "2px solid #16a34a", borderRadius: 14, color: "#166534", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>📤 シェア</button>
-          <button onClick={() => onComplete(3)} style={{ flex: 1, padding: 14, background: "linear-gradient(135deg,#16a34a,#15803d)", border: "none", borderRadius: 14, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>🏠 ホームへ</button>
+          <button onClick={() => { feedback("complete"); onComplete(3); }} style={{ flex: 1, padding: 14, background: "linear-gradient(135deg,#16a34a,#15803d)", border: "none", borderRadius: 14, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>🏠 ホームへ</button>
         </div>
       </div>
     </div>
@@ -8871,7 +8938,7 @@ function Episode3_2({ onComplete, onExit }) {
             </div>
           </div>
 
-          <button onClick={() => onComplete(safeCount)} style={{ width: "100%", background: lineGreen, color: "#fff", border: "none", borderRadius: 14, padding: "15px 0", fontSize: 16, fontWeight: 800, cursor: "pointer", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+          <button onClick={() => { feedback("complete"); onComplete(safeCount); }} style={{ width: "100%", background: lineGreen, color: "#fff", border: "none", borderRadius: 14, padding: "15px 0", fontSize: 16, fontWeight: 800, cursor: "pointer", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
             <RubyText text={el ? "{完了|かんりょう}！ホームへ 🏠" : "完了！ホームへ 🏠"} />
           </button>
         </div>
@@ -9418,7 +9485,7 @@ function Episode4({ onComplete, onExit }) {
         <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
           <button onClick={() => navigator.share?.({ title: "マモル EP4 クリア！", text: "なりすまし・アカウント乗っ取り対策を学んだ！SNSリテラシーアプリ「マモル」🔐" }).catch(() => {})}
             style={{ flex: 1, padding: 14, background: "#fff", border: `2px solid ${sky}`, borderRadius: 14, color: skyDark, fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>📤 シェア</button>
-          <button onClick={() => onComplete(3)}
+          <button onClick={() => { feedback("complete"); onComplete(3); }}
             style={{ flex: 1, padding: 14, background: `linear-gradient(135deg,${sky},${skyDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>🏠 ホームへ</button>
         </div>
       </div>
@@ -10037,7 +10104,7 @@ function Episode5({ onComplete, onExit }) {
         <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
           <button onClick={() => navigator.share?.({ title: "マモル EP5 クリア！", text: "ネットいじめ防衛隊になりました。SNSリテラシーアプリ「マモル」👥" }).catch(() => {})}
             style={{ flex: 1, padding: 14, background: "#fff", border: `2px solid ${pink}`, borderRadius: 14, color: pinkDark, fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>📤 シェア</button>
-          <button onClick={() => onComplete(3)}
+          <button onClick={() => { feedback("complete"); onComplete(3); }}
             style={{ flex: 1, padding: 14, background: `linear-gradient(135deg,${pink},${pinkDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>🏠 ホームへ</button>
         </div>
       </div>
@@ -10691,7 +10758,7 @@ function Episode6({ onComplete, onExit }) {
         <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
           <button onClick={() => navigator.share?.({ title: "マモル EP6 クリア！", text: "自画撮り被害の経路と対策を学んだ！SNSリテラシーアプリ「マモル」📸" }).catch(() => {})}
             style={{ flex: 1, padding: 14, background: "#fff", border: `2px solid ${rose}`, borderRadius: 14, color: roseDark, fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>📤 シェア</button>
-          <button onClick={() => onComplete(3)}
+          <button onClick={() => { feedback("complete"); onComplete(3); }}
             style={{ flex: 1, padding: 14, background: `linear-gradient(135deg,${rose},${roseDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>🏠 ホームへ</button>
         </div>
       </div>
@@ -11421,7 +11488,7 @@ function Episode7({ onComplete, onExit }) {
         <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
           <button onClick={() => navigator.share?.({ title: "マモル EP7 クリア！", text: "フィッシング詐欺の手口を体験して免疫マスターになった！SNSリテラシーアプリ「マモル」🎣" }).catch(() => {})}
             style={{ flex: 1, padding: 14, background: "#fff", border: `2px solid ${cyan}`, borderRadius: 14, color: cyanDark, fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>📤 シェア</button>
-          <button onClick={() => onComplete(3)}
+          <button onClick={() => { feedback("complete"); onComplete(3); }}
             style={{ flex: 1, padding: 14, background: `linear-gradient(135deg,${cyan},${cyanDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>🏠 ホームへ</button>
         </div>
       </div>
