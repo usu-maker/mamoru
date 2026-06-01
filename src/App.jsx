@@ -113,17 +113,17 @@ const I18N = {
       audience: { ja: "中学生〜・親子で", el: "{中学生|ちゅうがくせい}〜・{親子|おやこ}で", en: "Ages 12+ / With parents", ko: "중학생~ · 부모와 함께", zh: "初中~ · 亲子" },
     },
     ep32: {
-      tag: { ja: "EPISODE 03-2 · 断る練習", el: "EPISODE 03-2 · {断|ことわ}る{練習|れんしゅう}", en: "EPISODE 03-2 · Refusal Practice", ko: "EPISODE 03-2 · 거절 연습", zh: "第03-2话 · 拒绝练习" },
-      title: { ja: "その「おねがい」、だいじょうぶ？", el: "その「おねがい」、だいじょうぶ？", en: "Is That \"Request\" OK?", ko: "그 \"부탁\", 괜찮은 건가?", zh: "那个\"请求\"，没问题吗？" },
+      tag: { ja: "EPISODE 03-2 · 怪しい求人を見抜く", el: "EPISODE 03-2 · {怪|あや}しい{求人|きゅうじん}を{見抜|みぬ}く", en: "EPISODE 03-2 · Spot the Dark Job", ko: "EPISODE 03-2 · 이상한 구인 간파하기", zh: "第03-2话 · 识破可疑招募" },
+      title: { ja: "その求人、闇バイトじゃない？", el: "その{求人|きゅうじん}、{闇|やみ}バイトじゃない？", en: "Is That Job Listing Legit?", ko: "그 구인, 불법 아르바이트 아냐?", zh: "那个招聘，是非法兼职吗？" },
       desc: {
-        ja: "ゲームで知り合った相手から、少しずつ個人情報を求められる。断れる？",
-        el: "ゲームで{知|し}り{合|あ}った{相手|あいて}から、{少|すこ}しずつ{個人情報|こじんじょうほう}を{求|もと}められる。{断|ことわ}れる？",
-        en: "Someone you met in a game asks for more and more personal info. Can you say no?",
-        ko: "게임에서 만난 상대가 조금씩 개인정보를 요구한다. 거절할 수 있어?",
-        zh: "游戏中认识的人一点点要求个人信息，你能拒绝吗？",
+        ja: "X・Instagram・求人サイト…3つの場面で怪しいポイントを全部タップして見つけよう。",
+        el: "X・Instagram・{求人|きゅうじん}サイト…3つの{場面|ばめん}で{怪|あや}しいポイントを{全部|ぜんぶ}タップして{見|み}つけよう。",
+        en: "X, Instagram, job sites... Find all the suspicious points in 3 real-looking scams.",
+        ko: "X, 인스타그램, 구인 사이트... 3개 장면에서 수상한 포인트를 모두 찾아라.",
+        zh: "X、Instagram、求职网站…在3个场景中找出所有可疑点。",
       },
-      duration: { ja: "約5分", el: "{約|やく}5{分|ふん}", en: "About 5 min", ko: "약 5분", zh: "约5分钟" },
-      audience: { ja: "小学生〜・親子で", el: "{小学生|しょうがくせい}〜・{親子|おやこ}で", en: "Ages 8+ / With parents", ko: "초등학생~ · 부모와 함께", zh: "小学生~ · 亲子" },
+      duration: { ja: "約8分", el: "{約|やく}8{分|ふん}", en: "About 8 min", ko: "약 8분", zh: "约8分钟" },
+      audience: { ja: "中学生〜・親子で", el: "{中学生|ちゅうがくせい}〜・{親子|おやこ}で", en: "Ages 12+ / With parents", ko: "중학생~ · 부모와 함께", zh: "初中~ · 亲子" },
     },
     ep4: {
       tag: { ja: "EPISODE 04 · なりすまし体験", el: "EPISODE 04 · なりすまし{体験|たいけん}", en: "EPISODE 04 · Impersonation", ko: "EPISODE 04 · 사칭 체험", zh: "第04话 · 假冒身份" },
@@ -2996,6 +2996,17 @@ const EP_INTRO_META = {
     elParentNote: "{制服|せいふく}・{校章|こうしょう}・{表札|ひょうさつ}・ランドマークが{写|うつ}り{込|こ}んだ{写真|しゃしん}から、{住所|じゅうしょ}が{特定|とくてい}された{事例|じれい}があります。",
     accentColor: "#ffa940",
   },
+  ep12: {
+    theme: "位置情報サービスの怖さ",
+    hook: "エピソード1では、写真の背景から場所が特定される怖さを学んだ。でも実は、スマホ自体があなたの居場所を毎日記録し続けている。今日は実際に確認して、一緒に対策しよう。",
+    talkPoints: ["スマホが記録している位置情報の量に驚いたか", "どのアプリに位置情報を許可しているか知っていたか", "今後どのアプリの位置情報をオフにするか"],
+    parentNote: "スマホの位置情報は親御さん自身も把握していないことが多いテーマです。お子さまと一緒に実際の設定画面を開いて確認することを強くおすすめします。",
+    elTheme: "{位置情報|いちじょうほう}サービスのこわさ",
+    elHook: "エピソード1では、{写真|しゃしん}の{背景|はいけい}から{場所|ばしょ}が{特定|とくてい}されるこわさを{学|まな}んだね。でも{実|じつ}は、スマホ{自体|じたい}があなたの{居場所|いばしょ}を{毎日|まいにち}{記録|きろく}し{続|つづ}けているんだよ。{今日|きょう}は{実際|じっさい}に{確認|かくにん}して、{一緒|いっしょ}に{対策|たいさく}しよう。",
+    elTalkPoints: ["スマホが{記録|きろく}している{位置情報|いちじょうほう}の{量|りょう}に{驚|おどろ}いたか", "どのアプリに{位置情報|いちじょうほう}を{許可|きょか}しているか{知|し}っていたか", "これから{位置情報|いちじょうほう}をオフにするアプリはどれか"],
+    elParentNote: "スマホの{位置情報|いちじょうほう}はおうちの{人|ひと}も{把握|はあく}していないことが{多|おお}いテーマです。お{子|こ}さまと{一緒|いっしょ}に{実際|じっさい}の{設定|せってい}{画面|がめん}を{開|ひら}いて{確認|かくにん}することを{強|つよ}くおすすめします。",
+    accentColor: "#ffa940",
+  },
   ep2: {
     theme: "フェイクニュース・情報リテラシー",
     hook: "「緊急拡散希望」——その情報、本当ですか？デマを広めた側も責任を問われる時代です。",
@@ -3016,6 +3027,17 @@ const EP_INTRO_META = {
     elHook: "「スマホだけで{日払|ひばら}い5{万円|まんえん}」——その{求人|きゅうじん}{広告|こうこく}は、{犯罪|はんざい}グループの{入口|いりぐち}です。",
     elTalkPoints: ["{闇|やみ}バイトの{断|ことわ}り{方|かた}", "トクリュウって{何|なん}？", "{困|こま}ったら{誰|だれ}に{相談|そうだん}するか"],
     elParentNote: "2024{年|ねん}、{高校|こうこう}・{大学生|だいがくせい}の{逮捕者|たいほしゃ}が{急増|きゅうぞう}。「{知|し}らなかった」は{裁判|さいばん}で{通用|つうよう}しません。",
+    accentColor: "#16a34a",
+  },
+  ep32: {
+    theme: "怪しい求人を見抜く",
+    hook: "SNS・Instagram・求人サイト…闇バイトの入口はどこにでもある。本物の手口を使った3つの場面で、怪しいポイントを自分で見つけよう。",
+    talkPoints: ["求人を見て怪しいと気づいたサインは何か", "友達から「いい仕事あるよ」と誘われたらどうするか", "怪しいと思ったら誰に相談するか"],
+    parentNote: "闇バイトの入口はSNS・ゲーム・求人サイトなど日常的に使うサービスの中にあります。「高収入・簡単・スマホだけ」の募集を見たら必ず大人に相談するよう約束しましょう。",
+    elTheme: "{怪|あや}しい{求人|きゅうじん}を{見抜|みぬ}く",
+    elHook: "SNS・Instagram・{求人|きゅうじん}サイト…{闇|やみ}バイトの{入口|いりぐち}はどこにでもある。{本物|ほんもの}の{手口|てぐち}をつかった3つの{場面|ばめん}で、{怪|あや}しいポイントを{自分|じぶん}で{見|み}つけよう。",
+    elTalkPoints: ["{求人|きゅうじん}を{見|み}て{怪|あや}しいと{気|き}づいたサインは{何|なに}か", "{友達|ともだち}から「いい{仕事|しごと}あるよ」と{誘|さそ}われたらどうするか", "{怪|あや}しいと{思|おも}ったら{誰|だれ}に{相談|そうだん}するか"],
+    elParentNote: "{闇|やみ}バイトの{入口|いりぐち}はSNS・ゲーム・{求人|きゅうじん}サイトなど{日常|にちじょう}てきに{使|つか}うサービスの{中|なか}にあります。「{高収入|こうしゅうにゅう}・かんたん・スマホだけ」のぼしゅうを{見|み}たら{必|かなら}ず{大人|おとな}に{相談|そうだん}するよう{約束|やくそく}しましょう。",
     accentColor: "#16a34a",
   },
   ep4: {
@@ -4188,6 +4210,46 @@ const EP_KEYWORDS = {
         action: "{大切|たいせつ}なファイルをおくる{前|まえ}にメタデータを{消|け}すツールで{確認|かくにん}する",
       },
       epKey: "ep1",
+    },
+  ],
+  ep12: [
+    {
+      word: "ジオタグ",
+      reading: "じおたぐ",
+      emoji: "📍",
+      short: "写真に自動でつく「どこで撮ったか」の情報",
+      detail: "スマホで写真を撮ると、GPSで「どこで撮ったか」が自動的に記録される。これを「ジオタグ」という。写真をSNSにあげると、その場所の情報も一緒に公開されてしまう。",
+      news: "2019年、SNSにあげた写真のジオタグから芸能人の自宅が特定された事件がある。目の中の景色の反射からも場所が分かることもある。",
+      scary: "カメラアプリの位置情報をオンにしていると、毎日のジオタグが写真に残り続ける",
+      action: "設定→カメラ→位置情報→「許可しない」に変える",
+      el: {
+        word: "ジオタグ（{写真|しゃしん}につく{場所|ばしょ}の{情報|じょうほう}）",
+        short: "{写真|しゃしん}に{自動|じどう}でつく「どこで{撮|と}ったか」の{情報|じょうほう}",
+        detail: "スマホで{写真|しゃしん}を{撮|と}ると、GPSで「どこで{撮|と}ったか」が{自動的|じどうてき}に{記録|きろく}されます。これを「ジオタグ」といいます。{写真|しゃしん}をSNSにあげると、その{場所|ばしょ}の{情報|じょうほう}も{一緒|いっしょ}に{公開|こうかい}されてしまいます。",
+        news: "2019{年|ねん}、SNSにあげた{写真|しゃしん}のジオタグから{芸能人|げいのうじん}の{自宅|じたく}が{特定|とくてい}された{事件|じけん}があります。{目|め}の{中|なか}の{景色|けしき}の{反射|はんしゃ}からも{場所|ばしょ}がわかることもあります。",
+        scary: "カメラアプリの{位置情報|いちじょうほう}をオンにしていると、{毎日|まいにち}のジオタグが{写真|しゃしん}に{残|のこ}り{続|つづ}ける",
+        action: "{設定|せってい}→カメラ→{位置情報|いちじょうほう}→「{許可|きょか}しない」に{変|か}える",
+      },
+      epKey: "ep12",
+    },
+    {
+      word: "アクセス権限",
+      reading: "あくせすけんげん",
+      emoji: "🔓",
+      short: "アプリに「これを使っていいよ」と許可すること",
+      detail: "アプリをインストールするときに「位置情報を使ってもいいですか？」「カメラを使ってもいいですか？」と聞かれる。これに「許可」すると、そのアプリはあなたの情報を見られるようになる。",
+      news: "ライト（懐中電灯）アプリが、なぜか連絡先や位置情報の権限を要求し、こっそり情報を集めていた事件がある。",
+      scary: "「全部許可」を押す前に「このアプリに本当に必要？」と考えること",
+      action: "設定→プライバシー で、各アプリに与えた権限を定期的に見直す",
+      el: {
+        word: "アクセス{権限|けんげん}（アプリへの{許可|きょか}）",
+        short: "アプリに「これを{使|つか}っていいよ」と{許可|きょか}すること",
+        detail: "アプリをインストールするときに「{位置情報|いちじょうほう}を{使|つか}ってもいいですか？」「カメラを{使|つか}ってもいいですか？」と{聞|き}かれます。「{許可|きょか}」すると、そのアプリはあなたの{情報|じょうほう}を{見|み}られるようになります。",
+        news: "ライト（かいちゅうでんとう）アプリが、なぜか{連絡先|れんらくさき}や{位置情報|いちじょうほう}の{権限|けんげん}を{要求|ようきゅう}し、こっそり{情報|じょうほう}を{集|あつ}めていた{事件|じけん}があります。",
+        scary: "「{全部|ぜんぶ}{許可|きょか}」をおす{前|まえ}に「このアプリに{本当|ほんとう}に{必要|ひつよう}？」と{考|かんが}えること",
+        action: "{設定|せってい}→プライバシー で、{各|かく}アプリにあたえた{権限|けんげん}を{定期的|ていきてきに}に{見直|みなお}す",
+      },
+      epKey: "ep12",
     },
   ],
   ep2: [
@@ -5623,27 +5685,7 @@ function HomeScreen({ onNavigate, progress }) {
   const [secret4, setSecret4] = useState(false);
   const [secretMsg, setSecretMsg] = useState("");
 
-  // EP1-2 パスワードゲート
-  const EP12_PW = "さくら";
-  const [ep12Unlocked, setEp12Unlocked] = useState(() => {
-    try { return !!localStorage.getItem("mamoru_ep12_unlocked"); } catch { return false; }
-  });
-  const [showEp12PwModal, setShowEp12PwModal] = useState(false);
-  const [ep12PwInput, setEp12PwInput] = useState("");
-  const [ep12PwError, setEp12PwError] = useState(false);
-  const handleEp12Pw = () => {
-    if (ep12PwInput.trim() === EP12_PW) {
-      try { localStorage.setItem("mamoru_ep12_unlocked", "1"); } catch {}
-      setEp12Unlocked(true);
-      setShowEp12PwModal(false);
-      setEp12PwInput("");
-      setEp12PwError(false);
-      onNavigate("ep12");
-    } else {
-      setEp12PwError(true);
-      setEp12PwInput("");
-    }
-  };
+  // EP1-2: EP1クリアでアンロック（パスワードゲート廃止）
 
   // モリィタップ
   const handleOwlTap = () => {
@@ -5674,13 +5716,13 @@ function HomeScreen({ onNavigate, progress }) {
   const modes = [
     { id: "ep1", tag: t("modes.ep1.tag"), title: t("modes.ep1.title"), icon: "🔍", desc: t("modes.ep1.desc"), duration: t("modes.ep1.duration"), audience: t("modes.ep1.audience"), accent: "#ffa940", bg1: "#1a1000", bg2: "#0f0800", done: progress.ep1 },
     { id: "ep12",
-      tag: ageMode === "elementary" ? "EPISODE 01-2 · {保護者|ほごしゃ}{限定|げんてい}" : "EPISODE 01-2 · 保護者限定",
-      title: ageMode === "elementary" ? "{個人情報|こじんじょうほう}の{特定|とくてい}{体験|たいけん}" : "個人情報の特定体験",
-      icon: "🕵️",
-      desc: ageMode === "elementary" ? "「{悪|わる}い{人|ひと}」の{視点|してん}で、{校章|こうしょう}→{学校名|がっこうめい}→{住所|じゅうしょ}→{通学路|つうがくろ}が{特定|とくてい}されるシミュレーション。{保護者|ほごしゃ}{向|む}け。" : "「悪い人」の視点で、校章→学校名→住所→通学路が特定されるシミュレーション。保護者向け。",
-      duration: ageMode === "elementary" ? "{約|やく}5{分|ふん}" : "約5分",
-      audience: ageMode === "elementary" ? "{保護者|ほごしゃ}{専用|せんよう}" : "保護者専用",
-      accent: "#dc2626", bg1: "#1a0505", bg2: "#0f0303", done: progress.ep12, locked: !ep12Unlocked },
+      tag: ageMode === "elementary" ? "EPISODE 01-2 · {位置情報|いちじょうほう}サービス" : "EPISODE 01-2 · 位置情報サービス",
+      title: ageMode === "elementary" ? "{本当|ほんとう}は、{位置情報|いちじょうほう}が{見|み}えてるよ" : "本当は、位置情報が見えてるよ",
+      icon: "📍",
+      desc: ageMode === "elementary" ? "スマホが{毎日|まいにち}どこにいたか{記録|きろく}している！{実際|じっさい}に{確認|かくにん}して、いっしょに{設定|せってい}を{変|か}えよう。" : "スマホが毎日どこにいたか記録している！実際に確認して、一緒に設定を変えよう。",
+      duration: ageMode === "elementary" ? "{約|やく}8{分|ふん}" : "約8分",
+      audience: ageMode === "elementary" ? "{小学生|しょうがくせい}〜・{親子|おやこ}で" : "小学生〜・親子で",
+      accent: "#ffa940", bg1: "#1a1000", bg2: "#0f0800", done: progress.ep12, locked: !progress.ep1 },
     { id: "ep2", tag: t("modes.ep2.tag"), title: t("modes.ep2.title"), icon: "🔎", desc: t("modes.ep2.desc"), duration: t("modes.ep2.duration"), audience: t("modes.ep2.audience"), accent: "#7c3aed", bg1: "#0f0a1e", bg2: "#07041a", done: progress.ep2 },
     { id: "ep3", tag: t("modes.ep3.tag"), title: t("modes.ep3.title"), icon: "⚠️", desc: t("modes.ep3.desc"), duration: t("modes.ep3.duration"), audience: t("modes.ep3.audience"), accent: "#16a34a", bg1: "#0a1a0a", bg2: "#041004", done: progress.ep3 },
     { id: "ep32", tag: t("modes.ep32.tag"), title: t("modes.ep32.title"), icon: "💬", desc: t("modes.ep32.desc"), duration: t("modes.ep32.duration"), audience: t("modes.ep32.audience"), accent: "#06c755", bg1: "#041210", bg2: "#020c08", done: progress.ep32 },
@@ -5735,40 +5777,6 @@ function HomeScreen({ onNavigate, progress }) {
       {secret3 && <DarkWebMission onClose={() => setSecret3(false)} />}
       {secret4 && <ParentSecretDashboard onClose={() => setSecret4(false)} />}
 
-      {/* EP1-2 パスワードモーダル */}
-      {showEp12PwModal && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.8)", zIndex: 9998, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
-          <div style={{ background: "linear-gradient(135deg,#1a0505,#0f0303)", border: "2px solid rgba(220,38,38,.5)", borderRadius: 22, padding: "28px 22px", maxWidth: 360, width: "100%", fontFamily: "'Zen Maru Gothic',sans-serif", animation: "popIn .3s ease" }}>
-            <div style={{ textAlign: "center", fontSize: 42, marginBottom: 10 }}>🔐</div>
-            <h2 style={{ color: "#fff", fontSize: 17, fontWeight: 900, textAlign: "center", margin: "0 0 6px" }}>保護者限定コンテンツ</h2>
-            <p style={{ color: "rgba(255,255,255,.6)", fontSize: 12, textAlign: "center", lineHeight: 1.7, margin: "0 0 18px" }}>
-              このエピソードは保護者向けです。<br />合言葉を入力してください。
-            </p>
-            {ep12PwError && (
-              <div style={{ background: "rgba(220,38,38,.15)", border: "1px solid rgba(220,38,38,.4)", borderRadius: 10, padding: "8px 12px", marginBottom: 12, fontSize: 12, color: "#fca5a5", textAlign: "center" }}>
-                合言葉が違います 😔
-              </div>
-            )}
-            <input
-              type="text" value={ep12PwInput}
-              onChange={e => { setEp12PwInput(e.target.value); setEp12PwError(false); }}
-              onKeyDown={e => e.key === "Enter" && handleEp12Pw()}
-              placeholder="合言葉を入力..."
-              style={{ width: "100%", padding: "12px 14px", background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.2)", borderRadius: 12, color: "#fff", fontSize: 15, fontFamily: "inherit", outline: "none", boxSizing: "border-box", marginBottom: 12 }}
-            />
-            <div style={{ display: "flex", gap: 8 }}>
-              <button onClick={() => { setShowEp12PwModal(false); setEp12PwInput(""); setEp12PwError(false); }}
-                style={{ flex: 1, padding: 12, background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.15)", borderRadius: 12, color: "rgba(255,255,255,.7)", fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
-                キャンセル
-              </button>
-              <button onClick={handleEp12Pw}
-                style={{ flex: 1, padding: 12, background: "linear-gradient(135deg,#dc2626,#991b1b)", border: "none", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
-                解除する
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Hero */}
       <div style={{ position: "relative", padding: "44px 20px 28px", overflow: "hidden" }}>
@@ -5904,9 +5912,9 @@ function HomeScreen({ onNavigate, progress }) {
                 alert("🚧 攻撃者体験は近日公開予定です！\n\nAIリアルタイム生成が必要な機能のため、準備中です。お楽しみに。");
                 return;
               }
-              // EP1-2はパスワードゲート
+              // EP1-2はEP1クリアでアンロック
               if (m.id === "ep12") {
-                if (!ep12Unlocked) { setShowEp12PwModal(true); return; }
+                if (!progress.ep1) { alert("EP1をクリアするとアンロックされます！"); return; }
                 onNavigate("ep12"); return;
               }
               onNavigate(m.id);
@@ -5918,7 +5926,7 @@ function HomeScreen({ onNavigate, progress }) {
               {m.id === "attacker" && !CLAUDE_API_ENABLED
                 ? <div style={{ position: "absolute", top: 12, right: 12, background: "#475569", color: "#fff", fontSize: 9, fontWeight: 900, padding: "3px 9px", borderRadius: 99, letterSpacing: ".1em" }}>🚧 近日公開</div>
                 : m.locked
-                  ? <div style={{ position: "absolute", top: 12, right: 12, background: "#7f1d1d", color: "#fca5a5", fontSize: 9, fontWeight: 900, padding: "3px 9px", borderRadius: 99, letterSpacing: ".1em" }}>🔐 保護者限定</div>
+                  ? <div style={{ position: "absolute", top: 12, right: 12, background: "#78350f", color: "#fcd34d", fontSize: 9, fontWeight: 900, padding: "3px 9px", borderRadius: 99, letterSpacing: ".1em" }}>🔒 EP1クリアで解放</div>
                   : m.done
                     ? <div style={{ position: "absolute", top: 12, right: 12, background: "#22c55e", color: "#fff", fontSize: 9, fontWeight: 900, padding: "3px 9px", borderRadius: 99, letterSpacing: ".1em" }}>{t("home.clearedBadge")}</div>
                     : <div style={{ position: "absolute", top: 12, right: 12, background: m.accent, color: "#fff", fontSize: 9, fontWeight: 900, padding: "3px 9px", borderRadius: 99, letterSpacing: ".1em", animation: "newBadge 2s ease-in-out infinite" }}>{t("home.newBadge")}</div>
@@ -6649,181 +6657,320 @@ function Episode1({ onComplete, onExit }) {
 }
 
 // ─────────────────────────────────────────────
-// ██ EPISODE 1-2 — 個人情報の特定体験（保護者限定）
+// ██ EPISODE 1-2 — 本当は、位置情報が見えてるよ
+// 位置情報サービス・プライバシー体験
 // ─────────────────────────────────────────────
 function Episode1_2({ onComplete, onExit }) {
-  const [phase, setPhase] = useState("intro");
-  const [step, setStep] = useState(0);
+  const ageMode = useAgeMode();
+  const el = ageMode === "elementary";
+  const [phase, setPhase] = useState("parent_intro");
+  const [selectedDevice, setSelectedDevice] = useState(null);
+  const [stepIdx, setStepIdx] = useState(0);
+  const [locationStep, setLocationStep] = useState(0);
+  const [checklistDone, setChecklistDone] = useState([]);
 
-  const STEPS = [
-    {
-      phase: "校章",
-      icon: "🏫",
-      clue: "制服の胸に小さな紋章がある",
-      extract: "「桜花中学校」— 特定完了",
-      detail: "制服の校章は学校名の手がかり。SNSに制服写真を投稿すると、校章から学校名が特定される。",
-      found: "学校名",
-      risk: 1,
-      nextLabel: "学校を調べる →",
-    },
-    {
-      phase: "学校名",
-      icon: "📍",
-      clue: "「桜花中学校」で検索…",
-      extract: "住所：東京都練馬区○○町3-12 — 特定完了",
-      detail: "学校名がわかれば住所は即座に判明。学校の公式サイト・地図アプリで1分以内に特定できる。",
-      found: "学校の住所",
-      risk: 2,
-      nextLabel: "通学路を割り出す →",
-    },
-    {
-      phase: "通学路",
-      icon: "🗺️",
-      clue: "投稿時間：7:50〜8:10 AM（毎日）",
-      extract: "通学路・時刻パターン — 特定完了",
-      detail: "毎朝の投稿時間＋学校の住所で、「どこを通って何時に歩くか」がわかる。待ち伏せが可能になる。",
-      found: "通学路・行動パターン",
-      risk: 3,
-      nextLabel: "結果を見る →",
-    },
+  const orange = "#ffa940";
+  const orangeDark = "#d97706";
+
+  const iosSteps = el ? [
+    { icon: "⚙️", title: "「{設定|せってい}」アイコンをひらく", desc: "ホーム{画面|がめん}のグレーの{歯車|はぐるま}アイコン" },
+    { icon: "🔒", title: "「プライバシーとセキュリティ」をタップ", desc: "{少|すこ}し{下|した}にスクロールするとある" },
+    { icon: "📍", title: "「{位置情報|いちじょうほう}サービス」をタップ", desc: "{一番|いちばん}{上|うえ}のあたりにある" },
+    { icon: "⬇️", title: "{一番|いちばん}{下|した}までスクロール→「システムサービス」をタップ", desc: "リストの{一番|いちばん}{下|した}にある" },
+    { icon: "🗺️", title: "「よく{利用|りよう}する{場所|ばしょ}」または「{利用|りよう}{頻度|ひんど}の{高|たか}い{場所|ばしょ}」をタップ", desc: "{機種|きしゅ}によって{名前|なまえ}が{少|すこ}し{違|ちが}う" },
+    { icon: "🔑", title: "パスコードを{入力|にゅうりょく}する", desc: "おうちの{人|ひと}にやってもらおう" },
+  ] : [
+    { icon: "⚙️", title: "「設定」アイコンをひらく", desc: "ホーム画面のグレーの歯車アイコン" },
+    { icon: "🔒", title: "「プライバシーとセキュリティ」をタップ", desc: "少し下にスクロールするとある" },
+    { icon: "📍", title: "「位置情報サービス」をタップ", desc: "一番上のあたりにある" },
+    { icon: "⬇️", title: "一番下までスクロール→「システムサービス」をタップ", desc: "リストの一番下にある" },
+    { icon: "🗺️", title: "「よく利用する場所」または「利用頻度の高い場所」をタップ", desc: "機種によって名前が少し違う" },
+    { icon: "🔑", title: "パスコードを入力する", desc: "おうちの人にやってもらおう" },
   ];
 
-  const currentStep = STEPS[step];
+  const androidSteps = el ? [
+    { icon: "🗺️", title: "「Google マップ」アプリをひらく", desc: "{地図|ちず}のアプリ" },
+    { icon: "👤", title: "{右上|みぎうえ}のプロフィールアイコン（{丸|まる}いアイコン）をタップ", desc: "" },
+    { icon: "📅", title: "「タイムライン」をタップ", desc: "または「あなたのタイムライン」" },
+    { icon: "🗓️", title: "カレンダーで「{先週|せんしゅう}」や「{先月|せんげつ}」をえらぶ", desc: "どこに{行|い}ったか{記録|きろく}されている" },
+  ] : [
+    { icon: "🗺️", title: "「Google マップ」アプリをひらく", desc: "地図のアプリ" },
+    { icon: "👤", title: "右上のプロフィールアイコン（丸いアイコン）をタップ", desc: "" },
+    { icon: "📅", title: "「タイムライン」をタップ", desc: "または「あなたのタイムライン」" },
+    { icon: "🗓️", title: "カレンダーで「先週」や「先月」をえらぶ", desc: "どこに行ったか記録されている" },
+  ];
 
-  // ── Intro ──
+  const locationItems = el ? [
+    "📍 {自宅|じたく}の{場所|ばしょ}",
+    "🏫 {学校|がっこう}の{場所|ばしょ}",
+    "🎮 よく{行|い}く{場所|ばしょ}（ゲームセンター・{公園|こうえん}など）",
+    "🍜 よく{行|い}くレストラン・カフェ",
+    "🚃 {毎日|まいにち}の{通学|つうがく}ルート",
+    "📅 {何曜日|なんようび}の{何時|なんじ}ごろ、どこにいるか",
+  ] : [
+    "📍 自宅の場所",
+    "🏫 学校の場所",
+    "🎮 よく行く場所（ゲームセンター・公園など）",
+    "🍜 よく行くレストラン・カフェ",
+    "🚃 毎日の通学ルート",
+    "📅 何曜日の何時ごろ、どこにいるか",
+  ];
+
+  const appItems = [
+    { icon: "📷", title: el ? "カメラアプリ" : "カメラアプリ", desc: el ? "{写真|しゃしん}に{位置情報|いちじょうほう}（ジオタグ）がつく。SNSに{投稿|とうこう}すると、{撮|と}った{場所|ばしょ}がバレる。" : "写真に位置情報（ジオタグ）がつく。SNSに投稿すると、撮った場所がバレる。", levelLabel: el ? "{必|かなら}ずオフにする ✕" : "必ずオフにする ✕", levelColor: "#ef4444" },
+    { icon: "📱", title: el ? "SNSアプリ（Instagram・X・TikTokなど）" : "SNSアプリ（Instagram・X・TikTokなど）", desc: el ? "{投稿|とうこう}に「{現在地|げんざいち}」がついて{世界中|せかいじゅう}に{公開|こうかい}される。" : "投稿に「現在地」がついて世界中に公開される。", levelLabel: el ? "{必|かなら}ずオフにする ✕" : "必ずオフにする ✕", levelColor: "#ef4444" },
+    { icon: "🗺️", title: el ? "マップアプリ（Google マップなど）" : "マップアプリ（Google マップなど）", desc: el ? "{目的地|もくてきち}への{道案内|みちあんない}に{必要|ひつよう}。" : "目的地への道案内に必要。", levelLabel: el ? "{使|つか}う{時|とき}だけON △" : "使う時だけON △", levelColor: "#f59e0b" },
+    { icon: "☁️", title: el ? "{天気|てんき}アプリ" : "天気アプリ", desc: el ? "今いる{場所|ばしょ}の{天気|てんき}を{知|し}るために{使|つか}う。" : "今いる場所の天気を知るために使う。", levelLabel: el ? "{使|つか}う{時|とき}だけONでもOK △" : "使う時だけONでもOK △", levelColor: "#f59e0b" },
+  ];
+
+  const checklistItems = el ? [
+    { title: "カメラの{位置情報|いちじょうほう}をオフにする", ios: "{設定|せってい}→プライバシーとセキュリティ→{位置情報|いちじょうほう}サービス→カメラ→「しない」", android: "{設定|せってい}→アプリ→カメラ→{権限|けんげん}→{位置情報|いちじょうほう}→「{許可|きょか}しない」" },
+    { title: "SNSアプリの{位置情報|いちじょうほう}をオフにする", ios: "{設定|せってい}→プライバシーとセキュリティ→{位置情報|いちじょうほう}サービス→{各|かく}SNSアプリ→「しない」", android: "{設定|せってい}→アプリ→{各|かく}SNSアプリ→{権限|けんげん}→{位置情報|いちじょうほう}→「{許可|きょか}しない」" },
+    { title: "「よく{利用|りよう}する{場所|ばしょ}」の{履歴|りれき}を{消|け}す（iOSのみ）", ios: "{設定|せってい}→プライバシーとセキュリティ→{位置情報|いちじょうほう}サービス→システムサービス→よく{利用|りよう}する{場所|ばしょ}→「{履歴|りれき}を{消去|しょうきょ}」", android: null },
+  ] : [
+    { title: "カメラの位置情報をオフにする", ios: "設定→プライバシーとセキュリティ→位置情報サービス→カメラ→「しない」", android: "設定→アプリ→カメラ→権限→位置情報→「許可しない」" },
+    { title: "SNSアプリの位置情報をオフにする", ios: "設定→プライバシーとセキュリティ→位置情報サービス→各SNSアプリ→「しない」", android: "設定→アプリ→各SNSアプリ→権限→位置情報→「許可しない」" },
+    { title: "「よく利用する場所」の履歴を消す（iOSのみ）", ios: "設定→プライバシーとセキュリティ→位置情報サービス→システムサービス→よく利用する場所→「履歴を消去」", android: null },
+  ];
+
+  if (phase === "parent_intro") return (
+    <EpisodeIntroCard epKey="ep12" onStart={() => setPhase("intro")} />
+  );
+
   if (phase === "intro") return (
     <EpisodeShell onExit={onExit}>
-    <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at center,#1a0505,#000)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 20px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden" }}>
-      <div style={{ position: "absolute", inset: 0, backgroundImage: "repeating-linear-gradient(0deg,transparent 0px,transparent 3px,rgba(255,0,0,.015) 3px,rgba(255,0,0,.015) 4px)", pointerEvents: "none" }} />
-      <div style={{ maxWidth: 360, width: "100%", position: "relative", zIndex: 2, animation: "slideUp .6s ease" }}>
-        <div style={{ background: "rgba(220,38,38,.1)", border: "1.5px solid rgba(220,38,38,.5)", borderRadius: 12, padding: "10px 14px", marginBottom: 20, textAlign: "center" }}>
-          <span style={{ fontFamily: "'DotGothic16',monospace", fontSize: 9, color: "#dc2626", letterSpacing: ".3em" }}>⚠ PARENT ONLY — 教育目的シミュレーション</span>
+    <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#1a1000,#0f0800)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 20px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden" }}>
+      {[...Array(20)].map((_, i) => <div key={i} style={{ position: "absolute", width: Math.random()*2+1, height: Math.random()*2+1, background: orange, borderRadius: "50%", left: `${Math.random()*100}%`, top: `${Math.random()*100}%`, opacity: Math.random()*0.3+0.05, animation: `blink ${Math.random()*4+2}s infinite` }} />)}
+      <div style={{ fontSize: 70, marginBottom: 12, animation: "float 3s ease-in-out infinite" }}>📍</div>
+      <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: orange, letterSpacing: ".4em", margin: "0 0 10px" }}>EPISODE 01-2</div>
+      <h1 style={{ fontSize: 20, fontWeight: 900, color: "#fff", margin: "0 0 8px", textAlign: "center", lineHeight: 1.3 }}>
+        <RubyText text={el ? "{本当|ほんとう}は、{位置情報|いちじょうほう}が" : "本当は、位置情報が"} /><br />
+        <RubyText text={el ? "{見|み}えてるよ" : "見えてるよ"} />
+      </h1>
+      <div style={{ maxWidth: 320, width: "100%", margin: "16px 0 24px" }}>
+        <OwlSay mood="worried" e={el ? "エピソード1では、{写真|しゃしん}の{背景|はいけい}から{場所|ばしょ}が{特定|とくてい}されるこわさを{学|まな}んだね。でも、それだけじゃないんだ。じつは、あなたのスマホは「あなたが{今|いま}どこにいるか」をずっとおぼえているんだよ。🦉" : "エピソード1では、写真の背景から場所が特定されるこわさを学んだね。でも、それだけじゃないんだ。じつは、あなたのスマホは「あなたが今どこにいるか」をずっとおぼえているんだよ。🦉"}>エピソード1では、写真の背景から場所が特定されるこわさを学んだね。でも、それだけじゃないんだ。じつは、あなたのスマホは「あなたが今どこにいるか」をずっとおぼえているんだよ。🦉</OwlSay>
+      </div>
+      <button onClick={() => setPhase("device_select")} style={{ background: `linear-gradient(135deg,${orange},${orangeDark})`, border: "none", borderRadius: 50, padding: "15px 44px", fontSize: 16, fontWeight: 900, color: "#fff", cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${orange}44` }}>
+        <RubyText text={el ? "たしかめてみる →" : "たしかめてみる →"} />
+      </button>
+    </div>
+    </EpisodeShell>
+  );
+
+  if (phase === "device_select") return (
+    <EpisodeShell onExit={onExit}>
+    <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#1a1000,#0f0800)", padding: "40px 20px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
+      <div style={{ maxWidth: 440, margin: "0 auto" }}>
+        <h2 style={{ fontSize: 20, fontWeight: 900, color: "#fff", textAlign: "center", marginBottom: 8 }}>
+          <RubyText text={el ? "どの{端末|たんまつ}で{確認|かくにん}する？" : "どの端末で確認する？"} />
+        </h2>
+        <div style={{ fontSize: 13, color: "rgba(255,255,255,.55)", textAlign: "center", marginBottom: 24, lineHeight: 1.7 }}>
+          <RubyText text={el ? "今{使|つか}っている{端末|たんまつ}か、おうちの{人|ひと}の{端末|たんまつ}をえらんでじっさいに{確認|かくにん}してみよう。" : "今使っている端末か、おうちの人の端末をえらんで実際に確認してみよう。"} />
         </div>
-        <div style={{ textAlign: "center", fontSize: 56, marginBottom: 12 }}>🕵️</div>
-        <h1 style={{ fontSize: 22, fontWeight: 900, color: "#fff", textAlign: "center", margin: "0 0 8px", lineHeight: 1.3 }}>個人情報の<br />特定体験</h1>
-        <p style={{ color: "rgba(255,255,255,.5)", fontSize: 12, textAlign: "center", margin: "0 0 22px", lineHeight: 1.7 }}>
-          EPISODE 01-2
-        </p>
-        <div style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.1)", borderRadius: 16, padding: "16px 18px", marginBottom: 22, color: "rgba(255,255,255,.75)", fontSize: 13, lineHeight: 1.85 }}>
-          このシミュレーションでは、<strong style={{ color: "#fca5a5" }}>「悪意ある人物」の視点</strong>で、SNSの投稿から子どもの個人情報が特定される過程を体験します。<br /><br />
-          校章 → 学校名 → 住所 → 通学路…<br />
-          <strong style={{ color: "#fca5a5" }}>普通の1枚の写真から、どこまでわかるか</strong>を確認してください。
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          {[
+            { id: "ios", icon: "📱", title: "iOS", subtitle: "iPhone・iPad" },
+            { id: "android", icon: "🤖", title: "Android", subtitle: el ? "Androidスマホ・タブレット" : "Androidスマホ・タブレット" },
+          ].map((d) => (
+            <button key={d.id} onClick={() => { feedback("tap"); setSelectedDevice(d.id); setStepIdx(0); setPhase("steps"); }}
+              style={{ width: "100%", background: `${orange}0a`, border: `1.5px solid ${orange}44`, borderRadius: 18, padding: "20px 18px", cursor: "pointer", fontFamily: "inherit", textAlign: "left", display: "flex", alignItems: "center", gap: 16 }}>
+              <div style={{ fontSize: 36 }}>{d.icon}</div>
+              <div>
+                <div style={{ fontSize: 18, fontWeight: 900, color: "#fff" }}>{d.title}</div>
+                <div style={{ fontSize: 13, color: "rgba(255,255,255,.5)", marginTop: 2 }}>{d.subtitle}</div>
+              </div>
+              <span style={{ marginLeft: "auto", fontSize: 20, color: orange }}>→</span>
+            </button>
+          ))}
         </div>
-        <div style={{ background: "rgba(220,38,38,.12)", border: "1px solid rgba(220,38,38,.4)", borderRadius: 12, padding: "10px 14px", marginBottom: 22, fontSize: 11, color: "#fca5a5", lineHeight: 1.7 }}>
-          ⚠ これは教育目的のシミュレーションです。実際の犯罪行為ではありません。お子さんの安全のためにご活用ください。
-        </div>
-        <button onClick={() => { feedback("tap"); setPhase("simulation"); }}
-          style={{ width: "100%", padding: 16, background: "linear-gradient(135deg,#dc2626,#991b1b)", border: "none", borderRadius: 14, color: "#fff", fontSize: 16, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 8px 24px rgba(220,38,38,.4)" }}>
-          体験を開始する →
-        </button>
       </div>
     </div>
     </EpisodeShell>
   );
 
-  // ── Simulation steps ──
-  if (phase === "simulation") return (
-    <EpisodeShell onExit={onExit}>
-    <div style={{ minHeight: "100vh", background: "#0a0f0a", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden" }}>
-      <div style={{ position: "absolute", left: 0, right: 0, height: 2, background: "linear-gradient(90deg,transparent,#ff2d2d,transparent)", animation: "scanDown 3s linear infinite", opacity: .5 }} />
-      <div style={{ position: "absolute", inset: 0, backgroundImage: "repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,0,0,.012) 2px,rgba(255,0,0,.012) 4px)", pointerEvents: "none" }} />
-      <div style={{ maxWidth: 440, margin: "0 auto", position: "relative", zIndex: 2 }}>
-        {/* ヘッダー */}
-        <div style={{ borderBottom: "1px solid rgba(255,45,45,.2)", paddingBottom: 12, marginBottom: 18 }}>
-          <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 9, color: "#ff2d2d", letterSpacing: ".2em", marginBottom: 3 }}>▶ PERSONAL INFO EXTRACTION SIMULATION</div>
-          <div style={{ display: "flex", gap: 6, marginTop: 6 }}>
-            {STEPS.map((s, i) => (
-              <div key={i} style={{ flex: 1, height: 4, borderRadius: 2, background: i <= step ? "#dc2626" : "rgba(255,255,255,.1)", transition: "background .3s" }} />
+  if (phase === "steps") {
+    const steps = selectedDevice === "ios" ? iosSteps : androidSteps;
+    return (
+      <EpisodeShell onExit={onExit}>
+      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#1a1000,#0f0800)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
+        <div style={{ maxWidth: 440, margin: "0 auto" }}>
+          <h2 style={{ fontSize: 18, fontWeight: 900, color: "#fff", marginBottom: 8 }}>
+            {selectedDevice === "ios"
+              ? <RubyText text={el ? "iPhoneで、{位置情報|いちじょうほう}の{履歴|りれき}を{見|み}てみよう" : "iPhoneで、位置情報の履歴を見てみよう"} />
+              : <RubyText text={el ? "Androidで、{位置情報|いちじょうほう}の{履歴|りれき}を{見|み}てみよう" : "Androidで、位置情報の履歴を見てみよう"} />
+            }
+          </h2>
+          <OwlSay mood="happy" e={el ? "おうちの{人|ひと}といっしょに、じゅんばんにやってみよう🦉" : "おうちの人といっしょに、じゅんばんにやってみよう🦉"}>おうちの人といっしょに、じゅんばんにやってみよう🦉</OwlSay>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 14 }}>
+            {steps.slice(0, stepIdx + 1).map((s, i) => (
+              <div key={i} style={{ background: `${orange}08`, border: `1px solid ${orange}22`, borderRadius: 16, padding: "14px 16px", display: "flex", gap: 14, alignItems: "flex-start", animation: "slideUp .4s ease" }}>
+                <div style={{ width: 38, height: 38, borderRadius: 11, background: `${orange}18`, border: `1px solid ${orange}33`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>{s.icon}</div>
+                <div>
+                  <div style={{ fontSize: 12, color: orange, marginBottom: 3 }}>STEP {i + 1}</div>
+                  <div style={{ fontSize: 13, fontWeight: 900, color: "#fff", marginBottom: s.desc ? 4 : 0 }}><RubyText text={s.title} /></div>
+                  {s.desc && <div style={{ fontSize: 12, color: "rgba(255,255,255,.5)" }}><RubyText text={s.desc} /></div>}
+                </div>
+              </div>
             ))}
           </div>
-        </div>
-
-        {/* ステップカード */}
-        <div style={{ background: "rgba(255,45,45,.05)", border: "1px solid rgba(255,45,45,.25)", borderRadius: 16, padding: "18px 16px", marginBottom: 14, animation: "slideUp .4s ease" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
-            <div style={{ width: 48, height: 48, borderRadius: 12, background: "rgba(220,38,38,.15)", border: "1px solid rgba(220,38,38,.4)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, flexShrink: 0 }}>{currentStep.icon}</div>
-            <div>
-              <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 9, color: "#ff4343", letterSpacing: ".15em", marginBottom: 3 }}>STEP {step + 1} / {STEPS.length}</div>
-              <div style={{ fontSize: 15, fontWeight: 900, color: "#fff" }}>{currentStep.phase}を分析中…</div>
+          {selectedDevice === "ios" && (
+            <div style={{ background: "rgba(220,38,38,.08)", border: "1px solid rgba(220,38,38,.25)", borderRadius: 12, padding: "10px 14px", marginBottom: 14, fontSize: 12, color: "#fca5a5" }}>
+              ⚠️ <RubyText text={el ? "パスコードはおうちの{人|ひと}だけが{入力|にゅうりょく}してください" : "パスコードはおうちの人だけが入力してください"} />
             </div>
-          </div>
-
-          {/* ログライン */}
-          <div style={{ background: "#000", borderRadius: 10, padding: "12px 14px", marginBottom: 12, fontFamily: "'DotGothic16',monospace", fontSize: 11, lineHeight: 1.8 }}>
-            <div style={{ color: "#888", marginBottom: 4 }}>$ analyzing post data...</div>
-            <div style={{ color: "#ff6b6b" }}>INPUT: {currentStep.clue}</div>
-            <div style={{ color: "#4ade80", marginTop: 6, fontWeight: 700 }}>✓ OUTPUT: {currentStep.extract}</div>
-          </div>
-
-          <p style={{ color: "rgba(255,255,255,.7)", fontSize: 13, lineHeight: 1.75, margin: 0 }}>{currentStep.detail}</p>
+          )}
+          {selectedDevice === "android" && (
+            <div style={{ background: "rgba(220,38,38,.08)", border: "1px solid rgba(220,38,38,.25)", borderRadius: 12, padding: "10px 14px", marginBottom: 14, fontSize: 12, color: "#fca5a5" }}>
+              ⚠️ <RubyText text={el ? "Googleアカウントへのログインがひつようです。おうちの{人|ひと}のスマホで{確認|かくにん}しましょう。" : "Googleアカウントにログインが必要です。おうちの人のスマホで確認しましょう。"} />
+            </div>
+          )}
+          {stepIdx < steps.length - 1 ? (
+            <button onClick={() => setStepIdx(s => s + 1)}
+              style={{ width: "100%", padding: 14, background: `${orange}18`, border: `1px solid ${orange}33`, borderRadius: 14, color: orange, fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
+              <RubyText text={el ? "{次|つぎ}のステップ →" : "次のステップ →"} />
+            </button>
+          ) : (
+            <button onClick={() => { feedback("correct"); setPhase("location_reveal"); }}
+              style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${orange},${orangeDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
+              <RubyText text={el ? "{開|ひら}けた！{次|つぎ}へ →" : "開けた！次へ →"} />
+            </button>
+          )}
         </div>
+      </div>
+      </EpisodeShell>
+    );
+  }
 
-        {/* 危険度バー */}
-        <div style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.08)", borderRadius: 12, padding: "12px 14px", marginBottom: 16 }}>
-          <div style={{ fontSize: 11, color: "rgba(255,255,255,.4)", marginBottom: 8, fontFamily: "'DotGothic16',monospace", letterSpacing: ".1em" }}>特定済み情報</div>
-          {STEPS.slice(0, step + 1).map((s, i) => (
-            <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-              <div style={{ width: 6, height: 6, borderRadius: "50%", background: s.risk === 3 ? "#ef4444" : s.risk === 2 ? "#f97316" : "#fbbf24", flexShrink: 0 }} />
-              <div style={{ fontSize: 12, color: "#fff", fontWeight: 700 }}>{s.found}</div>
-              <div style={{ marginLeft: "auto", fontSize: 10, color: s.risk === 3 ? "#ef4444" : s.risk === 2 ? "#f97316" : "#fbbf24", fontFamily: "'DotGothic16',monospace" }}>{"█".repeat(s.risk)}{"░".repeat(3 - s.risk)} RISK</div>
+  if (phase === "location_reveal") return (
+    <EpisodeShell onExit={onExit}>
+    <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at center,#1a0505,#000)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
+      <div style={{ maxWidth: 440, margin: "0 auto" }}>
+        <h2 style={{ fontSize: 20, fontWeight: 900, color: "#fff", textAlign: "center", marginBottom: 16 }}>
+          <RubyText text={el ? "そこに{記録|きろく}されているのは…" : "そこに記録されているのは…"} />
+        </h2>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 16 }}>
+          {locationItems.slice(0, locationStep + 1).map((item, i) => (
+            <div key={i} style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.1)", borderRadius: 14, padding: "14px 16px", fontSize: 14, color: "rgba(255,255,255,.85)", animation: "slideUp .4s ease" }}>
+              <RubyText text={item} />
             </div>
           ))}
         </div>
+        {locationStep < locationItems.length - 1 ? (
+          <button onClick={() => { feedback("horror"); setLocationStep(s => s + 1); }}
+            style={{ width: "100%", padding: 14, background: "rgba(220,38,38,.12)", border: "1px solid rgba(220,38,38,.35)", borderRadius: 14, color: "#f87171", fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
+            <RubyText text={el ? "{続|つづ}きを{見|み}る →" : "続きを見る →"} />
+          </button>
+        ) : (
+          <>
+            <div style={{ background: "rgba(220,38,38,.1)", border: "1px solid rgba(220,38,38,.35)", borderRadius: 14, padding: "14px 16px", marginBottom: 14, fontSize: 13, color: "rgba(255,255,255,.75)", lineHeight: 1.85 }}>
+              <RubyText text={el ? "もしこのスマホを{落|お}としたり、{誰|だれ}かに{見|み}られたりしたら…あなたの{毎日|まいにち}の{行動|こうどう}が{全部|ぜんぶ}バレてしまう。" : "もしこのスマホを落としたり、誰かに見られたりしたら…あなたの毎日の行動が全部バレてしまう。"} />
+            </div>
+            <button onClick={() => { feedback("found"); setPhase("apps"); }}
+              style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${orange},${orangeDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
+              <RubyText text={el ? "{次|つぎ}へ →" : "次へ →"} />
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+    </EpisodeShell>
+  );
 
-        <button onClick={() => {
-          feedback("horror");
-          if (step < STEPS.length - 1) setStep(step + 1);
-          else { setStep(0); setPhase("conclusion"); }
-        }}
-          style={{ width: "100%", padding: 15, background: "linear-gradient(135deg,#dc2626,#991b1b)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 6px 20px rgba(220,38,38,.4)", animation: "pulse 2s infinite" }}>
-          {currentStep.nextLabel}
+  if (phase === "apps") return (
+    <EpisodeShell onExit={onExit}>
+    <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#1a1000,#0f0800)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
+      <div style={{ maxWidth: 440, margin: "0 auto" }}>
+        <h2 style={{ fontSize: 18, fontWeight: 900, color: "#fff", marginBottom: 14 }}>
+          <RubyText text={el ? "こんなアプリが、{位置情報|いちじょうほう}を{使|つか}っている" : "こんなアプリが、位置情報を使っている"} />
+        </h2>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 14 }}>
+          {appItems.map((a, i) => (
+            <div key={i} style={{ background: `${orange}06`, border: `1px solid ${orange}22`, borderRadius: 16, padding: "14px 16px", display: "flex", gap: 12, alignItems: "flex-start", animation: `slideUp .4s ${i * .1}s both ease` }}>
+              <div style={{ fontSize: 28, flexShrink: 0 }}>{a.icon}</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 13, fontWeight: 900, color: "#fff", marginBottom: 4 }}><RubyText text={a.title} /></div>
+                <div style={{ fontSize: 12, color: "rgba(255,255,255,.55)", lineHeight: 1.65, marginBottom: 6 }}><RubyText text={a.desc} /></div>
+                <div style={{ background: `${a.levelColor}18`, border: `1px solid ${a.levelColor}44`, borderRadius: 8, padding: "4px 10px", display: "inline-block", fontSize: 11, fontWeight: 900, color: a.levelColor }}>
+                  <RubyText text={a.levelLabel} />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <OwlSay mood="worried" e={el ? "カメラとSNSアプリは{必|かなら}ずオフにしよう！🦉" : "カメラとSNSアプリは必ずオフにしよう！🦉"}>カメラとSNSアプリは必ずオフにしよう！🦉</OwlSay>
+        <button onClick={() => setPhase("checklist")}
+          style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${orange},${orangeDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
+          <RubyText text={el ? "{今|いま}すぐ{設定|せってい}を{変|か}えよう →" : "今すぐ設定を変えよう →"} />
         </button>
       </div>
     </div>
     </EpisodeShell>
   );
 
-  // ── Conclusion ──
-  if (phase === "conclusion") return (
+  if (phase === "checklist") return (
     <EpisodeShell onExit={onExit}>
-    <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fff8f0,#ffeed6)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+    <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#1a1000,#0f0800)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
-        <div style={{ textAlign: "center", marginBottom: 16 }}><OwlMolly size={100} mood="worried" /></div>
-
-        <div style={{ background: "#fff", borderRadius: 20, border: "2px solid #fca5a5", padding: "20px 18px", marginBottom: 16, textAlign: "center" }}>
-          <div style={{ fontSize: 40, marginBottom: 6 }}>😱</div>
-          <h2 style={{ fontSize: 18, color: "#7f1d1d", fontWeight: 900, margin: "0 0 10px" }}>これが現実に起きること</h2>
-          <p style={{ fontSize: 13, color: "#5d4017", lineHeight: 1.85, margin: 0 }}>
-            たった1枚の制服写真から、<strong>学校・住所・通学路・行動パターン</strong>が特定されました。
-            <br /><br />
-            悪意ある人物には、これだけで十分な情報があります。
-          </p>
+        <h2 style={{ fontSize: 18, fontWeight: 900, color: "#fff", marginBottom: 8 }}>
+          <RubyText text={el ? "{今|いま}すぐ、いっしょに{設定|せってい}を{変|か}えよう" : "今すぐ、いっしょに設定を変えよう"} />
+        </h2>
+        <OwlSay mood="happy" e={el ? "おうちの{人|ひと}といっしょに、ひとつずつチェックしながらやってみよう。{全部|ぜんぶ}できたら{次|つぎ}に{進|すす}めるよ！🦉" : "おうちの人といっしょに、ひとつずつチェックしながらやってみよう。全部できたら次に進めるよ！🦉"}>おうちの人といっしょに、ひとつずつチェックしながらやってみよう。全部できたら次に進めるよ！🦉</OwlSay>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 14 }}>
+          {checklistItems.map((item, i) => (
+            <button key={i} onClick={() => { feedback("correct"); setChecklistDone(p => p.includes(i) ? p : [...p, i]); }}
+              style={{ width: "100%", display: "flex", alignItems: "flex-start", gap: 12, background: checklistDone.includes(i) ? "rgba(74,222,128,.08)" : `${orange}06`, border: `1px solid ${checklistDone.includes(i) ? "rgba(74,222,128,.3)" : orange + "22"}`, borderRadius: 16, padding: "14px 16px", cursor: "pointer", fontFamily: "inherit", textAlign: "left" }}>
+              <div style={{ width: 24, height: 24, borderRadius: 7, background: checklistDone.includes(i) ? "#4ade80" : "rgba(255,255,255,.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, flexShrink: 0, marginTop: 2 }}>{checklistDone.includes(i) ? "✓" : ""}</div>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 900, color: checklistDone.includes(i) ? "#86efac" : "#fff", marginBottom: 6 }}><RubyText text={item.title} /></div>
+                <div style={{ fontSize: 11, color: "rgba(255,255,255,.5)", lineHeight: 1.7 }}>
+                  iOS：<RubyText text={item.ios} />{item.android && <><br />Android：<RubyText text={item.android} /></>}
+                </div>
+              </div>
+            </button>
+          ))}
         </div>
+        {checklistDone.length >= checklistItems.length && (
+          <>
+            <div style={{ background: "rgba(74,222,128,.1)", border: "1px solid rgba(74,222,128,.3)", borderRadius: 14, padding: "14px 16px", marginBottom: 14, textAlign: "center", fontSize: 14, fontWeight: 900, color: "#86efac" }}>
+              🎉 <RubyText text={el ? "{完璧|かんぺき}！これで{位置情報|いちじょうほう}から{守|まも}られるよ！" : "完璧！これで位置情報から守られるよ！"} />
+            </div>
+            <button onClick={() => setPhase("summary")}
+              style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${orange},${orangeDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", animation: "popIn .4s ease" }}>
+              <RubyText text={el ? "まとめへ →" : "まとめへ →"} />
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+    </EpisodeShell>
+  );
 
-        <div style={{ background: "#fff", borderRadius: 16, border: "2px solid #f4d4a8", padding: "16px 16px", marginBottom: 16 }}>
-          <div style={{ fontSize: 12, fontWeight: 900, color: "#a05500", marginBottom: 12 }}>🛡️ 保護者にできること</div>
-          {[
-            ["📸", "投稿前に確認", "校章・制服・表札が写っていないかチェック"],
-            ["📍", "位置情報タグをオフ", "スマホのカメラ設定 → 位置情報を許可しない"],
-            ["⏰", "投稿のタイミング", "「今から学校」「今帰宅」は時刻と場所を同時公開"],
-            ["💬", "子どもと話し合う", "「この写真から何がわかる？」と一緒に確認する習慣"],
-          ].map(([icon, title, desc], i) => (
-            <div key={i} style={{ display: "flex", gap: 10, marginBottom: 10, alignItems: "flex-start" }}>
-              <div style={{ width: 30, height: 30, borderRadius: "50%", background: "linear-gradient(135deg,#ffa940,#ff8c1a)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, flexShrink: 0 }}>{icon}</div>
-              <div><div style={{ fontSize: 13, fontWeight: 900, color: "#3d2817" }}>{title}</div><div style={{ fontSize: 11, color: "#a08060", marginTop: 2, lineHeight: 1.5 }}>{desc}</div></div>
+  if (phase === "summary") return (
+    <EpisodeShell onExit={onExit}>
+    <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#1a1000,#0f0800)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
+      <div style={{ maxWidth: 440, margin: "0 auto" }}>
+        <h2 style={{ fontSize: 20, fontWeight: 900, color: "#fff", textAlign: "center", marginBottom: 16 }}>
+          <RubyText text={el ? "これで、{位置情報|いちじょうほう}のワナから{守|まも}れる" : "これで、位置情報のワナから守れる"} />
+        </h2>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 16 }}>
+          {(el ? [
+            "{写真|しゃしん}から{家|いえ}の{場所|ばしょ}がバレない",
+            "SNS{投稿|とうこう}から{場所|ばしょ}がバレない",
+            "{毎日|まいにち}の{行動|こうどう}パターンを{追|お}われない",
+          ] : [
+            "写真から家の場所がバレない",
+            "SNS投稿から場所がバレない",
+            "毎日の行動パターンを追われない",
+          ]).map((t, i) => (
+            <div key={i} style={{ display: "flex", gap: 12, alignItems: "center", background: "rgba(74,222,128,.06)", border: "1px solid rgba(74,222,128,.2)", borderRadius: 14, padding: "13px 16px", animation: `slideUp .4s ${i * .1}s both ease` }}>
+              <span style={{ fontSize: 20 }}>✅</span>
+              <span style={{ fontSize: 14, color: "#86efac" }}><RubyText text={t} /></span>
             </div>
           ))}
         </div>
-
-        <div style={{ background: "rgba(255,169,64,.08)", border: "1px solid rgba(255,169,64,.3)", borderRadius: 14, padding: "14px 16px", marginBottom: 16, fontSize: 12, color: "#5d4017", lineHeight: 1.75 }}>
-          <strong>💡 お子さんとの話し合いのヒント：</strong><br />
-          「今見た体験を一緒にやってみよう。この写真から何がわかるか教えてくれる？」
-          と聞いてみましょう。子どもが自分で気づくことが最大の学習効果を生みます。
-        </div>
-
-        <button onClick={() => onComplete(3)}
-          style={{ width: "100%", padding: 16, background: "linear-gradient(135deg,#ffa940,#ff8c1a)", border: "none", borderRadius: 14, color: "#fff", fontSize: 16, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 6px 20px rgba(255,169,64,.4)" }}>
-          🏠 ホームへ戻る
+        <OwlSay mood="happy" e={el ? "エピソード1とあわせて、{個人情報|こじんじょうほう}を{守|まも}る{第一歩|だいいっぽ}がふめたね！おうちの{人|ひと}と{一緒|いっしょ}にできたこと、すごいよ！🦉" : "エピソード1とあわせて、個人情報を守る第一歩がふめたね！おうちの人と一緒にできたこと、すごいよ！🦉"}>エピソード1とあわせて、個人情報を守る第一歩がふめたね！おうちの人と一緒にできたこと、すごいよ！🦉</OwlSay>
+        <button onClick={() => { feedback("complete"); onComplete(3); }}
+          style={{ width: "100%", padding: 16, background: `linear-gradient(135deg,${orange},${orangeDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 16, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${orange}44` }}>
+          🏆 <RubyText text={el ? "{修了証|しゅうりょうしょう}をもらう" : "修了証をもらう"} />
         </button>
       </div>
     </div>
@@ -6832,6 +6979,7 @@ function Episode1_2({ onComplete, onExit }) {
 
   return null;
 }
+
 
 // ─────────────────────────────────────────────
 // ██ EPISODE 2 — フェイクニュースを見抜け
@@ -8560,357 +8708,296 @@ function PhoneFrame({ children, header }) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// EPISODE 03-2 — その「おねがい」、だいじょうぶ？
+// EPISODE 03-2 — その求人、闇バイトじゃない？
+// 怪しい求人を見抜くタップ体験
 // ═══════════════════════════════════════════════════════════════
 function Episode3_2({ onComplete, onExit }) {
   const ageMode = useAgeMode();
-  const [phase, setPhase] = useState("intro");
-  const [stepIdx, setStepIdx] = useState(0);
-  const [choices, setChoices] = useState([]);
-
   const el = ageMode === "elementary";
-  const lineGreen = "#06c755";
+  const [phase, setPhase] = useState("parent_intro");
+  const [stage, setStage] = useState(1); // 1, 2, 3
+  const [foundS1, setFoundS1] = useState([]);
+  const [foundS2, setFoundS2] = useState([]);
+  const [foundS3, setFoundS3] = useState([]);
+  const [detailModal, setDetailModal] = useState(null); // { title, body }
+  const [contactName, setContactName] = useState("");
+  const [contactSaved, setContactSaved] = useState(false);
 
-  const STEPS = [
-    {
-      step: 1,
-      senderMsg: el
-        ? "ゲームのつよい{武器|ぶき}、もってるよね？いっしょに{使|つか}いたいな〜。アカウント{教|おし}えてくれる？"
-        : "ゲームの強い武器、もってるよね？一緒に使いたいな〜。アカウント教えてくれる？",
-      dangerBadge: el ? "アカウント{情報|じょうほう}の{要求|ようきゅう}" : "アカウント情報の要求",
-      okConsequence: el
-        ? "アカウントをわたしてしまった…「ありがとう！じゃあもうひとつ{聞|き}いていい？」"
-        : "アカウントを渡してしまった…「ありがとう！じゃあもうひとつ聞いていい？」",
-      okDanger: el
-        ? "アカウントをわたすと、{不正|ふせい}ログインや{乗|の}っとりのきけんがあるよ。ゲームの{友達|ともだち}でも、{本当|ほんとう}に{信|しん}じていい{人|ひと}かはわからない！"
-        : "アカウントを渡すと不正ログインや乗っ取りの危険があります。ゲームの友達でも本当に信頼できるかは確認できません。",
-      refusePraise: el
-        ? "えらい！アカウントはだれにも{教|おし}えてはいけないよ。ゲームの{友達|ともだち}でも{例外|れいがい}なし！"
-        : "正解！アカウント情報は誰にも教えないこと。ゲームの友達でも例外ではありません。",
-    },
-    {
-      step: 2,
-      senderMsg: el
-        ? "もっとなかよくなりたい！LINEのID{教|おし}えてくれない？"
-        : "もっと仲よくなりたい！LINEのID教えてくれない？",
-      dangerBadge: "LINE ID の要求",
-      okConsequence: el
-        ? "LINEのIDをわたしてしまった…すぐに{友達|ともだち}{申請|しんせい}が{来|き}た。「{実|じつ}はもうひとつ{聞|き}いていい？」"
-        : "LINE IDを教えてしまった…すぐに友達申請が来た。「実はもうひとつ聞いていい？」",
-      okDanger: el
-        ? "LINE IDをわたすと、ゲームの{外|そと}でれんらくされるようになるよ。{知|し}らない{人|ひと}と{個人的|こじんてき}につながるのはきけん！"
-        : "LINE IDを教えるとゲームの外での連絡が始まります。見知らぬ人物と個人的なつながりを作るリスクがあります。",
-      refusePraise: el
-        ? "ナイス！ゲームの{友達|ともだち}のLINEをいきなり{交換|こうかん}するひつようはないよ。{断|ことわ}れた{君|きみ}はすごい！"
-        : "正しい判断！ゲームの友達と外部SNSでつながる必要はありません。",
-    },
-    {
-      step: 3,
-      senderMsg: el
-        ? "ねえ、どこにすんでるの？うちのちかくかも！"
-        : "ねえ、どこに住んでるの？うちの近くかもしれないから教えて！",
-      dangerBadge: el ? "{住所|じゅうしょ}・{場所|ばしょ}の{要求|ようきゅう}" : "住所・居場所の要求",
-      okConsequence: el
-        ? "「○○くに{住|す}んでる」と{教|おし}えてしまった…「えっちかい！{放課後|ほうかご}{会|あ}えない？」とメッセージが{来|き}た。"
-        : "「○○区に住んでる」と教えてしまった…「えっ近い！放課後に会えない？」とメッセージが届いた。",
-      okDanger: el
-        ? "{住|す}んでいる{場所|ばしょ}を{教|おし}えると、{直接|ちょくせつ}{会|あ}いに{来|こ}られるきけんがあるよ。ネットで{知|し}り{合|あ}った{人|ひと}に{住所|じゅうしょ}を{教|おし}えるのは{絶対|ぜったい}ダメ！"
-        : "居場所を伝えると直接会いに来られる危険があります。ネットで知り合った人に住所・場所を教えるのは絶対に避けること。",
-      refusePraise: el
-        ? "よく{断|ことわ}れた！{住|す}んでいる{場所|ばしょ}はひみつにしてね。{学校|がっこう}や{近所|きんじょ}のじょうほうもダメだよ！"
-        : "よく断れました！住んでいる場所・学校・近所の情報は教えないことが大切です。",
-    },
-    {
-      step: 4,
-      senderMsg: el
-        ? "{顔|かお}がみたいな〜。{写真|しゃしん}1{枚|まい}{送|おく}って！"
-        : "顔が見たいなぁ。写真1枚だけ送ってよ。",
-      dangerBadge: el ? "{写真|しゃしん}の{要求|ようきゅう}" : "顔写真の要求",
-      okConsequence: el
-        ? "{写真|しゃしん}をおくってしまった…「もっと{送|おく}って」「{送|おく}らないと{友達|ともだち}にみせる」と{言|い}われた…"
-        : "写真を送ってしまった…「もっと送って」「送らないと友達に見せる」という返信が来た…",
-      okDanger: el
-        ? "{写真|しゃしん}を{一度|いちど}{送|おく}ると、「もっとおくらないとバラす」とおどされることがある。これはとてもこわいことにつながるよ。"
-        : "写真を一度送ると脅迫に使われる可能性があります。「もっと送らないと公開する」という脅しに発展することがあります。",
-      refusePraise: el
-        ? "{完璧|かんぺき}！{写真|しゃしん}は{絶対|ぜったい}におくってはいけない！これが{一番|いちばん}{危|あぶ}ないステップだったよ。{君|きみ}は{自分|じぶん}を{守|まも}れた！"
-        : "完璧な判断！写真は絶対に送ってはいけません。これが最も危険なステップでした。",
-    },
+  const green = "#16a34a";
+  const greenDark = "#15803d";
+
+  useEffect(() => {
+    const saved = localStorage.getItem("mamoru_ep3_2_contact");
+    if (saved) setContactName(saved);
+  }, []);
+
+  // Stage 1: X (Twitter) DM
+  const stage1Points = el ? [
+    { id: 0, label: el ? "アカウント{作成|さくせい}3{週間前|しゅうかんまえ}" : "アカウント作成3週間前", body: el ? "たった3{週間前|しゅうかんまえ}に{作|つく}られたアカウント。{本物|ほんもの}の{会社|かいしゃ}は{何年|なんねん}も{前|まえ}からアカウントがある。つかい{捨|す}て{目的|もくてき}で{作|つく}られた{可能性|かのうせい}が{高|たか}い。" : "たった3週間前に作られたアカウント。本物の会社は何年も前からアカウントがある。使い捨て目的で作られた可能性が高い。" },
+    { id: 1, label: el ? "フォロー{中|ちゅう}：1.2{万|まん}（フォロワーより{多|おお}い）" : "フォロー中：1.2万（フォロワーより多い）", body: el ? "フォロワーより{圧倒的|あっとうてき}にフォロー{数|すう}が{多|おお}い。{大量|たいりょう}フォローで{目立|めだ}たせようとしている。スパムアカウントの{典型的|てんけいてき}な{特徴|とくちょう}。" : "フォロワーより圧倒的にフォロー数が多い。大量フォローで目立たせようとしている。スパムアカウントの典型的な特徴。" },
+    { id: 2, label: el ? "{日払|ひばら}い3〜5{万円|まんえん}" : "日払い3〜5万円", body: el ? "1{日|にち}でこの{金額|きんがく}は{普通|ふつう}のバイトではあり{得|え}ない。{最低賃金|さいていちんぎん}のバイトなら8{時間|じかん}はたらいて{約|やく}1{万円|まんえん}。なぜこんなに{高|たか}いのか{必|かなら}ず{疑|うたが}うこと。" : "1日でこの金額は普通のバイトではあり得ない。最低賃金のバイトなら8時間働いて約1万円。なぜこんなに高いのか必ず疑うこと。" },
+    { id: 3, label: el ? "{身|み}バレなし" : "身バレなし", body: el ? "{合法的|ごうほうてき}な{仕事|しごと}なら{身|み}バレを{気|き}にする{必要|ひつよう}がない。{違法|いほう}な{仕事|しごと}だから{正体|しょうたい}を{隠|かく}す{必要|ひつよう}がある。これは{犯罪|はんざい}に{関|かか}わる{仕事|しごと}のサイン。" : "合法的な仕事なら身バレを気にする必要がない。違法な仕事だから正体を隠す必要がある。これは犯罪に関わる仕事のサイン。" },
+    { id: 4, label: el ? "LINEに{誘導|ゆうどう}するURL" : "LINEに誘導するURL", body: el ? "{正式|せいしき}な{採用|さいよう}は{会社|かいしゃ}の{公式|こうしき}サイトやハローワーク。LINEに{誘導|ゆうどう}するのは{個人情報|こじんじょうほう}を{集|あつ}めるため。{一度|いちど}LINEを{教|おし}えると{逃|に}げられなくなる。" : "正式な採用は会社の公式サイトやハローワーク。LINEに誘導するのは個人情報を集めるため。一度LINEを教えると逃げられなくなる。" },
+    { id: 5, label: el ? "18{才|さい}{未満|みまん}も{応募|おうぼ}OK" : "18歳未満も応募可能", body: el ? "{未成年|みせいねん}をターゲットにしている{証拠|しょうこ}。{判断力|はんだんりょく}が{低|ひく}く・{断|ことわ}りにくい・{社会|しゃかい}{経験|けいけん}が{少|すく}ない{若者|わかもの}が{狙|ねら}われている。" : "未成年をターゲットにしている証拠。判断力が低く・断りにくい・社会経験が少ない若者が狙われている。" },
+  ] : [
+    { id: 0, label: "アカウント作成3週間前", body: "たった3週間前に作られたアカウント。本物の会社は何年も前からアカウントがある。使い捨て目的で作られた可能性が高い。" },
+    { id: 1, label: "フォロー中：1.2万（フォロワーより多い）", body: "フォロワーより圧倒的にフォロー数が多い。大量フォローで目立たせようとしている。スパムアカウントの典型的な特徴。" },
+    { id: 2, label: "日払い3〜5万円", body: "1日でこの金額は普通のバイトではあり得ない。最低賃金のバイトなら8時間働いて約1万円。なぜこんなに高いのか必ず疑うこと。" },
+    { id: 3, label: "身バレなし", body: "合法的な仕事なら身バレを気にする必要がない。違法な仕事だから正体を隠す必要がある。これは犯罪に関わる仕事のサイン。" },
+    { id: 4, label: "LINEに誘導するURL", body: "正式な採用は会社の公式サイトやハローワーク。LINEに誘導するのは個人情報を集めるため。一度LINEを教えると逃げられなくなる。" },
+    { id: 5, label: "18歳未満も応募可能", body: "未成年をターゲットにしている証拠。判断力が低く・断りにくい・社会経験が少ない若者が狙われている。" },
   ];
 
-  const currentStep = STEPS[stepIdx];
-  const safeCount = choices.filter(c => c === "refuse").length;
+  // Stage 2: Instagram post
+  const stage2Points = el ? [
+    { id: 0, label: el ? "{収入|しゅうにゅう}{証明|しょうめい}{画像|がぞう}「¥680,000」" : "収入証明画像「¥680,000」", body: el ? "{収入|しゅうにゅう}{証明|しょうめい}は{簡単|かんたん}に{偽造|ぎぞう}できる。アプリひとつで{数字|すうじ}を{書|か}き{換|か}えられる。{画像|がぞう}1{枚|まい}の{証拠|しょうこ}は{信用|しんよう}してはいけない。" : "収入証明は簡単に偽造できる。アプリひとつで数字を書き換えられる。画像1枚の証拠は信用してはいけない。" },
+    { id: 1, label: el ? "「{未経験|みけいけん}でも{月|つき}30{万|まん}は{余裕|よゆう}」" : "「未経験でも月30万は余裕」", body: el ? "スキルなしで{月|つき}30{万円|まんえん}は{現実的|げんじつてき}にあり{得|え}ない。その{分|ぶん}のリスク・{危険|きけん}がある。「{簡単|かんたん}に{稼|かせ}げる」には{必|かなら}ず{裏|うら}がある。" : "スキルなしで月30万は現実的にあり得ない。その分のリスク・危険がある。「簡単に稼げる」には必ず裏がある。" },
+    { id: 2, label: el ? "「まずはDMください」" : "「まずはDMください」", body: el ? "{最初|さいしょ}の{一歩|いっぽ}がDMへの{誘導|ゆうどう}。{個人情報|こじんじょうほう}を{少|すこ}しずつ{引|ひ}き{出|だ}すための{入口|いりぐち}。{正式|せいしき}な{採用|さいよう}はDMでは{行|おこな}われない。" : "最初の一歩がDMへの誘導。個人情報を少しずつ引き出すための入口。正式な採用はDMでは行われない。" },
+    { id: 3, label: el ? "ハッシュタグ（#{高校生|こうこうせい} #{大学生|だいがくせい}）" : "ハッシュタグ（#高校生 #大学生）", body: el ? "{若者|わかもの}を{意図的|いとてき}にターゲットにしている。{若者|わかもの}は{断|ことわ}りにくく・{社会|しゃかい}{経験|けいけん}が{少|すく}ないため{狙|ねら}われやすい。" : "若者を意図的にターゲットにしている。若者は断りにくく・社会経験が少ないため狙われやすい。" },
+    { id: 4, label: el ? "プロフィールのリンク" : "プロフィールのリンク", body: el ? "{外部|がいぶ}サイトやLINEグループへの{誘導|ゆうどう}。{個人情報|こじんじょうほう}を{入力|にゅうりょく}させるための{罠|わな}。{絶対|ぜったい}にタップしない。" : "外部サイトやLINEグループへの誘導。個人情報を入力させるための罠。絶対にタップしない。" },
+  ] : [
+    { id: 0, label: "収入証明画像「¥680,000」", body: "収入証明は簡単に偽造できる。アプリひとつで数字を書き換えられる。画像1枚の証拠は信用してはいけない。" },
+    { id: 1, label: "「未経験でも月30万は余裕」", body: "スキルなしで月30万は現実的にあり得ない。その分のリスク・危険がある。「簡単に稼げる」には必ず裏がある。" },
+    { id: 2, label: "「まずはDMください」", body: "最初の一歩がDMへの誘導。個人情報を少しずつ引き出すための入口。正式な採用はDMでは行われない。" },
+    { id: 3, label: "ハッシュタグ（#高校生 #大学生）", body: "若者を意図的にターゲットにしている。若者は断りにくく・社会経験が少ないため狙われやすい。" },
+    { id: 4, label: "プロフィールのリンク", body: "外部サイトやLINEグループへの誘導。個人情報を入力させるための罠。絶対にタップしない。" },
+  ];
 
-  const handleRefuse = () => {
-    setChoices(prev => [...prev, "refuse"]);
-    setPhase("result_refuse");
+  // Stage 3: Job site
+  const stage3Points = el ? [
+    { id: 0, label: el ? "「1〜3{時間|じかん}で{日払|ひばら}い5{万円|まんえん}」" : "「1〜3時間で日払い5万円」", body: el ? "{時給|じきゅう}{換算|かんさん}で1{万|まん}6{千円|せんえん}{以上|いじょう}。{普通|ふつう}のバイトの10{倍|ばい}{以上|いじょう}の{金額|きんがく}。なぜこんなに{高|たか}いのか{絶対|ぜったい}に{疑|うたが}うこと。" : "時給換算で1万6千円以上。普通のバイトの10倍以上の金額。なぜこんなに高いのか絶対に疑うこと。" },
+    { id: 1, label: el ? "「{荷物|にもつ}の{中身|なかみ}の{確認|かくにん}は{不要|ふよう}」" : "「荷物の中身の確認は不要」", body: el ? "{中身|なかみ}を{見|み}せない{理由|りゆう}がある。{違法|いほう}な{物品|ぶっぴん}（{薬物|やくぶつ}・{盗品|とうひん}など）の{運搬|うんぱん}の{典型的|てんけいてき}な{手口|てぐち}。「{知|し}らなかった」では{済|す}まない。" : "中身を見せない理由がある。違法な物品（薬物・盗品など）の運搬の典型的な手口。「知らなかった」では済まない。" },
+    { id: 2, label: el ? "「{詳細|しょうさい}は{採用|さいよう}{後|ご}にご{説明|せつめい}」" : "「詳細は採用後にご説明」", body: el ? "{採用|さいよう}{前|まえ}に{仕事|しごと}{内容|ないよう}を{教|おし}えない。{断|ことわ}れなくなってから{本当|ほんとう}の{仕事|しごと}を{教|おし}える{罠|わな}。{合法|ごうほう}の{仕事|しごと}なら{最初|さいしょ}から{説明|せつめい}できる。" : "採用前に仕事内容を教えない。断れなくなってから本当の仕事を教える罠。合法の仕事なら最初から説明できる。" },
+    { id: 3, label: el ? "「{身分証明書|みぶんしょうめいしょ}をご{用意|ようい}ください」" : "「身分証明書をご用意ください」", body: el ? "{最初|さいしょ}から{個人情報|こじんじょうほう}を{要求|ようきゅう}している。{一度|いちど}{送|おく}ると{脅|おど}しの{材料|ざいりょう}にされる。{身分証|みぶんしょう}を{送|おく}ったら{絶対|ぜったい}に{逃|に}げられなくなる。" : "最初から個人情報を要求している。一度送ると脅しの材料にされる。身分証を送ったら絶対に逃げられなくなる。" },
+    { id: 4, label: el ? "「{秘密|ひみつ}が{守|まも}れる{方|かた}」" : "「秘密が守れる方」", body: el ? "{誰|だれ}にも{言|い}えない{仕事|しごと}＝{違法|いほう}な{仕事|しごと}。{合法|ごうほう}の{仕事|しごと}に{秘密|ひみつ}にする{理由|りゆう}はない。{家族|かぞく}や{友達|ともだち}に{言|い}えない{仕事|しごと}はやってはいけない。" : "誰にも言えない仕事＝違法な仕事。合法の仕事に秘密にする理由はない。家族や友達に言えない仕事はやってはいけない。" },
+    { id: 5, label: el ? "「すぐに{動|うご}ける{方|かた}」" : "「すぐに動ける方」", body: el ? "{考|かんが}える{時間|じかん}を{与|あた}えない。{焦|あせ}らせて{判断力|はんだんりょく}を{失|うしな}わせるのが{目的|もくてき}。{急|いそ}かされたら{必|かなら}ず{立|た}ち{止|と}まって{考|かんが}えること。" : "考える時間を与えない。焦らせて判断力を失わせるのが目的。急かされたら必ず立ち止まって考えること。" },
+  ] : [
+    { id: 0, label: "「1〜3時間で日払い5万円」", body: "時給換算で1万6千円以上。普通のバイトの10倍以上の金額。なぜこんなに高いのか絶対に疑うこと。" },
+    { id: 1, label: "「荷物の中身の確認は不要」", body: "中身を見せない理由がある。違法な物品（薬物・盗品など）の運搬の典型的な手口。「知らなかった」では済まない。" },
+    { id: 2, label: "「詳細は採用後にご説明」", body: "採用前に仕事内容を教えない。断れなくなってから本当の仕事を教える罠。合法の仕事なら最初から説明できる。" },
+    { id: 3, label: "「身分証明書をご用意ください」", body: "最初から個人情報を要求している。一度送ると脅しの材料にされる。身分証を送ったら絶対に逃げられなくなる。" },
+    { id: 4, label: "「秘密が守れる方」", body: "誰にも言えない仕事＝違法な仕事。合法の仕事に秘密にする理由はない。家族や友達に言えない仕事はやってはいけない。" },
+    { id: 5, label: "「すぐに動ける方」", body: "考える時間を与えない。焦らせて判断力を失わせるのが目的。急かされたら必ず立ち止まって考えること。" },
+  ];
+
+  const dangerSignCards = el ? [
+    { icon: "🚨", title: "{報酬|ほうしゅう}が{異常|いじょう}に{高|たか}い", desc: "{日払|ひばら}い{数万円|すうまんえん}・{月|つき}30{万|まん}{以上|いじょう}は{要注意|ようちゅうい}" },
+    { icon: "🚨", title: "{仕事|しごと}の{内容|ないよう}があいまい", desc: "「{荷物|にもつ}を{運|はこ}ぶだけ」「かんたんな{作業|さぎょう}」はNG" },
+    { icon: "🚨", title: "LINEやDMに{誘導|ゆうどう}する", desc: "{公式|こうしき}サイト・ハローワーク{以外|いがい}は{疑|うたが}う" },
+    { icon: "🚨", title: "{最初|さいしょ}から{身分証|みぶんしょう}を{要求|ようきゅう}する", desc: "{採用|さいよう}{前|まえ}の{個人情報|こじんじょうほう}{提供|ていきょう}は{絶対|ぜったい}NG" },
+    { icon: "🚨", title: "{秘密|ひみつ}にするよう{求|もと}める", desc: "{家族|かぞく}に{言|い}えない{仕事|しごと}はやってはいけない" },
+    { icon: "🚨", title: "{断|ことわ}ると{脅|おど}してくる", desc: "{脅|おど}されたらすぐ{警察|けいさつ}（#9110）に{相談|そうだん}" },
+  ] : [
+    { icon: "🚨", title: "報酬が異常に高い", desc: "日払い数万円・月30万以上は要注意" },
+    { icon: "🚨", title: "仕事の内容があいまい", desc: "「荷物を運ぶだけ」「簡単な作業」はNG" },
+    { icon: "🚨", title: "LINEやDMに誘導する", desc: "公式サイト・ハローワーク以外は疑う" },
+    { icon: "🚨", title: "最初から身分証を要求する", desc: "採用前の個人情報提供は絶対NG" },
+    { icon: "🚨", title: "秘密にするよう求める", desc: "家族に言えない仕事はやってはいけない" },
+    { icon: "🚨", title: "断ると脅してくる", desc: "脅されたらすぐ警察（#9110）に相談" },
+  ];
+
+  const renderFindGame = (points, found, setFound, stageLabel, nextStage) => {
+    const remaining = points.length - found.length;
+    const allFound = found.length >= points.length;
+    return (
+      <EpisodeShell onExit={onExit}>
+      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0a1a0a,#041004)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
+        <div style={{ maxWidth: 440, margin: "0 auto" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+            <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: green, letterSpacing: ".15em" }}>{stageLabel}</div>
+            <div style={{ background: `${green}18`, border: `1px solid ${green}33`, borderRadius: 20, padding: "4px 12px", fontSize: 12, color: green, fontWeight: 900 }}>
+              {found.length}/{points.length} <RubyText text={el ? "{発見|はっけん}" : "発見"} />
+            </div>
+          </div>
+          {!allFound && (
+            <OwlSay mood="worried" e={el ? `{怪|あや}しいポイントを{全部|ぜんぶ}{見|み}つけよう！あと${remaining}個かくれてるよ🦉` : `怪しいポイントを全部見つけよう！あと${remaining}個隠れてるよ🦉`}>{`怪しいポイントを全部見つけよう！あと${remaining}個隠れてるよ🦉`}</OwlSay>
+          )}
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 14 }}>
+            {points.map((pt) => {
+              const isFound = found.includes(pt.id);
+              return (
+                <button key={pt.id} onClick={() => {
+                  feedback(isFound ? "tap" : "found");
+                  if (!isFound) setFound(prev => [...prev, pt.id]);
+                  setDetailModal({ title: pt.label, body: pt.body });
+                }}
+                  style={{ width: "100%", padding: "13px 16px", background: isFound ? `${green}18` : "rgba(255,255,255,.04)", border: `1.5px solid ${isFound ? green + "55" : "rgba(255,255,255,.1)"}`, borderRadius: 14, color: isFound ? "#86efac" : "rgba(255,255,255,.75)", fontSize: 13, fontWeight: isFound ? 900 : 500, cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 12, textAlign: "left", transition: "all .2s" }}>
+                  <span style={{ fontSize: 18, flexShrink: 0 }}>{isFound ? "✅" : "❓"}</span>
+                  <RubyText text={pt.label} />
+                  {!isFound && <span style={{ marginLeft: "auto", fontSize: 11, color: "rgba(255,255,255,.3)" }}><RubyText text={el ? "タップ" : "タップ"} /></span>}
+                </button>
+              );
+            })}
+          </div>
+          {allFound && (
+            <button onClick={() => { feedback("complete"); nextStage(); }}
+              style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${green},${greenDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", animation: "popIn .4s ease" }}>
+              {stageLabel.replace("STAGE","").includes("3") ? <RubyText text={el ? "まとめを{見|み}る →" : "まとめを見る →"} /> : <RubyText text={el ? "STAGE {クリア|くりあ}！{次|つぎ}へ →" : "ステージクリア！次へ →"} />}
+            </button>
+          )}
+        </div>
+        {detailModal && (
+          <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.8)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }} onClick={() => setDetailModal(null)}>
+            <div style={{ background: "linear-gradient(135deg,#0a1a0a,#041004)", border: `2px solid ${green}`, borderRadius: 20, padding: "22px 20px", maxWidth: 340, width: "100%", animation: "popIn .3s ease" }} onClick={e => e.stopPropagation()}>
+              <div style={{ fontSize: 28, textAlign: "center", marginBottom: 8 }}>🚨</div>
+              <h3 style={{ color: "#86efac", fontSize: 15, fontWeight: 900, textAlign: "center", margin: "0 0 12px" }}><RubyText text={detailModal.title} /></h3>
+              <p style={{ color: "rgba(255,255,255,.75)", fontSize: 13, lineHeight: 1.8, margin: "0 0 14px" }}><RubyText text={detailModal.body} /></p>
+              <button onClick={() => setDetailModal(null)} style={{ width: "100%", padding: 12, background: `linear-gradient(135deg,${green},${greenDark})`, border: "none", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>
+                <RubyText text={el ? "なるほど！" : "なるほど！"} />
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+      </EpisodeShell>
+    );
   };
 
-  const handleOK = () => {
-    setChoices(prev => [...prev, "ok"]);
-    setPhase("result_ok");
-  };
+  if (phase === "parent_intro") return (
+    <EpisodeIntroCard epKey="ep32" onStart={() => setPhase("intro")} />
+  );
 
-  const handleNext = () => {
-    if (stepIdx < STEPS.length - 1) {
-      setStepIdx(i => i + 1);
-      setPhase("step");
-    } else {
-      setPhase("complete");
-    }
-  };
-
-  // ── Intro ──
   if (phase === "intro") return (
     <EpisodeShell onExit={onExit}>
-    <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#041210,#020c08)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 20px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden" }}>
-      {[...Array(20)].map((_, i) => <div key={i} style={{ position: "absolute", width: Math.random() * 2 + 1, height: Math.random() * 2 + 1, background: "#06c755", borderRadius: "50%", left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%`, opacity: Math.random() * 0.3 + 0.05, animation: `blink ${Math.random() * 4 + 2}s infinite` }} />)}
-      <div style={{ maxWidth: 360, width: "100%", position: "relative", zIndex: 2, animation: "slideUp .6s ease" }}>
+    <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#0a1a0a,#041004)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 20px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative" }}>
+      {[...Array(20)].map((_, i) => <div key={i} style={{ position: "absolute", width: Math.random()*2+1, height: Math.random()*2+1, background: green, borderRadius: "50%", left: `${Math.random()*100}%`, top: `${Math.random()*100}%`, opacity: Math.random()*0.25+0.05, animation: `blink ${Math.random()*4+2}s infinite` }} />)}
+      <div style={{ fontSize: 70, marginBottom: 12, animation: "float 3s ease-in-out infinite" }}>⚠️</div>
+      <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: green, letterSpacing: ".4em", margin: "0 0 10px" }}>EPISODE 03-2</div>
+      <h1 style={{ fontSize: 20, fontWeight: 900, color: "#fff", margin: "0 0 8px", textAlign: "center", lineHeight: 1.3 }}>
+        <RubyText text={el ? "その{求人|きゅうじん}、" : "その求人、"} /><br />
+        <RubyText text={el ? "{闇|やみ}バイトじゃない？" : "闇バイトじゃない？"} />
+      </h1>
+      <div style={{ maxWidth: 320, margin: "12px 0 20px" }}>
+        <OwlSay mood="worried" e={el ? "エピソード3で{闇|やみ}バイトのこわさを{学|まな}んだね。でも、{実際|じっさい}の{募集|ぼしゅう}を{見|み}てもすぐ{気|き}づける？{本物|ほんもの}の{手口|てぐち}を{使|つか}った3つの{場面|ばめん}で{怪|あや}しいポイントを{全部|ぜんぶ}{見|み}つけよう！🦉" : "エピソード3で闇バイトのこわさを学んだね。でも、実際の募集を見てもすぐ気づける？本物の手口を使った3つの場面で怪しいポイントを全部見つけよう！🦉"}>エピソード3で闇バイトのこわさを学んだね。でも、実際の募集を見てもすぐ気づける？本物の手口を使った3つの場面で怪しいポイントを全部見つけよう！🦉</OwlSay>
+      </div>
+      <div style={{ background: `${green}0a`, border: `1px solid ${green}22`, borderRadius: 16, padding: "14px 18px", maxWidth: 320, marginBottom: 16, fontSize: 13, color: "rgba(255,255,255,.7)", lineHeight: 1.8, textAlign: "center" }}>
+        <RubyText text={el ? "{画面|がめん}をよく{読|よ}んで、{怪|あや}しいと{思|おも}う{部分|ぶぶん}をタップしよう。{全部|ぜんぶ}{見|み}つけたら{次|つぎ}のステージへ！" : "画面をよく読んで、怪しいと思う部分をタップしよう。全部見つけたら次のステージへ！"} />
+      </div>
+      <button onClick={() => { feedback("tap"); setPhase("stage1"); }} style={{ background: `linear-gradient(135deg,${green},${greenDark})`, border: "none", borderRadius: 50, padding: "15px 44px", fontSize: 16, fontWeight: 900, color: "#fff", cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${green}44` }}>
+        <RubyText text={el ? "STAGE 1 {スタート|すたーと} →" : "STAGE 1 スタート →"} />
+      </button>
+    </div>
+    </EpisodeShell>
+  );
+
+  if (phase === "stage1") {
+    return renderFindGame(
+      stage1Points, foundS1, setFoundS1,
+      "STAGE 1 / 3 — X（旧Twitter）DM",
+      () => setPhase("stage2")
+    );
+  }
+
+  if (phase === "stage2") {
+    return renderFindGame(
+      stage2Points, foundS2, setFoundS2,
+      "STAGE 2 / 3 — Instagram投稿",
+      () => setPhase("stage3")
+    );
+  }
+
+  if (phase === "stage3") {
+    return renderFindGame(
+      stage3Points, foundS3, setFoundS3,
+      "STAGE 3 / 3 — 求人サイト",
+      () => setPhase("reveal")
+    );
+  }
+
+  if (phase === "reveal") return (
+    <EpisodeShell onExit={onExit}>
+    <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0a1a0a,#041004)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
+      <div style={{ maxWidth: 440, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 16 }}>
-          <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: "#06c755", letterSpacing: ".3em", marginBottom: 10 }}>EPISODE 03-2</div>
-          <div style={{ fontSize: 64, marginBottom: 10, animation: "float 3s ease-in-out infinite" }}>💬</div>
-          <h1 style={{ fontSize: 22, fontWeight: 900, color: "#fff", margin: "0 0 8px", lineHeight: 1.3, textAlign: "center" }}>
-            {el ? "その「おねがい」、\nだいじょうぶ？" : "その「おねがい」、\nだいじょうぶ？"}
-          </h1>
-          <p style={{ color: "rgba(255,255,255,.45)", fontSize: 12, margin: "0 0 20px", lineHeight: 1.7 }}>
-            <RubyText text={el ? "ゲームで{知|し}り{合|あ}った{相手|あいて}からのお{願|ねが}い" : "ゲームで知り合った相手からのお願い"} />
-          </p>
+          <div style={{ fontSize: 48, marginBottom: 8, animation: "celebrate 1s infinite" }}>🎉</div>
+          <h2 style={{ fontSize: 20, fontWeight: 900, color: "#fff", margin: "0 0 6px" }}>
+            <RubyText text={el ? "3つの{入口|いりぐち}、{全部|ぜんぶ}{見抜|みぬ}けた！" : "3つの入口、全部見抜けた！"} />
+          </h2>
         </div>
-        <div style={{ background: "rgba(6,199,85,.08)", border: "1px solid rgba(6,199,85,.25)", borderRadius: 16, padding: "16px 18px", marginBottom: 20, color: "rgba(255,255,255,.82)", fontSize: 13, lineHeight: 1.9 }}>
-          <RubyText text={el
-            ? "ゲームで{仲|なか}よくなった「ユウキ」から、{少|すこ}しずつお{願|ねが}いをされます。\n\n{全部|ぜんぶ}で4{段階|だんかい}。どこで「{断|ことわ}る」を{選|えら}べるかためしてみよう！"
-            : "ゲームで仲よくなった「ユウキ」から、少しずつお願いをされます。\n\n全部で4段階。どこで「断る」を選べるか試してみよう！"
-          } />
+        <OwlSay mood="happy" e={el ? "3つの{全然|ぜんぜん}{違|ちが}う{場所|ばしょ}から{同|おな}じ{手口|てぐち}が{使|つか}われていたね。{共通|きょうつう}するサインを{覚|おぼ}えておこう！🦉" : "3つの全然違う場所から同じ手口が使われていたね。共通するサインを覚えておこう！🦉"}>3つの全然違う場所から同じ手口が使われていたね。共通するサインを覚えておこう！🦉</OwlSay>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 14 }}>
+          {dangerSignCards.map((c, i) => (
+            <div key={i} style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.08)", borderRadius: 14, padding: "12px 16px", display: "flex", gap: 12, alignItems: "flex-start", animation: `slideUp .4s ${i * .08}s both ease` }}>
+              <span style={{ fontSize: 20, flexShrink: 0 }}>{c.icon}</span>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 900, color: "#86efac", marginBottom: 3 }}><RubyText text={c.title} /></div>
+                <div style={{ fontSize: 12, color: "rgba(255,255,255,.55)" }}><RubyText text={c.desc} /></div>
+              </div>
+            </div>
+          ))}
         </div>
-        <button onClick={() => setPhase("step")} style={{ width: "100%", background: lineGreen, color: "#fff", border: "none", borderRadius: 14, padding: "15px 0", fontSize: 16, fontWeight: 800, cursor: "pointer", fontFamily: "'Zen Maru Gothic',sans-serif", animation: "pulse 2s infinite" }}>
-          <RubyText text={el ? "スタート →" : "スタート →"} />
+        <div style={{ background: `${green}18`, border: `1px solid ${green}44`, borderRadius: 14, padding: "14px 16px", marginBottom: 14, textAlign: "center", fontSize: 15, fontWeight: 900, color: "#86efac" }}>
+          <RubyText text={el ? "「1つでも{当|あ}てはまったら{絶対|ぜったい}に{関|かか}わらない！」" : "「1つでも当てはまったら絶対に関わらない！」"} />
+        </div>
+        <button onClick={() => setPhase("promise")}
+          style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${green},${greenDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
+          <RubyText text={el ? "{次|つぎ}へ：{我|わ}が{家|や}のルールを{決|き}める →" : "次へ：我が家のルールを決める →"} />
         </button>
       </div>
     </div>
     </EpisodeShell>
   );
 
-  // ── Step (LINE chat UI) ──
-  if (phase === "step") {
-    const step = currentStep;
-    return (
-      <EpisodeShell onExit={onExit}>
-      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0d1b2a 0%,#0a1520 100%)", display: "flex", flexDirection: "column", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
-        {/* Status bar */}
-        <div style={{ background: "rgba(0,0,0,.5)", padding: "10px 18px 10px", display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid rgba(255,255,255,.06)" }}>
-          <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: "#06c755", letterSpacing: ".15em" }}>STEP {step.step} / 4</div>
-          <div style={{ display: "flex", gap: 7 }}>
-            {STEPS.map((_, i) => (
-              <div key={i} style={{ width: 10, height: 10, borderRadius: "50%", background: i < stepIdx ? "#06c755" : i === stepIdx ? "#fbbf24" : "rgba(255,255,255,.15)" }} />
-            ))}
+  if (phase === "promise") return (
+    <EpisodeShell onExit={onExit}>
+    <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0a1a0a,#041004)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
+      <div style={{ maxWidth: 440, margin: "0 auto" }}>
+        <h2 style={{ fontSize: 20, fontWeight: 900, color: "#fff", textAlign: "center", marginBottom: 8 }}>
+          <RubyText text={el ? "{我|わ}が{家|や}の{約束|やくそく}を{作|つく}ろう" : "我が家の約束を作ろう"} />
+        </h2>
+        <OwlSay mood="happy" e={el ? "{怪|あや}しいお{仕事|しごと}の{誘|さそ}いが{来|き}たとき、{一人|ひとり}で{悩|なや}まないようにしよう。{相談|そうだん}できる{人|ひと}の{名前|なまえ}を{入力|にゅうりょく}してね。🦉" : "怪しいお仕事の誘いが来たとき、一人で悩まないようにしよう。相談できる人の名前を入力してね。🦉"}>怪しいお仕事の誘いが来たとき、一人で悩まないようにしよう。相談できる人の名前を入力してね。🦉</OwlSay>
+        <div style={{ background: `${green}08`, border: `1px solid ${green}22`, borderRadius: 16, padding: "16px", marginBottom: 14 }}>
+          <div style={{ fontSize: 13, color: "rgba(255,255,255,.6)", marginBottom: 10 }}>
+            <RubyText text={el ? "{怪|あや}しいお{仕事|しごと}を{見|み}たら…" : "怪しいお仕事を見たら…"} />
           </div>
+          <input
+            value={contactName}
+            onChange={e => setContactName(e.target.value)}
+            placeholder={el ? "例：お{父|とう}さん・お{母|かあ}さん・◯◯{先生|せんせい}" : "例：お父さん・お母さん・◯◯先生"}
+            style={{ width: "100%", padding: "12px 14px", background: "rgba(255,255,255,.06)", border: `1px solid ${green}44`, borderRadius: 12, color: "#fff", fontSize: 14, fontFamily: "inherit", outline: "none", boxSizing: "border-box" }}
+          />
         </div>
-
-        {/* Chat area */}
-        <div style={{ flex: 1, padding: "16px 14px", overflowY: "auto" }}>
-          {/* Sender info header */}
-          <div style={{ textAlign: "center", marginBottom: 16 }}>
-            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(255,255,255,.05)", border: "1px solid rgba(255,255,255,.08)", borderRadius: 20, padding: "6px 14px" }}>
-              <div style={{ width: 30, height: 30, borderRadius: "50%", background: "linear-gradient(135deg,#7c3aed,#4f46e5)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, flexShrink: 0 }}>🎮</div>
-              <div style={{ textAlign: "left" }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: "#fff" }}>ユウキ</div>
-                <div style={{ fontSize: 10, color: "rgba(255,255,255,.38)" }}><RubyText text={el ? "ゲームで{知|し}り{合|あ}った{人|ひと}" : "ゲームで知り合った人"} /></div>
+        {contactName.length > 0 && (
+          <>
+            <div style={{ background: `${green}0a`, border: `2px solid ${green}44`, borderRadius: 16, padding: "18px 16px", marginBottom: 14, animation: "slideUp .4s ease" }}>
+              <div style={{ fontSize: 13, fontWeight: 900, color: green, marginBottom: 10 }}>🛡️ <RubyText text={el ? "{我|わ}が{家|や}の{約束|やくそく}" : "我が家の約束"} /></div>
+              <div style={{ fontSize: 13, color: "rgba(255,255,255,.75)", lineHeight: 1.9 }}>
+                <RubyText text={el ? "{怪|あや}しいお{仕事|しごと}の{誘|さそ}いが{来|き}たら" : "怪しいお仕事の誘いが来たら"} /><br />
+                <strong style={{ color: "#86efac", fontSize: 15 }}>「{contactName}」</strong><RubyText text={el ? "に{すぐ|すぐ}{相談|そうだん}する！" : "にすぐ相談する！"} /><br />
+                <span style={{ fontSize: 11, color: "rgba(255,255,255,.4)" }}>{new Date().toLocaleDateString("ja-JP")}</span>
               </div>
             </div>
-          </div>
-
-          {/* Sender message bubble */}
-          <div style={{ display: "flex", alignItems: "flex-end", gap: 8, marginBottom: 14 }}>
-            <div style={{ width: 38, height: 38, borderRadius: "50%", background: "linear-gradient(135deg,#7c3aed,#4f46e5)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>🎮</div>
-            <div style={{ maxWidth: "74%" }}>
-              <div style={{ fontSize: 10, color: "rgba(255,255,255,.32)", marginBottom: 4, paddingLeft: 4 }}>ユウキ</div>
-              <div style={{ background: "rgba(255,255,255,.11)", borderRadius: "4px 14px 14px 14px", padding: "11px 14px", fontSize: 14, color: "#fff", lineHeight: 1.75 }}>
-                <RubyText text={step.senderMsg} />
-              </div>
-              <div style={{ fontSize: 10, color: "rgba(255,255,255,.22)", marginTop: 4 }}><RubyText text={el ? "たった{今|いま}" : "たった今"} /></div>
-            </div>
-          </div>
-
-          {/* Danger badge */}
-          <div style={{ display: "flex", justifyContent: "center", marginTop: 4 }}>
-            <div style={{ background: "rgba(239,68,68,.13)", border: "1px solid rgba(239,68,68,.38)", borderRadius: 20, padding: "4px 13px", fontSize: 11, color: "#fca5a5", display: "flex", alignItems: "center", gap: 5 }}>
-              ⚠️ <RubyText text={step.dangerBadge} />
-            </div>
-          </div>
-        </div>
-
-        {/* Choice buttons */}
-        <div style={{ padding: "14px 16px 32px", background: "rgba(0,0,0,.35)", borderTop: "1px solid rgba(255,255,255,.07)" }}>
-          <div style={{ fontSize: 12, color: "rgba(255,255,255,.42)", textAlign: "center", marginBottom: 12 }}>
-            <RubyText text={el ? "どうする？" : "どうする？"} />
-          </div>
-          <div style={{ display: "flex", gap: 10 }}>
-            <button onClick={handleRefuse} style={{ flex: 1, background: lineGreen, color: "#fff", border: "none", borderRadius: 12, padding: "15px 0", fontSize: 15, fontWeight: 800, cursor: "pointer", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
-              <RubyText text={el ? "✋ {断|ことわ}る" : "✋ 断る"} />
-            </button>
-            <button onClick={handleOK} style={{ flex: 1, background: "rgba(239,68,68,.18)", color: "#fca5a5", border: "1.5px solid rgba(239,68,68,.38)", borderRadius: 12, padding: "15px 0", fontSize: 15, fontWeight: 800, cursor: "pointer", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
-              ✅ OK
-            </button>
-          </div>
-        </div>
-      </div>
-      </EpisodeShell>
-    );
-  }
-
-  // ── Result: Refuse (praise) ──
-  if (phase === "result_refuse") {
-    const step = currentStep;
-    const isLast = stepIdx === STEPS.length - 1;
-    return (
-      <EpisodeShell onExit={onExit}>
-      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0a1a0a 0%,#041004 100%)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "32px 20px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
-        <div style={{ maxWidth: 360, width: "100%", animation: "slideUp .5s ease" }}>
-          {/* User bubble (refuse) */}
-          <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 18 }}>
-            <div style={{ background: lineGreen, borderRadius: "14px 4px 14px 14px", padding: "12px 16px", fontSize: 14, color: "#fff", fontWeight: 700 }}>
-              <RubyText text={el ? "{断|ことわ}る！" : "断る！"} />
-            </div>
-          </div>
-
-          {/* Molly praise */}
-          <div style={{ textAlign: "center", marginBottom: 8 }}>
-            <div style={{ fontSize: 54, animation: "celebrate .6s ease" }}>🦉</div>
-          </div>
-          <div style={{ background: "rgba(74,222,128,.08)", border: "1.5px solid rgba(74,222,128,.3)", borderRadius: 18, padding: "16px 18px", marginBottom: 20, color: "#dcfce7", fontSize: 13, lineHeight: 1.9 }}>
-            <div style={{ fontSize: 16, fontWeight: 900, color: "#4ade80", marginBottom: 8 }}>
-              <RubyText text={el ? "すごい！よく{断|ことわ}れたね！🎉" : "すごい！よく断れたね！🎉"} />
-            </div>
-            <RubyText text={step.refusePraise} />
-          </div>
-
-          <button onClick={handleNext} style={{ width: "100%", background: lineGreen, color: "#fff", border: "none", borderRadius: 14, padding: "15px 0", fontSize: 15, fontWeight: 800, cursor: "pointer", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
-            <RubyText text={isLast ? (el ? "{結果|けっか}を{見|み}る →" : "結果を見る →") : (el ? "つぎのステップへ →" : "次のステップへ →")} />
-          </button>
-        </div>
-      </div>
-      </EpisodeShell>
-    );
-  }
-
-  // ── Result: OK (danger) ──
-  if (phase === "result_ok") {
-    const step = currentStep;
-    const isLast = stepIdx === STEPS.length - 1;
-    return (
-      <EpisodeShell onExit={onExit}>
-      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#1a0505 0%,#0f0303 100%)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "32px 20px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
-        <div style={{ maxWidth: 360, width: "100%", animation: "slideUp .5s ease" }}>
-          {/* User bubble (ok) */}
-          <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 18 }}>
-            <div style={{ background: "rgba(239,68,68,.28)", borderRadius: "14px 4px 14px 14px", padding: "12px 16px", fontSize: 14, color: "#fca5a5", fontWeight: 700, border: "1px solid rgba(239,68,68,.38)" }}>
-              OK…
-            </div>
-          </div>
-
-          {/* Consequence */}
-          <div style={{ background: "rgba(239,68,68,.07)", border: "1.5px solid rgba(239,68,68,.3)", borderRadius: 16, padding: "16px 18px", marginBottom: 14 }}>
-            <div style={{ fontSize: 13, color: "rgba(255,255,255,.85)", lineHeight: 1.85, marginBottom: 12 }}>
-              <RubyText text={step.okConsequence} />
-            </div>
-            <div style={{ background: "rgba(239,68,68,.13)", borderRadius: 10, padding: "10px 12px", fontSize: 12, color: "#fca5a5", lineHeight: 1.75 }}>
-              <div style={{ fontWeight: 800, marginBottom: 4 }}>⚠️ <RubyText text={el ? "なぜ{危|あぶ}ないの？" : "なぜ危ないの？"} /></div>
-              <RubyText text={step.okDanger} />
-            </div>
-          </div>
-
-          {/* Molly advice */}
-          <div style={{ display: "flex", gap: 10, alignItems: "flex-start", marginBottom: 20 }}>
-            <div style={{ fontSize: 30, flexShrink: 0 }}>🦉</div>
-            <div style={{ background: "rgba(251,191,36,.07)", border: "1px solid rgba(251,191,36,.28)", borderRadius: 14, padding: "11px 13px", fontSize: 12, color: "#fde68a", lineHeight: 1.8 }}>
-              <RubyText text={el
-                ? "{次|つぎ}のステップでは{断|ことわ}ってみよう！{断|ことわ}り{方|かた}を{練習|れんしゅう}すれば{大丈夫|だいじょうぶ}！"
-                : "次のステップでは断ってみよう！断り方を練習すれば大丈夫！"
-              } />
-            </div>
-          </div>
-
-          <button onClick={handleNext} style={{ width: "100%", background: "rgba(239,68,68,.22)", color: "#fca5a5", border: "1.5px solid rgba(239,68,68,.45)", borderRadius: 14, padding: "15px 0", fontSize: 15, fontWeight: 800, cursor: "pointer", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
-            <RubyText text={isLast ? (el ? "{結果|けっか}を{見|み}る →" : "結果を見る →") : (el ? "つぎのステップへ →" : "次のステップへ →")} />
-          </button>
-        </div>
-      </div>
-      </EpisodeShell>
-    );
-  }
-
-  // ── Complete ──
-  if (phase === "complete") {
-    const allSafe = safeCount === STEPS.length;
-    const mostSafe = safeCount >= 3;
-    return (
-      <EpisodeShell onExit={onExit}>
-      <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#041210,#020c08)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "32px 20px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
-        <div style={{ maxWidth: 360, width: "100%", animation: "slideUp .6s ease" }}>
-          {/* Score display */}
-          <div style={{ textAlign: "center", marginBottom: 22 }}>
-            <div style={{ fontSize: 64, marginBottom: 10, animation: allSafe ? "celebrate .6s ease" : "" }}>
-              {allSafe ? "🏆" : mostSafe ? "⭐" : "🔒"}
-            </div>
-            <div style={{ fontSize: 20, fontWeight: 900, color: "#fff", marginBottom: 10 }}>
-              <RubyText text={el
-                ? allSafe ? "{全部|ぜんぶ}{断|ことわ}れた！" : `4{問|もん}のうち${safeCount}{問|もん}{断|ことわ}れた！`
-                : allSafe ? "全部断れた！" : `4問のうち${safeCount}問断れた！`
-              } />
-            </div>
-            <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: 4 }}>
-              {choices.map((c, i) => (
-                <div key={i} style={{ width: 38, height: 38, borderRadius: "50%", background: c === "refuse" ? "rgba(74,222,128,.18)" : "rgba(239,68,68,.18)", border: `2px solid ${c === "refuse" ? "#4ade80" : "#f87171"}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>
-                  {c === "refuse" ? "✅" : "❌"}
+            <div style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.08)", borderRadius: 14, padding: "14px 16px", marginBottom: 14 }}>
+              <div style={{ fontSize: 12, fontWeight: 900, color: "#fcd34d", marginBottom: 8 }}>📞 <RubyText text={el ? "{困|こま}ったらここに{電話|でんわ}しよう" : "困ったらここに電話しよう"} /></div>
+              {[
+                { name: "#9110", desc: el ? "{警察|けいさつ}{相談|そうだん}{専用|せんよう}{電話|でんわ}" : "警察相談専用電話" },
+                { name: "0120-007-110", desc: el ? "{子|こ}どもの{人権|じんけん}110{番|ばん}" : "子どもの人権110番" },
+                { name: "0120-279-338", desc: el ? "よりそいホットライン" : "よりそいホットライン" },
+              ].map((c, i) => (
+                <div key={i} style={{ display: "flex", gap: 10, marginBottom: 6, alignItems: "center" }}>
+                  <a href={`tel:${c.name}`} style={{ fontSize: 14, fontWeight: 900, color: "#86efac", textDecoration: "none" }}>{c.name}</a>
+                  <span style={{ fontSize: 12, color: "rgba(255,255,255,.5)" }}><RubyText text={c.desc} /></span>
                 </div>
               ))}
             </div>
-            <div style={{ fontSize: 11, color: "rgba(255,255,255,.4)", marginTop: 6 }}>
-              <RubyText text={el ? "✅ = {断|ことわ}れた　❌ = OKしてしまった" : "✅ = 断れた　❌ = OKしてしまった"} />
-            </div>
-          </div>
-
-          {/* Key lessons */}
-          <div style={{ background: "rgba(6,199,85,.07)", border: "1px solid rgba(6,199,85,.22)", borderRadius: 16, padding: "16px 18px", marginBottom: 16, fontSize: 13, color: "rgba(255,255,255,.85)", lineHeight: 1.85 }}>
-            <div style={{ fontWeight: 900, color: "#4ade80", marginBottom: 10, fontSize: 14 }}>
-              🔐 <RubyText text={el ? "{覚|おぼ}えておこう！" : "覚えておこう！"} />
-            </div>
-            {[
-              { icon: "🎮", text: el ? "ゲームの{相手|あいて}はリアルの{友達|ともだち}じゃない" : "ゲームの相手はリアルの友達ではない" },
-              { icon: "🔗", text: el ? "アカウント・LINE IDは{絶対|ぜったい}に{教|おし}えない" : "アカウント・LINE IDは絶対に教えない" },
-              { icon: "📍", text: el ? "{住所|じゅうしょ}や{学校|がっこう}を{教|おし}えない" : "住所・学校・場所は教えない" },
-              { icon: "📸", text: el ? "{写真|しゃしん}は{絶対|ぜったい}に{送|おく}らない" : "写真は絶対に送らない" },
-              { icon: "💬", text: el ? "{変|へん}だと{思|おも}ったら{大人|おとな}に{相談|そうだん}する" : "変だと思ったら大人に相談する" },
-            ].map((item, i) => (
-              <div key={i} style={{ display: "flex", gap: 8, marginBottom: 6, alignItems: "flex-start" }}>
-                <span style={{ fontSize: 14, flexShrink: 0, marginTop: 2 }}>{item.icon}</span>
-                <span style={{ fontSize: 12 }}><RubyText text={item.text} /></span>
-              </div>
-            ))}
-          </div>
-
-          {/* Molly closing */}
-          <div style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.09)", borderRadius: 14, padding: "14px 16px", marginBottom: 22, display: "flex", gap: 10, alignItems: "flex-start" }}>
-            <div style={{ fontSize: 28, flexShrink: 0 }}>🦉</div>
-            <div style={{ fontSize: 12, color: "rgba(255,255,255,.72)", lineHeight: 1.85 }}>
-              <RubyText text={el
-                ? "{断|ことわ}ることは、{悪|わる}いことじゃない！{自分|じぶん}を{守|まも}るために「いや」と{言|い}える{勇気|ゆうき}をもってね。{心配|しんぱい}なことがあったら、{必|かなら}ずおうちの{人|ひと}や{先生|せんせい}に{話|はな}してね！"
-                : "断ることは悪いことではありません。自分を守るために「いや」と言える勇気を持ってください。心配なことがあれば、必ず大人に相談してください。"
-              } />
-            </div>
-          </div>
-
-          <button onClick={() => { feedback("complete"); onComplete(safeCount); }} style={{ width: "100%", background: lineGreen, color: "#fff", border: "none", borderRadius: 14, padding: "15px 0", fontSize: 16, fontWeight: 800, cursor: "pointer", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
-            <RubyText text={el ? "{完了|かんりょう}！ホームへ 🏠" : "完了！ホームへ 🏠"} />
-          </button>
-        </div>
+            <button onClick={() => {
+              feedback("complete");
+              try { localStorage.setItem("mamoru_ep3_2_contact", contactName); } catch {}
+              onComplete(3);
+            }}
+              style={{ width: "100%", padding: 16, background: `linear-gradient(135deg,${green},${greenDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 16, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${green}44` }}>
+              🏆 <RubyText text={el ? "{修了証|しゅうりょうしょう}をもらう" : "修了証をもらう"} />
+            </button>
+          </>
+        )}
       </div>
-      </EpisodeShell>
-    );
-  }
+    </div>
+    </EpisodeShell>
+  );
 
   return null;
 }
+
 
 // ═══════════════════════════════════════════════════════════════
 function Episode4({ onComplete, onExit }) {
