@@ -1983,6 +1983,122 @@ function DialogueRunner({ accentColor, bg, questions, epKey, myWordsPrompt, myWo
 }
 
 // ═══════════════════════════════════════════════
+// 💬 ParentDialogue — 親子対話コンポーネント
+// 問いかけ→メモ→保護者ヒント→次へ の形式
+// ═══════════════════════════════════════════════
+function ParentDialogue({ questions, epKey, accentColor = "#ffa940", onComplete }) {
+  const ageMode = useAgeMode();
+  const el = ageMode === "elementary";
+  const [idx, setIdx] = useState(0);
+  const [hintOpen, setHintOpen] = useState(false);
+  const [done, setDone] = useState(false);
+  const [memo, setMemo] = useState(() => {
+    try { return localStorage.getItem(`mamoru_dialogue_${epKey}_${questions[0].id}`) || ""; } catch { return ""; }
+  });
+
+  const q = questions[idx];
+
+  useEffect(() => {
+    const key = `mamoru_dialogue_${epKey}_${questions[idx].id}`;
+    try { setMemo(localStorage.getItem(key) || ""); } catch { setMemo(""); }
+    setHintOpen(false);
+  }, [idx]);
+
+  const questionText = el ? (q.questionEl || q.question) : q.question;
+  const hints = el ? (q.hintsEl || q.hints) : q.hints;
+  const phText = el ? (q.placeholderEl || q.placeholder) : q.placeholder;
+  const canProceed = memo.trim().length > 0;
+  const isLast = idx === questions.length - 1;
+
+  const handleNext = () => {
+    feedback("tap");
+    try { localStorage.setItem(`mamoru_dialogue_${epKey}_${q.id}`, memo.trim()); } catch {}
+    if (isLast) {
+      setDone(true);
+      setTimeout(() => onComplete(), 800);
+    } else {
+      setIdx(i => i + 1);
+    }
+  };
+
+  if (done) return (
+    <div style={{ background: "#ffffff", borderRadius: 18, padding: "40px 24px", boxShadow: "0 4px 20px rgba(0,0,0,.08)", textAlign: "center", fontFamily: "'Zen Maru Gothic',sans-serif", animation: "popIn .4s ease" }}>
+      <div style={{ fontSize: 40, marginBottom: 12 }}>🎉</div>
+      <div style={{ fontSize: 18, fontWeight: 900, color: "#1e293b" }}>全部話し合えた！</div>
+    </div>
+  );
+
+  return (
+    <div style={{ background: "#ffffff", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+      <div style={{ maxWidth: 440, margin: "0 auto" }}>
+        {/* Progress dots */}
+        <div style={{ display: "flex", gap: 8, justifyContent: "center", marginBottom: 20 }}>
+          {questions.map((_, i) => (
+            <div key={i} style={{ width: 10, height: 10, borderRadius: "50%", background: i === idx ? accentColor : "#e2e8f0", transition: "background .3s" }} />
+          ))}
+        </div>
+        {/* Question card */}
+        <div style={{ background: "#ffffff", borderRadius: 18, padding: "20px 18px", marginBottom: 14, boxShadow: "0 4px 20px rgba(0,0,0,.08)", border: "1px solid #f1f5f9" }}>
+          <div style={{ fontSize: 16, fontWeight: 900, color: "#1e293b", lineHeight: 1.75 }}>
+            <RubyText text={questionText} />
+          </div>
+        </div>
+        {/* Memo textarea */}
+        <textarea
+          value={memo}
+          onChange={e => setMemo(e.target.value)}
+          placeholder={phText}
+          rows={5}
+          style={{ border: `1.5px solid ${memo.trim() ? accentColor : "#e2e8f0"}`, borderRadius: 12, padding: 12, fontSize: 14, fontFamily: "inherit", resize: "vertical", width: "100%", outline: "none", boxSizing: "border-box", marginBottom: 12, transition: "border-color .2s" }}
+        />
+        {/* Hint accordion */}
+        <div style={{ marginBottom: 14 }}>
+          <button
+            onClick={() => { feedback("tap"); setHintOpen(o => !o); }}
+            style={{ background: "rgba(99,102,241,.08)", border: "1px solid rgba(99,102,241,.2)", color: "#4f46e5", borderRadius: hintOpen ? "12px 12px 0 0" : 12, padding: "10px 14px", width: "100%", textAlign: "left", cursor: "pointer", fontFamily: "inherit", fontSize: 13, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <span><RubyText text={el ? "{保護者|ほごしゃ}の{方|かた}へ" : "保護者の方へ"} /></span>
+            <span style={{ transform: hintOpen ? "rotate(180deg)" : "none", transition: "transform .2s" }}>▾</span>
+          </button>
+          {hintOpen && (
+            <div style={{ background: "rgba(99,102,241,.04)", border: "1px solid rgba(99,102,241,.2)", borderTop: "none", borderRadius: "0 0 12px 12px", padding: "14px 16px", animation: "slideUp .2s ease" }}>
+              {hints && hints.map((hint, i) => (
+                <div key={i} style={{ display: "flex", gap: 8, marginBottom: 8, alignItems: "flex-start", fontSize: 13, color: "#4f46e5", lineHeight: 1.7 }}>
+                  <span style={{ fontWeight: 900, flexShrink: 0 }}>{["①","②","③","④","⑤"][i] || `${i + 1}.`}</span>
+                  <span><RubyText text={hint} /></span>
+                </div>
+              ))}
+              {epKey === "ep3" && q.id === "q4" && (
+                <div style={{ marginTop: 12, background: "rgba(16,185,129,.06)", border: "1px solid rgba(16,185,129,.2)", borderRadius: 10, padding: "12px 14px" }}>
+                  <div style={{ fontSize: 12, fontWeight: 900, color: "#065f46", marginBottom: 8 }}>📞 <RubyText text={el ? "{困|こま}ったらここに{相談|そうだん}しよう" : "困ったらここに相談しよう"} /></div>
+                  {[
+                    { name: "#9110", label: el ? "{警察|けいさつ}{相談|そうだん}{専用|せんよう}{電話|でんわ}" : "警察相談専用電話", note: el ? "24{時間|じかん}{対応|たいおう}・{全国|ぜんこく}どこからでも" : "24時間対応・全国どこからでも" },
+                    { name: "0120-007-110", label: el ? "{子|こ}どもの{人権|じんけん}110{番|ばん}" : "子どもの人権110番", note: el ? "{無料|むりょう}・{平日|へいじつ}8:30〜17:15" : "無料・平日8:30〜17:15" },
+                    { name: "0120-279-338", label: "よりそいホットライン", note: el ? "24{時間|じかん}{対応|たいおう}・{無料|むりょう}" : "24時間対応・無料" },
+                  ].map((c, i) => (
+                    <div key={i} style={{ marginBottom: 8 }}>
+                      <a href={`tel:${c.name}`} style={{ fontSize: 14, fontWeight: 900, color: "#059669", textDecoration: "none" }}>{c.name}</a>
+                      <span style={{ fontSize: 12, color: "#065f46", marginLeft: 8 }}><RubyText text={c.label} /></span>
+                      <div style={{ fontSize: 11, color: "#6b7280", marginTop: 2 }}><RubyText text={c.note} /></div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+        {/* Next button */}
+        <button
+          onClick={handleNext}
+          disabled={!canProceed}
+          style={{ background: canProceed ? `linear-gradient(135deg,${accentColor},${accentColor}cc)` : "#e2e8f0", color: canProceed ? "#fff" : "#94a3b8", padding: 15, width: "100%", borderRadius: 14, fontSize: 15, fontWeight: 900, border: "none", cursor: canProceed ? "pointer" : "not-allowed", fontFamily: "inherit", transition: "all .2s" }}>
+          <RubyText text={isLast ? (el ? "{完了|かんりょう} ✓" : "完了 ✓") : (el ? "{次|つぎ}へ →" : "次へ →")} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════
 // 🔥 週次チャレンジシステム
 // ═══════════════════════════════════════════════
 
@@ -6533,7 +6649,7 @@ function Episode1({ onComplete, onExit }) {
         <TodaysHomework
           mode="light"
           accentColor="#ffa940"
-          onComplete={() => setPhase("keywords")}
+          onComplete={() => setPhase("dialogue")}
           tasks={ageMode === "elementary" ? [
             { title: "スマホのカメラ{位置情報|いちじょうほう}をオフにする", desc: "{設定|せってい} → プライバシー → {位置情報|いちじょうほう} → カメラ → 「{許可|きょか}しない」に{変更|へんこう}" },
             { title: "{最近|さいきん}の{投稿|とうこう}{写真|しゃしん}を1{枚|まい}チェックする", desc: "{個人情報|こじんじょうほう}（{校章|こうしょう}・{表札|ひょうさつ}・{背景|はいけい}）が{映|うつ}っていないか{確認|かくにん}しよう" },
@@ -6555,7 +6671,7 @@ function Episode1({ onComplete, onExit }) {
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fff8f0,#ffeed6)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
         <OwlSay mood="excited" e="このおはなしにでてきた{大切|たいせつ}な{言葉|ことば}をおぼえよう！ニュースでも{出|で}てくるよ🦉">このエピソードで出てきた大事なワードを一緒に覚えよう！ニュースでも出てくるよ🦉</OwlSay>
-        <KeywordPhase epKey="ep1" accentColor="#ffa940" onComplete={() => setPhase("dialogue")} />
+        <KeywordPhase epKey="ep1" accentColor="#ffa940" onComplete={() => setPhase("mywords")} />
         <ParentExpertCard epKey="ep1" accentColor="#ffa940" />
       </div>
     </div>
@@ -6565,63 +6681,55 @@ function Episode1({ onComplete, onExit }) {
   // ── Dialogue (EP1) ──
   if (phase === "dialogue") return (
     <EpisodeShell onExit={onExit}>
-    <DialogueRunner
-      accentColor="#ffa940"
-      bg="linear-gradient(180deg,#fff8f0,#ffeed6)"
+    <ParentDialogue
       epKey="ep1"
+      accentColor="#ffa940"
       questions={ageMode === "elementary" ? [
         {
-          question: "SNSに{写真|しゃしん}を{投稿|とうこう}する{前|まえ}に、{確認|かくにん}すべき{一番|いちばん}{大切|たいせつ}なことは{何|なに}？",
-          childOptions: ["きれいに{写|うつ}っているか", "{個人情報|こじんじょうほう}（{校章|こうしょう}・{表札|ひょうさつ}・{場所|ばしょ}）が{写|うつ}っていないか", "フォロワーが{見|み}てくれるか"],
-          explanation: "「{個人情報|こじんじょうほう}が{写|うつ}っていないか」が{正解|せいかい}。{校章|こうしょう}・{表札|ひょうさつ}・{看板|かんばん}・{背景|はいけい}の{建物|たてもの}などから、{住所|じゅうしょ}・{学校|がっこう}が{特定|とくてい}される{事例|じれい}が{実際|じっさい}に{起|お}きています。",
-          talkTip: "「{最近|さいきん}の{投稿|とうこう}、{一緒|いっしょ}に{見直|みなお}してみよう」と{誘|さそ}ってみましょう。",
+          id: "q1",
+          question: "{写真|しゃしん}をSNSに{投稿|とうこう}する{前|まえ}に、どんなことを{確認|かくにん}したらいいかな？",
+          placeholder: "{親子|おやこ}で{話|はな}した{内容|ないよう}を{書|か}いてみよう",
+          hints: ["{顔|かお}や{本名|ほんみょう}が{写|うつ}っていると{何|なに}が{困|こま}るか{一緒|いっしょ}に{考|かんが}えてみよう", "{背景|はいけい}になにが{写|うつ}っていたら{困|こま}るかな？（{校章|こうしょう}・{表札|ひょうさつ}・{看板|かんばん}など）"],
         },
         {
-          question: "カメラの{位置情報|いちじょうほう}タグをオフにするのはなぜ？",
-          childOptions: ["{電池|でんち}の{節約|せつやく}のため", "{写真|しゃしん}のGPS{情報|じょうほう}から{自宅|じたく}が{特定|とくてい}されるのを{防|ふせ}ぐため", "{画質|がしつ}が{悪|わる}くなるから"],
-          explanation: "{写真|しゃしん}には{撮影|さつえい}{場所|ばしょ}のGPS{座標|ざひょう}が{自動|じどう}で{記録|きろく}される{場合|ばあい}があります。SNSにアップすると、{自宅|じたく}・{学校|がっこう}の{場所|ばしょ}が{知|し}らない{人|ひと}に{知|し}られるリスクがあります。",
-          talkTip: "「{一緒|いっしょ}にスマホの{設定|せってい}を{確認|かくにん}してみよう」と{設定|せってい}を{開|ひら}いてみましょう。",
+          id: "q2",
+          question: "もし{知|し}らない{人|ひと}からメッセージが{来|き}て「きみのことしってるよ」って{言|い}われたら、どうする？",
+          placeholder: "{親子|おやこ}で{話|はな}した{内容|ないよう}を{書|か}いてみよう",
+          hints: ["{返信|へんしん}したら{相手|あいて}はどう{思|おも}うかな？どんなリスクがあるか{考|かんが}えよう", "{誰|だれ}に{相談|そうだん}したらいいかな？すぐに{話|はな}せる{大人|おとな}は{誰|だれ}？"],
         },
       ] : [
         {
-          question: "SNSに写真を投稿する前に、確認すべき一番大切なことは何？",
-          childOptions: ["きれいに写っているか", "個人情報（校章・表札・場所）が写っていないか", "フォロワーが見てくれるか"],
-          explanation: "「個人情報が写っていないか」が正解。校章・表札・看板・背景の建物などから、住所・学校が特定される事例が実際に起きています。",
-          talkTip: "「最近の投稿、一緒に見直してみよう」と誘ってみましょう。",
+          id: "q1",
+          question: "あなたが写真をSNSに投稿する前に、どんなことを確認したらいいかな？",
+          placeholder: "親子で話した内容を書いてみよう",
+          hints: ["顔や本名が写っていると何が困るか一緒に考えてみよう", "背景に何が写っていたら困るかな？（校章・表札・看板など）"],
         },
         {
-          question: "カメラの位置情報タグをオフにするのはなぜ？",
-          childOptions: ["電池の節約のため", "写真のGPS情報から自宅が特定されるのを防ぐため", "画質が悪くなるから"],
-          explanation: "写真には撮影場所のGPS座標が自動で記録される場合があります。SNSにアップすると、自宅・学校の場所が知らない人に知られるリスクがあります。",
-          talkTip: "「一緒にスマホの設定を確認してみよう」と設定を開いてみましょう。",
+          id: "q2",
+          question: "もし知らない人からメッセージが来て『きみのこと知ってるよ』って言われたら、どうする？",
+          placeholder: "親子で話した内容を書いてみよう",
+          hints: ["返信したら相手はどう思うかな？どんなリスクがあるか考えよう", "誰に相談したら良いかな？すぐに話せる大人は誰？"],
         },
       ]}
-      myWordsPrompt={ageMode === "elementary" ? "{今日|きょう}のエピソードで{一番|いちばん}「{怖|こわ}い」と{思|おも}ったことを{書|か}いてみよう" : "今日のエピソードで一番「怖い」と思ったことを書いてみよう"}
-      myWordsPlaceholder={ageMode === "elementary" ? "{例|れい}：{写真|しゃしん}の{背景|はいけい}から{家|いえ}がわかってしまうのが{怖|こわ}かった" : "例：写真の背景から家がわかってしまうのが怖かった"}
-      onComplete={() => { feedback("tap"); setPhase("quiz"); }}
+      onComplete={() => setPhase("keywords")}
     />
-    {/* 親へのスマホ渡しタイミング — 専門家カード */}
-    <div style={{ padding: "0 16px 20px" }}>
-      <div style={{ background: "rgba(255,169,64,.08)", border: "1px solid rgba(255,169,64,.2)", borderRadius: 12, padding: "10px 14px", marginBottom: 10, fontSize: 12, color: "#a05500", fontWeight: 700 }}>
-        <RubyText text={ageMode === "elementary" ? "📱 {親|おや}にスマホを{渡|わた}すタイミング" : "📱 親にスマホを渡すタイミング"} />
-      </div>
-      <ParentExpertCard epKey="ep1" accentColor="#ffa940" />
-    </div>
     </EpisodeShell>
   );
 
-  // ── MyWords（キーワードノート） ──
+  // ── MyWords ──
   if (phase === "mywords") return (
     <EpisodeShell onExit={onExit}>
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fff8f0,#ffeed6)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
-        <div style={{ display: "flex", gap: 4, marginBottom: 18 }}>
-          {["comparison","dialogue","quiz","mywords"].map((s, i) => (
-            <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i === 3 ? "#ffa940" : "rgba(0,0,0,.1)" }} />
-          ))}
-        </div>
-        <OwlSay mood="excited" e="このおはなしにでてきた{大切|たいせつ}な{言葉|ことば}をおぼえよう！ニュースでも{出|で}てくるよ🦉">このエピソードで出てきた大事なワードを一緒に覚えよう！ニュースでも出てくるよ🦉</OwlSay>
-        <KeywordPhase epKey="ep1" accentColor="#ffa940" onComplete={() => { feedback("complete"); setAnimStars(true); setPhase("complete"); }} />
+        <OwlSay mood="excited" e="{自分|じぶん}の{言葉|ことば}で{記録|きろく}しよう🦉">自分の言葉で記録しよう🦉</OwlSay>
+        <MyWordsInput
+          mode="light"
+          epKey="ep1"
+          prompt={ageMode === "elementary" ? "{今日|きょう}{学|まな}んだことを{一言|ひとこと}で{書|か}いてみよう" : "今日学んだことを一言で書いてみよう"}
+          placeholder={ageMode === "elementary" ? "{例|れい}：{投稿|とうこう}{前|まえ}に{背景|はいけい}を{確認|かくにん}する{習慣|しゅうかん}をつける" : "例：投稿前に背景を確認する習慣をつける"}
+          accentColor="#ffa940"
+          onSave={() => { feedback("complete"); setAnimStars(true); setPhase("complete"); }}
+        />
       </div>
     </div>
     </EpisodeShell>
@@ -7748,9 +7856,9 @@ function Episode2({ onComplete, onExit }) {
             { title: "Googleレンズ（画像検索）を試してみる", desc: "怪しい写真を長押しして「Googleで検索」を選ぶ" },
           ]}
         />
-        <button onClick={() => setPhase("keywords")}
+        <button onClick={() => setPhase("dialogue")}
           style={{ width: "100%", marginTop: 14, padding: 15, background: "linear-gradient(135deg,#7c3aed,#4f46e5)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
-          <RubyText text={ageMode === "elementary" ? "キーワードを{覚|おぼ}える 📖 →" : "キーワードを覚える 📖 →"} />
+          <RubyText text={ageMode === "elementary" ? "おうちの{人|ひと}と{話|はな}そう 💬 →" : "おうちの人と話そう 💬 →"} />
         </button>
       </div>
     </div>
@@ -7761,7 +7869,7 @@ function Episode2({ onComplete, onExit }) {
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#f0eeff,#e0d9ff)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
         <OwlSay mood="excited" e="フェイクニュースを{見抜|みぬ}くための{重要|じゅうよう}なことばをおぼえよう！🦉">フェイクニュースを見抜くための重要ワードを覚えよう！🦉</OwlSay>
-        <KeywordPhase epKey="ep2" accentColor="#7c3aed" onComplete={() => setPhase("dialogue")} />
+        <KeywordPhase epKey="ep2" accentColor="#7c3aed" onComplete={() => setPhase("mywords")} />
         <ParentExpertCard epKey="ep2" accentColor="#7c3aed" />
       </div>
     </div>
@@ -8450,9 +8558,9 @@ function Episode3({ onComplete, onExit }) {
             { title: "おうちの人と「闇バイト」について話す", desc: "「こういう手口があるんだって」と教えてあげよう" },
           ]}
         />
-        <button onClick={() => setPhase("keywords")}
+        <button onClick={() => setPhase("dialogue")}
           style={{ width: "100%", marginTop: 14, padding: 15, background: "linear-gradient(135deg,#16a34a,#15803d)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
-          <RubyText text={ageMode === "elementary" ? "キーワードを{覚|おぼ}える 📖 →" : "キーワードを覚える 📖 →"} />
+          <RubyText text={ageMode === "elementary" ? "おうちの{人|ひと}と{話|はな}そう 💬 →" : "おうちの人と話そう 💬 →"} />
         </button>
       </div>
     </div>
@@ -8463,7 +8571,7 @@ function Episode3({ onComplete, onExit }) {
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#f0fdf4,#dcfce7)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
         <OwlSay mood="excited" e="ニュースにも{出|で}てくる{重要|じゅうよう}なことばをいっしょにおぼえよう！🦉">ニュースにも出てくる重要ワードを一緒に覚えよう！🦉</OwlSay>
-        <KeywordPhase epKey="ep3" accentColor="#16a34a" onComplete={() => setPhase("dialogue")} />
+        <KeywordPhase epKey="ep3" accentColor="#16a34a" onComplete={() => setPhase("mywords")} />
         <ParentExpertCard epKey="ep3" accentColor="#16a34a" />
       </div>
     </div>
@@ -9377,9 +9485,9 @@ function Episode4({ onComplete, onExit }) {
             </div>
           ))}
         </div>
-        <button onClick={() => setPhase("keywords")}
+        <button onClick={() => setPhase("dialogue")}
           style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${sky},${skyDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
-          <RubyText text={el ? "キーワードを{覚|おぼ}える 📖 →" : "キーワードを覚える 📖 →"} />
+          <RubyText text={el ? "おうちの{人|ひと}と{話|はな}そう 💬 →" : "おうちの人と話そう 💬 →"} />
         </button>
       </div>
     </div>
@@ -9390,7 +9498,7 @@ function Episode4({ onComplete, onExit }) {
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#e0f2fe,#bae6fd)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
         <OwlSay mood="excited" e={el ? "フィッシング{詐欺|さぎ}と2{段階|だんかい}{認証|にんしょう}のことばをおぼえよう！🦉" : "フィッシング詐欺と2段階認証のことばを覚えよう！🦉"}>フィッシング詐欺と2段階認証のことばを覚えよう！🦉</OwlSay>
-        <KeywordPhase epKey="ep4" accentColor={sky} onComplete={() => setPhase("dialogue")} />
+        <KeywordPhase epKey="ep4" accentColor={sky} onComplete={() => setPhase("mywords")} />
         <ParentExpertCard epKey="ep4" accentColor={sky} />
       </div>
     </div>
@@ -9997,9 +10105,9 @@ function Episode5({ onComplete, onExit }) {
             { title: "相談窓口を1つ覚える", desc: "子どもの人権110番：0120-007-110（無料）" },
           ]}
         />
-        <button onClick={() => setPhase("keywords")}
+        <button onClick={() => setPhase("dialogue")}
           style={{ width: "100%", marginTop: 14, padding: 15, background: `linear-gradient(135deg,${pink},${pinkDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
-          <RubyText text={ageMode === "elementary" ? "キーワードを{覚|おぼ}える 📖 →" : "キーワードを覚える 📖 →"} />
+          <RubyText text={ageMode === "elementary" ? "おうちの{人|ひと}と{話|はな}そう 💬 →" : "おうちの人と話そう 💬 →"} />
         </button>
       </div>
     </div>
@@ -10010,7 +10118,7 @@ function Episode5({ onComplete, onExit }) {
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fdf2f8,#fce7f3)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
         <OwlSay mood="excited" e="ネットいじめを{理解|りかい}するための{重要|じゅうよう}なことばをおぼえよう！🦉">ネットいじめを理解するための重要ワードを覚えよう！🦉</OwlSay>
-        <KeywordPhase epKey="ep5" accentColor="#ec4899" onComplete={() => setPhase("dialogue")} />
+        <KeywordPhase epKey="ep5" accentColor="#ec4899" onComplete={() => setPhase("mywords")} />
         <ParentExpertCard epKey="ep5" accentColor="#ec4899" />
       </div>
     </div>
@@ -10342,9 +10450,9 @@ function Episode6({ onComplete, onExit }) {
           ))}
         </div>
         {checklistDone.length >= checklistItems.length && (
-          <button onClick={() => setPhase("keywords")}
+          <button onClick={() => setPhase("dialogue")}
             style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${rose},${roseDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", animation: "popIn .4s ease" }}>
-            <RubyText text={el ? "キーワードを{覚|おぼ}える 📖 →" : "キーワードを覚える 📖 →"} />
+            <RubyText text={el ? "おうちの{人|ひと}と{話|はな}そう 💬 →" : "おうちの人と話そう 💬 →"} />
           </button>
         )}
       </div>
@@ -10356,7 +10464,7 @@ function Episode6({ onComplete, onExit }) {
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fff1f2,#ffe4e8)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
         <OwlSay mood="excited" e={el ? "{肖像権|しょうぞうけん}とプライバシーのことばをおぼえよう！🦉" : "肖像権とプライバシーのことばを覚えよう！🦉"}>肖像権とプライバシーのことばを覚えよう！🦉</OwlSay>
-        <KeywordPhase epKey="ep6" accentColor={rose} onComplete={() => setPhase("dialogue")} />
+        <KeywordPhase epKey="ep6" accentColor={rose} onComplete={() => setPhase("mywords")} />
         <ParentExpertCard epKey="ep6" accentColor={rose} />
       </div>
     </div>
@@ -10759,9 +10867,9 @@ function Episode7({ onComplete, onExit }) {
                 <RubyText text={el ? "「{完全|かんぜん}に{確|たし}かめる{方法|ほうほう}はありません。{写真|しゃしん}も{名前|なまえ}も{年齢|ねんれい}もビデオ{通話|つうわ}も{偽装|ぎそう}できます。だから{直接|ちょくせつ}{会|あ}ったことがない{人|ひと}には{個人情報|こじんじょうほう}を{教|おし}えないルールを{作|つく}りましょう。」" : "「完全に確かめる方法はありません。写真も名前も年齢もビデオ通話も偽装できます。だから直接会ったことがない人には個人情報を教えないルールを作りましょう。」"} />
               </div>
             </div>
-            <button onClick={() => setPhase("keywords")}
+            <button onClick={() => setPhase("dialogue")}
               style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${purple},${purpleDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", animation: "popIn .4s ease" }}>
-              <RubyText text={el ? "キーワードを{覚|おぼ}える 📖 →" : "キーワードを覚える 📖 →"} />
+              <RubyText text={el ? "おうちの{人|ひと}と{話|はな}そう 💬 →" : "おうちの人と話そう 💬 →"} />
             </button>
           </>
         )}
@@ -10774,7 +10882,7 @@ function Episode7({ onComplete, onExit }) {
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#ede9fe,#ddd6fe)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
         <OwlSay mood="excited" e={el ? "グルーミングとセクストーションのことばをおぼえよう！🦉" : "グルーミングとセクストーションのことばを覚えよう！🦉"}>グルーミングとセクストーションのことばを覚えよう！🦉</OwlSay>
-        <KeywordPhase epKey="ep7" accentColor={purple} onComplete={() => setPhase("dialogue")} />
+        <KeywordPhase epKey="ep7" accentColor={purple} onComplete={() => setPhase("mywords")} />
         <ParentExpertCard epKey="ep7" accentColor={purple} />
       </div>
     </div>
