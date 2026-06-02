@@ -2006,7 +2006,7 @@ function ParentDialogue({ questions, epKey, accentColor = "#ffa940", onComplete 
 
   const questionText = el ? (q.questionEl || q.question) : q.question;
   const hints = el ? (q.hintsEl || q.hints) : q.hints;
-  const phText = el ? (q.placeholderEl || q.placeholder) : q.placeholder;
+  const phText = el ? "おやこで はなした ないようを かいてみよう" : q.placeholder;
   const canProceed = memo.trim().length > 0;
   const isLast = idx === questions.length - 1;
 
@@ -2031,6 +2031,13 @@ function ParentDialogue({ questions, epKey, accentColor = "#ffa940", onComplete 
   return (
     <div style={{ background: "#ffffff", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
+        {/* OwlMolly + bubble */}
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+          <OwlMolly size={60} />
+          <div style={{ background: `${accentColor}15`, border: `1px solid ${accentColor}33`, borderRadius: 14, padding: "10px 14px", fontSize: 13, fontWeight: 700, color: "#1e293b", flex: 1 }}>
+            <RubyText text={el ? "{今回|こんかい}{学|まな}んだことについて{親子|おやこ}で{話|はな}し{合|あ}ってみよう！" : "今回学んだことについて親子で話し合ってみよう！"} />
+          </div>
+        </div>
         {/* Progress dots */}
         <div style={{ display: "flex", gap: 8, justifyContent: "center", marginBottom: 20 }}>
           {questions.map((_, i) => (
@@ -2056,11 +2063,14 @@ function ParentDialogue({ questions, epKey, accentColor = "#ffa940", onComplete 
           <button
             onClick={() => { feedback("tap"); setHintOpen(o => !o); }}
             style={{ background: "rgba(99,102,241,.08)", border: "1px solid rgba(99,102,241,.2)", color: "#4f46e5", borderRadius: hintOpen ? "12px 12px 0 0" : 12, padding: "10px 14px", width: "100%", textAlign: "left", cursor: "pointer", fontFamily: "inherit", fontSize: 13, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <span><RubyText text={el ? "{保護者|ほごしゃ}の{方|かた}へ" : "保護者の方へ"} /></span>
+            <span><RubyText text={el ? "👨‍👩‍👧 {保護者|ほごしゃ}の{方|かた}へ（{話題|わだい}に{詰|つ}まった{時|とき}はこちら）" : "👨‍👩‍👧 保護者の方へ（話題に詰まった時はこちら）"} /></span>
             <span style={{ transform: hintOpen ? "rotate(180deg)" : "none", transition: "transform .2s" }}>▾</span>
           </button>
           {hintOpen && (
             <div style={{ background: "rgba(99,102,241,.04)", border: "1px solid rgba(99,102,241,.2)", borderTop: "none", borderRadius: "0 0 12px 12px", padding: "14px 16px", animation: "slideUp .2s ease" }}>
+              <div style={{ fontSize: 11, color: "#64748b", marginBottom: 10, lineHeight: 1.65 }}>
+                <RubyText text={el ? "お{子|こ}さまから{意見|いけん}が{出|で}ない{時|とき}、{以下|いか}のヒントを{出|だ}してみましょう" : "お子さまから意見が出ない時、以下のヒントを出してみましょう"} />
+              </div>
               {hints && hints.map((hint, i) => (
                 <div key={i} style={{ display: "flex", gap: 8, marginBottom: 8, alignItems: "flex-start", fontSize: 13, color: "#4f46e5", lineHeight: 1.7 }}>
                   <span style={{ fontWeight: 900, flexShrink: 0 }}>{["①","②","③","④","⑤"][i] || `${i + 1}.`}</span>
@@ -2086,6 +2096,11 @@ function ParentDialogue({ questions, epKey, accentColor = "#ffa940", onComplete 
             </div>
           )}
         </div>
+        {!canProceed && (
+          <div style={{ fontSize: 11, color: "#94a3b8", textAlign: "center", marginBottom: 6 }}>
+            <RubyText text={el ? "✏️ 1{文字|もじ}{以上|いじょう}{入力|にゅうりょく}すると{次|つぎ}に{進|すす}めるよ" : "✏️ 1文字以上入力すると次に進めるよ"} />
+          </div>
+        )}
         {/* Next button */}
         <button
           onClick={handleNext}
@@ -6625,7 +6640,7 @@ function Episode1({ onComplete, onExit }) {
           onRevealComplete={() => setWorstCaseShown(true)}
         />
         <button
-          onClick={() => { feedback("tap"); setPhase("dialogue"); }}
+          onClick={() => { feedback("tap"); setPhase("pre_dialogue"); }}
           disabled={!worstCaseShown}
           style={{ width: "100%", marginTop: 14, padding: 15, background: worstCaseShown ? "linear-gradient(135deg,#ffa940,#ff8c1a)" : "rgba(0,0,0,.12)", border: "none", borderRadius: 14, color: worstCaseShown ? "#fff" : "rgba(0,0,0,.3)", fontSize: 15, fontWeight: 900, cursor: worstCaseShown ? "pointer" : "default", fontFamily: "inherit", transition: "all .3s" }}>
           <RubyText text={ageMode === "elementary" ? "{次|つぎ}へ →" : "次へ →"} />
@@ -6649,7 +6664,7 @@ function Episode1({ onComplete, onExit }) {
         <TodaysHomework
           mode="light"
           accentColor="#ffa940"
-          onComplete={() => setPhase("dialogue")}
+          onComplete={() => setPhase("pre_dialogue")}
           tasks={ageMode === "elementary" ? [
             { title: "スマホのカメラ{位置情報|いちじょうほう}をオフにする", desc: "{設定|せってい} → プライバシー → {位置情報|いちじょうほう} → カメラ → 「{許可|きょか}しない」に{変更|へんこう}" },
             { title: "{最近|さいきん}の{投稿|とうこう}{写真|しゃしん}を1{枚|まい}チェックする", desc: "{個人情報|こじんじょうほう}（{校章|こうしょう}・{表札|ひょうさつ}・{背景|はいけい}）が{映|うつ}っていないか{確認|かくにん}しよう" },
@@ -6679,6 +6694,28 @@ function Episode1({ onComplete, onExit }) {
   );
 
   // ── Dialogue (EP1) ──
+  if (phase === "pre_dialogue") return (
+    <EpisodeShell onExit={onExit}>
+      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fff8f0,#ffeed6)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 24px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ maxWidth: 400, width: "100%", textAlign: "center" }}>
+          <OwlMolly size={100} />
+          <div style={{ background: "#fff", border: "2px solid #ffa94044", borderRadius: 20, padding: "20px 22px", marginTop: 20, marginBottom: 32, textAlign: "left", boxShadow: "0 4px 20px #ffa94018" }}>
+            <div style={{ fontSize: 16, fontWeight: 900, color: "#1e293b", lineHeight: 1.75, marginBottom: 12 }}>
+              <RubyText text={ageMode === "elementary" ? "つぎのページから、{今回|こんかい}{学|まな}んだことについて{親子|おやこ}で{話|はな}し{合|あ}ってみよう！" : "次のページから、今回学んだことについて親子で話し合ってみよう！"} />
+            </div>
+            <div style={{ fontSize: 13, color: "#475569", lineHeight: 1.8 }}>
+              <RubyText text={ageMode === "elementary" ? "{時間|じかん}がかかってもよいから、{学|まな}びを{自分|じぶん}の{言葉|ことば}で{話|はな}して、{記録|きろく}することが{大切|たいせつ}だよ！" : "時間がかかってもよいから、学びを自分の言葉で話して、記録することが大切だよ！"} />
+            </div>
+          </div>
+          <button onClick={() => { feedback("tap"); setPhase("dialogue"); }}
+            style={{ width: "100%", padding: "16px", background: "linear-gradient(135deg,#ffa940,#ffa940cc)", border: "none", borderRadius: 16, color: "#fff", fontSize: 16, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 8px 24px #ffa94033" }}>
+            👨‍👩‍👧 話し合いをはじめる →
+          </button>
+        </div>
+      </div>
+    </EpisodeShell>
+  );
+
   const ep1Questions = [
     {
       id: "q1",
@@ -7866,7 +7903,7 @@ function Episode2({ onComplete, onExit }) {
             { title: "Googleレンズ（画像検索）を試してみる", desc: "怪しい写真を長押しして「Googleで検索」を選ぶ" },
           ]}
         />
-        <button onClick={() => setPhase("dialogue")}
+        <button onClick={() => setPhase("pre_dialogue")}
           style={{ width: "100%", marginTop: 14, padding: 15, background: "linear-gradient(135deg,#7c3aed,#4f46e5)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
           <RubyText text={ageMode === "elementary" ? "おうちの{人|ひと}と{話|はな}そう 💬 →" : "おうちの人と話そう 💬 →"} />
         </button>
@@ -7886,6 +7923,28 @@ function Episode2({ onComplete, onExit }) {
   );
 
   // ── Dialogue (EP2) ──
+  if (phase === "pre_dialogue") return (
+    <EpisodeShell onExit={onExit}>
+      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#f5f0ff,#ede0ff)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 24px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ maxWidth: 400, width: "100%", textAlign: "center" }}>
+          <OwlMolly size={100} />
+          <div style={{ background: "#fff", border: "2px solid #7c3aed44", borderRadius: 20, padding: "20px 22px", marginTop: 20, marginBottom: 32, textAlign: "left", boxShadow: "0 4px 20px #7c3aed18" }}>
+            <div style={{ fontSize: 16, fontWeight: 900, color: "#1e293b", lineHeight: 1.75, marginBottom: 12 }}>
+              <RubyText text={ageMode === "elementary" ? "つぎのページから、{今回|こんかい}{学|まな}んだことについて{親子|おやこ}で{話|はな}し{合|あ}ってみよう！" : "次のページから、今回学んだことについて親子で話し合ってみよう！"} />
+            </div>
+            <div style={{ fontSize: 13, color: "#475569", lineHeight: 1.8 }}>
+              <RubyText text={ageMode === "elementary" ? "{時間|じかん}がかかってもよいから、{学|まな}びを{自分|じぶん}の{言葉|ことば}で{話|はな}して、{記録|きろく}することが{大切|たいせつ}だよ！" : "時間がかかってもよいから、学びを自分の言葉で話して、記録することが大切だよ！"} />
+            </div>
+          </div>
+          <button onClick={() => { feedback("tap"); setPhase("dialogue"); }}
+            style={{ width: "100%", padding: "16px", background: "linear-gradient(135deg,#7c3aed,#7c3aedcc)", border: "none", borderRadius: 16, color: "#fff", fontSize: 16, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 8px 24px #7c3aed33" }}>
+            👨‍👩‍👧 話し合いをはじめる →
+          </button>
+        </div>
+      </div>
+    </EpisodeShell>
+  );
+
   const ep2Questions = [
     {
       id: "q1",
@@ -8577,7 +8636,7 @@ function Episode3({ onComplete, onExit }) {
             { title: "おうちの人と「闇バイト」について話す", desc: "「こういう手口があるんだって」と教えてあげよう" },
           ]}
         />
-        <button onClick={() => setPhase("dialogue")}
+        <button onClick={() => setPhase("pre_dialogue")}
           style={{ width: "100%", marginTop: 14, padding: 15, background: "linear-gradient(135deg,#16a34a,#15803d)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
           <RubyText text={ageMode === "elementary" ? "おうちの{人|ひと}と{話|はな}そう 💬 →" : "おうちの人と話そう 💬 →"} />
         </button>
@@ -8597,6 +8656,28 @@ function Episode3({ onComplete, onExit }) {
   );
 
   // ── Dialogue (EP3) ──
+  if (phase === "pre_dialogue") return (
+    <EpisodeShell onExit={onExit}>
+      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#f0fff4,#dcfce7)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 24px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ maxWidth: 400, width: "100%", textAlign: "center" }}>
+          <OwlMolly size={100} />
+          <div style={{ background: "#fff", border: "2px solid #16a34a44", borderRadius: 20, padding: "20px 22px", marginTop: 20, marginBottom: 32, textAlign: "left", boxShadow: "0 4px 20px #16a34a18" }}>
+            <div style={{ fontSize: 16, fontWeight: 900, color: "#1e293b", lineHeight: 1.75, marginBottom: 12 }}>
+              <RubyText text={ageMode === "elementary" ? "つぎのページから、{今回|こんかい}{学|まな}んだことについて{親子|おやこ}で{話|はな}し{合|あ}ってみよう！" : "次のページから、今回学んだことについて親子で話し合ってみよう！"} />
+            </div>
+            <div style={{ fontSize: 13, color: "#475569", lineHeight: 1.8 }}>
+              <RubyText text={ageMode === "elementary" ? "{時間|じかん}がかかってもよいから、{学|まな}びを{自分|じぶん}の{言葉|ことば}で{話|はな}して、{記録|きろく}することが{大切|たいせつ}だよ！" : "時間がかかってもよいから、学びを自分の言葉で話して、記録することが大切だよ！"} />
+            </div>
+          </div>
+          <button onClick={() => { feedback("tap"); setPhase("dialogue"); }}
+            style={{ width: "100%", padding: "16px", background: "linear-gradient(135deg,#16a34a,#16a34acc)", border: "none", borderRadius: 16, color: "#fff", fontSize: 16, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 8px 24px #16a34a33" }}>
+            👨‍👩‍👧 話し合いをはじめる →
+          </button>
+        </div>
+      </div>
+    </EpisodeShell>
+  );
+
   const ep3Questions = [
     {
       id: "q1",
@@ -9561,7 +9642,7 @@ function Episode4({ onComplete, onExit }) {
             </div>
           ))}
         </div>
-        <button onClick={() => setPhase("dialogue")}
+        <button onClick={() => setPhase("pre_dialogue")}
           style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${sky},${skyDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
           <RubyText text={el ? "おうちの{人|ひと}と{話|はな}そう 💬 →" : "おうちの人と話そう 💬 →"} />
         </button>
@@ -9578,6 +9659,28 @@ function Episode4({ onComplete, onExit }) {
         <ParentExpertCard epKey="ep4" accentColor={sky} />
       </div>
     </div>
+  );
+
+  if (phase === "pre_dialogue") return (
+    <EpisodeShell onExit={onExit}>
+      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#f0f9ff,#e0f2fe)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 24px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ maxWidth: 400, width: "100%", textAlign: "center" }}>
+          <OwlMolly size={100} />
+          <div style={{ background: "#fff", border: `2px solid ${sky}44`, borderRadius: 20, padding: "20px 22px", marginTop: 20, marginBottom: 32, textAlign: "left", boxShadow: `0 4px 20px ${sky}18` }}>
+            <div style={{ fontSize: 16, fontWeight: 900, color: "#1e293b", lineHeight: 1.75, marginBottom: 12 }}>
+              <RubyText text={el ? "つぎのページから、{今回|こんかい}{学|まな}んだことについて{親子|おやこ}で{話|はな}し{合|あ}ってみよう！" : "次のページから、今回学んだことについて親子で話し合ってみよう！"} />
+            </div>
+            <div style={{ fontSize: 13, color: "#475569", lineHeight: 1.8 }}>
+              <RubyText text={el ? "{時間|じかん}がかかってもよいから、{学|まな}びを{自分|じぶん}の{言葉|ことば}で{話|はな}して、{記録|きろく}することが{大切|たいせつ}だよ！" : "時間がかかってもよいから、学びを自分の言葉で話して、記録することが大切だよ！"} />
+            </div>
+          </div>
+          <button onClick={() => { feedback("tap"); setPhase("dialogue"); }}
+            style={{ width: "100%", padding: "16px", background: `linear-gradient(135deg,${sky},${sky}cc)`, border: "none", borderRadius: 16, color: "#fff", fontSize: 16, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${sky}33` }}>
+            👨‍👩‍👧 話し合いをはじめる →
+          </button>
+        </div>
+      </div>
+    </EpisodeShell>
   );
 
   const ep4Questions = [
@@ -10190,7 +10293,7 @@ function Episode5({ onComplete, onExit }) {
             { title: "相談窓口を1つ覚える", desc: "子どもの人権110番：0120-007-110（無料）" },
           ]}
         />
-        <button onClick={() => setPhase("dialogue")}
+        <button onClick={() => setPhase("pre_dialogue")}
           style={{ width: "100%", marginTop: 14, padding: 15, background: `linear-gradient(135deg,${pink},${pinkDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
           <RubyText text={ageMode === "elementary" ? "おうちの{人|ひと}と{話|はな}そう 💬 →" : "おうちの人と話そう 💬 →"} />
         </button>
@@ -10210,6 +10313,28 @@ function Episode5({ onComplete, onExit }) {
   );
 
   // ── Dialogue (EP5) ──
+  if (phase === "pre_dialogue") return (
+    <EpisodeShell onExit={onExit}>
+      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fff0f6,#fce7f3)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 24px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ maxWidth: 400, width: "100%", textAlign: "center" }}>
+          <OwlMolly size={100} />
+          <div style={{ background: "#fff", border: `2px solid ${pink}44`, borderRadius: 20, padding: "20px 22px", marginTop: 20, marginBottom: 32, textAlign: "left", boxShadow: `0 4px 20px ${pink}18` }}>
+            <div style={{ fontSize: 16, fontWeight: 900, color: "#1e293b", lineHeight: 1.75, marginBottom: 12 }}>
+              <RubyText text={ageMode === "elementary" ? "つぎのページから、{今回|こんかい}{学|まな}んだことについて{親子|おやこ}で{話|はな}し{合|あ}ってみよう！" : "次のページから、今回学んだことについて親子で話し合ってみよう！"} />
+            </div>
+            <div style={{ fontSize: 13, color: "#475569", lineHeight: 1.8 }}>
+              <RubyText text={ageMode === "elementary" ? "{時間|じかん}がかかってもよいから、{学|まな}びを{自分|じぶん}の{言葉|ことば}で{話|はな}して、{記録|きろく}することが{大切|たいせつ}だよ！" : "時間がかかってもよいから、学びを自分の言葉で話して、記録することが大切だよ！"} />
+            </div>
+          </div>
+          <button onClick={() => { feedback("tap"); setPhase("dialogue"); }}
+            style={{ width: "100%", padding: "16px", background: `linear-gradient(135deg,${pink},${pink}cc)`, border: "none", borderRadius: 16, color: "#fff", fontSize: 16, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${pink}33` }}>
+            👨‍👩‍👧 話し合いをはじめる →
+          </button>
+        </div>
+      </div>
+    </EpisodeShell>
+  );
+
   const ep5Questions = [
     {
       id: "q1",
@@ -10559,7 +10684,7 @@ function Episode6({ onComplete, onExit }) {
           ))}
         </div>
         {checklistDone.length >= checklistItems.length && (
-          <button onClick={() => setPhase("dialogue")}
+          <button onClick={() => setPhase("pre_dialogue")}
             style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${rose},${roseDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", animation: "popIn .4s ease" }}>
             <RubyText text={el ? "おうちの{人|ひと}と{話|はな}そう 💬 →" : "おうちの人と話そう 💬 →"} />
           </button>
@@ -10577,6 +10702,28 @@ function Episode6({ onComplete, onExit }) {
         <ParentExpertCard epKey="ep6" accentColor={rose} />
       </div>
     </div>
+  );
+
+  if (phase === "pre_dialogue") return (
+    <EpisodeShell onExit={onExit}>
+      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fff0f3,#ffe4e6)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 24px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ maxWidth: 400, width: "100%", textAlign: "center" }}>
+          <OwlMolly size={100} />
+          <div style={{ background: "#fff", border: `2px solid ${rose}44`, borderRadius: 20, padding: "20px 22px", marginTop: 20, marginBottom: 32, textAlign: "left", boxShadow: `0 4px 20px ${rose}18` }}>
+            <div style={{ fontSize: 16, fontWeight: 900, color: "#1e293b", lineHeight: 1.75, marginBottom: 12 }}>
+              <RubyText text={el ? "つぎのページから、{今回|こんかい}{学|まな}んだことについて{親子|おやこ}で{話|はな}し{合|あ}ってみよう！" : "次のページから、今回学んだことについて親子で話し合ってみよう！"} />
+            </div>
+            <div style={{ fontSize: 13, color: "#475569", lineHeight: 1.8 }}>
+              <RubyText text={el ? "{時間|じかん}がかかってもよいから、{学|まな}びを{自分|じぶん}の{言葉|ことば}で{話|はな}して、{記録|きろく}することが{大切|たいせつ}だよ！" : "時間がかかってもよいから、学びを自分の言葉で話して、記録することが大切だよ！"} />
+            </div>
+          </div>
+          <button onClick={() => { feedback("tap"); setPhase("dialogue"); }}
+            style={{ width: "100%", padding: "16px", background: `linear-gradient(135deg,${rose},${rose}cc)`, border: "none", borderRadius: 16, color: "#fff", fontSize: 16, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${rose}33` }}>
+            👨‍👩‍👧 話し合いをはじめる →
+          </button>
+        </div>
+      </div>
+    </EpisodeShell>
   );
 
   const ep6Questions = [
@@ -10985,7 +11132,7 @@ function Episode7({ onComplete, onExit }) {
                 <RubyText text={el ? "「{完全|かんぜん}に{確|たし}かめる{方法|ほうほう}はありません。{写真|しゃしん}も{名前|なまえ}も{年齢|ねんれい}もビデオ{通話|つうわ}も{偽装|ぎそう}できます。だから{直接|ちょくせつ}{会|あ}ったことがない{人|ひと}には{個人情報|こじんじょうほう}を{教|おし}えないルールを{作|つく}りましょう。」" : "「完全に確かめる方法はありません。写真も名前も年齢もビデオ通話も偽装できます。だから直接会ったことがない人には個人情報を教えないルールを作りましょう。」"} />
               </div>
             </div>
-            <button onClick={() => setPhase("dialogue")}
+            <button onClick={() => setPhase("pre_dialogue")}
               style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${purple},${purpleDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", animation: "popIn .4s ease" }}>
               <RubyText text={el ? "おうちの{人|ひと}と{話|はな}そう 💬 →" : "おうちの人と話そう 💬 →"} />
             </button>
@@ -11004,6 +11151,28 @@ function Episode7({ onComplete, onExit }) {
         <ParentExpertCard epKey="ep7" accentColor={purple} />
       </div>
     </div>
+  );
+
+  if (phase === "pre_dialogue") return (
+    <EpisodeShell onExit={onExit}>
+      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#f5f3ff,#ede9fe)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 24px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ maxWidth: 400, width: "100%", textAlign: "center" }}>
+          <OwlMolly size={100} />
+          <div style={{ background: "#fff", border: `2px solid ${purple}44`, borderRadius: 20, padding: "20px 22px", marginTop: 20, marginBottom: 32, textAlign: "left", boxShadow: `0 4px 20px ${purple}18` }}>
+            <div style={{ fontSize: 16, fontWeight: 900, color: "#1e293b", lineHeight: 1.75, marginBottom: 12 }}>
+              <RubyText text={el ? "つぎのページから、{今回|こんかい}{学|まな}んだことについて{親子|おやこ}で{話|はな}し{合|あ}ってみよう！" : "次のページから、今回学んだことについて親子で話し合ってみよう！"} />
+            </div>
+            <div style={{ fontSize: 13, color: "#475569", lineHeight: 1.8 }}>
+              <RubyText text={el ? "{時間|じかん}がかかってもよいから、{学|まな}びを{自分|じぶん}の{言葉|ことば}で{話|はな}して、{記録|きろく}することが{大切|たいせつ}だよ！" : "時間がかかってもよいから、学びを自分の言葉で話して、記録することが大切だよ！"} />
+            </div>
+          </div>
+          <button onClick={() => { feedback("tap"); setPhase("dialogue"); }}
+            style={{ width: "100%", padding: "16px", background: `linear-gradient(135deg,${purple},${purple}cc)`, border: "none", borderRadius: 16, color: "#fff", fontSize: 16, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${purple}33` }}>
+            👨‍👩‍👧 話し合いをはじめる →
+          </button>
+        </div>
+      </div>
+    </EpisodeShell>
   );
 
   const ep7Questions = [
