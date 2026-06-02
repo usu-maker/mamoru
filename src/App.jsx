@@ -7027,18 +7027,18 @@ function Episode1_2({ onComplete, onExit }) {
 
   const iosSteps = el ? [
     { icon: "⚙️", title: "「{設定|せってい}」アイコンをひらく", desc: "ホーム{画面|がめん}のグレーの{歯車|はぐるま}アイコン" },
-    { icon: "🔒", title: "「プライバシーとセキュリティ」をタップ", desc: "{少|すこ}し{下|した}にスクロールするとある" },
+    { icon: "🖐️", title: "「プライバシーとセキュリティ」をタップ", desc: "{少|すこ}し{下|した}にスクロールするとある" },
     { icon: "📍", title: "「{位置情報|いちじょうほう}サービス」をタップ", desc: "{一番|いちばん}{上|うえ}のあたりにある" },
     { icon: "⬇️", title: "{一番|いちばん}{下|した}までスクロール→「システムサービス」をタップ", desc: "リストの{一番|いちばん}{下|した}にある" },
-    { icon: "🗺️", title: "「よく{利用|りよう}する{場所|ばしょ}」または「{利用|りよう}{頻度|ひんど}の{高|たか}い{場所|ばしょ}」をタップ", desc: "{機種|きしゅ}によって{名前|なまえ}が{少|すこ}し{違|ちが}う" },
-    { icon: "🔑", title: "パスコードを{入力|にゅうりょく}する", desc: "おうちの{人|ひと}にやってもらおう" },
+    { icon: "🗺️", title: "「よく{利用|りよう}する{場所|ばしょ}」または「{利用|りよう}{頻度|ひんど}の{高|たか}い{場所|ばしょ}と{経路|けいろ}」をタップ", desc: "{機種|きしゅ}・バージョンによって{名前|なまえ}が{異|こと}なる{場合|ばあい}があります" },
+    { icon: "🔑", title: "パスコードを{入力|にゅうりょく}する", desc: "おうちの{人|ひと}にやってもらおう", desc2: "{設定|せってい}によってはTouch IDやFace IDが{要求|ようきゅう}される{場合|ばあい}があります" },
   ] : [
     { icon: "⚙️", title: "「設定」アイコンをひらく", desc: "ホーム画面のグレーの歯車アイコン" },
-    { icon: "🔒", title: "「プライバシーとセキュリティ」をタップ", desc: "少し下にスクロールするとある" },
+    { icon: "🖐️", title: "「プライバシーとセキュリティ」をタップ", desc: "少し下にスクロールするとある" },
     { icon: "📍", title: "「位置情報サービス」をタップ", desc: "一番上のあたりにある" },
     { icon: "⬇️", title: "一番下までスクロール→「システムサービス」をタップ", desc: "リストの一番下にある" },
-    { icon: "🗺️", title: "「よく利用する場所」または「利用頻度の高い場所」をタップ", desc: "機種によって名前が少し違う" },
-    { icon: "🔑", title: "パスコードを入力する", desc: "おうちの人にやってもらおう" },
+    { icon: "🗺️", title: "「よく利用する場所」または「利用頻度の高い場所と経路」をタップ", desc: "機種・バージョンによって名前が異なる場合があります" },
+    { icon: "🔑", title: "パスコードを入力する", desc: "おうちの人にやってもらおう", desc2: "設定次第ではTouch IDやFace IDが要求される場合があります" },
   ];
 
   const androidSteps = el ? [
@@ -7154,6 +7154,11 @@ function Episode1_2({ onComplete, onExit }) {
             }
           </h2>
           <OwlSay mood="happy" e={el ? "おうちの{人|ひと}といっしょに、じゅんばんにやってみよう🦉" : "おうちの人といっしょに、じゅんばんにやってみよう🦉"}>おうちの人といっしょに、じゅんばんにやってみよう🦉</OwlSay>
+          {selectedDevice === "ios" && (
+            <div style={{ background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.15)", borderRadius: 10, padding: "10px 14px", fontSize: 11, color: "rgba(255,255,255,.55)", lineHeight: 1.75, marginBottom: 14 }}>
+              下記の例は2026年6月時点のiOSの操作画面を参考にしています。操作手順は変更される場合がございます。また、既に位置情報サービスを無効化している場合は記載の結果にならない可能性があります。
+            </div>
+          )}
           <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 14 }}>
             {steps.slice(0, stepIdx + 1).map((s, i) => (
               <div key={i} style={{ background: `${orange}08`, border: `1px solid ${orange}22`, borderRadius: 16, padding: "14px 16px", display: "flex", gap: 14, alignItems: "flex-start", animation: "slideUp .4s ease" }}>
@@ -7162,11 +7167,12 @@ function Episode1_2({ onComplete, onExit }) {
                   <div style={{ fontSize: 12, color: orange, marginBottom: 3 }}>STEP {i + 1}</div>
                   <div style={{ fontSize: 13, fontWeight: 900, color: "#fff", marginBottom: s.desc ? 4 : 0 }}><RubyText text={s.title} /></div>
                   {s.desc && <div style={{ fontSize: 12, color: "rgba(255,255,255,.5)" }}><RubyText text={s.desc} /></div>}
+                  {s.desc2 && <div style={{ fontSize: 11, color: "rgba(255,255,255,.45)", marginTop: 4 }}><RubyText text={s.desc2} /></div>}
                 </div>
               </div>
             ))}
           </div>
-          {selectedDevice === "ios" && (
+          {selectedDevice === "ios" && stepIdx >= steps.length - 1 && (
             <div style={{ background: "rgba(220,38,38,.08)", border: "1px solid rgba(220,38,38,.25)", borderRadius: 12, padding: "10px 14px", marginBottom: 14, fontSize: 12, color: "#fca5a5" }}>
               ⚠️ <RubyText text={el ? "パスコードはおうちの{人|ひと}だけが{入力|にゅうりょく}してください" : "パスコードはおうちの人だけが入力してください"} />
             </div>
