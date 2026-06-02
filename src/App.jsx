@@ -3323,6 +3323,10 @@ function FishingTrap({ onClose }) {
   // ── 偽ログイン画面 ──
   if (phase === "login") return (
     <div style={{ position: "fixed", inset: 0, zIndex: 9999, background: "#fff", fontFamily: "system-ui,-apple-system,sans-serif", display: "flex", flexDirection: "column" }}>
+      <button onClick={() => { feedback("tap"); onClose(); }}
+        style={{ position: "fixed", top: 14, left: 14, zIndex: 200, width: 36, height: 36, borderRadius: 10, background: "rgba(255,255,255,.15)", border: "1px solid rgba(255,255,255,.2)", cursor: "pointer", fontSize: 16, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        ←
+      </button>
       {/* 本物そっくりのフェイクヘッダー */}
       <div style={{ background: "#fff", borderBottom: "1px solid #e5e7eb", padding: "12px 16px", display: "flex", alignItems: "center", gap: 8 }}>
         <div style={{ width: 16, height: 16, borderRadius: "50%", background: "#22c55e" }} />
