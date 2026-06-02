@@ -7353,7 +7353,7 @@ function Episode1_2({ onComplete, onExit }) {
               style={{ width: "48%", background: orange, border: "none", borderRadius: 12, padding: "12px", fontSize: 13, fontWeight: 900, color: "#fff", cursor: "pointer", fontFamily: "inherit" }}>
               <RubyText text={el ? "{設定|せってい}してみる" : "設定してみる"} />
             </button>
-            <button onClick={() => { feedback("complete"); setPhase("complete"); }}
+            <button onClick={() => { feedback("tap"); setPhase("summary"); }}
               style={{ width: "48%", background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.15)", borderRadius: 12, padding: "12px", fontSize: 13, color: "rgba(255,255,255,.5)", cursor: "pointer", fontFamily: "inherit" }}>
               <RubyText text={el ? "{今|いま}はスキップする" : "今はスキップする"} />
             </button>
@@ -7376,7 +7376,7 @@ function Episode1_2({ onComplete, onExit }) {
                 </button>
               ))}
             </div>
-            <button onClick={() => { feedback("complete"); setPhase("complete"); }}
+            <button onClick={() => { feedback("tap"); setPhase("summary"); }}
               style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${orange},${orangeDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", animation: "popIn .4s ease" }}>
               <RubyText text={el ? "まとめへ →" : "まとめへ →"} />
             </button>
@@ -7387,6 +7387,102 @@ function Episode1_2({ onComplete, onExit }) {
     </EpisodeShell>
   );
 
+  if (phase === "summary") return (
+    <EpisodeShell onExit={onExit}>
+      <div style={{
+        minHeight: "100vh",
+        background: "linear-gradient(180deg,#fff8f0,#ffeed6)",
+        padding: "32px 20px 40px",
+        fontFamily: "'Zen Maru Gothic',sans-serif",
+      }}>
+        <div style={{ maxWidth: 440, margin: "0 auto" }}>
+
+          <OwlMolly size={80} />
+
+          <div style={{
+            background: "#fff",
+            borderRadius: 18,
+            padding: "18px 20px",
+            margin: "14px 0 20px",
+            border: "1.5px solid #ffa94044",
+          }}>
+            <RubyText text={ageMode === "elementary"
+              ? "エピソード1とあわせて、こじん{情報|じょうほう}を{守|まも}る{第一歩|だいいっぽ}がふめたね！おうちの{人|ひと}と{一緒|いっしょ}にできたこと、すごいよ！"
+              : "エピソード1とあわせて、個人情報を守る第一歩がふめたね！おうちの人と一緒にできたこと、すごいよ！"
+            } />
+          </div>
+
+          <div style={{
+            background: "rgba(34,197,94,.08)",
+            border: "1px solid rgba(34,197,94,.2)",
+            borderRadius: 16,
+            padding: "16px 18px",
+            marginBottom: 24,
+          }}>
+            <div style={{
+              fontSize: 13,
+              fontWeight: 900,
+              color: "#16a34a",
+              marginBottom: 12,
+            }}>
+              <RubyText text={ageMode === "elementary"
+                ? "これで、{位置情報|いちじょうほう}のワナから{守|まも}れる"
+                : "これで、位置情報のワナから守れる"
+              } />
+            </div>
+            {[
+              ["写真から家の場所がバレない", "{写真|しゃしん}から{家|いえ}の{場所|ばしょ}がバレない"],
+              ["SNS投稿から場所がバレない", "SNS{投稿|とうこう}から{場所|ばしょ}がバレない"],
+              ["毎日の行動パターンを追われない", "{毎日|まいにち}の{行動|こうどう}パターンを{追|お}われない"],
+            ].map(([text, textEl], i) => (
+              <div key={i} style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                padding: "8px 0",
+                borderBottom: i < 2 ? "1px solid rgba(34,197,94,.1)" : "none",
+              }}>
+                <div style={{
+                  width: 22,
+                  height: 22,
+                  borderRadius: 99,
+                  background: "#22c55e",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 13,
+                  color: "#fff",
+                  flexShrink: 0,
+                }}>✓</div>
+                <span style={{ fontSize: 13, fontWeight: 700, color: "#1e293b" }}>
+                  <RubyText text={ageMode === "elementary" ? textEl : text} />
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <button
+            onClick={() => { feedback("complete"); setPhase("complete"); }}
+            style={{
+              width: "100%",
+              padding: "16px",
+              background: "linear-gradient(135deg,#ffa940,#ff8c1a)",
+              border: "none",
+              borderRadius: 16,
+              color: "#fff",
+              fontSize: 16,
+              fontWeight: 900,
+              cursor: "pointer",
+              fontFamily: "inherit",
+            }}>
+            🏆 修了証をもらう
+          </button>
+
+        </div>
+      </div>
+    </EpisodeShell>
+  );
+
   if (phase === "complete") return (
     <EpisodeShell onExit={onExit}>
       <CompleteScreen
@@ -7394,39 +7490,6 @@ function Episode1_2({ onComplete, onExit }) {
         accentColor="#ffa940"
         onComplete={onComplete}
       />
-    </EpisodeShell>
-  );
-
-  if (phase === "summary") return (
-    <EpisodeShell onExit={onExit}>
-    <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#1a1000,#0f0800)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
-      <div style={{ maxWidth: 440, margin: "0 auto" }}>
-        <h2 style={{ fontSize: 20, fontWeight: 900, color: "#fff", textAlign: "center", marginBottom: 16 }}>
-          <RubyText text={el ? "これで、{位置情報|いちじょうほう}のワナから{守|まも}れる" : "これで、位置情報のワナから守れる"} />
-        </h2>
-        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 16 }}>
-          {(el ? [
-            "{写真|しゃしん}から{家|いえ}の{場所|ばしょ}がバレない",
-            "SNS{投稿|とうこう}から{場所|ばしょ}がバレない",
-            "{毎日|まいにち}の{行動|こうどう}パターンを{追|お}われない",
-          ] : [
-            "写真から家の場所がバレない",
-            "SNS投稿から場所がバレない",
-            "毎日の行動パターンを追われない",
-          ]).map((t, i) => (
-            <div key={i} style={{ display: "flex", gap: 12, alignItems: "center", background: "rgba(74,222,128,.06)", border: "1px solid rgba(74,222,128,.2)", borderRadius: 14, padding: "13px 16px", animation: `slideUp .4s ${i * .1}s both ease` }}>
-              <span style={{ fontSize: 20 }}>✅</span>
-              <span style={{ fontSize: 14, color: "#86efac" }}><RubyText text={t} /></span>
-            </div>
-          ))}
-        </div>
-        <OwlSay mood="happy" e={el ? "エピソード1とあわせて、{個人情報|こじんじょうほう}を{守|まも}る{第一歩|だいいっぽ}がふめたね！おうちの{人|ひと}と{一緒|いっしょ}にできたこと、すごいよ！🦉" : "エピソード1とあわせて、個人情報を守る第一歩がふめたね！おうちの人と一緒にできたこと、すごいよ！🦉"}>エピソード1とあわせて、個人情報を守る第一歩がふめたね！おうちの人と一緒にできたこと、すごいよ！🦉</OwlSay>
-        <button onClick={() => { feedback("complete"); setPhase("complete"); }}
-          style={{ width: "100%", padding: 16, background: `linear-gradient(135deg,${orange},${orangeDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 16, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${orange}44` }}>
-          🏆 <RubyText text={el ? "{修了証|しゅうりょうしょう}をもらう" : "修了証をもらう"} />
-        </button>
-      </div>
-    </div>
     </EpisodeShell>
   );
 
