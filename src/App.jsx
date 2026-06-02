@@ -5847,6 +5847,13 @@ function HomeScreen({ onNavigate, progress }) {
     "ネットのトラブルは、{知識|ちしき}があれば9{割|わり}{防|ふせ}げるって{知|し}ってた？💡",
   ];
   const [mollyMsgIdx, setMollyMsgIdx] = useState(0);
+  const [activeTab, setActiveTab] = useState("top");
+  const tabs = [
+    { id: "top",       icon: "🦉",   label: "トップ",       labelEl: "トップ" },
+    { id: "learn",     icon: "📚",   label: "学ぶ",         labelEl: "まなぶ" },
+    { id: "challenge", icon: "🔥",   label: "チャレンジ",   labelEl: "チャレンジ" },
+    { id: "parent",    icon: "👨‍👩‍👧", label: "保護者の方へ", labelEl: "ほごしゃのかたへ" },
+  ];
 
   // モリィタップ（シークレットコマンド）
   const handleOwlTap = () => {
@@ -5949,34 +5956,24 @@ function HomeScreen({ onNavigate, progress }) {
       {secret3 && <DarkWebMission onClose={() => setSecret3(false)} />}
       {secret4 && <ParentSecretDashboard onClose={() => setSecret4(false)} />}
 
-
-      {/* Hero */}
-      <div style={{ position: "relative", padding: "44px 20px 28px", overflow: "hidden" }}>
-        <div style={{ position: "absolute", width: 300, height: 300, borderRadius: "50%", background: "radial-gradient(circle,rgba(100,180,255,.18) 0%,transparent 70%)", top: -80, left: -60, animation: "orb 12s ease-in-out infinite", pointerEvents: "none" }} />
-        <div style={{ position: "absolute", width: 250, height: 250, borderRadius: "50%", background: "radial-gradient(circle,rgba(255,169,64,.12) 0%,transparent 70%)", top: 40, right: -40, animation: "orb2 15s ease-in-out infinite", pointerEvents: "none" }} />
-        <div style={{ maxWidth: 440, margin: "0 auto", position: "relative", zIndex: 2 }}>
-          {/* Title row + Language switcher */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28 }}>
-            <div>
-              <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 9, color: "#fff", letterSpacing: ".3em", marginBottom: 4 }}>{t("home.badge")}</div>
-              {/* ② ロゴ長押し3秒でシークレット2 */}
-              <div
-                onMouseDown={() => { const t = setTimeout(() => { setSecret2(true); setLogoHoldTimer(null); try { localStorage.setItem("mamoru_secret2_found", "1"); } catch {} }, 3000); setLogoHoldTimer(t); }}
-                onMouseUp={() => { if (logoHoldTimer) { clearTimeout(logoHoldTimer); setLogoHoldTimer(null); } }}
-                onTouchStart={() => { const t = setTimeout(() => { setSecret2(true); setLogoHoldTimer(null); try { localStorage.setItem("mamoru_secret2_found", "1"); } catch {} }, 3000); setLogoHoldTimer(t); }}
-                onTouchEnd={() => { if (logoHoldTimer) { clearTimeout(logoHoldTimer); setLogoHoldTimer(null); } }}
-                style={{ fontSize: 30, fontWeight: 900, color: "#fff", letterSpacing: "-.02em", cursor: "default", userSelect: "none" }}>
-                {t("home.appName")}
-              </div>
+      {/* ── トップタブ ── */}
+      {activeTab === "top" && (
+        <div style={{ padding: "24px 20px 80px", maxWidth: 440, margin: "0 auto" }}>
+          {/* ヘッダー */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+            <div
+              onMouseDown={() => { const t = setTimeout(() => { setSecret2(true); setLogoHoldTimer(null); try { localStorage.setItem("mamoru_secret2_found", "1"); } catch {} }, 3000); setLogoHoldTimer(t); }}
+              onMouseUp={() => { if (logoHoldTimer) { clearTimeout(logoHoldTimer); setLogoHoldTimer(null); } }}
+              onTouchStart={() => { const t = setTimeout(() => { setSecret2(true); setLogoHoldTimer(null); try { localStorage.setItem("mamoru_secret2_found", "1"); } catch {} }, 3000); setLogoHoldTimer(t); }}
+              onTouchEnd={() => { if (logoHoldTimer) { clearTimeout(logoHoldTimer); setLogoHoldTimer(null); } }}
+              style={{ fontSize: 20, fontWeight: 900, color: "#fff", cursor: "default", userSelect: "none" }}>
+              {t("home.appName")}
             </div>
-            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-              <LanguageSwitcher compact />
-              <div style={{ background: "rgba(255,169,64,.12)", border: "1px solid rgba(255,169,64,.3)", borderRadius: 8, padding: "4px 10px", fontSize: 10, color: "#ffa940", fontWeight: 700 }}><RubyText text={t("home.beta")} /></div>
-            </div>
+            <LanguageSwitcher compact />
           </div>
-          {/* Owl greeting */}
-          <div style={{ marginBottom: 28 }}>
-            {/* 吹き出し */}
+
+          {/* モリィ＋セリフ */}
+          <div style={{ marginBottom: 20 }}>
             <div key={mollyMsgIdx} style={{ background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.15)", borderRadius: 16, padding: "12px 16px", marginBottom: 12, animation: "slideUp .3s ease" }}>
               <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", lineHeight: 1.75 }}>
                 <RubyText text={ageMode === "elementary" ? mollyMessagesEl[mollyMsgIdx] : mollyMessages[mollyMsgIdx]} />
@@ -5985,7 +5982,6 @@ function HomeScreen({ onNavigate, progress }) {
                 {ageMode === "elementary" ? "タップでセリフがかわるよ" : "タップでセリフが変わるよ"}
               </div>
             </div>
-            {/* ① モリィ10回タップでシークレット1 + セリフ変更 */}
             <div style={{ display: "flex", justifyContent: "center" }}>
               <div
                 onClick={handleMollyTap}
@@ -6004,15 +6000,15 @@ function HomeScreen({ onNavigate, progress }) {
               </div>
             </div>
           </div>
-          {/* Master title + badge strip */}
+
+          {/* 取得済み実績 */}
           {(() => {
             const rec = (() => { try { const r = localStorage.getItem("mamoru_progress_v1"); return r ? JSON.parse(r) : {}; } catch { return {}; } })();
             const mt = getMasterTitle(rec);
             const earned = getBadges(rec);
             if (earned.length === 0) return null;
             return (
-              <div style={{ marginTop: 12, animation: "slideUp .6s ease" }}>
-                {/* 実績ヘッダー */}
+              <div style={{ marginBottom: 14, animation: "slideUp .6s ease" }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
                   <div style={{ fontSize: 14, fontWeight: 900, color: "#fff" }}>🏆 取得済み実績</div>
                   <div style={{ fontSize: 13, fontWeight: 900, color: "#ffa940", background: "rgba(255,169,64,.12)", border: "1px solid rgba(255,169,64,.25)", borderRadius: 99, padding: "3px 12px" }}>
@@ -6027,8 +6023,8 @@ function HomeScreen({ onNavigate, progress }) {
             );
           })()}
 
-          {/* 年齢モード表示・切り替え */}
-          <div style={{ background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.12)", borderRadius: 14, padding: "12px 16px", marginTop: 10, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+          {/* 年齢モード切り替え */}
+          <div style={{ background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.12)", borderRadius: 14, padding: "12px 16px", marginBottom: 14, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
             <div>
               <div style={{ fontSize: 13, fontWeight: 900, color: "#fff" }}>
                 {ageMode === "elementary" ? "🏫 小学生モード" : "🏫 中学生以上モード"}
@@ -6038,197 +6034,135 @@ function HomeScreen({ onNavigate, progress }) {
               </div>
             </div>
             <button
-              onClick={() => {
-                feedback("tap");
-                const next = ageMode === "elementary" ? "middle" : "elementary";
-                localStorage.setItem(AGE_MODE_KEY, next);
-                window.location.reload();
-              }}
+              onClick={() => { feedback("tap"); const next = ageMode === "elementary" ? "middle" : "elementary"; localStorage.setItem(AGE_MODE_KEY, next); window.location.reload(); }}
               style={{ background: "rgba(255,255,255,.1)", border: "1px solid rgba(255,255,255,.2)", borderRadius: 99, padding: "6px 14px", fontSize: 11, fontWeight: 700, color: "#fff", cursor: "pointer", fontFamily: "inherit", whiteSpace: "nowrap", flexShrink: 0 }}>
               {ageMode === "elementary" ? "中学生モードに切り替え" : "小学生モードに切り替え"}
             </button>
           </div>
-        </div>
-      </div>
 
-      {/* Content */}
-      <div style={{ padding: "0 20px 48px", maxWidth: 440, margin: "0 auto" }}>
-
-        {/* はじめての方へ（保護者向け）バナー */}
-        <button onClick={() => onNavigate("opening")}
-          style={{
-            width: "100%", marginTop: 0, marginBottom: 14, padding: "16px 16px",
-            background: "rgba(255,255,255,.08)",
-            border: "1.5px solid rgba(255,255,255,.2)",
-            borderRadius: 16, cursor: "pointer", fontFamily: "inherit",
-            display: "flex", alignItems: "center", gap: 12,
-          }}>
-          <div style={{ width: 44, height: 44, borderRadius: 12, background: "rgba(255,255,255,.12)", border: "1px solid rgba(255,255,255,.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>
-            👨‍👩‍👧
-          </div>
-          <div style={{ flex: 1, textAlign: "left" }}>
-            <div style={{ fontSize: 13, fontWeight: 900, color: "#fff" }}>
-              <RubyText text={ageMode === "elementary" ? "はじめての{方|かた}へ（{保護者|ほごしゃ}{向|む}け）" : "はじめての方へ（保護者向け）"} />
+          {/* はじめての方へ */}
+          <button onClick={() => onNavigate("opening")}
+            style={{ width: "100%", marginBottom: 10, padding: "16px", background: "rgba(255,255,255,.08)", border: "1.5px solid rgba(255,255,255,.2)", borderRadius: 16, cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ width: 44, height: 44, borderRadius: 12, background: "rgba(255,255,255,.12)", border: "1px solid rgba(255,255,255,.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>👨‍👩‍👧</div>
+            <div style={{ flex: 1, textAlign: "left" }}>
+              <div style={{ fontSize: 13, fontWeight: 900, color: "#fff" }}>
+                <RubyText text={ageMode === "elementary" ? "はじめての{方|かた}へ（{保護者|ほごしゃ}{向|む}け）" : "はじめての方へ（保護者向け）"} />
+              </div>
+              <div style={{ fontSize: 11, color: "rgba(255,255,255,.55)", marginTop: 2 }}>
+                <RubyText text={ageMode === "elementary" ? "このアプリの{使|つか}い{方|かた}・{目的|もくてき}・{統計|とうけい}を{確認|かくにん}する" : "このアプリの使い方・目的・統計を確認する"} />
+              </div>
             </div>
-            <div style={{ fontSize: 11, color: "rgba(255,255,255,.55)", marginTop: 2 }}>
-              <RubyText text={ageMode === "elementary" ? "このアプリの{使|つか}い{方|かた}・{目的|もくてき}・{統計|とうけい}を{確認|かくにん}する" : "このアプリの使い方・目的・統計を確認する"} />
-            </div>
-          </div>
-          <div style={{ fontSize: 16, color: "rgba(255,255,255,.4)" }}>→</div>
-        </button>
+            <div style={{ fontSize: 16, color: "rgba(255,255,255,.4)" }}>→</div>
+          </button>
 
-        {/* PLAY section */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10, margin: "20px 0 12px" }}>
-          <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: "#fff", letterSpacing: ".2em" }}>{t("home.sectionPlay")}</div>
-          <div style={{ flex: 1, height: 1, background: "rgba(30,58,95,.1)" }} />
+          {/* キーワードノート */}
+          <button onClick={() => onNavigate("keywordnote")}
+            style={{ width: "100%", marginBottom: 14, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.15)", borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 12, cursor: "pointer", fontFamily: "inherit" }}>
+            <span style={{ fontSize: 24 }}>📖</span>
+            <div style={{ flex: 1, textAlign: "left" }}>
+              <div style={{ fontSize: 13, fontWeight: 900, color: "#fff" }}>キーワードノート</div>
+              <div style={{ fontSize: 11, color: "rgba(255,255,255,.4)", marginTop: 2 }}>学んだ言葉を確認する</div>
+            </div>
+            <div style={{ color: "rgba(255,255,255,.3)" }}>→</div>
+          </button>
+
+          {/* プライバシーポリシー */}
+          <div style={{ textAlign: "center" }}>
+            <button onClick={() => onNavigate("info")}
+              style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "inherit", fontSize: 11, color: "rgba(255,255,255,.25)" }}>
+              <RubyText text={ageMode === "elementary" ? "プライバシーポリシー · {運営者|うんえいしゃ}{情報|じょうほう} · {利用|りよう}{規約|きやく}" : "プライバシーポリシー · 運営者情報 · 利用規約"} />
+            </button>
+          </div>
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 28 }}>
-          {modes.map((m, i) => (
-            <button key={m.id} onClick={() => {
-              // 2台モードは近日公開
-              if (m.id === "twodevice") {
-                alert("🚧 2台モードは近日公開予定です！\n\nFirebase連携によるリアル2台モードを準備中です。お楽しみに。");
-                return;
-              }
-              // 攻撃者体験はAPIが必要なため無効時はお知らせ
-              if (m.id === "attacker" && !CLAUDE_API_ENABLED) {
-                alert("🚧 攻撃者体験は近日公開予定です！\n\nAIリアルタイム生成が必要な機能のため、準備中です。お楽しみに。");
-                return;
-              }
-              // EP1-2はEP1クリアでアンロック
-              if (m.id === "ep12") {
-                if (!progress.ep1) { alert("EP1をクリアするとアンロックされます！"); return; }
-                onNavigate("ep12"); return;
-              }
-              onNavigate(m.id);
-            }}
-              style={{ width: "100%", background: m.id === "attacker" && !CLAUDE_API_ENABLED ? `linear-gradient(135deg,#1a1a1a,#111)` : `linear-gradient(135deg,${m.bg1},${m.bg2})`, border: `1.5px solid ${m.accent}35`, borderRadius: 22, padding: "20px 18px", cursor: "pointer", textAlign: "left", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden", boxShadow: `0 6px 20px rgba(0,0,0,.3)`, animation: `slideUp .5s ${i * .12}s both ease`, opacity: m.id === "attacker" && !CLAUDE_API_ENABLED ? 0.6 : 1 }}>
-              <div style={{ position: "absolute", width: 130, height: 130, borderRadius: "50%", background: m.accent, opacity: .06, right: -35, top: -35, filter: "blur(30px)", pointerEvents: "none" }} />
-              {m.id === "attacker" && <div style={{ position: "absolute", left: 0, right: 0, height: 1, background: `linear-gradient(90deg,transparent,${m.accent}60,transparent)`, animation: "scanDown 4s linear infinite", pointerEvents: "none" }} />}
-              {/* バッジ */}
-              {m.id === "attacker" && !CLAUDE_API_ENABLED
-                ? <div style={{ position: "absolute", top: 12, right: 12, background: "#475569", color: "#fff", fontSize: 9, fontWeight: 900, padding: "3px 9px", borderRadius: 99, letterSpacing: ".1em" }}>🚧 近日公開</div>
-                : m.locked
+      )}
+
+      {/* ── 学ぶタブ ── */}
+      {activeTab === "learn" && (
+        <div style={{ padding: "24px 20px 80px", maxWidth: 440, margin: "0 auto" }}>
+          <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 11, fontWeight: 900, color: "#fff", letterSpacing: ".1em", marginBottom: 10 }}>{t("home.sectionPlay")}</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 16 }}>
+            {modes.filter(m => m.id !== "twodevice" && m.id !== "attacker").map((m, i) => (
+              <button key={m.id} onClick={() => {
+                if (m.id === "ep12") { if (!progress.ep1) { alert("EP1をクリアするとアンロックされます！"); return; } onNavigate("ep12"); return; }
+                onNavigate(m.id);
+              }}
+                style={{ width: "100%", background: `linear-gradient(135deg,${m.bg1},${m.bg2})`, border: `1.5px solid ${m.accent}35`, borderRadius: 22, padding: "20px 18px", cursor: "pointer", textAlign: "left", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden", boxShadow: `0 6px 20px rgba(0,0,0,.3)`, animation: `slideUp .5s ${i * .12}s both ease` }}>
+                <div style={{ position: "absolute", width: 130, height: 130, borderRadius: "50%", background: m.accent, opacity: .06, right: -35, top: -35, filter: "blur(30px)", pointerEvents: "none" }} />
+                {m.locked
                   ? <div style={{ position: "absolute", top: 12, right: 12, background: "#78350f", color: "#fcd34d", fontSize: 9, fontWeight: 900, padding: "3px 9px", borderRadius: 99, letterSpacing: ".1em" }}>🔒 EP1クリアで解放</div>
                   : m.done
                     ? <div style={{ position: "absolute", top: 12, right: 12, background: "#22c55e", color: "#fff", fontSize: 9, fontWeight: 900, padding: "3px 9px", borderRadius: 99, letterSpacing: ".1em" }}>{t("home.clearedBadge")}</div>
                     : <div style={{ position: "absolute", top: 12, right: 12, background: m.accent, color: "#fff", fontSize: 9, fontWeight: 900, padding: "3px 9px", borderRadius: 99, letterSpacing: ".1em", animation: "newBadge 2s ease-in-out infinite" }}>{t("home.newBadge")}</div>
-              }
-              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
-                <div style={{ width: 52, height: 52, borderRadius: 14, background: `${m.accent}18`, border: `1.5px solid ${m.accent}35`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, flexShrink: 0 }}>{m.icon}</div>
-                <div>
-                  <div style={{ fontSize: 9, fontFamily: "'DotGothic16',monospace", color: m.accent, letterSpacing: ".15em", marginBottom: 4 }}><RubyText text={m.tag} /></div>
-                  <div style={{ fontSize: 17, fontWeight: 900, color: "#fff", lineHeight: 1.2 }}><RubyText text={m.title} /></div>
+                }
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+                  <div style={{ width: 52, height: 52, borderRadius: 14, background: `${m.accent}18`, border: `1.5px solid ${m.accent}35`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, flexShrink: 0 }}>{m.icon}</div>
+                  <div>
+                    <div style={{ fontSize: 9, fontFamily: "'DotGothic16',monospace", color: m.accent, letterSpacing: ".15em", marginBottom: 4 }}><RubyText text={m.tag} /></div>
+                    <div style={{ fontSize: 17, fontWeight: 900, color: "#fff", lineHeight: 1.2 }}><RubyText text={m.title} /></div>
+                  </div>
                 </div>
-              </div>
-              <p style={{ fontSize: 12, color: "rgba(255,255,255,.6)", lineHeight: 1.75, margin: "0 0 14px" }}><RubyText text={m.desc} /></p>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <p style={{ fontSize: 12, color: "rgba(255,255,255,.6)", lineHeight: 1.75, margin: "0 0 14px" }}><RubyText text={m.desc} /></p>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <div style={{ display: "flex", gap: 10 }}>
+                    <span style={{ fontSize: 11, color: "rgba(255,255,255,.4)" }}>⏱ <RubyText text={m.duration} /></span>
+                    <span style={{ fontSize: 11, color: "rgba(255,255,255,.4)" }}>👤 <RubyText text={m.audience} /></span>
+                  </div>
+                  <div style={{ background: m.accent, borderRadius: 99, width: 30, height: 30, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, color: "#fff" }}>
+                    {m.locked ? "🔐" : "→"}
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+
+          <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 11, color: "rgba(255,255,255,.4)", letterSpacing: ".1em", margin: "16px 0 8px" }}>{t("home.sectionSoon")}</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {[modes.find(x => x.id === "twodevice"), modes.find(x => x.id === "attacker")].map((m, i) => (
+              <button key={m.id} onClick={() => {
+                if (m.id === "twodevice") { alert("🚧 2台モードは近日公開予定です！\n\nFirebase連携によるリアル2台モードを準備中です。お楽しみに。"); return; }
+                if (m.id === "attacker" && !CLAUDE_API_ENABLED) { alert("🚧 攻撃者体験は近日公開予定です！\n\nAIリアルタイム生成が必要な機能のため、準備中です。お楽しみに。"); return; }
+                onNavigate(m.id);
+              }}
+                style={{ width: "100%", background: m.id === "attacker" && !CLAUDE_API_ENABLED ? "linear-gradient(135deg,#1a1a1a,#111)" : `linear-gradient(135deg,${m.bg1},${m.bg2})`, border: `1.5px solid ${m.accent}35`, borderRadius: 22, padding: "20px 18px", cursor: "pointer", textAlign: "left", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden", boxShadow: `0 6px 20px rgba(0,0,0,.3)`, opacity: 0.6, animation: `slideUp .5s ${i * .12}s both ease` }}>
+                <div style={{ position: "absolute", top: 12, right: 12, background: "#475569", color: "#fff", fontSize: 9, fontWeight: 900, padding: "3px 9px", borderRadius: 99, letterSpacing: ".1em" }}>🚧 近日公開</div>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+                  <div style={{ width: 52, height: 52, borderRadius: 14, background: `${m.accent}18`, border: `1.5px solid ${m.accent}35`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, flexShrink: 0 }}>{m.icon}</div>
+                  <div>
+                    <div style={{ fontSize: 9, fontFamily: "'DotGothic16',monospace", color: m.accent, letterSpacing: ".15em", marginBottom: 4 }}><RubyText text={m.tag} /></div>
+                    <div style={{ fontSize: 17, fontWeight: 900, color: "#fff", lineHeight: 1.2 }}><RubyText text={m.title} /></div>
+                  </div>
+                </div>
+                <p style={{ fontSize: 12, color: "rgba(255,255,255,.6)", lineHeight: 1.75, margin: "0 0 14px" }}><RubyText text={m.desc} /></p>
                 <div style={{ display: "flex", gap: 10 }}>
                   <span style={{ fontSize: 11, color: "rgba(255,255,255,.4)" }}>⏱ <RubyText text={m.duration} /></span>
                   <span style={{ fontSize: 11, color: "rgba(255,255,255,.4)" }}>👤 <RubyText text={m.audience} /></span>
                 </div>
-                <div style={{ background: m.id === "attacker" && !CLAUDE_API_ENABLED ? "#475569" : m.accent, borderRadius: 99, width: 30, height: 30, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, color: "#fff" }}>
-                  {(m.id === "attacker" && !CLAUDE_API_ENABLED) ? "🔒" : m.locked ? "🔐" : "→"}
-                </div>
-              </div>
-            </button>
-          ))}
+              </button>
+            ))}
+          </div>
         </div>
+      )}
 
-        {/* COMING SOON */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-          <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: "#fff", letterSpacing: ".2em" }}>{t("home.sectionSoon")}</div>
-          <div style={{ flex: 1, height: 1, background: "rgba(30,58,95,.08)" }} />
-        </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          {soon.map((item, i) => (
-            <div key={i} style={{ background: "rgba(255,255,255,.5)", border: "1px dashed rgba(30,58,95,.15)", borderRadius: 14, padding: "12px 16px", display: "flex", alignItems: "center", gap: 12, animation: `slideUp .5s ${i * .08}s both ease` }}>
-              <div style={{ width: 40, height: 40, borderRadius: 11, background: "rgba(30,58,95,.05)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, opacity: .5, filter: "grayscale(1)", flexShrink: 0 }}>{item.icon}</div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: "rgba(30,58,95,.4)" }}><RubyText text={item.title} /></div>
-                <div style={{ fontSize: 10, color: "rgba(30,58,95,.25)", marginTop: 2 }}>{item.tag}</div>
-              </div>
-              <div style={{ fontSize: 10, color: "rgba(30,58,95,.25)", fontFamily: "'DotGothic16',monospace" }}><RubyText text={t("home.soonLabel")} /></div>
-            </div>
-          ))}
-        </div>
-
-        {/* 週次チャレンジバナー */}
-        {(() => {
-          const weekStr = getWeekNumber();
-          const resultKey = `mamoru_weekly_result_${weekStr}`;
-          let done = 0;
-          try { done = JSON.parse(localStorage.getItem(resultKey) || "[]").length; } catch {}
-          const completed = done >= 3;
-          const daysLeft = 7 - ((new Date().getDay() + 6) % 7);
-          return (
-            <button onClick={() => onNavigate("weekly")}
-              style={{ width: "100%", marginTop: 16, padding: "14px 16px", background: completed ? "rgba(74,222,128,.06)" : "rgba(255,169,64,.08)", border: `1.5px solid ${completed ? "rgba(74,222,128,.3)" : "rgba(255,169,64,.35)"}`, borderRadius: 16, cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 12, animation: "glowPulse 3s ease-in-out infinite" }}>
-              <div style={{ width: 44, height: 44, borderRadius: 12, background: completed ? "rgba(74,222,128,.15)" : "rgba(255,169,64,.15)", border: `1px solid ${completed ? "rgba(74,222,128,.4)" : "rgba(255,169,64,.4)"}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>
-                {completed ? "🏆" : "🔥"}
-              </div>
-              <div style={{ flex: 1, textAlign: "left" }}>
-                <div style={{ fontSize: 13, fontWeight: 900, color: completed ? "#86efac" : "#ffd28a", display: "flex", alignItems: "center", gap: 6 }}>
-                  <RubyText text={ageMode === "elementary" ? "{今週|こんしゅう}のチャレンジ" : "今週のチャレンジ"} />
-                  {!completed && <span style={{ fontSize: 10, background: "#ffa940", color: "#fff", borderRadius: 99, padding: "1px 7px", fontWeight: 700 }}>NEW</span>}
-                  {completed && <span style={{ fontSize: 10, background: "#22c55e", color: "#fff", borderRadius: 99, padding: "1px 7px", fontWeight: 700 }}><RubyText text={ageMode === "elementary" ? "{完了|かんりょう}✓" : "完了✓"} /></span>}
-                </div>
-                <div style={{ fontSize: 11, color: "rgba(255,255,255,.4)", marginTop: 2 }}>
-                  {completed
-                    ? (ageMode === "elementary"
-                      ? <RubyText text={`{今週|こんしゅう} ${done}/3{問|もん}{正解|せいかい} · {来週|らいしゅう}{月曜|げつよう}に{更新|こうしん}`} />
-                      : `今週 ${done}/3問正解 · 来週月曜に更新`)
-                    : (ageMode === "elementary"
-                      ? <RubyText text={`${done}/3{問|もん}{完了|かんりょう} · {残|のこ}り${daysLeft}{日|にち}`} />
-                      : `${done}/3問完了 · 残り${daysLeft}日`)}
-                </div>
-              </div>
-              <div style={{ fontSize: 16, color: "rgba(255,255,255,.3)" }}>→</div>
-            </button>
-          );
-        })()}
-
-        {/* Bottom buttons: Keyword note + Parent report */}
-        <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 10 }}>
-          {/* Keyword note button */}
-          <button onClick={() => onNavigate("keywordnote")}
-            style={{ width: "100%", padding: "14px 16px", background: "rgba(255,255,255,.8)", border: "1.5px solid rgba(100,180,255,.2)", borderRadius: 16, cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 12, boxShadow: "0 2px 8px rgba(100,180,255,.1)" }}>
-            <div style={{ width: 40, height: 40, borderRadius: 11, background: "rgba(255,169,64,.15)", border: "1px solid rgba(255,169,64,.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>📖</div>
-            <div style={{ flex: 1, textAlign: "left" }}>
-              <div style={{ fontSize: 13, fontWeight: 900, color: "#1e3a5f", display: "flex", alignItems: "center", gap: 8 }}>
-                キーワードノート
-                {Boolean(kwCount) && <span style={{ fontSize: 11, background: "#ffa940", color: "#fff", borderRadius: 99, padding: "1px 8px", fontWeight: 700 }}>{kwCount}ワード</span>}
-              </div>
-              <div style={{ fontSize: 11, color: "rgba(30,58,95,.45)", marginTop: 2 }}><RubyText text={ageMode === "elementary" ? "{各|かく}エピソードで{学|まな}んだ{重要|じゅうよう}ワードを{確認|かくにん}" : "各エピソードで学んだ重要ワードを確認"} /></div>
-            </div>
-            <div style={{ fontSize: 16, color: "rgba(30,58,95,.3)" }}>→</div>
+      {/* ── タブバー ── */}
+      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 100, background: "#b35a00", borderTop: "1px solid rgba(255,255,255,.15)", display: "flex", height: 60, paddingBottom: "env(safe-area-inset-bottom)" }}>
+        {tabs.map(tab => (
+          <button key={tab.id}
+            onClick={() => {
+              if (tab.id === "challenge") { feedback("tap"); onNavigate("weekly"); return; }
+              if (tab.id === "parent") { feedback("tap"); onNavigate("report"); return; }
+              feedback("tap"); setActiveTab(tab.id);
+            }}
+            onMouseDown={tab.id === "parent" ? () => { const t = setTimeout(() => { setSecret4(true); setReportHoldTimer(null); try { localStorage.setItem("mamoru_secret4_found", "1"); } catch {} }, 5000); setReportHoldTimer(t); } : undefined}
+            onMouseUp={tab.id === "parent" ? () => { if (reportHoldTimer) { clearTimeout(reportHoldTimer); setReportHoldTimer(null); } } : undefined}
+            onTouchStart={tab.id === "parent" ? () => { const t = setTimeout(() => { setSecret4(true); setReportHoldTimer(null); try { localStorage.setItem("mamoru_secret4_found", "1"); } catch {} }, 5000); setReportHoldTimer(t); } : undefined}
+            onTouchEnd={tab.id === "parent" ? () => { if (reportHoldTimer) { clearTimeout(reportHoldTimer); setReportHoldTimer(null); } } : undefined}
+            style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2, padding: "6px 4px 8px", border: "none", cursor: "pointer", fontFamily: "inherit", background: activeTab === tab.id ? "rgba(0,0,0,.2)" : "transparent" }}>
+            <span style={{ fontSize: 20 }}>{tab.icon}</span>
+            <span style={{ fontSize: 10, color: activeTab === tab.id ? "#fff" : "rgba(255,255,255,.55)", fontWeight: activeTab === tab.id ? 700 : 400 }}>
+              {ageMode === "elementary" ? tab.labelEl : tab.label}
+            </span>
           </button>
-
-          {/* Parent report button — ④ 5秒長押しでシークレットダッシュボード */}
-          <button onClick={() => onNavigate("report")}
-            onMouseDown={() => { const t = setTimeout(() => { setSecret4(true); setReportHoldTimer(null); try { localStorage.setItem("mamoru_secret4_found", "1"); } catch {} }, 5000); setReportHoldTimer(t); }}
-            onMouseUp={() => { if (reportHoldTimer) { clearTimeout(reportHoldTimer); setReportHoldTimer(null); } }}
-            onTouchStart={() => { const t = setTimeout(() => { setSecret4(true); setReportHoldTimer(null); try { localStorage.setItem("mamoru_secret4_found", "1"); } catch {} }, 5000); setReportHoldTimer(t); }}
-            onTouchEnd={() => { if (reportHoldTimer) { clearTimeout(reportHoldTimer); setReportHoldTimer(null); } }}
-            style={{ width: "100%", padding: "14px 16px", background: "rgba(255,255,255,.8)", border: "1.5px solid rgba(100,180,255,.2)", borderRadius: 16, cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 12, boxShadow: "0 2px 8px rgba(100,180,255,.1)" }}>
-            <div style={{ width: 40, height: 40, borderRadius: 11, background: "rgba(99,102,241,.15)", border: "1px solid rgba(99,102,241,.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>👨‍👩‍👧</div>
-            <div style={{ flex: 1, textAlign: "left" }}>
-              <div style={{ fontSize: 13, fontWeight: 900, color: "#1e3a5f" }}><RubyText text={t("home.parentReport")} /></div>
-              <div style={{ fontSize: 11, color: "rgba(30,58,95,.45)", marginTop: 2 }}><RubyText text={t("home.parentReportDesc")} /></div>
-            </div>
-            <div style={{ fontSize: 16, color: "rgba(30,58,95,.3)" }}>→</div>
-          </button>
-
-        </div>
-
-        {/* アプリ情報リンク */}
-        <div style={{ marginTop: 14, textAlign: "center" }}>
-          <button onClick={() => onNavigate("info")}
-            style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "inherit", fontSize: 11, color: "rgba(30,58,95,.3)" }}>
-            <RubyText text={ageMode === "elementary" ? "プライバシーポリシー · {運営者|うんえいしゃ}{情報|じょうほう} · {利用|りよう}{規約|きやく}" : "プライバシーポリシー · 運営者情報 · 利用規約"} />
-          </button>
-        </div>
-
+        ))}
       </div>
     </div>
   );
