@@ -5762,7 +5762,7 @@ function OwlSay({ children, mood = "happy", e }) {
 // ─────────────────────────────────────────────
 const POSTS = [
   {
-    id: 1, day: "3/12", textKey: "p1Text",
+    id: 1, day: "4/8", textKey: "p1Text",
     photoBg: "linear-gradient(135deg,#ffd6e0,#ffafcc)", photoIcon: "🌸",
     localImage: "/images/ep1/post1.png",
     elements: [
@@ -5772,7 +5772,7 @@ const POSTS = [
     ],
   },
   {
-    id: 2, day: "3/20", textKey: "p2Text",
+    id: 2, day: "4/15", textKey: "p2Text",
     photoBg: "linear-gradient(135deg,#fff4d6,#ffc97a)", photoIcon: "🍰",
     localImage: "/images/ep1/post2.png",
     elements: [
@@ -5781,7 +5781,7 @@ const POSTS = [
     ],
   },
   {
-    id: 3, day: "4/2", textKey: "p3Text",
+    id: 3, day: "4/19", textKey: "p3Text",
     photoBg: "linear-gradient(135deg,#d6e8ff,#7ab8ff)", photoIcon: "☕",
     localImage: "/images/ep1/post3.png",
     elements: [
@@ -5790,7 +5790,7 @@ const POSTS = [
     ],
   },
   {
-    id: 4, day: "4/8", textKey: "p4Text",
+    id: 4, day: "4/22", textKey: "p4Text",
     photoBg: "linear-gradient(135deg,#e0d6ff,#a98aff)", photoIcon: "🐕",
     localImage: "/images/ep1/post4.png",
     elements: [
@@ -6394,7 +6394,7 @@ function Episode1({ onComplete, onExit }) {
                     <span style={{ fontSize: 12, color: "#657786" }}>{t("ep1.characterHandle")}</span>
                     <span style={{ fontSize: 12, color: "#657786", marginLeft: "auto" }}>{p.day}</span>
                   </div>
-                  <p style={{ fontSize: 14, color: "#14171a", lineHeight: 1.65, margin: "0 0 10px" }}>{getPostText(p)}</p>
+                  <p style={{ fontSize: 14, color: "#14171a", lineHeight: 1.65, margin: "0 0 10px" }}><RubyText text={getPostText(p)} /></p>
                 </div>
               </div>
 
