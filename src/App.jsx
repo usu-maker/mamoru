@@ -6282,7 +6282,7 @@ function Episode1({ onComplete, onExit }) {
   const nextPost = () => {
     setDetail(null);
     if (postIdx < POSTS.length - 1) setPostIdx(postIdx + 1);
-    else { setHorrorStage(0); setPhase("horror"); }
+    else { setPhase("quiz"); }
   };
 
   // ── Parent Intro ──
@@ -6424,7 +6424,7 @@ function Episode1({ onComplete, onExit }) {
                 style={{ width: "100%", padding: 14, background: "#1da1f2", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
                 <RubyText text={t("ep1.nextPost")} />
               </button>
-            : <button onClick={() => { feedback("tap"); setPhase("investigate"); setPostIdx(0); setFound({}); }}
+            : <button onClick={() => { feedback("tap"); setPhase("horror"); }}
                 style={{ width: "100%", padding: 14, background: "linear-gradient(135deg,#ffa940,#ff8c1a)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
                 <RubyText text={t("ep1.looksHappy")} />
               </button>
@@ -6677,7 +6677,7 @@ function Episode1({ onComplete, onExit }) {
           onRevealComplete={() => setWorstCaseShown(true)}
         />
         <button
-          onClick={() => { feedback("tap"); setPhase("pre_dialogue"); }}
+          onClick={() => { feedback("tap"); setPhase("investigate"); setPostIdx(0); setFound({}); }}
           disabled={!worstCaseShown}
           style={{ width: "100%", marginTop: 14, padding: 15, background: worstCaseShown ? "linear-gradient(135deg,#ffa940,#ff8c1a)" : "rgba(0,0,0,.12)", border: "none", borderRadius: 14, color: worstCaseShown ? "#fff" : "rgba(0,0,0,.3)", fontSize: 15, fontWeight: 900, cursor: worstCaseShown ? "pointer" : "default", fontFamily: "inherit", transition: "all .3s" }}>
           <RubyText text={ageMode === "elementary" ? "{次|つぎ}へ →" : "次へ →"} />
