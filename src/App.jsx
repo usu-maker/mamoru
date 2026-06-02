@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, createContext, useContext } from "react";
+﻿import { useState, useEffect, useRef, createContext, useContext } from "react";
 
 // ═══════════════════════════════════════════════════════════════
 // 🌐 I18N — 国際化システム（日・英・韓・中）
