@@ -6362,7 +6362,7 @@ function Episode1({ onComplete, onExit }) {
   const nextPost = () => {
     setDetail(null);
     if (postIdx < POSTS.length - 1) setPostIdx(postIdx + 1);
-    else { setPhase("quiz"); }
+    else { setPhase("explain"); }
   };
 
   // ── Parent Intro ──
@@ -6806,42 +6806,13 @@ function Episode1({ onComplete, onExit }) {
             </div>
           ))}
         </div>
-        <button onClick={() => setPhase("quiz")} style={{ width: "100%", padding: 15, background: "linear-gradient(135deg,#ffa940,#ff8c1a)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}><RubyText text={t("ep1.talkToFamily")} /></button>
+        <button onClick={() => setPhase("pre_dialogue")} style={{ width: "100%", padding: 15, background: "linear-gradient(135deg,#ffa940,#ff8c1a)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}><RubyText text={t("ep1.talkToFamily")} /></button>
       </div>
     </div>
     </EpisodeShell>
   );
 
   // ── Quiz (EP1) ──
-  if (phase === "quiz") return (
-    <EpisodeShell onExit={onExit}>
-    <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fff8f0,#ffeed6)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
-      <div style={{ maxWidth: 440, margin: "0 auto" }}>
-        <div style={{ display: "flex", gap: 4, marginBottom: 18 }}>
-          {["comparison","dialogue","quiz","mywords"].map((s,i) => (
-            <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i === 2 ? "#ffa940" : "rgba(0,0,0,.1)" }} />
-          ))}
-        </div>
-        <OwlSay mood="excited" e="ちゃんとりかいできたかかくにんしよう！{正解|せいかい}するまで{次|つぎ}に{進|すす}めないよ🦉">理解できたか確認しよう！正解するまで次に進めないよ🦉</OwlSay>
-        <MandatoryQuiz
-          mode="light"
-          question={ageMode === "elementary"
-            ? "{投稿|とうこう}{写真|しゃしん}から{個人情報|こじんじょうほう}が{漏|も}れるのを{防|ふせ}ぐために、もっとも{効果的|こうかてき}な{方法|ほうほう}はどれ？"
-            : "投稿写真から個人情報が漏れるのを防ぐために、最も効果的な方法はどれ？"}
-          choices={[
-            { id: "a", label: "A", text: ageMode === "elementary" ? "{顔|かお}を{映|うつ}さないようにする" : "顔を映さないようにする" },
-            { id: "b", label: "B", text: ageMode === "elementary" ? "{投稿|とうこう}{前|まえ}に{写真|しゃしん}の{隅々|すみずみ}を{確認|かくにん}し、{位置情報|いちじょうほう}タグをオフにする" : "投稿前に写真の隅々を確認し、位置情報タグをオフにする" },
-            { id: "c", label: "C", text: ageMode === "elementary" ? "フォロワーを{友達|ともだち}だけに{限定|げんてい}する" : "フォロワーを友達だけに限定する" },
-          ]}
-          correctId="b"
-          onPass={() => setPhase("mywords")}
-          accentColor="#ffa940"
-        />
-      </div>
-    </div>
-    </EpisodeShell>
-  );
-
   // ── Comparison (EP1) ──
   if (phase === "comparison") return (
     <EpisodeShell onExit={onExit}>
@@ -6909,7 +6880,7 @@ function Episode1({ onComplete, onExit }) {
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fff8f0,#ffeed6)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
         <OwlSay mood="excited" e="このおはなしにでてきた{大切|たいせつ}な{言葉|ことば}をおぼえよう！ニュースでも{出|で}てくるよ🦉">このエピソードで出てきた大事なワードを一緒に覚えよう！ニュースでも出てくるよ🦉</OwlSay>
-        <KeywordPhase epKey="ep1" accentColor="#ffa940" onComplete={() => setPhase("mywords")} />
+        <KeywordPhase epKey="ep1" accentColor="#ffa940" onComplete={() => setPhase("complete")} />
         <ParentExpertCard epKey="ep1" accentColor="#ffa940" />
       </div>
     </div>
@@ -6984,25 +6955,6 @@ function Episode1({ onComplete, onExit }) {
         </EpisodeShell>
       </div>
     </div>
-  );
-
-  // ── MyWords ──
-  if (phase === "mywords") return (
-    <EpisodeShell onExit={onExit}>
-    <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fff8f0,#ffeed6)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
-      <div style={{ maxWidth: 440, margin: "0 auto" }}>
-        <OwlSay mood="excited" e="{自分|じぶん}の{言葉|ことば}で{記録|きろく}しよう🦉">自分の言葉で記録しよう🦉</OwlSay>
-        <MyWordsInput
-          mode="light"
-          epKey="ep1"
-          prompt={ageMode === "elementary" ? "{今日|きょう}{学|まな}んだことを{一言|ひとこと}で{書|か}いてみよう" : "今日学んだことを一言で書いてみよう"}
-          placeholder={ageMode === "elementary" ? "{例|れい}：{投稿|とうこう}{前|まえ}に{背景|はいけい}を{確認|かくにん}する{習慣|しゅうかん}をつける" : "例：投稿前に背景を確認する習慣をつける"}
-          accentColor="#ffa940"
-          onSave={() => { feedback("complete"); setAnimStars(true); setPhase("complete"); }}
-        />
-      </div>
-    </div>
-    </EpisodeShell>
   );
 
   // ── Complete ──
