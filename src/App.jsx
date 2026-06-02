@@ -6178,6 +6178,7 @@ function Episode1({ onComplete, onExit }) {
   const [found, setFound] = useState({});
   const [detail, setDetail] = useState(null);
   const [horrorStage, setHorrorStage] = useState(0);
+  const [horrorMsgIdx, setHorrorMsgIdx] = useState(0);
   const [animStars, setAnimStars] = useState(false);
   const [timedHuntResult, setTimedHuntResult] = useState(null);
   const [useTimedMode, setUseTimedMode] = useState(true);
@@ -6195,13 +6196,16 @@ function Episode1({ onComplete, onExit }) {
 
   useEffect(() => {
     if (phase !== "horror") return;
-    const timers = [
-      setTimeout(() => { setHorrorStage(1); feedback("horror"); }, 1200),
-      setTimeout(() => { setHorrorStage(2); feedback("typing"); }, 3000),
-      setTimeout(() => setHorrorStage(3), 6500),
-    ];
-    return () => timers.forEach(clearTimeout);
-  }, [phase]);
+    let timer;
+    if (horrorStage === 0 && horrorMsgIdx < 3) {
+      timer = setTimeout(() => setHorrorMsgIdx(i => i + 1), 800);
+    } else if (horrorStage === 1 && horrorMsgIdx < 6) {
+      timer = setTimeout(() => setHorrorMsgIdx(i => i + 1), 900);
+    } else if (horrorStage === 2 && horrorMsgIdx < 1) {
+      timer = setTimeout(() => setHorrorMsgIdx(i => i + 1), 2000);
+    }
+    return () => clearTimeout(timer);
+  }, [phase, horrorStage, horrorMsgIdx]);
 
   // Translation helpers for posts
   const getPostText = (p) => t(`ep1Posts.${p.textKey}`);
@@ -6358,7 +6362,7 @@ function Episode1({ onComplete, onExit }) {
                 style={{ width: "100%", padding: 14, background: "#1da1f2", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
                 <RubyText text={t("ep1.nextPost")} />
               </button>
-            : <button onClick={() => { feedback("tap"); setPhase("horror"); }}
+            : <button onClick={() => { feedback("tap"); setHorrorStage(0); setHorrorMsgIdx(0); setPhase("horror"); }}
                 style={{ width: "100%", padding: 14, background: "linear-gradient(135deg,#ffa940,#ff8c1a)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
                 <RubyText text={t("ep1.looksHappy")} />
               </button>
@@ -6372,40 +6376,146 @@ function Episode1({ onComplete, onExit }) {
   // ── Horror ──
   if (phase === "horror") return (
     <EpisodeShell onExit={onExit}>
-    <div style={{ minHeight: "100vh", background: horrorStage >= 1 ? "radial-gradient(ellipse at center,#1a0a0a,#000)" : "linear-gradient(180deg,#fff8f0,#ffeed6)", transition: "background 1.2s ease", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
-      {horrorStage >= 1 && <div style={{ position: "absolute", inset: 0, background: "repeating-linear-gradient(0deg,transparent 0px,transparent 2px,rgba(255,0,0,.025) 2px,rgba(255,0,0,.025) 4px)", pointerEvents: "none" }} />}
-      {horrorStage === 0 && <div style={{ textAlign: "center", color: "#3d2817", fontSize: 14, opacity: .6 }}><RubyText text={t("ep1.daysLater")} /></div>}
-      {horrorStage >= 1 && (
-        <div style={{ position: "fixed", top: 16, left: 16, right: 16, background: "rgba(20,0,0,.95)", border: "1px solid rgba(255,67,67,.5)", borderRadius: 14, padding: "12px 14px", display: "flex", alignItems: "center", gap: 10, animation: "notifDrop .6s ease, pulse 1.5s infinite", backdropFilter: "blur(10px)", maxWidth: 400, margin: "0 auto", zIndex: 10 }}>
-          <div style={{ width: 36, height: 36, borderRadius: 8, background: "#ff4343", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, animation: "heartbeat 1s infinite" }}>📩</div>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 10, color: "#ff8a8a", fontFamily: "'DotGothic16',monospace", letterSpacing: ".1em" }}>{t("ep1.unknownSender")}</div>
-            <div style={{ fontSize: 13, color: "#fff", fontWeight: 700, marginTop: 2 }}><RubyText text={t("ep1.newDM")} /></div>
+    <div style={{ minHeight: "100vh", background: horrorStage === 3 ? "#0d1a2e" : "#1a0000", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff", padding: "20px 16px", position: "relative", overflow: "hidden", animation: horrorStage === 2 ? "redPulse 1s ease-in-out infinite" : "none" }}>
+      <div style={{ maxWidth: 400, margin: "0 auto" }}>
+
+        {/* ── STAGE 1 ── */}
+        {horrorStage === 0 && (<>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, background: "rgba(255,255,255,.06)", borderRadius: 12, padding: "10px 14px", marginBottom: 20 }}>
+            <div style={{ width: 36, height: 36, borderRadius: "50%", background: "#333", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, color: "#888" }}>👤</div>
+            <div style={{ flex: 1, fontSize: 13, fontWeight: 900, color: "#fff" }}>不明なアカウント</div>
+            <div style={{ fontSize: 11, color: "rgba(255,255,255,.35)" }}>既読</div>
           </div>
-          <div style={{ fontSize: 10, color: "#ff8a8a" }}><RubyText text={t("ep1.justNow")} /></div>
-        </div>
-      )}
-      {horrorStage >= 2 && (
-        <div style={{ background: "rgba(30,10,10,.6)", border: "1px solid rgba(255,67,67,.3)", borderRadius: 20, padding: "18px 16px", maxWidth: 340, width: "100%", marginTop: 80, animation: "slideUp .5s ease", backdropFilter: "blur(20px)" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, paddingBottom: 12, borderBottom: "1px solid rgba(255,67,67,.2)", marginBottom: 12 }}>
-            <div style={{ width: 40, height: 40, borderRadius: "50%", background: "#2a0a0a", border: "2px solid #ff4343", display: "flex", alignItems: "center", justifyContent: "center", color: "#ff4343", fontSize: 20, fontFamily: "'DotGothic16',monospace" }}>?</div>
-            <div><div style={{ fontSize: 13, color: "#ffaaaa", fontWeight: 700 }}><RubyText text={t("ep1.unknownUser")} /></div><div style={{ fontSize: 10, color: "#ff6b6b", animation: "blink 2s infinite" }}>{t("ep1.online")}</div></div>
-          </div>
-          <div style={{ background: "rgba(255,67,67,.1)", border: "1px solid rgba(255,67,67,.3)", borderRadius: 14, borderTopLeftRadius: 4, padding: "12px 14px", color: "#ffe0e0", fontSize: 14, lineHeight: 1.7 }}>
-            {ageMode === "elementary" ? <RubyText text={t("ep1.dm1")} /> : <Typewriter text={t("ep1.dm1")} speed={70} />}
-          </div>
-          {horrorStage >= 3 && (
-            <div style={{ background: "rgba(255,67,67,.15)", border: "1px solid rgba(255,67,67,.4)", borderRadius: 14, borderTopLeftRadius: 4, padding: "12px 14px", marginTop: 8, color: "#fff", fontSize: 16, fontWeight: 900, animation: "shake .4s ease" }}>
-              {ageMode === "elementary" ? <RubyText text={t("ep1.dm2")} /> : <Typewriter text={t("ep1.dm2")} speed={120} />}
+          {horrorMsgIdx >= 1 && (
+            <div style={{ background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.12)", borderRadius: "0px 14px 14px 14px", padding: "10px 14px", marginBottom: 8, animation: "slideUp .4s ease" }}>
+              <div style={{ fontSize: 14, color: "#fff", lineHeight: 1.65 }}><RubyText text={ageMode === "elementary" ? "{桜花中学校|おうかちゅうがっこう}の{制服|せいふく}、かわいいね" : "桜花中学校の制服、かわいいね"} /></div>
+              <div style={{ fontSize: 10, color: "rgba(255,255,255,.35)", marginTop: 4, textAlign: "right" }}>4/8 18:23</div>
             </div>
           )}
-        </div>
-      )}
-      {horrorStage >= 3 && (
-        <div style={{ marginTop: 28, width: "100%", maxWidth: 340, animation: "slideUp .6s 1.5s both ease" }}>
-          <button onClick={() => { feedback("tap"); setWorstCaseShown(false); setPhase("comparison"); }} style={{ width: "100%", padding: 15, background: "linear-gradient(135deg,#ff4343,#cc0000)", border: "1px solid #ff8a8a", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 8px 24px rgba(255,67,67,.4)", animation: "pulse 2s infinite" }}><RubyText text={t("ep1.investigate")} /></button>
-        </div>
-      )}
+          {horrorMsgIdx >= 2 && (
+            <div style={{ background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.12)", borderRadius: "0px 14px 14px 14px", padding: "10px 14px", marginBottom: 8, animation: "slideUp .4s ease" }}>
+              <div style={{ fontSize: 14, color: "#fff", lineHeight: 1.65 }}>今日もカフェ ルブランに行ったの？</div>
+              <div style={{ fontSize: 10, color: "rgba(255,255,255,.35)", marginTop: 4, textAlign: "right" }}>4/15 16:45</div>
+            </div>
+          )}
+          {horrorMsgIdx >= 3 && (
+            <div style={{ background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.12)", borderRadius: "0px 14px 14px 14px", padding: "10px 14px", marginBottom: 8, animation: "slideUp .4s ease" }}>
+              <div style={{ fontSize: 14, color: "#fff", lineHeight: 1.65 }}>トイプードル、毎日散歩してるんだね</div>
+              <div style={{ fontSize: 10, color: "rgba(255,255,255,.35)", marginTop: 4, textAlign: "right" }}>4/19 08:12</div>
+            </div>
+          )}
+          {horrorMsgIdx >= 3 && (
+            <div style={{ marginTop: 20, animation: "slideUp .4s ease" }}>
+              <button onClick={() => { feedback("tap"); setHorrorStage(1); setHorrorMsgIdx(0); }}
+                style={{ width: "100%", padding: 14, background: "rgba(255,67,67,.2)", border: "1px solid rgba(255,67,67,.4)", borderRadius: 14, color: "#ff8a8a", fontSize: 14, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
+                <RubyText text={ageMode === "elementary" ? "{次|つぎ}へ →" : "次へ →"} />
+              </button>
+            </div>
+          )}
+        </>)}
+
+        {/* ── STAGE 2 ── */}
+        {horrorStage === 1 && (<>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, background: "rgba(255,255,255,.06)", borderRadius: 12, padding: "10px 14px", marginBottom: 20 }}>
+            <div style={{ width: 36, height: 36, borderRadius: "50%", background: "#333", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, color: "#888" }}>👤</div>
+            <div style={{ flex: 1, fontSize: 13, fontWeight: 900, color: "#fff" }}>不明なアカウント</div>
+            <div style={{ fontSize: 11, color: "rgba(255,255,255,.35)" }}>既読</div>
+          </div>
+          {horrorMsgIdx >= 1 && (
+            <div style={{ background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.12)", borderRadius: "0px 14px 14px 14px", padding: "10px 14px", marginBottom: 8, animation: "slideUp .4s ease" }}>
+              <div style={{ fontSize: 14, color: "#fff", lineHeight: 1.65 }}><RubyText text={ageMode === "elementary" ? "{雨宮|あめみや}さんっていうんだね" : "雨宮さんっていうんだね"} /></div>
+              <div style={{ fontSize: 10, color: "rgba(255,255,255,.35)", marginTop: 4, textAlign: "right" }}>4/20 21:34</div>
+            </div>
+          )}
+          {horrorMsgIdx >= 2 && (
+            <div style={{ fontSize: 11, color: "#ff4343", fontWeight: 700, padding: "4px 10px", background: "rgba(255,67,67,.1)", borderRadius: 8, marginBottom: 10, animation: "slideUp .3s ease" }}>
+              ⚠️ <RubyText text={ageMode === "elementary" ? "{表札|ひょうさつ}から{苗字|みょうじ}を{知|し}られた" : "表札から苗字を知られた"} />
+            </div>
+          )}
+          {horrorMsgIdx >= 3 && (
+            <div style={{ background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.12)", borderRadius: "0px 14px 14px 14px", padding: "10px 14px", marginBottom: 8, animation: "slideUp .4s ease" }}>
+              <div style={{ fontSize: 14, color: "#fff", lineHeight: 1.65 }}><RubyText text={ageMode === "elementary" ? "{桜花中学校|おうかちゅうがっこう}って〇〇{駅|えき}の{近|ちか}くだよね" : "桜花中学校って〇〇駅の近くだよね"} /></div>
+              <div style={{ fontSize: 10, color: "rgba(255,255,255,.35)", marginTop: 4, textAlign: "right" }}>4/21 17:05</div>
+            </div>
+          )}
+          {horrorMsgIdx >= 4 && (
+            <div style={{ fontSize: 11, color: "#ff4343", fontWeight: 700, padding: "4px 10px", background: "rgba(255,67,67,.1)", borderRadius: 8, marginBottom: 10, animation: "slideUp .3s ease" }}>
+              ⚠️ <RubyText text={ageMode === "elementary" ? "{通学|つうがく}ルートが{読|よ}まれている" : "通学ルートが読まれている"} />
+            </div>
+          )}
+          {horrorMsgIdx >= 5 && (
+            <div style={{ background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.12)", borderRadius: "0px 14px 14px 14px", padding: "10px 14px", marginBottom: 8, animation: "slideUp .4s ease" }}>
+              <div style={{ fontSize: 14, color: "#fff", lineHeight: 1.65 }}><RubyText text={ageMode === "elementary" ? "いつも4{時半|じはん}ごろ{帰|かえ}るんだね" : "いつも4時半ごろ帰るんだね"} /></div>
+              <div style={{ fontSize: 10, color: "rgba(255,255,255,.35)", marginTop: 4, textAlign: "right" }}>4/22 16:33</div>
+            </div>
+          )}
+          {horrorMsgIdx >= 6 && (
+            <div style={{ fontSize: 11, color: "#ff4343", fontWeight: 700, padding: "4px 10px", background: "rgba(255,67,67,.1)", borderRadius: 8, marginBottom: 10, animation: "slideUp .3s ease" }}>
+              ⚠️ <RubyText text={ageMode === "elementary" ? "{帰宅|きたく}{時間|じかん}まで{分|わ}かっている" : "帰宅時間まで分かっている"} />
+            </div>
+          )}
+          {horrorMsgIdx >= 6 && (
+            <div style={{ marginTop: 20, animation: "slideUp .4s ease" }}>
+              <button onClick={() => { feedback("tap"); setHorrorStage(2); setHorrorMsgIdx(0); }}
+                style={{ width: "100%", padding: 14, background: "rgba(255,67,67,.2)", border: "1px solid rgba(255,67,67,.4)", borderRadius: 14, color: "#ff8a8a", fontSize: 14, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
+                <RubyText text={ageMode === "elementary" ? "{次|つぎ}へ →" : "次へ →"} />
+              </button>
+            </div>
+          )}
+        </>)}
+
+        {/* ── STAGE 3 ── */}
+        {horrorStage === 2 && (<>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, background: "rgba(255,255,255,.06)", borderRadius: 12, padding: "10px 14px", marginBottom: 20 }}>
+            <div style={{ width: 36, height: 36, borderRadius: "50%", background: "#333", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, color: "#888" }}>👤</div>
+            <div style={{ flex: 1, fontSize: 13, fontWeight: 900, color: "#fff" }}>不明なアカウント</div>
+            <div style={{ fontSize: 11, color: "rgba(255,255,255,.35)" }}>既読</div>
+          </div>
+          <div style={{ background: "rgba(255,67,67,.15)", border: "1px solid rgba(255,67,67,.4)", borderRadius: "0px 14px 14px 14px", padding: "14px 16px", marginBottom: 16, animation: "slideUp .4s ease" }}>
+            <div style={{ fontSize: 18, fontWeight: 900, color: "#ff4343", lineHeight: 1.65 }}>今、あなたの家の近くにいるよ</div>
+            <div style={{ fontSize: 10, color: "rgba(255,255,255,.35)", marginTop: 4, textAlign: "right" }}>4/22 18:55</div>
+          </div>
+          {horrorMsgIdx >= 1 && (
+            <div style={{ textAlign: "center", fontSize: 56, animation: "shake .4s ease", marginBottom: 20 }}>😨</div>
+          )}
+          {horrorMsgIdx >= 1 && (
+            <div style={{ animation: "slideUp .4s ease" }}>
+              <button onClick={() => { feedback("tap"); setHorrorStage(3); setHorrorMsgIdx(0); }}
+                style={{ width: "100%", padding: 14, background: "linear-gradient(135deg,#ff4343,#cc0000)", border: "none", borderRadius: 14, color: "#fff", fontSize: 14, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 8px 24px rgba(255,67,67,.4)" }}>
+                <RubyText text={ageMode === "elementary" ? "{何|なに}が{起|お}きていたの？→" : "何が起きていたの？→"} />
+              </button>
+            </div>
+          )}
+        </>)}
+
+        {/* ── STAGE 4 ── */}
+        {horrorStage === 3 && (<>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
+            <OwlMolly size={80} mood="worried" />
+          </div>
+          <div style={{ background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.15)", borderRadius: 16, padding: "14px 16px", marginBottom: 12, animation: "slideUp .5s ease" }}>
+            <div style={{ fontSize: 13, color: "#fff", lineHeight: 1.8 }}>
+              <RubyText text={ageMode === "elementary"
+                ? "この{人|ひと}はミナちゃんの{投稿|とうこう}をずっと{見|み}ていたんだ。{投稿|とうこう}の{写真|しゃしん}から、たくさんのことを{知|し}ってしまった…"
+                : "この人はミナちゃんの投稿をずっと見ていたんだ。投稿の写真から、たくさんのことを知ってしまった…"
+              } />
+            </div>
+          </div>
+          <div style={{ background: "rgba(255,169,64,.1)", border: "1px solid rgba(255,169,64,.25)", borderRadius: 16, padding: "14px 16px", marginBottom: 24, animation: "slideUp .5s .2s both ease" }}>
+            <div style={{ fontSize: 13, color: "#ffd28a", lineHeight: 1.8 }}>
+              <RubyText text={ageMode === "elementary"
+                ? "{次|つぎ}のページで、なにが{手|て}がかりになったか{自分|じぶん}で{探|さが}してみよう！{全部|ぜんぶ}{見|み}つけられるかな？🔍"
+                : "次のページで、何が手がかりになったか自分で探してみよう！全部見つけられるかな？🔍"
+              } />
+            </div>
+          </div>
+          <button onClick={() => { feedback("tap"); setPostIdx(0); setFound({}); setPhase("investigate"); }}
+            style={{ width: "100%", padding: 15, background: "linear-gradient(135deg,#ffa940,#ff8c1a)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 8px 24px rgba(255,169,64,.3)", animation: "popIn .4s ease" }}>
+            <RubyText text={ageMode === "elementary" ? "{探|さが}してみる →" : "さがしてみる →"} />
+          </button>
+        </>)}
+
+      </div>
     </div>
     </EpisodeShell>
   );
