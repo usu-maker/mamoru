@@ -279,20 +279,6 @@ const I18N = {
       ko: "교표·문패·간판·번호판",
       zh: "校徽·门牌·招牌·车牌",
     },
-    tip2Title: {
-      ja: "位置情報タグは常にオフ",
-      el: "{位置情報|いちじょうほう}タグは{常|つね}にオフ",
-      en: "Keep location tags always off",
-      ko: "위치 태그는 항상 끄기",
-      zh: "始终关闭位置标签",
-    },
-    tip2Desc: {
-      ja: "スマホ設定→プライバシー→位置情報",
-      el: "スマホ{設定|せってい}→プライバシー→{位置情報|いちじょうほう}",
-      en: "Phone settings → Privacy → Location",
-      ko: "스마트폰 설정 → 개인정보 → 위치",
-      zh: "手机设置→隐私→位置",
-    },
     tip3Title: {
       ja: "「家の近く」がわかる投稿は控える",
       el: "「{家|いえ}の{近|ちか}く」がわかる{投稿|とうこう}は{控|ひか}える",
@@ -6798,7 +6784,6 @@ function Episode1({ onComplete, onExit }) {
         </div>
         <div style={{ background: "#fff", borderRadius: 16, padding: "14px 16px", marginBottom: 14, border: "2px solid #f4d4a8" }}>
           {[["📍", t("ep1.tip1Title"), t("ep1.tip1Desc")],
-            ["📱", t("ep1.tip2Title"), t("ep1.tip2Desc")],
             ["🔒", t("ep1.tip3Title"), t("ep1.tip3Desc")]].map(([ic, tt, d], i) => (
             <div key={i} style={{ display: "flex", gap: 12, marginBottom: 10, alignItems: "flex-start" }}>
               <div style={{ width: 28, height: 28, borderRadius: "50%", background: "linear-gradient(135deg,#ffa940,#ff8c1a)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, flexShrink: 0 }}>{ic}</div>
