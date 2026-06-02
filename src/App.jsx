@@ -5800,6 +5800,114 @@ const POSTS = [
 ];
 
 // ─────────────────────────────────────────────
+// ██ チュートリアル
+// ─────────────────────────────────────────────
+const TUTORIAL_KEY = "mamoru_tutorial_v1";
+
+const TUTORIAL_STEPS = [
+  { step: 1, highlight: null, position: "center",
+    message: "マモルへようこそ！\n画面の使い方をかんたんに説明するね。\nタップして進んでね！",
+    messageEl: "マモルへようこそ！\n{画面|がめん}の{使|つか}い{方|かた}をかんたんに{説明|せつめい}するね。\nタップして{進|すす}んでね！" },
+  { step: 2, highlight: "badges", position: "below",
+    message: "エピソードをクリアすると\n実績バッジがもらえるよ。\n全部集めてみよう！🏆",
+    messageEl: "エピソードをクリアすると\n{実績|じっせき}バッジがもらえるよ。\n{全部|ぜんぶ}{集|あつ}めてみよう！🏆" },
+  { step: 3, highlight: "modeSwitch", position: "below",
+    message: "小学生・中学生モードを\n切り替えられるよ。\n漢字のルビが変わるんだ！",
+    messageEl: "{小学生|しょうがくせい}・{中学生|ちゅうがくせい}モードを\n{切|き}り{替|か}えられるよ。\n{漢字|かんじ}のルビが{変|か}わるんだ！" },
+  { step: 4, highlight: "tabLearn", position: "above",
+    message: "『学ぶ』タブでは\nエピソードごとにSNSの\n危険を体験しながら学べるよ！📚",
+    messageEl: "「{学|まな}ぶ」タブでは\nエピソードごとにSNSの\n{危険|きけん}を{体験|たいけん}しながら{学|まな}べるよ！📚" },
+  { step: 5, highlight: "tabChallenge", position: "above",
+    message: "『チャレンジ』では\n週ごとに新しい問題に\n挑戦できるよ。毎週来てね！🔥",
+    messageEl: "「チャレンジ」では\n{週|しゅう}ごとに{新|あたら}しい{問題|もんだい}に\n{挑戦|ちょうせん}できるよ。{毎週|まいしゅう}{来|き}てね！🔥" },
+  { step: 6, highlight: "tabParent", position: "above",
+    message: "保護者の方はここから\n学習記録の確認や\n設定のリセットができるよ👨‍👩‍👧",
+    messageEl: "{保護者|ほごしゃ}の{方|かた}はここから\n{学習|がくしゅう}{記録|きろく}の{確認|かくにん}や\n{設定|せってい}のリセットができるよ👨‍👩‍👧" },
+];
+
+function TutorialOverlay({ step, onNext, onSkip, refs }) {
+  const currentStep = TUTORIAL_STEPS.find(s => s.step === step);
+  const [highlightRect, setHighlightRect] = useState(null);
+  const ageMode = useAgeMode();
+
+  useEffect(() => {
+    if (!currentStep.highlight) { setHighlightRect(null); return; }
+    const ref = refs[currentStep.highlight];
+    if (ref?.current) {
+      const rect = ref.current.getBoundingClientRect();
+      setHighlightRect(rect);
+    } else {
+      setHighlightRect(null);
+    }
+  }, [step]);
+
+  const message = ageMode === "elementary" ? currentStep.messageEl : currentStep.message;
+  const isLast = step === TUTORIAL_STEPS.length;
+
+  return (
+    <div style={{ position: "fixed", inset: 0, zIndex: 500, pointerEvents: "all" }}>
+      {/* 全体オーバーレイ */}
+      <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,.78)" }} onClick={onNext} />
+
+      {/* ハイライト枠 */}
+      {highlightRect && (
+        <div style={{ position: "absolute", top: highlightRect.top - 4, left: highlightRect.left - 4, width: highlightRect.width + 8, height: highlightRect.height + 8, border: "2.5px solid #ffa940", borderRadius: 14, boxShadow: "0 0 0 4px rgba(255,169,64,.25)", pointerEvents: "none", animation: "glowPulse 1.5s ease-in-out infinite", zIndex: 501 }} />
+      )}
+
+      {/* STEP 1：中央にモリィ */}
+      {!currentStep.highlight && (
+        <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 24px", zIndex: 502 }}>
+          <OwlMolly size={90} />
+          <div style={{ background: "#fff", borderRadius: 18, padding: "18px 20px", marginTop: 16, maxWidth: 300, textAlign: "center", animation: "slideUp .4s ease" }}>
+            <p style={{ fontSize: 15, fontWeight: 700, color: "#1e293b", lineHeight: 1.8, margin: "0 0 14px", whiteSpace: "pre-line" }}>
+              <RubyText text={message} />
+            </p>
+            <button onClick={onNext} style={{ background: "linear-gradient(135deg,#ffa940,#ff8c1a)", border: "none", borderRadius: 99, padding: "10px 28px", fontSize: 14, fontWeight: 900, color: "#fff", cursor: "pointer", fontFamily: "inherit" }}>
+              はじめる →
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* STEP 2〜6：ハイライト要素近くの吹き出し */}
+      {currentStep.highlight && highlightRect && (
+        <div style={{
+          position: "absolute",
+          left: Math.max(12, Math.min(highlightRect.left + highlightRect.width / 2 - 140, window.innerWidth - 292)),
+          ...(currentStep.position === "above"
+            ? { bottom: window.innerHeight - highlightRect.top + 12 }
+            : { top: highlightRect.bottom + 12 }),
+          width: 280,
+          zIndex: 502,
+          animation: "slideUp .35s ease",
+        }}>
+          <div style={{ background: "#fff", borderRadius: 16, padding: "14px 16px" }}>
+            <div style={{ display: "flex", gap: 5, marginBottom: 10, justifyContent: "center" }}>
+              {TUTORIAL_STEPS.map(s => (
+                <div key={s.step} style={{ width: s.step === step ? 18 : 6, height: 6, borderRadius: 99, background: s.step === step ? "#ffa940" : "#e2e8f0", transition: "all .3s" }} />
+              ))}
+            </div>
+            <p style={{ fontSize: 13, fontWeight: 700, color: "#1e293b", lineHeight: 1.8, margin: "0 0 12px", textAlign: "center", whiteSpace: "pre-line" }}>
+              <RubyText text={message} />
+            </p>
+            <button onClick={() => { feedback("tap"); onNext(); }} style={{ width: "100%", background: "linear-gradient(135deg,#ffa940,#ff8c1a)", border: "none", borderRadius: 12, padding: "10px", fontSize: 13, fontWeight: 900, color: "#fff", cursor: "pointer", fontFamily: "inherit" }}>
+              {isLast ? "OK！はじめよう 🛡️" : "次へ →"}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* スキップボタン（STEP 1以外） */}
+      {step > 1 && (
+        <button onClick={() => { feedback("tap"); onSkip(); }} style={{ position: "absolute", top: 16, right: 16, background: "rgba(255,255,255,.15)", border: "1px solid rgba(255,255,255,.25)", borderRadius: 99, padding: "6px 14px", fontSize: 12, color: "rgba(255,255,255,.8)", cursor: "pointer", fontFamily: "inherit", zIndex: 503 }}>
+          スキップ
+        </button>
+      )}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────
 // ██ HOME SCREEN
 // ─────────────────────────────────────────────
 function HomeScreen({ onNavigate, progress }) {
@@ -5848,6 +5956,28 @@ function HomeScreen({ onNavigate, progress }) {
   ];
   const [mollyMsgIdx, setMollyMsgIdx] = useState(0);
   const [activeTab, setActiveTab] = useState("top");
+
+  // チュートリアル
+  const [tutorialStep, setTutorialStep] = useState(() => {
+    try { return localStorage.getItem(TUTORIAL_KEY) ? 0 : 1; } catch { return 1; }
+  });
+  const showTutorial = tutorialStep > 0;
+  const finishTutorial = () => {
+    try { localStorage.setItem(TUTORIAL_KEY, "1"); } catch {}
+    setTutorialStep(0);
+  };
+  const nextTutorialStep = () => {
+    if (tutorialStep >= TUTORIAL_STEPS.length) finishTutorial();
+    else setTutorialStep(s => s + 1);
+  };
+  const tutorialRefs = {
+    badges:      useRef(null),
+    modeSwitch:  useRef(null),
+    tabLearn:    useRef(null),
+    tabChallenge: useRef(null),
+    tabParent:   useRef(null),
+  };
+
   const tabs = [
     { id: "top",       icon: "🦉",   label: "トップ",       labelEl: "トップ" },
     { id: "learn",     icon: "📚",   label: "学ぶ",         labelEl: "まなぶ" },
@@ -6008,7 +6138,7 @@ function HomeScreen({ onNavigate, progress }) {
             const earned = getBadges(rec);
             if (earned.length === 0) return null;
             return (
-              <div style={{ marginBottom: 14, animation: "slideUp .6s ease" }}>
+              <div ref={tutorialRefs.badges} style={{ marginBottom: 14, animation: "slideUp .6s ease" }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
                   <div style={{ fontSize: 14, fontWeight: 900, color: "#fff" }}>🏆 取得済み実績</div>
                   <div style={{ fontSize: 13, fontWeight: 900, color: "#ffa940", background: "rgba(255,169,64,.12)", border: "1px solid rgba(255,169,64,.25)", borderRadius: 99, padding: "3px 12px" }}>
@@ -6024,7 +6154,7 @@ function HomeScreen({ onNavigate, progress }) {
           })()}
 
           {/* 年齢モード切り替え */}
-          <div style={{ background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.12)", borderRadius: 14, padding: "12px 16px", marginBottom: 14, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+          <div ref={tutorialRefs.modeSwitch} style={{ background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.12)", borderRadius: 14, padding: "12px 16px", marginBottom: 14, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
             <div>
               <div style={{ fontSize: 13, fontWeight: 900, color: "#fff" }}>
                 {ageMode === "elementary" ? "🏫 小学生モード" : "🏫 中学生以上モード"}
@@ -6041,7 +6171,7 @@ function HomeScreen({ onNavigate, progress }) {
           </div>
 
           {/* はじめての方へ */}
-          <button onClick={() => onNavigate("opening")}
+          <button onClick={() => { feedback("tap"); setTutorialStep(1); }}
             style={{ width: "100%", marginBottom: 10, padding: "16px", background: "rgba(255,255,255,.08)", border: "1.5px solid rgba(255,255,255,.2)", borderRadius: 16, cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 12 }}>
             <div style={{ width: 44, height: 44, borderRadius: 12, background: "rgba(255,255,255,.12)", border: "1px solid rgba(255,255,255,.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>👨‍👩‍👧</div>
             <div style={{ flex: 1, textAlign: "left" }}>
@@ -6143,10 +6273,21 @@ function HomeScreen({ onNavigate, progress }) {
         </div>
       )}
 
+      {/* チュートリアルオーバーレイ */}
+      {showTutorial && (
+        <TutorialOverlay
+          step={tutorialStep}
+          onNext={nextTutorialStep}
+          onSkip={finishTutorial}
+          refs={tutorialRefs}
+        />
+      )}
+
       {/* ── タブバー ── */}
       <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 100, background: "#b35a00", borderTop: "1px solid rgba(255,255,255,.15)", display: "flex", height: 60, paddingBottom: "env(safe-area-inset-bottom)" }}>
         {tabs.map(tab => (
           <button key={tab.id}
+            ref={tab.id === "learn" ? tutorialRefs.tabLearn : tab.id === "challenge" ? tutorialRefs.tabChallenge : tab.id === "parent" ? tutorialRefs.tabParent : undefined}
             onClick={() => {
               if (tab.id === "challenge") { feedback("tap"); onNavigate("weekly"); return; }
               if (tab.id === "parent") { feedback("tap"); onNavigate("report"); return; }
