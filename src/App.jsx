@@ -5768,7 +5768,6 @@ const POSTS = [
     elements: [
       // 校章マーカー削除
       { x: 82, y: 42, emoji: "🏫", labelKey: "schoolSign",    infoKey: "schoolSignInfo",    danger: true },  // 桜花中学校の看板
-      { x: 18, y: 18, emoji: "📍", labelKey: "locationTag",   infoKey: "locationTagInfo",   danger: true },  // GPS位置情報タグ
     ],
   },
   {
