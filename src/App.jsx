@@ -377,6 +377,37 @@ const I18N = {
     },
   },
 
+  // ═══════ EP1_2 ═══════
+  ep1_2: {
+    certLabel: { ja: "CERTIFICATE", en: "CERTIFICATE", ko: "CERTIFICATE", zh: "证书" },
+    certTitle: { ja: "しゅうりょうしょう", en: "Certificate of Completion", ko: "수료증", zh: "结业证书" },
+    certBody: {
+      ja: "あなたは「マモル」第1話-2<br />**本当は、位置情報が見えてるよ**<br />をクリアしました。",
+      el: "あなたは「マモル」{第|だい}1{話|わ}-2<br />**{本当|ほんとう}は、{位置情報|いちじょうほう}が{見|み}えてるよ**<br />をクリアしました。",
+      en: "You completed Mamoru EP 1-2<br />**Your Location Is Always Visible**",
+      ko: "당신은 마모루 1-2화<br />**사실은 위치 정보가 보여**<br />을 완료했습니다.",
+      zh: "你完成了「守护」第1-2话<br />**其实位置信息一直可见**",
+    },
+    epComplete: { ja: "EPISODE 01-2 COMPLETE", en: "EPISODE 01-2 COMPLETE", ko: "EPISODE 01-2 COMPLETE", zh: "第01-2话 完成" },
+    masterTitle: {
+      ja: "⭐ 位置情報マスター ⭐",
+      el: "⭐ {位置情報|いちじょうほう}マスター ⭐",
+      en: "⭐ Location Privacy Master ⭐",
+      ko: "⭐ 위치 정보 마스터 ⭐",
+      zh: "⭐ 位置信息大师 ⭐",
+    },
+    share: { ja: "📤 シェア", en: "📤 Share", ko: "📤 공유", zh: "📤 分享" },
+    toHome: { ja: "🏠 ホームへ", en: "🏠 Home", ko: "🏠 홈으로", zh: "🏠 主页" },
+    shareTitle: { ja: "マモル EP1-2 クリア！", en: "Mamoru EP1-2 Complete!", ko: "마모루 EP1-2 클리어!", zh: "守护 第1-2话 完成!" },
+    shareText: {
+      ja: "SNSリテラシーアプリ「マモル」で位置情報マスターになりました🏆",
+      el: "SNSリテラシーアプリ「マモル」で{位置情報|いちじょうほう}マスターになりました🏆",
+      en: "I became a Location Privacy Master on Mamoru 🏆",
+      ko: "SNS 리터러시 앱 마모루에서 위치 정보 마스터가 됐어요 🏆",
+      zh: "在社交媒体素养应用「守护」中成为了位置信息大师 🏆",
+    },
+  },
+
   // ═══════ EP1 POSTS DATA ═══════
   ep1Posts: {
     p1Text: {
@@ -7010,6 +7041,39 @@ function Episode1({ onComplete, onExit }) {
 }
 
 // ─────────────────────────────────────────────
+// 修了証コンポーネント（EP共通）
+// ─────────────────────────────────────────────
+function CompleteScreen({ epKey, accentColor = "#ffa940", onComplete }) {
+  const t = useT();
+  return (
+    <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#fff4d6,#ffeed6,#ffd28a)", padding: "30px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden" }}>
+      {[...Array(36)].map((_, i) => <div key={i} style={{ position: "absolute", left: `${Math.random() * 100}%`, top: "-20px", width: 8, height: 12, background: ["#ff8a8a", "#ffa940", "#ffd28a", "#a8e6cf", "#ffafcc"][i % 5], animation: `confettiFall ${Math.random() * 2 + 2}s ${Math.random()}s linear infinite` }} />)}
+      <div style={{ maxWidth: 380, margin: "0 auto", position: "relative", zIndex: 2 }}>
+        <div style={{ textAlign: "center", marginBottom: 18, animation: "celebrate 1s infinite" }}><OwlMolly size={110} /></div>
+        <div style={{ background: "linear-gradient(135deg,#fff,#fff8f0)", borderRadius: 22, padding: "28px 22px", border: `3px double ${accentColor}`, textAlign: "center", boxShadow: "0 20px 60px rgba(94,64,32,.18)", position: "relative" }}>
+          {[{top:12,left:12},{top:12,right:12},{bottom:12,left:12},{bottom:12,right:12}].map((pos,i)=><div key={i} style={{position:"absolute",...pos,fontSize:16,color:accentColor}}>✦</div>)}
+          <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: "#a08060", letterSpacing: ".4em", marginBottom: 10 }}>{t(`${epKey}.certLabel`)}</div>
+          <div style={{ fontSize: 46, marginBottom: 4 }}>🏆</div>
+          <h1 style={{ fontSize: 20, color: "#3d2817", fontWeight: 900, margin: "0 0 4px" }}>{t(`${epKey}.certTitle`)}</h1>
+          <p style={{ fontSize: 12, color: "#5d4017", lineHeight: 1.9, margin: "12px 0 16px", padding: "0 8px" }}>
+            <FormattedText text={t(`${epKey}.certBody`)} style={{ color: "inherit" }} />
+          </p>
+          <div style={{ background: `linear-gradient(135deg,${accentColor}33,${accentColor}22)`, borderRadius: 12, padding: "10px 14px", margin: "10px 0" }}>
+            <div style={{ fontSize: 10, color: "#a05500", marginBottom: 3 }}>{t(`${epKey}.epComplete`)}</div>
+            <div style={{ fontSize: 13, color: "#3d2817", fontWeight: 900 }}><RubyText text={t(`${epKey}.masterTitle`)} /></div>
+          </div>
+          <div style={{ fontSize: 10, color: "#a08060", marginTop: 14, fontFamily: "'DotGothic16',monospace" }}>{new Date().toLocaleDateString()}</div>
+        </div>
+        <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
+          <button onClick={() => navigator.share?.({ title: t(`${epKey}.shareTitle`), text: t(`${epKey}.shareText`) }).catch(() => {})} style={{ flex: 1, padding: 14, background: "#fff", border: `2px solid ${accentColor}`, borderRadius: 14, color: "#a05500", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>{t(`${epKey}.share`)}</button>
+          <button onClick={() => onComplete(3)} style={{ flex: 1, padding: 14, background: `linear-gradient(135deg,${accentColor},${accentColor}cc)`, border: "none", borderRadius: 14, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>{t(`${epKey}.toHome`)}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────
 // ██ EPISODE 1-2 — 本当は、位置情報が見えてるよ
 // 位置情報サービス・プライバシー体験
 // ─────────────────────────────────────────────
@@ -7289,7 +7353,7 @@ function Episode1_2({ onComplete, onExit }) {
               style={{ width: "48%", background: orange, border: "none", borderRadius: 12, padding: "12px", fontSize: 13, fontWeight: 900, color: "#fff", cursor: "pointer", fontFamily: "inherit" }}>
               <RubyText text={el ? "{設定|せってい}してみる" : "設定してみる"} />
             </button>
-            <button onClick={() => { feedback("tap"); setPhase("summary"); }}
+            <button onClick={() => { feedback("complete"); setPhase("complete"); }}
               style={{ width: "48%", background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.15)", borderRadius: 12, padding: "12px", fontSize: 13, color: "rgba(255,255,255,.5)", cursor: "pointer", fontFamily: "inherit" }}>
               <RubyText text={el ? "{今|いま}はスキップする" : "今はスキップする"} />
             </button>
@@ -7312,7 +7376,7 @@ function Episode1_2({ onComplete, onExit }) {
                 </button>
               ))}
             </div>
-            <button onClick={() => { feedback("tap"); setPhase("summary"); }}
+            <button onClick={() => { feedback("complete"); setPhase("complete"); }}
               style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${orange},${orangeDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", animation: "popIn .4s ease" }}>
               <RubyText text={el ? "まとめへ →" : "まとめへ →"} />
             </button>
@@ -7320,6 +7384,16 @@ function Episode1_2({ onComplete, onExit }) {
         )}
       </div>
     </div>
+    </EpisodeShell>
+  );
+
+  if (phase === "complete") return (
+    <EpisodeShell onExit={onExit}>
+      <CompleteScreen
+        epKey="ep1_2"
+        accentColor="#ffa940"
+        onComplete={onComplete}
+      />
     </EpisodeShell>
   );
 
@@ -7347,7 +7421,7 @@ function Episode1_2({ onComplete, onExit }) {
           ))}
         </div>
         <OwlSay mood="happy" e={el ? "エピソード1とあわせて、{個人情報|こじんじょうほう}を{守|まも}る{第一歩|だいいっぽ}がふめたね！おうちの{人|ひと}と{一緒|いっしょ}にできたこと、すごいよ！🦉" : "エピソード1とあわせて、個人情報を守る第一歩がふめたね！おうちの人と一緒にできたこと、すごいよ！🦉"}>エピソード1とあわせて、個人情報を守る第一歩がふめたね！おうちの人と一緒にできたこと、すごいよ！🦉</OwlSay>
-        <button onClick={() => { feedback("complete"); onComplete(3); }}
+        <button onClick={() => { feedback("complete"); setPhase("complete"); }}
           style={{ width: "100%", padding: 16, background: `linear-gradient(135deg,${orange},${orangeDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 16, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${orange}44` }}>
           🏆 <RubyText text={el ? "{修了証|しゅうりょうしょう}をもらう" : "修了証をもらう"} />
         </button>
