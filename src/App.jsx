@@ -6059,23 +6059,23 @@ function HomeScreen({ onNavigate, progress }) {
         <button onClick={() => onNavigate("opening")}
           style={{
             width: "100%", marginTop: 0, marginBottom: 14, padding: "16px 16px",
-            background: "linear-gradient(135deg,rgba(99,102,241,.12),rgba(139,92,246,.08))",
-            border: "1.5px solid rgba(139,92,246,.4)",
+            background: "rgba(255,255,255,.08)",
+            border: "1.5px solid rgba(255,255,255,.2)",
             borderRadius: 16, cursor: "pointer", fontFamily: "inherit",
             display: "flex", alignItems: "center", gap: 12,
           }}>
-          <div style={{ width: 44, height: 44, borderRadius: 12, background: "rgba(139,92,246,.2)", border: "1px solid rgba(139,92,246,.4)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>
+          <div style={{ width: 44, height: 44, borderRadius: 12, background: "rgba(255,255,255,.12)", border: "1px solid rgba(255,255,255,.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>
             👨‍👩‍👧
           </div>
           <div style={{ flex: 1, textAlign: "left" }}>
-            <div style={{ fontSize: 13, fontWeight: 900, color: "#6d28d9" }}>
+            <div style={{ fontSize: 13, fontWeight: 900, color: "#fff" }}>
               <RubyText text={ageMode === "elementary" ? "はじめての{方|かた}へ（{保護者|ほごしゃ}{向|む}け）" : "はじめての方へ（保護者向け）"} />
             </div>
-            <div style={{ fontSize: 11, color: "rgba(109,40,217,.5)", marginTop: 2 }}>
+            <div style={{ fontSize: 11, color: "rgba(255,255,255,.55)", marginTop: 2 }}>
               <RubyText text={ageMode === "elementary" ? "このアプリの{使|つか}い{方|かた}・{目的|もくてき}・{統計|とうけい}を{確認|かくにん}する" : "このアプリの使い方・目的・統計を確認する"} />
             </div>
           </div>
-          <div style={{ fontSize: 16, color: "rgba(255,255,255,.3)" }}>→</div>
+          <div style={{ fontSize: 16, color: "rgba(255,255,255,.4)" }}>→</div>
         </button>
 
         {/* PLAY section */}
