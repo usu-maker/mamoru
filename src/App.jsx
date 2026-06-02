@@ -5818,13 +5818,51 @@ function HomeScreen({ onNavigate, progress }) {
 
   // EP1-2: EP1クリアでアンロック（パスワードゲート廃止）
 
-  // モリィタップ
+  // モリィセリフリスト
+  const mollyMessages = [
+    "まずはEPISODE 1から始めるのがおすすめだよ！",
+    "知らなかった！って気づくことが、守る第一歩だよ🛡️",
+    "SNSって楽しいけど、ちょっと待って。一緒に確認しよう！",
+    "おうちの人と一緒にやると、もっと学べるよ👨‍👩‍👧",
+    "怖い話もあるけど、知っていれば大丈夫！一緒にがんばろう🦉",
+    "全エピソードクリアしたら、スマホ名人だね✨",
+    "投稿する前に、一度だけ立ち止まって考えてみよう📱",
+    "マモルを使ってくれてありがとう！きみのこと、応援してるよ🎉",
+    "今日学んだことを、だれかに話してみよう。それが一番の復習！",
+    "ネットのトラブルは、知識があれば9割防げるって知ってた？💡",
+  ];
+  const mollyMessagesEl = [
+    "まずはEPISODE 1から{始|はじ}めるのがおすすめだよ！",
+    "{知|し}らなかった！って{気|き}づくことが、{守|まも}る{第一歩|だいいっぽ}だよ🛡️",
+    "SNSって{楽|たの}しいけど、ちょっと{待|ま}って。{一緒|いっしょ}に{確認|かくにん}しよう！",
+    "おうちの{人|ひと}と{一緒|いっしょ}にやると、もっと{学|まな}べるよ👨‍👩‍👧",
+    "{怖|こわ}い{話|はなし}もあるけど、{知|し}っていれば{大丈夫|だいじょうぶ}！{一緒|いっしょ}にがんばろう🦉",
+    "{全|ぜん}エピソードクリアしたら、スマホ{名人|めいじん}だね✨",
+    "{投稿|とうこう}する{前|まえ}に、{一度|いちど}だけ{立|た}ち{止|と}まって{考|かんが}えてみよう📱",
+    "マモルを{使|つか}ってくれてありがとう！きみのこと、{応援|おうえん}してるよ🎉",
+    "{今日|きょう}{学|まな}んだことを、だれかに{話|はな}してみよう。それが{一番|いちばん}の{復習|ふくしゅう}！",
+    "ネットのトラブルは、{知識|ちしき}があれば9{割|わり}{防|ふせ}げるって{知|し}ってた？💡",
+  ];
+  const [mollyMsgIdx, setMollyMsgIdx] = useState(0);
+
+  // モリィタップ（シークレットコマンド）
   const handleOwlTap = () => {
     const next = owlTapCount + 1;
     setOwlTapCount(next);
     if (next >= 10) { setOwlTapCount(0); setSecret1(true); try { localStorage.setItem("mamoru_secret1_found", "1"); } catch {} }
     else if (next >= 5) setSecretMsg(`あと${10 - next}回！`);
     else setSecretMsg("");
+  };
+
+  // モリィタップ（セリフ変更 + シークレット）
+  const handleMollyTap = () => {
+    feedback("tap");
+    handleOwlTap();
+    setMollyMsgIdx(prev => {
+      let next;
+      do { next = Math.floor(Math.random() * mollyMessages.length); } while (next === prev);
+      return next;
+    });
   };
 
   // スワイプ検出（左右左右左）
@@ -5934,20 +5972,32 @@ function HomeScreen({ onNavigate, progress }) {
             </div>
           </div>
           {/* Owl greeting */}
-          <div style={{ display: "flex", alignItems: "flex-end", gap: 16, marginBottom: 28 }}>
-            {/* ① モリィ10回タップでシークレット1 */}
-            <div onClick={handleOwlTap} style={{ cursor: "pointer", display: "inline-block", position: "relative" }}>
-              <OwlMolly size={88} mood={owlTapCount >= 5 ? "excited" : "happy"} />
-              {secretMsg && (
-                <div style={{ position: "absolute", top: -28, left: "50%", transform: "translateX(-50%)", background: "#ffa940", color: "#fff", borderRadius: 99, padding: "3px 10px", fontSize: 10, fontWeight: 700, whiteSpace: "nowrap", animation: "popIn .2s ease" }}>
-                  {secretMsg}
-                </div>
-              )}
+          <div style={{ marginBottom: 28 }}>
+            {/* 吹き出し */}
+            <div key={mollyMsgIdx} style={{ background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.15)", borderRadius: 16, padding: "12px 16px", marginBottom: 12, animation: "slideUp .3s ease" }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", lineHeight: 1.75 }}>
+                <RubyText text={ageMode === "elementary" ? mollyMessagesEl[mollyMsgIdx] : mollyMessages[mollyMsgIdx]} />
+              </div>
+              <div style={{ fontSize: 10, color: "rgba(255,255,255,.3)", marginTop: 6, textAlign: "right" }}>
+                {ageMode === "elementary" ? "タップでセリフがかわるよ" : "タップでセリフが変わるよ"}
+              </div>
             </div>
-            <div style={{ background: "rgba(255,255,255,.85)", backdropFilter: "blur(10px)", border: "1px solid rgba(100,180,255,.25)", borderRadius: "18px 18px 18px 6px", padding: "13px 16px", flex: 1, animation: "slideUp .5s .2s both ease", boxShadow: "0 4px 16px rgba(100,180,255,.1)" }}>
-              <div style={{ fontSize: 14, color: "#1e3a5f", fontWeight: 700, marginBottom: 4 }}>{t("home.greeting")}</div>
-              <div style={{ fontSize: 12, color: "rgba(30,58,95,.6)", lineHeight: 1.7 }}>
-                <FormattedText text={t("home.greetingDesc").replace(/\*\*([^*]+)\*\*/g, '<<<$1>>>')} />
+            {/* ① モリィ10回タップでシークレット1 + セリフ変更 */}
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <div
+                onClick={handleMollyTap}
+                onMouseDown={e => e.currentTarget.style.transform = "scale(1.05)"}
+                onMouseUp={e => e.currentTarget.style.transform = "scale(1)"}
+                onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
+                onTouchStart={e => e.currentTarget.style.transform = "scale(1.05)"}
+                onTouchEnd={e => e.currentTarget.style.transform = "scale(1)"}
+                style={{ cursor: "pointer", display: "inline-block", position: "relative", transition: "transform .15s" }}>
+                <OwlMolly size={88} mood={owlTapCount >= 5 ? "excited" : "happy"} />
+                {secretMsg && (
+                  <div style={{ position: "absolute", top: -28, left: "50%", transform: "translateX(-50%)", background: "#ffa940", color: "#fff", borderRadius: 99, padding: "3px 10px", fontSize: 10, fontWeight: 700, whiteSpace: "nowrap", animation: "popIn .2s ease" }}>
+                    {secretMsg}
+                  </div>
+                )}
               </div>
             </div>
           </div>
