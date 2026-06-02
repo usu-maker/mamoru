@@ -7070,8 +7070,8 @@ function Episode1_2({ onComplete, onExit }) {
   ];
 
   const appItems = [
-    { icon: "📷", title: el ? "カメラアプリ" : "カメラアプリ", desc: el ? "{写真|しゃしん}に{位置情報|いちじょうほう}（ジオタグ）がつく。SNSに{投稿|とうこう}すると、{撮|と}った{場所|ばしょ}がバレる。" : "写真に位置情報（ジオタグ）がつく。SNSに投稿すると、撮った場所がバレる。", levelLabel: el ? "{必|かなら}ずオフにする ✕" : "必ずオフにする ✕", levelColor: "#ef4444" },
-    { icon: "📱", title: el ? "SNSアプリ（Instagram・X・TikTokなど）" : "SNSアプリ（Instagram・X・TikTokなど）", desc: el ? "{投稿|とうこう}に「{現在地|げんざいち}」がついて{世界中|せかいじゅう}に{公開|こうかい}される。" : "投稿に「現在地」がついて世界中に公開される。", levelLabel: el ? "{必|かなら}ずオフにする ✕" : "必ずオフにする ✕", levelColor: "#ef4444" },
+    { icon: "📷", title: el ? "カメラアプリ" : "カメラアプリ", desc: el ? "{写真|しゃしん}に{位置情報|いちじょうほう}（ジオタグ）がつく。SNSに{投稿|とうこう}すると、{撮|と}った{場所|ばしょ}がバレる。" : "写真に位置情報（ジオタグ）がつく。SNSに投稿すると、撮った場所がバレる。", levelLabel: el ? "オフにすることを{推奨|すいしょう} ⚠️" : "オフにすることを推奨 ⚠️", levelColor: "#ffa940" },
+    { icon: "📱", title: el ? "SNSアプリ（Instagram・X・TikTokなど）" : "SNSアプリ（Instagram・X・TikTokなど）", desc: el ? "{投稿|とうこう}に「{現在地|げんざいち}」がついて{世界中|せかいじゅう}に{公開|こうかい}される。" : "投稿に「現在地」がついて世界中に公開される。", levelLabel: el ? "オフにすることを{推奨|すいしょう} ⚠️" : "オフにすることを推奨 ⚠️", levelColor: "#ffa940" },
     { icon: "🗺️", title: el ? "マップアプリ（Google マップなど）" : "マップアプリ（Google マップなど）", desc: el ? "{目的地|もくてきち}への{道案内|みちあんない}に{必要|ひつよう}。" : "目的地への道案内に必要。", levelLabel: el ? "{使|つか}う{時|とき}だけON △" : "使う時だけON △", levelColor: "#f59e0b" },
     { icon: "☁️", title: el ? "{天気|てんき}アプリ" : "天気アプリ", desc: el ? "今いる{場所|ばしょ}の{天気|てんき}を{知|し}るために{使|つか}う。" : "今いる場所の天気を知るために使う。", levelLabel: el ? "{使|つか}う{時|とき}だけONでもOK △" : "使う時だけONでもOK △", levelColor: "#f59e0b" },
   ];
@@ -7255,7 +7255,7 @@ function Episode1_2({ onComplete, onExit }) {
             </div>
           ))}
         </div>
-        <OwlSay mood="worried" e={el ? "カメラとSNSアプリは{必|かなら}ずオフにしよう！🦉" : "カメラとSNSアプリは必ずオフにしよう！🦉"}>カメラとSNSアプリは必ずオフにしよう！🦉</OwlSay>
+        <OwlSay mood="worried" e={el ? "カメラとSNSアプリは{位置情報|いちじょうほう}をオフにすることが{望|のぞ}ましいよ🦉" : "カメラとSNSアプリは位置情報をオフにすることが望ましいよ🦉"}>カメラとSNSアプリは位置情報をオフにすることが望ましいよ🦉</OwlSay>
         <button onClick={() => setPhase("checklist")}
           style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${orange},${orangeDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
           <RubyText text={el ? "{今|いま}すぐ{設定|せってい}を{変|か}えよう →" : "今すぐ設定を変えよう →"} />
