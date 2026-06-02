@@ -674,6 +674,7 @@ const GlobalStyle = () => (
     @keyframes glitch1   {0%,100%{clip-path:inset(0 0 90% 0);transform:translate(-4px,0)} 50%{clip-path:inset(30% 0 50% 0);transform:translate(4px,0)}}
     @keyframes glitch2   {0%,100%{clip-path:inset(50% 0 20% 0);transform:translate(4px,0)} 50%{clip-path:inset(10% 0 70% 0);transform:translate(-4px,0)}}
     @keyframes matrixFall{0%{transform:translateY(-100%);opacity:1} 100%{transform:translateY(100vh);opacity:0}}
+    @keyframes fadeIn    {from{opacity:0} to{opacity:1}}
     @keyframes scanLine  {0%{top:0} 100%{top:100%}}
     @keyframes hackBlink {0%,100%{opacity:1} 49%{opacity:1} 50%{opacity:0} 99%{opacity:0}}
     @keyframes shakeX    {0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)}}
@@ -6322,14 +6323,41 @@ function Episode1({ onComplete, onExit }) {
 
   // Unsplash取得は不要になったためuseEffectは削除
 
+  const playTypingSound = () => {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const notes = [300, 280, 310, 290];
+      notes.forEach((freq, i) => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.connect(g); g.connect(ctx.destination);
+        o.type = "sine";
+        o.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.08);
+        g.gain.setValueAtTime(0.08, ctx.currentTime + i * 0.08);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.08 + 0.07);
+        o.start(ctx.currentTime + i * 0.08);
+        o.stop(ctx.currentTime + i * 0.08 + 0.07);
+      });
+    } catch {}
+  };
+
   useEffect(() => {
     if (phase !== "horror") return;
     let timer;
-    if (horrorStage === 0 && horrorMsgIdx < 3) {
-      timer = setTimeout(() => setHorrorMsgIdx(i => i + 1), 800);
+    if (horrorStage === -1 && horrorMsgIdx === 0) {
+      timer = setTimeout(() => setHorrorMsgIdx(1), 1500);
+    } else if (horrorStage === -1 && horrorMsgIdx === 1) {
+      timer = setTimeout(() => { setHorrorStage(0); setHorrorMsgIdx(0); }, 1500);
+    } else if (horrorStage === 0 && horrorMsgIdx < 3) {
+      timer = setTimeout(() => { playTypingSound(); setHorrorMsgIdx(i => i + 1); }, 800);
     } else if (horrorStage === 1 && horrorMsgIdx < 6) {
-      timer = setTimeout(() => setHorrorMsgIdx(i => i + 1), 900);
-    } else if (horrorStage === 2 && horrorMsgIdx < 1) {
+      const next = horrorMsgIdx + 1;
+      timer = setTimeout(() => {
+        if (next === 1 || next === 3 || next === 5) playTypingSound();
+        setHorrorMsgIdx(next);
+      }, 900);
+    } else if (horrorStage === 2 && horrorMsgIdx === 0) {
+      playTypingSound();
       timer = setTimeout(() => setHorrorMsgIdx(i => i + 1), 2000);
     }
     return () => clearTimeout(timer);
@@ -6490,7 +6518,7 @@ function Episode1({ onComplete, onExit }) {
                 style={{ width: "100%", padding: 14, background: "#1da1f2", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
                 <RubyText text={t("ep1.nextPost")} />
               </button>
-            : <button onClick={() => { feedback("tap"); setHorrorStage(0); setHorrorMsgIdx(0); setPhase("horror"); }}
+            : <button onClick={() => { feedback("tap"); setHorrorStage(-1); setHorrorMsgIdx(0); setPhase("horror"); }}
                 style={{ width: "100%", padding: 14, background: "linear-gradient(135deg,#ffa940,#ff8c1a)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
                 <RubyText text={t("ep1.looksHappy")} />
               </button>
@@ -6504,8 +6532,18 @@ function Episode1({ onComplete, onExit }) {
   // ── Horror ──
   if (phase === "horror") return (
     <EpisodeShell onExit={onExit}>
-    <div style={{ minHeight: "100vh", background: horrorStage === 3 ? "#0d1a2e" : "#1a0000", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff", padding: "20px 16px", position: "relative", overflow: "hidden", animation: horrorStage === 2 ? "redPulse 1s ease-in-out infinite" : "none" }}>
+    <div style={{ minHeight: "100vh", background: horrorStage === -1 ? "#000" : horrorStage === 3 ? "#0d1a2e" : "#1a0000", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff", padding: "20px 16px", position: "relative", overflow: "hidden", animation: horrorStage === 2 ? "redPulse 1s ease-in-out infinite" : "none" }}>
       <div style={{ maxWidth: 400, margin: "0 auto" }}>
+
+        {/* ── 導入：ある日… ── */}
+        {horrorStage === -1 && (
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}>
+            <div style={{ fontSize: 22, color: "rgba(255,255,255,.6)", textAlign: "center", animation: "fadeIn 1s ease" }}>ある日…</div>
+            {horrorMsgIdx >= 1 && (
+              <div style={{ fontSize: 18, color: "rgba(255,255,255,.4)", textAlign: "center", marginTop: 16, animation: "fadeIn .8s ease" }}>DMが届きました</div>
+            )}
+          </div>
+        )}
 
         {/* ── STAGE 1 ── */}
         {horrorStage === 0 && (<>
@@ -6557,7 +6595,7 @@ function Episode1({ onComplete, onExit }) {
           )}
           {horrorMsgIdx >= 2 && (
             <div style={{ fontSize: 11, color: "#ff4343", fontWeight: 700, padding: "4px 10px", background: "rgba(255,67,67,.1)", borderRadius: 8, marginBottom: 10, animation: "slideUp .3s ease" }}>
-              ⚠️ <RubyText text={ageMode === "elementary" ? "{表札|ひょうさつ}から{苗字|みょうじ}を{知|し}られた" : "表札から苗字を知られた"} />
+              ⚠️ <RubyText text={ageMode === "elementary" ? "{苗字|みょうじ}が{知|し}られている" : "苗字が知られている"} />
             </div>
           )}
           {horrorMsgIdx >= 3 && (
