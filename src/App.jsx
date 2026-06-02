@@ -6001,21 +6001,6 @@ function HomeScreen({ onNavigate, progress }) {
               </div>
             </div>
           </div>
-          {/* Stats */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8, marginBottom: 4 }}>
-            {[
-              { icon: "🎮", val: "10", label: t("home.statsMode") },
-              { icon: "⭐", val: Object.values(progress).filter(Boolean).length * 3, label: t("home.statsStar") },
-              { icon: "✅", val: `${Object.values(progress).filter(Boolean).length}/10`, label: t("home.statsClear") },
-            ].map((s, i) => (
-              <div key={i} style={{ background: "rgba(255,255,255,.8)", border: "1px solid rgba(100,180,255,.2)", borderRadius: 14, padding: "12px 10px", textAlign: "center", animation: `popIn .4s ${i * .1}s both ease`, boxShadow: "0 2px 12px rgba(100,180,255,.1)" }}>
-                <div style={{ fontSize: 20, marginBottom: 4 }}>{s.icon}</div>
-                <div style={{ fontSize: 20, fontWeight: 900, color: "#1e3a5f", fontFamily: "'DotGothic16',monospace" }}>{s.val}</div>
-                <div style={{ fontSize: 10, color: "rgba(30,58,95,.5)", marginTop: 2 }}>{s.label}</div>
-              </div>
-            ))}
-          </div>
-
           {/* Master title + badge strip */}
           {(() => {
             const rec = (() => { try { const r = localStorage.getItem("mamoru_progress_v1"); return r ? JSON.parse(r) : {}; } catch { return {}; } })();
@@ -6024,6 +6009,13 @@ function HomeScreen({ onNavigate, progress }) {
             if (earned.length === 0) return null;
             return (
               <div style={{ marginTop: 12, animation: "slideUp .6s ease" }}>
+                {/* 実績ヘッダー */}
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                  <div style={{ fontSize: 14, fontWeight: 900, color: "#fff" }}>🏆 取得済み実績</div>
+                  <div style={{ fontSize: 13, fontWeight: 900, color: "#ffa940", background: "rgba(255,169,64,.12)", border: "1px solid rgba(255,169,64,.25)", borderRadius: 99, padding: "3px 12px" }}>
+                    {earned.length} / {BADGES.length}
+                  </div>
+                </div>
                 <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: `${mt.color}15`, border: `1px solid ${mt.color}33`, borderRadius: 99, padding: "4px 12px", marginBottom: 8 }}>
                   <span style={{ fontSize: 12, fontWeight: 900, color: mt.color }}><RubyText text={ageMode === "elementary" ? mt.elTitle : mt.title} /></span>
                 </div>
