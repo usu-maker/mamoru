@@ -5917,14 +5917,14 @@ function HomeScreen({ onNavigate, progress }) {
           {/* Title row + Language switcher */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28 }}>
             <div>
-              <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 9, color: "rgba(30,58,95,.4)", letterSpacing: ".3em", marginBottom: 4 }}>{t("home.badge")}</div>
+              <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 9, color: "#fff", letterSpacing: ".3em", marginBottom: 4 }}>{t("home.badge")}</div>
               {/* ② ロゴ長押し3秒でシークレット2 */}
               <div
                 onMouseDown={() => { const t = setTimeout(() => { setSecret2(true); setLogoHoldTimer(null); try { localStorage.setItem("mamoru_secret2_found", "1"); } catch {} }, 3000); setLogoHoldTimer(t); }}
                 onMouseUp={() => { if (logoHoldTimer) { clearTimeout(logoHoldTimer); setLogoHoldTimer(null); } }}
                 onTouchStart={() => { const t = setTimeout(() => { setSecret2(true); setLogoHoldTimer(null); try { localStorage.setItem("mamoru_secret2_found", "1"); } catch {} }, 3000); setLogoHoldTimer(t); }}
                 onTouchEnd={() => { if (logoHoldTimer) { clearTimeout(logoHoldTimer); setLogoHoldTimer(null); } }}
-                style={{ fontSize: 30, fontWeight: 900, color: "#1e3a5f", letterSpacing: "-.02em", cursor: "default", userSelect: "none" }}>
+                style={{ fontSize: 30, fontWeight: 900, color: "#fff", letterSpacing: "-.02em", cursor: "default", userSelect: "none" }}>
                 {t("home.appName")}
               </div>
             </div>
@@ -6034,7 +6034,7 @@ function HomeScreen({ onNavigate, progress }) {
 
         {/* PLAY section */}
         <div style={{ display: "flex", alignItems: "center", gap: 10, margin: "20px 0 12px" }}>
-          <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: "rgba(30,58,95,.5)", letterSpacing: ".2em" }}>{t("home.sectionPlay")}</div>
+          <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: "#fff", letterSpacing: ".2em" }}>{t("home.sectionPlay")}</div>
           <div style={{ flex: 1, height: 1, background: "rgba(30,58,95,.1)" }} />
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 28 }}>
@@ -6092,7 +6092,7 @@ function HomeScreen({ onNavigate, progress }) {
 
         {/* COMING SOON */}
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-          <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: "rgba(30,58,95,.35)", letterSpacing: ".2em" }}>{t("home.sectionSoon")}</div>
+          <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: "#fff", letterSpacing: ".2em" }}>{t("home.sectionSoon")}</div>
           <div style={{ flex: 1, height: 1, background: "rgba(30,58,95,.08)" }} />
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
