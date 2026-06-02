@@ -5899,7 +5899,7 @@ function HomeScreen({ onNavigate, progress }) {
   ];
 
   return (
-    <div style={{ minHeight: "100vh", background: "linear-gradient(160deg,#e8f4fd 0%,#f0f8ff 40%,#fff8f5 100%)", fontFamily: "'Zen Maru Gothic',sans-serif" }}
+    <div style={{ minHeight: "100vh", background: "linear-gradient(160deg,#0d1a2e,#0a0f1a)", fontFamily: "'Zen Maru Gothic',sans-serif" }}
       onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
 
       {/* 隠しコマンド オーバーレイ */}
