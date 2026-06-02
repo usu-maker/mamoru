@@ -5981,26 +5981,33 @@ function HomeScreen({ onNavigate, progress }) {
               </div>
             );
           })()}
+
+          {/* 年齢モード表示・切り替え */}
+          <div style={{ background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.12)", borderRadius: 14, padding: "12px 16px", marginTop: 10, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 900, color: "#fff" }}>
+                {ageMode === "elementary" ? "🏫 小学生モード" : "🏫 中学生以上モード"}
+              </div>
+              <div style={{ fontSize: 11, color: "rgba(255,255,255,.4)", marginTop: 2 }}>
+                {ageMode === "elementary" ? "すべての漢字にルビを振っています" : "漢字にルビを振っていません"}
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                feedback("tap");
+                const next = ageMode === "elementary" ? "middle" : "elementary";
+                localStorage.setItem(AGE_MODE_KEY, next);
+                window.location.reload();
+              }}
+              style={{ background: "rgba(255,255,255,.1)", border: "1px solid rgba(255,255,255,.2)", borderRadius: 99, padding: "6px 14px", fontSize: 11, fontWeight: 700, color: "#fff", cursor: "pointer", fontFamily: "inherit", whiteSpace: "nowrap", flexShrink: 0 }}>
+              {ageMode === "elementary" ? "中学生モードに切り替え" : "小学生モードに切り替え"}
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Content */}
       <div style={{ padding: "0 20px 48px", maxWidth: 440, margin: "0 auto" }}>
-
-        {/* 小学生モードバナー */}
-        {ageMode === "elementary" && (
-          <div style={{ display: "flex", alignItems: "center", gap: 10, background: "linear-gradient(135deg,#fef9c3,#fde68a)", border: "1.5px solid #fcd34d", borderRadius: 14, padding: "10px 14px", marginBottom: 12, animation: "slideUp .4s ease" }}>
-            <span style={{ fontSize: 20 }}>🏫</span>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 12, fontWeight: 900, color: "#92400e" }}><RubyText text="{小学生|しょうがくせい}モードでひょうじ{中|ちゅう}" /></div>
-              <div style={{ fontSize: 11, color: "#b45309" }}><RubyText text="むずかしい{言葉|ことば}はやさしくしています" /></div>
-            </div>
-            <button onClick={() => { if (window.confirm("中学生以上モードに変更しますか？")) setAgeMode("middle"); }}
-              style={{ fontSize: 10, color: "#92400e", background: "rgba(0,0,0,.08)", border: "none", borderRadius: 8, padding: "4px 8px", cursor: "pointer", fontFamily: "inherit", fontWeight: 700 }}>
-              <RubyText text="{変更|へんこう}" />
-            </button>
-          </div>
-        )}
 
         {/* はじめての方へ（保護者向け）バナー */}
         <button onClick={() => onNavigate("opening")}
@@ -6167,21 +6174,6 @@ function HomeScreen({ onNavigate, progress }) {
             <div style={{ fontSize: 16, color: "rgba(30,58,95,.3)" }}>→</div>
           </button>
 
-          {/* 年齢設定変更ボタン */}
-          <button onClick={() => {
-            const next = ageMode === "elementary" ? "middle" : "elementary";
-            const label = next === "elementary" ? "小学4〜6年生" : "中学生以上";
-            if (window.confirm(`対象年齢を「${label}」に変更しますか？`)) {
-              setAgeMode(next);
-            }
-          }}
-            style={{ width: "100%", padding: "12px 16px", background: "rgba(255,255,255,.6)", border: "1px solid rgba(30,58,95,.12)", borderRadius: 14, cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 12 }}>
-            <div style={{ fontSize: 18 }}>🎓</div>
-            <div style={{ flex: 1, textAlign: "left", fontSize: 12, color: "rgba(30,58,95,.6)" }}>
-              <RubyText text={ageMode === "elementary" ? `{対象|たいしょう}{年齢|ねんれい}の{設定|せってい}を{変更|へんこう}する（{現在|げんざい}：{小学生|しょうがくせい}モード）` : `対象年齢の設定を変更する（現在：中学生以上）`} />
-            </div>
-            <div style={{ fontSize: 14, color: "rgba(30,58,95,.3)" }}>→</div>
-          </button>
         </div>
 
         {/* アプリ情報リンク */}
