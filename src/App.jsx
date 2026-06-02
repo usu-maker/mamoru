@@ -7021,6 +7021,7 @@ function Episode1_2({ onComplete, onExit }) {
   const [stepIdx, setStepIdx] = useState(0);
   const [locationStep, setLocationStep] = useState(0);
   const [checklistDone, setChecklistDone] = useState([]);
+  const [showChecklist, setShowChecklist] = useState(false);
 
   const orange = "#ffa940";
   const orangeDark = "#d97706";
@@ -7272,27 +7273,46 @@ function Episode1_2({ onComplete, onExit }) {
         <h2 style={{ fontSize: 18, fontWeight: 900, color: "#fff", marginBottom: 8 }}>
           <RubyText text={el ? "{今|いま}すぐ、いっしょに{設定|せってい}を{変|か}えよう" : "今すぐ、いっしょに設定を変えよう"} />
         </h2>
-        <OwlSay mood="happy" e={el ? "おうちの{人|ひと}といっしょに、ひとつずつチェックしながらやってみよう。{全部|ぜんぶ}できたら{次|つぎ}に{進|すす}めるよ！🦉" : "おうちの人といっしょに、ひとつずつチェックしながらやってみよう。全部できたら次に進めるよ！🦉"}>おうちの人といっしょに、ひとつずつチェックしながらやってみよう。全部できたら次に進めるよ！🦉</OwlSay>
-        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 14 }}>
-          {checklistItems.map((item, i) => (
-            <button key={i} onClick={() => { feedback("correct"); setChecklistDone(p => p.includes(i) ? p : [...p, i]); }}
-              style={{ width: "100%", display: "flex", alignItems: "flex-start", gap: 12, background: checklistDone.includes(i) ? "rgba(74,222,128,.08)" : `${orange}06`, border: `1px solid ${checklistDone.includes(i) ? "rgba(74,222,128,.3)" : orange + "22"}`, borderRadius: 16, padding: "14px 16px", cursor: "pointer", fontFamily: "inherit", textAlign: "left" }}>
-              <div style={{ width: 24, height: 24, borderRadius: 7, background: checklistDone.includes(i) ? "#4ade80" : "rgba(255,255,255,.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, flexShrink: 0, marginTop: 2 }}>{checklistDone.includes(i) ? "✓" : ""}</div>
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 900, color: checklistDone.includes(i) ? "#86efac" : "#fff", marginBottom: 6 }}><RubyText text={item.title} /></div>
-                <div style={{ fontSize: 11, color: "rgba(255,255,255,.5)", lineHeight: 1.7 }}>
-                  iOS：<RubyText text={item.ios} />{item.android && <><br />Android：<RubyText text={item.android} /></>}
-                </div>
-              </div>
-            </button>
-          ))}
+        {/* メインメッセージ */}
+        <div style={{ background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.12)", borderRadius: 14, padding: "14px 16px", marginBottom: 14 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", lineHeight: 1.75, marginBottom: 6 }}>
+            <RubyText text={el ? "{必要|ひつよう}だと{思|おも}ったら、おうちの{人|ひと}といっしょに{以下|いか}の{設定|せってい}をしてみてね！" : "必要だと思ったら、おうちの人といっしょに以下の設定をしてみてね！"} />
+          </div>
+          <div style={{ fontSize: 12, color: "rgba(255,255,255,.45)", lineHeight: 1.65 }}>
+            <RubyText text={el ? "{位置情報|いちじょうほう}を{共有|きょうゆう}して{楽|たの}しむこともあるので、{強制|きょうせい}ではありません。" : "位置情報を共有して楽しむこともあるので、強制ではありません。"} />
+          </div>
         </div>
-        {checklistDone.length >= checklistItems.length && (
+        {/* 2ボタン */}
+        {!showChecklist && (
+          <div style={{ display: "flex", gap: "4%", marginBottom: 14 }}>
+            <button onClick={() => { feedback("tap"); setShowChecklist(true); }}
+              style={{ width: "48%", background: orange, border: "none", borderRadius: 12, padding: "12px", fontSize: 13, fontWeight: 900, color: "#fff", cursor: "pointer", fontFamily: "inherit" }}>
+              <RubyText text={el ? "{設定|せってい}してみる" : "設定してみる"} />
+            </button>
+            <button onClick={() => { feedback("tap"); setPhase("summary"); }}
+              style={{ width: "48%", background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.15)", borderRadius: 12, padding: "12px", fontSize: 13, color: "rgba(255,255,255,.5)", cursor: "pointer", fontFamily: "inherit" }}>
+              <RubyText text={el ? "{今|いま}はスキップする" : "今はスキップする"} />
+            </button>
+          </div>
+        )}
+        {/* チェックリスト（設定してみるを押した場合のみ） */}
+        {showChecklist && (
           <>
-            <div style={{ background: "rgba(74,222,128,.1)", border: "1px solid rgba(74,222,128,.3)", borderRadius: 14, padding: "14px 16px", marginBottom: 14, textAlign: "center", fontSize: 14, fontWeight: 900, color: "#86efac" }}>
-              🎉 <RubyText text={el ? "{完璧|かんぺき}！これで{位置情報|いちじょうほう}から{守|まも}られるよ！" : "完璧！これで位置情報から守られるよ！"} />
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 14 }}>
+              {checklistItems.map((item, i) => (
+                <button key={i} onClick={() => { feedback("correct"); setChecklistDone(p => p.includes(i) ? p : [...p, i]); }}
+                  style={{ width: "100%", display: "flex", alignItems: "flex-start", gap: 12, background: checklistDone.includes(i) ? "rgba(74,222,128,.08)" : `${orange}06`, border: `1px solid ${checklistDone.includes(i) ? "rgba(74,222,128,.3)" : orange + "22"}`, borderRadius: 16, padding: "14px 16px", cursor: "pointer", fontFamily: "inherit", textAlign: "left" }}>
+                  <div style={{ width: 24, height: 24, borderRadius: 7, background: checklistDone.includes(i) ? "#4ade80" : "rgba(255,255,255,.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, flexShrink: 0, marginTop: 2 }}>{checklistDone.includes(i) ? "✓" : ""}</div>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 900, color: checklistDone.includes(i) ? "#86efac" : "#fff", marginBottom: 6 }}><RubyText text={item.title} /></div>
+                    <div style={{ fontSize: 11, color: "rgba(255,255,255,.5)", lineHeight: 1.7 }}>
+                      iOS：<RubyText text={item.ios} />{item.android && <><br />Android：<RubyText text={item.android} /></>}
+                    </div>
+                  </div>
+                </button>
+              ))}
             </div>
-            <button onClick={() => setPhase("summary")}
+            <button onClick={() => { feedback("tap"); setPhase("summary"); }}
               style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${orange},${orangeDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", animation: "popIn .4s ease" }}>
               <RubyText text={el ? "まとめへ →" : "まとめへ →"} />
             </button>
