@@ -5910,7 +5910,7 @@ function TutorialOverlay({ step, onNext, onSkip, refs }) {
 // ─────────────────────────────────────────────
 // ██ HOME SCREEN
 // ─────────────────────────────────────────────
-function HomeScreen({ onNavigate, progress }) {
+function HomeScreen({ onNavigate, progress, startTutorial, onTutorialStarted }) {
   const t = useT();
   const { ageMode, setAgeMode } = useContext(AgeModeContext);
   const kwCount = loadKeywords().length;
@@ -5958,18 +5958,19 @@ function HomeScreen({ onNavigate, progress }) {
   const [activeTab, setActiveTab] = useState("top");
 
   // チュートリアル
-  const [tutorialStep, setTutorialStep] = useState(() => {
-    try { return localStorage.getItem(TUTORIAL_KEY) ? 0 : 1; } catch { return 1; }
-  });
+  const [tutorialStep, setTutorialStep] = useState(0);
   const showTutorial = tutorialStep > 0;
-  const finishTutorial = () => {
-    try { localStorage.setItem(TUTORIAL_KEY, "1"); } catch {}
-    setTutorialStep(0);
-  };
+  const finishTutorial = () => { setTutorialStep(0); };
   const nextTutorialStep = () => {
     if (tutorialStep >= TUTORIAL_STEPS.length) finishTutorial();
     else setTutorialStep(s => s + 1);
   };
+  useEffect(() => {
+    if (startTutorial) {
+      setTutorialStep(1);
+      if (onTutorialStarted) onTutorialStarted();
+    }
+  }, [startTutorial]);
   const tutorialRefs = {
     badges:      useRef(null),
     modeSwitch:  useRef(null),
@@ -6171,7 +6172,7 @@ function HomeScreen({ onNavigate, progress }) {
           </div>
 
           {/* はじめての方へ */}
-          <button onClick={() => { feedback("tap"); setTutorialStep(1); }}
+          <button onClick={() => { feedback("tap"); onNavigate("opening"); }}
             style={{ width: "100%", marginBottom: 10, padding: "16px", background: "rgba(255,255,255,.08)", border: "1.5px solid rgba(255,255,255,.2)", borderRadius: 16, cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 12 }}>
             <div style={{ width: 44, height: 44, borderRadius: 12, background: "rgba(255,255,255,.12)", border: "1px solid rgba(255,255,255,.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>👨‍👩‍👧</div>
             <div style={{ flex: 1, textAlign: "left" }}>
@@ -12180,6 +12181,7 @@ export default function App() {
   const [showOpening, setShowOpening] = useState(() => {
     try { return !localStorage.getItem(ONBOARDING_KEY); } catch { return false; }
   });
+  const [startTutorialAfterOpening, setStartTutorialAfterOpening] = useState(false);
 
   const [screen, setScreen] = useState("home");
   const [progress, setProgress] = useState(() => {
@@ -12207,7 +12209,7 @@ export default function App() {
     <AgeModeContext.Provider value={{ ageMode, setAgeMode }}>
       <LangContext.Provider value={{ lang, setLang }}>
         <GlobalStyle />
-        <Opening onComplete={() => setShowOpening(false)} />
+        <Opening onComplete={() => { setShowOpening(false); setStartTutorialAfterOpening(true); }} />
       </LangContext.Provider>
     </AgeModeContext.Provider>
   );
@@ -12216,12 +12218,12 @@ export default function App() {
     <AgeModeContext.Provider value={{ ageMode, setAgeMode }}>
       <LangContext.Provider value={{ lang, setLang }}>
         <GlobalStyle />
-        {screen === "home" && <HomeScreen onNavigate={navigate} progress={progress} />}
+        {screen === "home" && <HomeScreen onNavigate={navigate} progress={progress} startTutorial={startTutorialAfterOpening} onTutorialStarted={() => setStartTutorialAfterOpening(false)} />}
         {screen === "report" && <ParentReport onBack={() => navigate("home")} />}
         {screen === "keywordnote" && <KeywordNoteScreen onBack={() => navigate("home")} />}
         {screen === "weekly" && <WeeklyChallengeScreen onBack={() => navigate("home")} />}
         {screen === "info" && <InfoScreen onBack={() => navigate("home")} />}
-        {screen === "opening" && <Opening onComplete={() => navigate("home")} />}
+        {screen === "opening" && <Opening onComplete={() => { navigate("home"); setStartTutorialAfterOpening(true); }} />}
         {screen === "ep1" && <Episode1 onComplete={(s) => finish("ep1", s)} onExit={() => navigate("home")} />}
         {screen === "ep12" && <Episode1_2 onComplete={(s) => finish("ep12", s)} onExit={() => navigate("home")} />}
         {screen === "ep2" && <Episode2 onComplete={(s) => finish("ep2", s)} onExit={() => navigate("home")} />}
