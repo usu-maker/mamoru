@@ -2773,6 +2773,210 @@ function ParentExpertCard({ epKey, accentColor }) {
 }
 
 // ═══════════════════════════════════════════════
+// 🔥 チャレンジ導入画面
+// ═══════════════════════════════════════════════
+function ChallengeIntroScreen({ onStart, onExit }) {
+  const ageMode = useAgeMode();
+  const el = ageMode === "elementary";
+
+  return (
+    <div style={{
+      minHeight: "100vh",
+      background: "linear-gradient(180deg,#1a0800,#0f0500)",
+      padding: "32px 20px 40px",
+      fontFamily: "'Zen Maru Gothic',sans-serif",
+      color: "#fff",
+    }}>
+      <div style={{ maxWidth: 440, margin: "0 auto" }}>
+
+        {/* 戻るボタン */}
+        <button onClick={() => { feedback("tap"); onExit(); }}
+          style={{
+            background: "rgba(255,255,255,.1)",
+            border: "1px solid rgba(255,255,255,.2)",
+            borderRadius: 10,
+            padding: "6px 14px",
+            fontSize: 12,
+            color: "rgba(255,255,255,.7)",
+            cursor: "pointer",
+            fontFamily: "inherit",
+            marginBottom: 20,
+          }}>← 戻る</button>
+
+        {/* 炎アニメーション */}
+        <div style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "flex-end",
+          gap: 6,
+          height: 80,
+          marginBottom: 8,
+        }}>
+          {[
+            { w: 18, h: 46, delay: "0s", dur: "1.1s", op: 0.85 },
+            { w: 28, h: 64, delay: ".1s", dur: "0.9s", op: 1 },
+            { w: 22, h: 52, delay: ".05s", dur: "1.3s", op: 0.9 },
+            { w: 16, h: 40, delay: ".15s", dur: "1.0s", op: 0.75 },
+          ].map((f, i) => (
+            <div key={i} style={{
+              width: f.w,
+              height: f.h,
+              background: `linear-gradient(180deg,#ff${i%2===0?"2200":"3300"},#ff${i%2===0?"6600":"7700"})`,
+              borderRadius: "50% 50% 30% 30% / 60% 60% 40% 40%",
+              opacity: f.op,
+              transformOrigin: "bottom center",
+              animation: `challengeFlame ${f.dur} ${f.delay} ease-in-out infinite`,
+            }} />
+          ))}
+        </div>
+
+        {/* keyframesをstyleタグで追加 */}
+        <style>{`
+          @keyframes challengeFlame {
+            0%,100%{transform:scaleY(1) scaleX(1)}
+            33%{transform:scaleY(1.1) scaleX(.95)}
+            66%{transform:scaleY(.93) scaleX(1.05)}
+          }
+          @keyframes challengeOwlBob {
+            0%,100%{transform:translateY(0)}
+            50%{transform:translateY(-5px)}
+          }
+          @keyframes challengeFadeUp {
+            from{opacity:0;transform:translateY(12px)}
+            to{opacity:1;transform:translateY(0)}
+          }
+        `}</style>
+
+        {/* タイトル */}
+        <div style={{ textAlign: "center", marginBottom: 18, animation: "challengeFadeUp .5s .1s both ease" }}>
+          <div style={{
+            display: "inline-block",
+            background: "rgba(255,120,0,.15)",
+            border: "1px solid rgba(255,120,0,.3)",
+            borderRadius: 99,
+            padding: "4px 14px",
+            fontSize: 11,
+            color: "#ff8c00",
+            fontWeight: 900,
+            marginBottom: 8,
+            letterSpacing: ".05em",
+          }}>WEEKLY CHALLENGE</div>
+          <p style={{ fontSize: 22, fontWeight: 900, color: "#fff", margin: 0 }}>
+            <RubyText text={el ? "今{週|しゅう}のチャレンジ" : "今週のチャレンジ"} />
+          </p>
+        </div>
+
+        {/* オウル＋セリフ */}
+        <div style={{
+          display: "flex",
+          alignItems: "flex-start",
+          gap: 10,
+          marginBottom: 18,
+          animation: "challengeFadeUp .5s .25s both ease",
+        }}>
+          <div style={{
+            width: 52,
+            height: 52,
+            background: "rgba(255,169,64,.15)",
+            borderRadius: "50%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: 28,
+            flexShrink: 0,
+            animation: "challengeOwlBob 2s ease-in-out infinite",
+          }}>🦉</div>
+          <div style={{
+            background: "rgba(255,255,255,.08)",
+            border: "0.5px solid rgba(255,255,255,.15)",
+            borderRadius: "0 14px 14px 14px",
+            padding: "11px 14px",
+            flex: 1,
+          }}>
+            <p style={{ fontSize: 13, color: "#fff", lineHeight: 1.8, margin: 0 }}>
+              <RubyText text={el
+                ? "{問題|もんだい}を{解|と}いて、{学|まな}んだことを{確|たし}かめよう！{知識|ちしき}をつければ、{自分|じぶん}や{家族|かぞく}をもっと{守|まも}れるようになるよ🔥"
+                : "問題を解いて、学んだことを確かめよう！知識をつければ、自分や家族をもっと守れるようになるよ🔥"
+              } />
+            </p>
+          </div>
+        </div>
+
+        {/* 説明カード3枚 */}
+        {[
+          {
+            icon: "📚",
+            text: "各エピソードで学んだ内容から出題されます",
+            textEl: "{各|かく}エピソードで{学|まな}んだ{内容|ないよう}から{出題|しゅつだい}されます",
+            delay: ".4s",
+          },
+          {
+            icon: "3️⃣",
+            text: "毎週3問用意されています",
+            textEl: "{毎週|まいしゅう}3{問|もん}{用意|ようい}されています",
+            delay: ".5s",
+          },
+          {
+            icon: "📅",
+            text: "問題は毎週月曜日に入れ替わります",
+            textEl: "{問題|もんだい}は{毎週|まいしゅう}{月曜日|げつようび}に{入|い}れ{替|か}わります",
+            delay: ".6s",
+          },
+        ].map((item, i) => (
+          <div key={i} style={{
+            background: "rgba(255,255,255,.06)",
+            border: "0.5px solid rgba(255,120,0,.2)",
+            borderRadius: 14,
+            padding: "12px 14px",
+            marginBottom: 10,
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            animation: `challengeFadeUp .5s ${item.delay} both ease`,
+          }}>
+            <div style={{
+              width: 36,
+              height: 36,
+              background: "rgba(255,120,0,.15)",
+              borderRadius: 10,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 18,
+              flexShrink: 0,
+            }}>{item.icon}</div>
+            <p style={{ fontSize: 13, color: "rgba(255,255,255,.85)", lineHeight: 1.65, margin: 0 }}>
+              <RubyText text={el ? item.textEl : item.text} />
+            </p>
+          </div>
+        ))}
+
+        {/* スタートボタン */}
+        <div style={{ marginTop: 20, animation: "challengeFadeUp .5s .75s both ease" }}>
+          <button
+            onClick={() => { feedback("tap"); onStart(); }}
+            style={{
+              width: "100%",
+              padding: "16px",
+              background: "linear-gradient(135deg,#ff6600,#ff4400)",
+              border: "none",
+              borderRadius: 16,
+              color: "#fff",
+              fontSize: 16,
+              fontWeight: 900,
+              cursor: "pointer",
+              fontFamily: "inherit",
+            }}>
+            🔥 <RubyText text={el ? "チャレンジをはじめる →" : "チャレンジをはじめる →"} />
+          </button>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════
 // 🔥 週次チャレンジ画面
 // ═══════════════════════════════════════════════
 function WeeklyChallengeScreen({ onBack }) {
@@ -12322,6 +12526,7 @@ export default function App() {
   const [startTutorialAfterOpening, setStartTutorialAfterOpening] = useState(false);
 
   const [screen, setScreen] = useState("home");
+  const [showChallengeIntro, setShowChallengeIntro] = useState(false);
   const [progress, setProgress] = useState(() => {
     const rec = loadRecord();
     return {
@@ -12359,7 +12564,17 @@ export default function App() {
         {screen === "home" && <HomeScreen onNavigate={navigate} progress={progress} startTutorial={startTutorialAfterOpening} onTutorialStarted={() => setStartTutorialAfterOpening(false)} />}
         {screen === "report" && <ParentReport onBack={() => navigate("home")} />}
         {screen === "keywordnote" && <KeywordNoteScreen onBack={() => navigate("home")} />}
-        {screen === "weekly" && <WeeklyChallengeScreen onBack={() => navigate("home")} />}
+        {screen === "weekly" && showChallengeIntro && (
+          <WeeklyChallengeScreen
+            onBack={() => { setShowChallengeIntro(false); navigate("home"); }}
+          />
+        )}
+        {screen === "weekly" && !showChallengeIntro && (
+          <ChallengeIntroScreen
+            onStart={() => { feedback("tap"); setShowChallengeIntro(true); }}
+            onExit={() => navigate("home")}
+          />
+        )}
         {screen === "info" && <InfoScreen onBack={() => navigate("home")} />}
         {screen === "opening" && <Opening onComplete={() => { navigate("home"); setStartTutorialAfterOpening(true); }} />}
         {screen === "ep1" && <Episode1 onComplete={(s) => finish("ep1", s)} onExit={() => navigate("home")} />}
