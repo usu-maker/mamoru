@@ -4338,6 +4338,8 @@ function Opening({ onComplete }) {
         elTitle: "{親子|おやこ}で{隣|となり}に{座|すわ}る",
         elBody: "お{子|こ}さまと{一緒|いっしょ}に{同|おな}じ{画面|がめん}を{見|み}ながら{進|すす}めてください。<br />{一人|ひとり}で{進|すす}めても{構|かま}いませんが、{隣|となり}に{座|すわ}ることで「{話|はな}し{合|あ}い」が{自然|しぜん}に{生|う}まれます。",
         elTip: "💡 {所要時間|しょようじかん}は1エピソード{約|やく}8〜10{分|ふん}",
+        img: "/images/opening/step1.jpg",
+        imgAlt: "親子でタブレットを一緒に見ている様子",
       },
       {
         num: "02", icon: "😱", color: "#ec4899",
@@ -4347,6 +4349,8 @@ function Opening({ onComplete }) {
         elTitle: "{体験|たいけん}→{驚|おどろ}く→{話|はな}し{合|あ}う",
         elBody: "{各|かく}エピソードにはリアルな「{疑似体験|ぎじたいけん}」があります。<br />{体験後|たいけんご}に「{怖|こわ}かった？」「どう{思|おも}う？」と{話|はな}しかけてみてください。",
         elTip: "💡 {大人|おとな}が{見|み}ても「{知|し}らなかった」と{驚|おどろ}く{内容|ないよう}です",
+        img: "/images/opening/step2.jpg",
+        imgAlt: "親子が真剣にタブレットを見ている様子",
       },
       {
         num: "03", icon: "📖", color: "#7c3aed",
@@ -4356,6 +4360,8 @@ function Opening({ onComplete }) {
         elTitle: "キーワードを{一緒|いっしょ}に{覚|おぼ}える",
         elBody: "トクリュウ・グルーミング・スミッシング…<br />ニュースに{出|で}てくる{言葉|ことば}を{親子|おやこ}で{覚|おぼ}えて、{日常|にちじょう}の{話題|わだい}にしましょう。",
         elTip: "💡 キーワードノートに{記録|きろく}して{後|あと}から{見返|みかえ}せます",
+        img: "/images/opening/step3.jpg",
+        imgAlt: "親子がソファで話し合っている様子",
       },
     ];
     const step = steps[tutIdx];
@@ -4420,6 +4426,18 @@ function Opening({ onComplete }) {
             <div style={{ background: `${step.color}0a`, border: `1px solid ${step.color}22`, borderRadius: 12, padding: "11px 14px", fontSize: 12, color: `${step.color}cc`, lineHeight: 1.7 }}>
               <RubyText text={ageMode === "elementary" ? (step.elTip || step.tip) : step.tip} />
             </div>
+            {step.img && (
+              <img
+                src={step.img}
+                alt={step.imgAlt}
+                style={{
+                  width: "100%",
+                  borderRadius: 10,
+                  display: "block",
+                  marginTop: 10,
+                }}
+              />
+            )}
           </div>
         </div>
 
