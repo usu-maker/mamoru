@@ -7851,6 +7851,7 @@ const FAKE_POSTS = [
     likes: 48200, rts: 92100, replies: 3400,
     photoBg: "linear-gradient(135deg,#1a0000,#3d0000)",
     photoIcon: "🚨",
+    image: "/images/ep2/post1.jpg",
     dangerPoints: [
       { x: 15, y: 20, emoji: "⚡", label: "アカウント名", elLabel: "アカウント{名|めい}", info: "「緊急速報_bot」という個人アカウント。公式機関ではない。フォロワー数も確認すべき。", elInfo: "「{緊急|きんきゅう}{速報|そくほう}_bot」という{個人|こじん}アカウント。{公式|こうしき}{機関|きかん}ではない。フォロワー{数|すう}も{確認|かくにん}しよう。" },
       { x: 80, y: 20, emoji: "📅", label: "投稿時刻", elLabel: "{投稿|とうこう}{時刻|じこく}", info: "「2分前」という超速報。本物の災害情報は公式機関が確認してから発表するので時間がかかる。", elInfo: "「2{分|ふん}{前|まえ}」という{超|ちょう}{速報|そくほう}。{本物|ほんもの}の{災害|さいがい}{情報|じょうほう}は{公式|こうしき}{機関|きかん}が{確認|かくにん}してから{発表|はっぴょう}するので{時間|じかん}がかかる。" },
@@ -7873,6 +7874,7 @@ const FAKE_POSTS = [
     likes: 31000, rts: 44000, replies: 8900,
     photoBg: "linear-gradient(135deg,#1a0a00,#3d2000)",
     photoIcon: "📰",
+    image: "/images/ep2/post2.jpg",
     dangerPoints: [
       { x: 20, y: 25, emoji: "📺", label: "非公式アカウント", elLabel: "{非|ひ}{公式|こうしき}アカウント", info: "実在するニュース局に似た名前だが、認証バッジ（✓）がない。なりすましアカウントの典型。", elInfo: "{実在|じつざい}するニュース{局|きょく}に{似|に}た{名前|なまえ}だが、{認証|にんしょう}バッジ（✓）がない。なりすましアカウントの{典型|てんけい}。" },
       { x: 75, y: 30, emoji: "🤫", label: "曖昧な情報源", elLabel: "あいまいな{情報源|じょうほうげん}", info: "「警視庁が発表」と書いてあるが、警視庁の公式サイトに該当情報がない。具体的なリンクもない。", elInfo: "「{警視庁|けいしちょう}が{発表|はっぴょう}」と{書|か}いてあるが、{警視庁|けいしちょう}の{公式|こうしき}サイトに{該当|がいとう}{情報|じょうほう}がない。{具体的|ぐたいてき}なリンクもない。" },
@@ -7895,6 +7897,7 @@ const FAKE_POSTS = [
     likes: 22000, rts: 67000, replies: 1200,
     photoBg: "linear-gradient(135deg,#0a0a2e,#1a1a4e)",
     photoIcon: "🖼️",
+    image: "/images/ep2/post3.jpg",
     dangerPoints: [
       { x: 50, y: 30, emoji: "🖼️", label: "写真の出典不明", elLabel: "{写真|しゃしん}の{出典|しゅってん}不明", info: "「この写真を見てください」と言うだけで、いつ・どこで・誰が撮った写真かが一切書かれていない。古い写真や別の国の写真を使い回しているケースが多い。", elInfo: "「この{写真|しゃしん}を{見|み}てください」と{言|い}うだけで、いつ・どこで・{誰|だれ}が{撮|と}った{写真|しゃしん}かが{一切|いっさい}{書|か}かれていない。{古|ふる}い{写真|しゃしん}や{別|べつ}の{国|くに}の{写真|しゃしん}を{使|つか}い{回|まわ}しているケースが{多|おお}い。" },
       { x: 20, y: 65, emoji: "😱", label: "感情操作", elLabel: "{感情|かんじょう}{操作|そうさ}", info: "「これが現実」「今すぐ」という言葉で焦りと怒りを煽る。冷静な判断をさせないための心理的テクニック。", elInfo: "「これが{現実|げんじつ}」「{今|いま}すぐ」という{言葉|ことば}で{焦|あせ}りと{怒|いか}りを{煽|あお}る。{冷静|れいせい}な{判断|はんだん}をさせないための{心理的|しんりてき}なテクニック。" },
@@ -7917,13 +7920,14 @@ const FAKE_POSTS = [
     likes: 3200, rts: 1400, replies: 280,
     photoBg: "linear-gradient(135deg,#0a1628,#0d2142)",
     photoIcon: "🛡️",
+    image: "/images/ep2/post4.jpg",
     dangerPoints: [
-      { x: 18, y: 22, emoji: "✅", label: "認証済みアカウント", elLabel: "{認証|にんしょう}{済|す}みアカウント", info: "青い認証バッジ（✓）がついている。これはプラットフォームが本物の公式アカウントと確認したもの。偽物のNHKアカウントには✓がない。", elInfo: "{青|あお}い{認証|にんしょう}バッジ（✓）がついている。これはプラットフォームが{本物|ほんもの}の{公式|こうしき}アカウントと{確認|かくにん}したもの。{偽物|にせもの}のNHKアカウントには✓がない。" },
+      { x: 18, y: 22, emoji: "✅", label: "認証済みアカウント", elLabel: "{認証|にんしょう}{済|す}みアカウント", info: "認証バッジ（✓）は参考程度に。現在は有料で誰でも取得できるため、バッジだけでは信頼の証明にはならない。重要なのは②発表機関が明確か③情報源があるか。", elInfo: "{認証|にんしょう}バッジ（✓）は{参考|さんこう}{程度|ていど}に。{今|いま}は{有料|ゆうりょう}で{誰|だれ}でも{取得|しゅとく}できるため、バッジだけでは{信頼|しんらい}の{証明|しょうめい}にはならない。{重要|じゅうよう}なのは{発表|はっぴょう}{機関|きかん}が{明確|めいかく}かどうか。" },
       { x: 75, y: 22, emoji: "🏛️", label: "発表機関が明確", elLabel: "{発表|はっぴょう}{機関|きかん}が{明確|めいかく}", info: "「警察庁は14日」と具体的な公的機関と日付が明記されている。信頼できる情報は「誰が・いつ」が明確。", elInfo: "「{警察庁|けいさつちょう}は14{日|にち}」と{具体的|ぐたいてき}な{公的|こうてき}{機関|きかん}と{日付|ひづけ}が{明記|めいき}されている。" },
       { x: 50, y: 70, emoji: "🔗", label: "一次情報源への誘導", elLabel: "{一次|いちじ}{情報源|じょうほうげん}への{誘導|ゆうどう}", info: "「NHKウェブニュースへ」と一次情報源の確認手段を示している。本物の情報発信は必ず確認先を提示する。", elInfo: "「NHKウェブニュースへ」と{一次|いちじ}{情報源|じょうほうげん}の{確認|かくにん}{手段|しゅだん}を{示|しめ}している。" },
     ],
-    whyFake: "これは本物です。①認証バッジ ②具体的な発表機関（警察庁）と日付 ③一次情報源への誘導 — 信頼できる3条件が揃っています。",
-    elWhyFake: "これは{本物|ほんもの}です。①{認証|にんしょう}バッジ ②{具体的|ぐたいてき}な{発表|はっぴょう}{機関|きかん}（{警察庁|けいさつちょう}）と{日付|ひづけ} ③{一次|いちじ}{情報源|じょうほうげん}への{誘導|ゆうどう} — {信頼|しんらい}できる3{条件|じょうけん}が{揃|そろ}っています。",
+    whyFake: "これは本物です。①具体的な発表機関（警察庁）と日付が明記 ②一次情報源（NHKウェブ）への誘導がある ③認証バッジは参考程度・バッジだけでは判断しない",
+    elWhyFake: "{本物|ほんもの}のニュースです。①{具体的|ぐたいてき}な{発表|はっぴょう}{機関|きかん}（{警察庁|けいさつちょう}）と{日付|ひづけ}が{明記|めいき}されている ②{一次|いちじ}{情報源|じょうほうげん}への{誘導|ゆうどう}がある ③{認証|にんしょう}バッジは{参考|さんこう}{程度|ていど}・バッジだけでは{判断|はんだん}しない",
     checkMethod: "✓ このニュースは信頼できます。NHK公式アカウント（✓）から警察庁発表を正確に伝える本物のニュースです。",
     elCheckMethod: "✓ このニュースは{信頼|しんらい}できます。NHK{公式|こうしき}アカウント（✓）から{警察庁|けいさつちょう}{発表|はっぴょう}を{正確|せいかく}に{伝|つた}える{本物|ほんもの}のニュースです。",
     isReal: true,
@@ -8241,7 +8245,25 @@ function Episode2({ onComplete, onExit }) {
           </div>
 
           {/* Post text */}
-          <p style={{ fontSize: 14, color: "rgba(255,255,255,.9)", lineHeight: 1.75, margin: "0 0 12px" }}>{post.text}</p>
+          {post.id === 2 ? (
+            <p style={{ fontSize: 14, color: "rgba(255,255,255,.9)", lineHeight: 1.75, margin: "0 0 12px" }}>
+              {"【衝撃】有名芸能人○○さんが詐欺で逮捕されたと警視庁が発表。本人のSNSアカウントも"}
+              <span style={{ background: "rgba(255,200,0,.2)", color: "#ffd700", padding: "0 2px", borderRadius: 3 }}>突然削除</span>
+              {"。関係者は"}
+              <span style={{ background: "rgba(255,200,0,.2)", color: "#ffd700", padding: "0 2px", borderRadius: 3 }}>口を閉ざす</span>
+              {"…"}
+            </p>
+          ) : post.id === 4 ? (
+            <p style={{ fontSize: 14, color: "rgba(255,255,255,.9)", lineHeight: 1.75, margin: "0 0 12px" }}>
+              {"【注意】"}
+              <span style={{ background: "rgba(34,197,94,.15)", color: "#4ade80", padding: "0 2px", borderRadius: 3 }}>警察庁は14日</span>
+              {"、SNS型詐欺の被害が今年に入り"}
+              <span style={{ background: "rgba(34,197,94,.15)", color: "#4ade80", padding: "0 2px", borderRadius: 3 }}>前年比2倍以上</span>
+              {"に急増していると発表しました。「フォロワーを増やせる」「副業で月10万円」などの勧誘DM・投稿に注意するよう呼びかけています。▶詳細はNHKウェブニュースへ"}
+            </p>
+          ) : (
+            <p style={{ fontSize: 14, color: "rgba(255,255,255,.9)", lineHeight: 1.75, margin: "0 0 12px" }}>{post.text}</p>
+          )}
 
           {/* Photo */}
           <div style={{ position: "relative", background: post.photoBg, borderRadius: 12, height: 140, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12, overflow: "hidden" }}>
@@ -8261,12 +8283,58 @@ function Episode2({ onComplete, onExit }) {
             })}
           </div>
 
+          {/* 実際の投稿画像 */}
+          {post.image && (
+            <img
+              src={post.image}
+              alt=""
+              style={{
+                width: "100%",
+                borderRadius: 10,
+                display: "block",
+                marginBottom: 10,
+                objectFit: "cover",
+                maxHeight: 180,
+              }}
+            />
+          )}
+
+          {/* 投稿3：出典不明ラベル */}
+          {post.id === 3 && (
+            <div style={{
+              background: "rgba(255,67,67,.1)",
+              border: "0.5px solid rgba(255,67,67,.3)",
+              borderRadius: 8,
+              padding: "6px 10px",
+              fontSize: 11,
+              color: "#ff6b6b",
+              display: "flex",
+              gap: 10,
+              marginBottom: 8,
+            }}>
+              <span>📅 日付：不明</span>
+              <span>📍 場所：不明</span>
+              <span>🔗 出典：なし</span>
+            </div>
+          )}
+
           {/* Engagement stats */}
-          <div style={{ display: "flex", gap: 16, fontSize: 12, color: "rgba(255,255,255,.4)" }}>
-            <span>❤️ {post.likes.toLocaleString()}</span>
-            <span>🔁 {post.rts.toLocaleString()}</span>
-            <span>💬 {post.replies.toLocaleString()}</span>
-          </div>
+          {post.id === 1 ? (
+            <div style={{ display: "flex", gap: 16, fontSize: 12, color: "rgba(255,255,255,.4)" }}>
+              <span>❤️ {post.likes.toLocaleString()}</span>
+              <div>
+                <div><span style={{ color: "#ff6b6b" }}>🔁 {post.rts.toLocaleString()} ⚠️</span></div>
+                <div style={{ fontSize: 10, color: "#ff6b6b" }}>RTがいいね数より多いのは不自然</div>
+              </div>
+              <span>💬 {post.replies.toLocaleString()}</span>
+            </div>
+          ) : (
+            <div style={{ display: "flex", gap: 16, fontSize: 12, color: "rgba(255,255,255,.4)" }}>
+              <span>❤️ {post.likes.toLocaleString()}</span>
+              <span>🔁 {post.rts.toLocaleString()}</span>
+              <span>💬 {post.replies.toLocaleString()}</span>
+            </div>
+          )}
         </div>
 
         {/* Verdict buttons */}
