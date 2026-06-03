@@ -1295,11 +1295,74 @@ function SwipeJudge({ posts, onComplete, accentColor = "#7c3aed" }) {
             <div style={{ fontSize: 10, color: "rgba(255,255,255,.35)" }}>{post.time}</div>
           </div>
         </div>
-        <p style={{ fontSize: 13, color: "rgba(255,255,255,.85)", lineHeight: 1.7, margin: "0 0 10px" }}>{post.text}</p>
-        <div style={{ display: "flex", gap: 12, fontSize: 11, color: "rgba(255,255,255,.35)" }}>
-          <span>❤️ {post.likes?.toLocaleString()}</span>
-          <span>🔁 {post.rts?.toLocaleString()}</span>
-        </div>
+        {post.id === 2 ? (
+          <p style={{ fontSize: 13, color: "rgba(255,255,255,.85)", lineHeight: 1.7, margin: "0 0 10px" }}>
+            {"【衝撃】有名芸能人○○さんが詐欺で逮捕されたと警視庁が発表。本人のSNSアカウントも"}
+            <span style={{ background: "rgba(255,200,0,.2)", color: "#ffd700", padding: "0 2px", borderRadius: 3 }}>突然削除</span>
+            {"。関係者は"}
+            <span style={{ background: "rgba(255,200,0,.2)", color: "#ffd700", padding: "0 2px", borderRadius: 3 }}>口を閉ざす</span>
+            {"…"}
+          </p>
+        ) : post.id === 4 ? (
+          <p style={{ fontSize: 13, color: "rgba(255,255,255,.85)", lineHeight: 1.7, margin: "0 0 10px" }}>
+            {"【注意】"}
+            <span style={{ background: "rgba(34,197,94,.15)", color: "#4ade80", padding: "0 2px", borderRadius: 3 }}>警察庁は14日</span>
+            {"、SNS型詐欺の被害が今年に入り"}
+            <span style={{ background: "rgba(34,197,94,.15)", color: "#4ade80", padding: "0 2px", borderRadius: 3 }}>前年比2倍以上</span>
+            {"に急増していると発表しました。「フォロワーを増やせる」「副業で月10万円」などの勧誘DM・投稿に注意するよう呼びかけています。▶詳細はNHKウェブニュースへ"}
+          </p>
+        ) : (
+          <p style={{ fontSize: 13, color: "rgba(255,255,255,.85)", lineHeight: 1.7, margin: "0 0 10px" }}>{post.text}</p>
+        )}
+
+        {post.image && (
+          <img
+            src={post.image}
+            alt=""
+            style={{
+              width: "100%",
+              borderRadius: 10,
+              display: "block",
+              marginTop: 10,
+              marginBottom: 10,
+              objectFit: "cover",
+              maxHeight: 180,
+            }}
+          />
+        )}
+
+        {post.id === 3 && (
+          <div style={{
+            background: "rgba(255,67,67,.1)",
+            border: "0.5px solid rgba(255,67,67,.3)",
+            borderRadius: 8,
+            padding: "6px 10px",
+            fontSize: 11,
+            color: "#ff6b6b",
+            display: "flex",
+            gap: 10,
+            marginBottom: 8,
+          }}>
+            <span>📅 日付：不明</span>
+            <span>📍 場所：不明</span>
+            <span>🔗 出典：なし</span>
+          </div>
+        )}
+
+        {post.id === 1 ? (
+          <div style={{ display: "flex", gap: 12, fontSize: 11, color: "rgba(255,255,255,.35)" }}>
+            <span>❤️ {post.likes?.toLocaleString()}</span>
+            <div>
+              <div><span style={{ color: "#ff4343" }}>🔁 {post.rts?.toLocaleString()} ⚠️</span></div>
+              <div style={{ fontSize: 10, color: "#ff6b6b", marginTop: 2 }}>RTがいいね数より多いのは不自然</div>
+            </div>
+          </div>
+        ) : (
+          <div style={{ display: "flex", gap: 12, fontSize: 11, color: "rgba(255,255,255,.35)" }}>
+            <span>❤️ {post.likes?.toLocaleString()}</span>
+            <span>🔁 {post.rts?.toLocaleString()}</span>
+          </div>
+        )}
       </div>
 
       {/* Feedback overlay */}
