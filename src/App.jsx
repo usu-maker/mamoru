@@ -4147,6 +4147,11 @@ function Opening({ onComplete }) {
       fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff",
       display: "flex", flexDirection: "column",
     }}>
+      <style>{`
+        @keyframes mamBarH { from { width: 0; } to { width: var(--w); } }
+        @keyframes mamBarV { from { height: 0; } to { height: var(--h); } }
+      `}</style>
+
       {/* 上部インジケーター */}
       <div style={{ padding: "20px 24px 0", display: "flex", gap: 6 }}>
         {[0,1,2,3,4].map(i => (
@@ -4154,8 +4159,8 @@ function Opening({ onComplete }) {
         ))}
       </div>
 
-      <div style={{ flex: 1, padding: "24px 24px 0" }}>
-        <div style={{ animation: "slideUp .5s ease", marginBottom: 24 }}>
+      <div style={{ flex: 1, padding: "24px 24px 0", overflowY: "auto" }}>
+        <div style={{ animation: "slideUp .5s ease", marginBottom: 20 }}>
           <div style={{ fontSize: 12, color: "#ffa940", fontWeight: 700, marginBottom: 8, letterSpacing: ".05em" }}>
             <RubyText text={ageMode === "elementary" ? "なぜ{今|いま}、{必要|ひつよう}なのか" : "なぜ今、必要なのか"} />
           </div>
@@ -4164,41 +4169,148 @@ function Opening({ onComplete }) {
           </div>
         </div>
 
-        {/* 統計カード */}
-        {[
-          {
-            emoji: "⚠️", color: "#f97316",
-            stat: "年間2万件超",
-            label: "ネットいじめの認知件数（文科省2023年）",
-            body: "過去最多を更新し続けています。被害者の平均年齢は下がっています。",
-          },
-          {
-            emoji: "🕶️", color: "#ef4444",
-            stat: "10〜20代が約70%",
-            label: "闇バイト逮捕者の年代（警察庁2024年）",
-            body: "「スマホだけでできるバイト」として招集された若者が後を絶ちません。",
-          },
-          {
-            emoji: "📱", color: "#8b5cf6",
-            stat: "約65%がSNS経由",
-            label: "児童への性的被害の接触経路（警察庁2024年）",
-            body: "ゲーム・SNSで知り合った相手からの被害が最多です。",
-          },
-        ].map((s, i) => (
-          <div key={i} style={{
-            background: `${s.color}0a`, border: `1px solid ${s.color}33`,
-            borderRadius: 16, padding: "16px 15px", marginBottom: 10,
-            display: "flex", gap: 14, alignItems: "flex-start",
-            animation: `slideUp .5s ${.1 + i * .1}s both ease`,
-          }}>
-            <div style={{ fontSize: 26, flexShrink: 0 }}>{s.emoji}</div>
-            <div>
-              <div style={{ fontSize: 20, fontWeight: 900, color: s.color, marginBottom: 2 }}>{s.stat}</div>
-              <div style={{ fontSize: 11, color: "rgba(255,255,255,.5)", marginBottom: 5 }}>{s.label}</div>
-              <div style={{ fontSize: 12, color: "rgba(255,255,255,.7)", lineHeight: 1.7 }}>{s.body}</div>
-            </div>
+        {/* グラフ1: SNS接触経路（積み上げ横棒） */}
+        <div style={{ background: "rgba(255,255,255,.06)", border: "0.5px solid rgba(255,255,255,.15)", borderRadius: 14, padding: 14, marginBottom: 12, animation: "slideUp .5s .1s both ease" }}>
+          <div style={{ fontSize: 10, color: "rgba(255,255,255,.4)", marginBottom: 6, lineHeight: 1.6 }}>
+            📱 SNSきっかけの児童犯罪被害の接触経路（警察庁・2024年 計1,486人）
           </div>
-        ))}
+          <div style={{ fontSize: 15, fontWeight: 900, color: "#378ADD", marginBottom: 10 }}>
+            InstagramとXで約60%
+          </div>
+          <div style={{ height: 36, borderRadius: 8, overflow: "hidden", display: "flex", marginBottom: 8 }}>
+            {[
+              { w: "32%", bg: "#185FA5",               fc: "#E6F1FB",                label: "Instagram 32%" },
+              { w: "28%", bg: "#378ADD",               fc: "#E6F1FB",                label: "X 28%" },
+              { w: "33%", bg: "rgba(55,138,221,.25)",  fc: "rgba(55,138,221,.8)",    label: "TikTok等 33%" },
+              { w: "7%",  bg: "rgba(255,255,255,.08)", fc: "rgba(255,255,255,.4)",   label: "" },
+            ].map((s, i) => (
+              <div key={i} style={{
+                "--w": s.w, width: s.w, background: s.bg,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 10, fontWeight: 700, color: s.fc,
+                overflow: "hidden", whiteSpace: "nowrap",
+                animation: `mamBarH 1s cubic-bezier(.4,0,.2,1) ${i * .1}s both`,
+              }}>{s.label}</div>
+            ))}
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 12px", marginBottom: 8 }}>
+            {[
+              { color: "#185FA5",              text: "Instagram：約32%" },
+              { color: "#378ADD",              text: "X（旧Twitter）：約28%" },
+              { color: "rgba(55,138,221,.5)",  text: "TikTok等：約33%" },
+              { color: "rgba(255,255,255,.3)", text: "ゲーム等：約7%（98人）" },
+            ].map((l, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 10, color: "rgba(255,255,255,.6)" }}>
+                <div style={{ width: 10, height: 10, borderRadius: 3, background: l.color, flexShrink: 0 }} />
+                {l.text}
+              </div>
+            ))}
+          </div>
+          <div style={{ borderLeft: "3px solid #378ADD", background: "rgba(55,138,221,.08)", padding: "7px 10px", fontSize: 11, color: "rgba(255,255,255,.6)", lineHeight: 1.7 }}>
+            <RubyText text={ageMode === "elementary"
+              ? "SNSだけでなく、ゲーム{経由|けいゆ}も98{人|にん}・{増加|ぞうか}{傾向|けいこう}。{普段|ふだん}{使|つか}いのアプリが{危険|きけん}への{入口|いりぐち}になっています。"
+              : "SNSだけでなく、ゲーム経由も98人・増加傾向。普段使いのアプリが危険への入口になっています。"
+            } />
+          </div>
+        </div>
+
+        {/* グラフ2: 闇バイト年代（積み上げ横棒） */}
+        <div style={{ background: "rgba(255,255,255,.06)", border: "0.5px solid rgba(255,255,255,.15)", borderRadius: 14, padding: 14, marginBottom: 12, animation: "slideUp .5s .2s both ease" }}>
+          <div style={{ fontSize: 10, color: "rgba(255,255,255,.4)", marginBottom: 6, lineHeight: 1.6 }}>
+            🕶️ 闇バイト保護者の年代（警察庁・2024年 計544件）
+          </div>
+          <div style={{ fontSize: 15, fontWeight: 900, color: "#ef4444", marginBottom: 10 }}>
+            10〜20代が約70%を占める
+          </div>
+          <div style={{ height: 36, borderRadius: 8, overflow: "hidden", display: "flex", marginBottom: 8 }}>
+            {[
+              { w: "25%", bg: "#E24B4A",               fc: "#FCEBEB",               label: "10代 25%" },
+              { w: "45%", bg: "#A32D2D",               fc: "#FCEBEB",               label: "20代 45%" },
+              { w: "14%", bg: "rgba(255,255,255,.15)", fc: "rgba(255,255,255,.5)",  label: "30代 14%" },
+              { w: "16%", bg: "rgba(255,255,255,.07)", fc: "rgba(255,255,255,.3)",  label: "40代〜" },
+            ].map((s, i) => (
+              <div key={i} style={{
+                "--w": s.w, width: s.w, background: s.bg,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 10, fontWeight: 700, color: s.fc,
+                overflow: "hidden", whiteSpace: "nowrap",
+                animation: `mamBarH 1s cubic-bezier(.4,0,.2,1) ${i * .1}s both`,
+              }}>{s.label}</div>
+            ))}
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 12px", marginBottom: 8 }}>
+            {[
+              { color: "#E24B4A",              text: "10代：約25%" },
+              { color: "#A32D2D",              text: "20代：約45%" },
+              { color: "rgba(255,255,255,.2)", text: "30代：約14%" },
+              { color: "rgba(255,255,255,.1)", text: "40代〜：約16%" },
+            ].map((l, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 10, color: "rgba(255,255,255,.6)" }}>
+                <div style={{ width: 10, height: 10, borderRadius: 3, background: l.color, flexShrink: 0 }} />
+                {l.text}
+              </div>
+            ))}
+          </div>
+          <div style={{ borderLeft: "3px solid #ef4444", background: "rgba(239,68,68,.08)", padding: "7px 10px", fontSize: 11, color: "rgba(255,255,255,.6)", lineHeight: 1.7 }}>
+            <RubyText text={ageMode === "elementary"
+              ? "「スマホだけでできるバイト」として{若者|わかもの}が{狙|ねら}われています。"
+              : "「スマホだけでできるバイト」として若者が狙われています。"
+            } />
+          </div>
+        </div>
+
+        {/* グラフ3: ネットいじめ推移（縦棒） */}
+        <div style={{ background: "rgba(255,255,255,.06)", border: "0.5px solid rgba(255,255,255,.15)", borderRadius: 14, padding: 14, marginBottom: 16, animation: "slideUp .5s .3s both ease" }}>
+          <div style={{ fontSize: 10, color: "rgba(255,255,255,.4)", marginBottom: 6 }}>
+            ⚠️ ネットいじめ認知件数（文部科学省）
+          </div>
+          <div style={{ fontSize: 15, fontWeight: 900, color: "#ffa940", marginBottom: 10 }}>
+            5年間で約38%増加・毎年過去最多を更新
+          </div>
+          {/* 過去最多ラベル行 */}
+          <div style={{ display: "flex", gap: 6, marginBottom: 4 }}>
+            {["", "", "", "", "▲ 過去最多"].map((lbl, i) => (
+              <div key={i} style={{ flex: 1, textAlign: "center", fontSize: 9, color: "#ffa940", fontWeight: 900, height: 14 }}>{lbl}</div>
+            ))}
+          </div>
+          {/* 縦棒 */}
+          <div style={{ height: 100, display: "flex", alignItems: "flex-end", gap: 6, marginBottom: 6 }}>
+            {[
+              { h: "72.6%", bg: "rgba(255,169,64,.2)" },
+              { h: "76.5%", bg: "rgba(255,169,64,.4)" },
+              { h: "88.8%", bg: "rgba(255,169,64,.6)" },
+              { h: "97.0%", bg: "rgba(255,169,64,.8)" },
+              { h: "100%",  bg: "#ffa940" },
+            ].map((b, i) => (
+              <div key={i} style={{
+                "--h": b.h, flex: 1, height: b.h, background: b.bg,
+                borderRadius: "4px 4px 0 0",
+                animation: `mamBarV 1s cubic-bezier(.4,0,.2,1) ${i * .15}s both`,
+              }} />
+            ))}
+          </div>
+          {/* 年・件数ラベル */}
+          <div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
+            {[
+              { year: "2019", val: "17,924", hi: false },
+              { year: "2020", val: "18,870", hi: false },
+              { year: "2021", val: "21,900", hi: false },
+              { year: "2022", val: "23,920", hi: false },
+              { year: "2023", val: "24,678", hi: true },
+            ].map((b, i) => (
+              <div key={i} style={{ flex: 1, textAlign: "center" }}>
+                <div style={{ fontSize: 9, fontWeight: b.hi ? 900 : 400, color: b.hi ? "#ffa940" : "rgba(255,255,255,.3)" }}>{b.year}</div>
+                <div style={{ fontSize: 8, color: b.hi ? "#ffa940" : "rgba(255,255,255,.3)" }}>{b.val}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ borderLeft: "3px solid #ffa940", background: "rgba(255,169,64,.08)", padding: "7px 10px", fontSize: 11, color: "rgba(255,255,255,.6)", lineHeight: 1.7 }}>
+            <RubyText text={ageMode === "elementary"
+              ? "2019{年|ねん}の{約|やく}1.8{万件|まんけん}から2023{年|ねん}には{約|やく}2.5{万件|まんけん}へ。5{年間|ねんかん}で{約|やく}38%{増加|ぞうか}し、{毎年|まいとし}{過去|かこ}{最多|さいた}を{更新|こうしん}しています。"
+              : "2019年の約1.8万件から2023年には約2.5万件へ。5年間で約38%増加し、毎年過去最多を更新しています。"
+            } />
+          </div>
+        </div>
       </div>
 
       <div style={{ padding: "16px 24px 32px" }}>
