@@ -694,6 +694,7 @@ const GlobalStyle = () => (
     @keyframes orb       {0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(30px,-20px) scale(1.1)} 66%{transform:translate(-20px,10px) scale(0.95)}}
     @keyframes orb2      {0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(-25px,15px) scale(1.08)} 66%{transform:translate(20px,-25px) scale(0.93)}}
     @keyframes pulse     {0%,100%{box-shadow:0 0 0 0 rgba(255,60,60,0.6)} 50%{box-shadow:0 0 0 10px rgba(255,60,60,0)}}
+    @keyframes mamPulse  {0%,100%{opacity:1} 50%{opacity:.35}}
     @keyframes scanDown  {0%{top:0;opacity:0.7} 100%{top:100%;opacity:0}}
     @keyframes heartbeat {0%,100%{transform:scale(1)} 25%{transform:scale(1.18)} 75%{transform:scale(1.08)}}
     @keyframes shake     {0%,100%{transform:translateX(0)} 20%{transform:translateX(-5px)} 60%{transform:translateX(5px)}}
@@ -7997,6 +7998,356 @@ const FAKE_POSTS = [
   },
 ];
 
+// ── 最悪ケースシミュレーション ──
+function WorstCasePage({ onComplete }) {
+  const ageMode = useAgeMode();
+  const el = ageMode === "elementary";
+  const [innerPhase, setInnerPhase] = React.useState("intro");
+  const [eventIdx, setEventIdx] = React.useState(0);
+  const [shownReports, setShownReports] = React.useState([]);
+  const [reportStatus, setReportStatus] = React.useState({});
+  const [showEnd, setShowEnd] = React.useState(false);
+  const [logs, setLogs] = React.useState([]);
+  const [bubble, setBubble] = React.useState(null);
+  const [policePos, setPolicePos] = React.useState([
+    {x:14,y:38},{x:48,y:58},{x:73,y:28}
+  ]);
+  const timerRef = React.useRef(null);
+
+  const REPORTS = [
+    {id:0,x:50,y:38,type:'real'},
+    {id:1,x:20,y:24,type:'fake'},
+    {id:2,x:70,y:20,type:'fake'},
+    {id:3,x:45,y:66,type:'fake'},
+    {id:4,x:78,y:56,type:'fake'},
+    {id:5,x:33,y:56,type:'real'},
+    {id:6,x:15,y:50,type:'fake'},
+    {id:7,x:28,y:34,type:'fake'},
+    {id:8,x:62,y:42,type:'fake'},
+    {id:9,x:63,y:75,type:'real'},
+    {id:10,x:24,y:72,type:'fake'},
+  ];
+
+  const EVENTS = [
+    {
+      clock:"18:00",show:[0],reveal:[],
+      police:[{x:50,y:45},{x:33,y:56},{x:63,y:50}],
+      bubble:{type:'police',text:"通報あり　向かいます",bx:50,by:45},
+      log:{time:"18:00",text:"📞 通報が入った。警察が現場へ向かう（中身はまだ不明）",color:"rgba(255,255,255,.75)"},
+    },
+    {
+      clock:"18:05",show:[1,2],reveal:[{id:0,to:'real_waiting'}],
+      police:[{x:20,y:30},{x:70,y:26},{x:55,y:55}],
+      bubble:{type:'real',text:"😣 本物だ！でも他の通報も…",bx:50,by:38},
+      log:{time:"18:05",text:"🆘 最初の通報は本物だった。でも新たな通報が2件入る",color:"#ffb84d"},
+    },
+    {
+      clock:"18:10",show:[3,4],reveal:[{id:1,to:'fake'},{id:2,to:'fake'}],
+      police:[{x:20,y:24},{x:70,y:20},{x:45,y:66}],
+      bubble:{type:'police',text:"現場確認…デマだ！",bx:20,by:24},
+      log:{time:"18:10",text:"❌ 駆けつけた2件はどちらもデマ。警察が振り回される",color:"#ff6b6b"},
+    },
+    {
+      clock:"18:20",show:[5,6,7],reveal:[{id:3,to:'fake'},{id:4,to:'fake'}],
+      police:[{x:45,y:66},{x:78,y:56},{x:33,y:56}],
+      bubble:{type:'police',text:"これもデマか…次へ！",bx:45,by:66},
+      log:{time:"18:20",text:"❌ さらに2件もデマ。通報が増え、手が回らない",color:"#ff6b6b"},
+    },
+    {
+      clock:"18:30",show:[8],reveal:[],
+      police:[{x:15,y:50},{x:28,y:34},{x:62,y:42}],
+      bubble:{type:'real',text:"😢 まだ誰も来ない…",bx:50,by:38},
+      log:{time:"18:30",text:"😢 本物の被災者は30分待っている。警察はデマ対応中",color:"#ffb84d"},
+    },
+    {
+      clock:"18:45",show:[9,10],reveal:[{id:5,to:'real_waiting'},{id:6,to:'fake'},{id:7,to:'fake'},{id:8,to:'fake'}],
+      police:[{x:24,y:72},{x:62,y:42},{x:15,y:50}],
+      bubble:{type:'police',text:"デマばかりだ…",bx:24,by:72},
+      log:{time:"18:45",text:"❌ 確認した通報は次々デマ。本物2件目も放置されたまま",color:"#ff6b6b"},
+    },
+    {
+      clock:"19:00",show:[],reveal:[{id:9,to:'real_waiting'},{id:10,to:'fake'}],
+      police:[{x:24,y:72},{x:62,y:42},{x:15,y:50}],
+      bubble:{type:'real',text:"💔 応答がない…",bx:50,by:38},
+      log:{time:"19:00",text:"💔 1時間経過。本物の救助要請3件、まだ誰も来ていない",color:"#ff6b6b",danger:true},
+    },
+  ];
+
+  const startAnimation = () => {
+    setInnerPhase("anim");
+    setEventIdx(0);
+    setShownReports([]);
+    const initialStatus = {};
+    REPORTS.forEach(r => { initialStatus[r.id] = 'unknown'; });
+    setReportStatus(initialStatus);
+    setLogs([]);
+    setBubble(null);
+    setShowEnd(false);
+    setPolicePos([{x:14,y:38},{x:48,y:58},{x:73,y:28}]);
+  };
+
+  React.useEffect(() => {
+    if(innerPhase !== "anim") return;
+    if(eventIdx >= EVENTS.length) {
+      setShowEnd(true);
+      setBubble(null);
+      return;
+    }
+    const e = EVENTS[eventIdx];
+    setPolicePos(e.police);
+    setBubble(e.bubble);
+    setShownReports(prev => {
+      const next = [...prev];
+      (e.show||[]).forEach(id => { if(!next.includes(id)) next.push(id); });
+      return next;
+    });
+    setReportStatus(prev => {
+      const next = {...prev};
+      (e.reveal||[]).forEach(rv => { next[rv.id] = rv.to; });
+      return next;
+    });
+    setLogs(prev => [...prev, e.log]);
+    timerRef.current = setTimeout(() => {
+      setEventIdx(i => i + 1);
+    }, 3200);
+    return () => clearTimeout(timerRef.current);
+  }, [innerPhase, eventIdx]);
+
+  const getPinStyle = (status) => {
+    if(status==='unknown')      return {bg:'rgba(255,255,255,.15)',bd:'#aaa',color:'#ddd',mark:'?',pulse:false};
+    if(status==='fake')         return {bg:'rgba(255,67,67,.2)',bd:'#ff4343',color:'#ff6b6b',mark:'✕',pulse:false};
+    return {bg:'rgba(255,149,0,.2)',bd:'#ff9500',color:'#ffb84d',mark:'!',pulse:true};
+  };
+
+  const countByStatus = (st) =>
+    shownReports.filter(id => reportStatus[id]===st).length;
+
+  if(innerPhase === "intro") return (
+    <div style={{
+      minHeight:"100vh",
+      background:"linear-gradient(180deg,#0a0f1a,#0d1424)",
+      display:"flex",
+      flexDirection:"column",
+      alignItems:"center",
+      justifyContent:"center",
+      padding:"32px 24px",
+      fontFamily:"'Zen Maru Gothic',sans-serif",
+    }}>
+      <div style={{maxWidth:400,width:"100%",textAlign:"center"}}>
+        <div style={{fontSize:52,marginBottom:16}}>⚠️</div>
+        <div style={{fontSize:20,fontWeight:900,color:"#fff",marginBottom:16,lineHeight:1.5}}>
+          <RubyText text={el
+            ? "そのデマがもたらす\n「{最悪|さいあく}のケース」"
+            : "そのデマがもたらす\n「最悪のケース」"
+          }/>
+        </div>
+        <div style={{
+          background:"rgba(255,255,255,.06)",
+          border:"1px solid rgba(255,255,255,.12)",
+          borderRadius:14,
+          padding:"16px 18px",
+          marginBottom:24,
+          textAlign:"left",
+        }}>
+          <p style={{fontSize:13,color:"rgba(255,255,255,.75)",lineHeight:1.9,whiteSpace:"pre-line"}}>
+            <RubyText text={el
+              ? "あなたが{軽|かる}い{気持|きも}ちでシェアしたデマ。それが{災害|さいがい}のときに{広|ひろ}まると、{何|なに}が{起|お}きるのか。\n\n{通報|つうほう}が{入|はい}っても、{警察|けいさつ}は{行|い}ってみるまでそれがデマか{本物|ほんもの}か{分|わ}かりません。\n\nこれから、{実際|じっさい}に{起|お}きうる{最悪|さいあく}のケースを{見|み}てみよう。"
+              : "あなたが軽い気持ちでシェアしたデマ。それが災害のときに広まると、何が起きるのか。\n\n通報が入っても、警察は行ってみるまでそれがデマか本物か分かりません。\n\nこれから、実際に起きうる最悪のケースを見てみよう。"
+            }/>
+          </p>
+        </div>
+        <button
+          onClick={() => { feedback("tap"); startAnimation(); }}
+          style={{
+            width:"100%",
+            padding:"16px",
+            borderRadius:14,
+            border:"none",
+            background:"linear-gradient(135deg,#ff6600,#ff4400)",
+            color:"#fff",
+            fontSize:16,
+            fontWeight:900,
+            cursor:"pointer",
+            fontFamily:"inherit",
+          }}>
+          最悪のケースを見る →
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div style={{
+      minHeight:"100vh",
+      background:"linear-gradient(180deg,#0a0f1a,#0d1424)",
+      padding:"20px 16px 40px",
+      fontFamily:"'Zen Maru Gothic',sans-serif",
+    }}>
+      <div style={{maxWidth:440,margin:"0 auto"}}>
+
+        <div style={{fontSize:13,fontWeight:900,color:"#fff",marginBottom:2}}>
+          <RubyText text={el ? "○○{市|し} {災害|さいがい}{発生中|はっせいちゅう}" : "○○市 災害発生中"} />
+        </div>
+        <div style={{fontSize:22,fontWeight:900,color:"#ff8c00",marginBottom:12}}>
+          {eventIdx < EVENTS.length ? EVENTS[eventIdx].clock : "19:00"}
+        </div>
+
+        {/* マップ */}
+        <div style={{
+          position:"relative",height:240,
+          background:"#0d1424",
+          border:"1px solid rgba(255,255,255,.1)",
+          borderRadius:12,overflow:"hidden",marginBottom:10,
+        }}>
+          {[[18,30,64,'h'],[18,62,64,'h'],[33,8,84,'v'],[66,8,84,'v']].map((r,i)=>(
+            <div key={i} style={{
+              position:"absolute",
+              left:`${r[0]}%`,top:`${r[1]}%`,
+              width:r[3]==='h'?`${r[2]}%`:'1px',
+              height:r[3]==='h'?'1px':`${r[2]}%`,
+              background:"rgba(255,255,255,.06)",
+            }}/>
+          ))}
+
+          {/* ピン */}
+          {shownReports.map(id => {
+            const r = REPORTS.find(x => x.id===id);
+            const st = reportStatus[id]||'unknown';
+            const ps = getPinStyle(st);
+            return (
+              <div key={id} style={{
+                position:"absolute",
+                left:`${r.x}%`,top:`${r.y}%`,
+                transform:"translate(-50%,-50%)",
+                width:22,height:22,borderRadius:"50%",
+                background:ps.bg,border:`1.5px solid ${ps.bd}`,
+                color:ps.color,
+                display:"flex",alignItems:"center",justifyContent:"center",
+                fontSize:11,fontWeight:900,
+                animation:ps.pulse?"mamPulse 1.2s ease-in-out infinite":"none",
+                zIndex:3,
+              }}>
+                {ps.mark}
+              </div>
+            );
+          })}
+
+          {/* 警察 */}
+          {policePos.map((p,i) => (
+            <div key={i} style={{
+              position:"absolute",
+              left:`${p.x}%`,top:`${p.y}%`,
+              transform:"translate(-50%,-50%)",
+              width:24,height:24,borderRadius:"50%",
+              background:"rgba(55,138,221,.25)",
+              border:"1.5px solid #5badf0",
+              display:"flex",alignItems:"center",justifyContent:"center",
+              fontSize:12,
+              transition:"left 1.8s ease,top 1.8s ease",
+              zIndex:5,
+            }}>🚓</div>
+          ))}
+
+          {/* 吹き出し */}
+          {bubble && (
+            <div style={{
+              position:"absolute",
+              left:`${bubble.bx}%`,
+              top:`${bubble.by - 15}%`,
+              transform:"translate(-50%,0)",
+              background:bubble.type==='police'?"#fff":"#ff9500",
+              color:bubble.type==='police'?"#1a1a1a":"#fff",
+              fontSize:10,fontWeight:900,
+              padding:"4px 8px",borderRadius:8,
+              whiteSpace:"nowrap",zIndex:20,
+              boxShadow:"0 2px 8px rgba(0,0,0,.4)",
+            }}>
+              {bubble.text}
+              <div style={{
+                position:"absolute",bottom:-5,left:"50%",
+                transform:"translateX(-50%)",
+                borderLeft:"5px solid transparent",
+                borderRight:"5px solid transparent",
+                borderTop:`5px solid ${bubble.type==='police'?"#fff":"#ff9500"}`,
+              }}/>
+            </div>
+          )}
+        </div>
+
+        {/* 凡例 */}
+        <div style={{display:"flex",gap:10,marginBottom:12,flexWrap:"wrap",fontSize:11}}>
+          {[
+            {bg:"#aaa",color:"rgba(255,255,255,.5)",label:el?"{未確認|みかくにん}の{通報|つうほう}":"未確認の通報",st:"unknown"},
+            {bg:"#ff4343",color:"#ff6b6b",label:"デマだった",st:"fake"},
+            {bg:"#ff9500",color:"#ffb84d",label:el?"{本物|ほんもの}の{救助|きゅうじょ}{要請|ようせい}":"本物の救助要請",st:"real_waiting"},
+          ].map(leg=>(
+            <div key={leg.st} style={{display:"flex",alignItems:"center",gap:5,color:leg.color}}>
+              <div style={{width:11,height:11,borderRadius:"50%",background:leg.bg,flexShrink:0}}/>
+              <RubyText text={leg.label}/> <b>{countByStatus(leg.st)}</b>
+            </div>
+          ))}
+        </div>
+
+        {/* ログ */}
+        <div style={{
+          background:"rgba(255,255,255,.04)",
+          border:"1px solid rgba(255,255,255,.08)",
+          borderRadius:12,padding:12,marginBottom:12,minHeight:120,
+        }}>
+          <div style={{fontSize:11,color:"rgba(255,255,255,.4)",marginBottom:8}}>― 起きていること ―</div>
+          <div style={{display:"flex",flexDirection:"column",gap:6}}>
+            {logs.map((log,i)=>(
+              <div key={i} style={{
+                display:"flex",gap:8,padding:"7px 9px",borderRadius:8,
+                fontSize:11,lineHeight:1.5,
+                background:"rgba(255,255,255,.04)",
+                border:"0.5px solid rgba(255,255,255,.1)",
+              }}>
+                <span style={{color:"rgba(255,255,255,.4)",flexShrink:0}}>{log.time}</span>
+                <span style={{color:log.color}}><RubyText text={log.text}/></span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 終了 */}
+        {showEnd && (
+          <div>
+            <div style={{
+              background:"rgba(255,67,67,.1)",
+              border:"1px solid rgba(255,67,67,.35)",
+              borderRadius:12,padding:14,marginBottom:12,textAlign:"center",
+            }}>
+              <div style={{fontSize:14,fontWeight:900,color:"#ff6b6b",marginBottom:6,lineHeight:1.5}}>
+                <RubyText text={el
+                  ? "デマの{確認|かくにん}に{追|お}われた{間|あいだ}、\n{本物|ほんもの}の{救助|きゅうじょ}が{放置|ほうち}されました"
+                  : "デマの確認に追われた間、\n本物の救助が放置されました"
+                }/>
+              </div>
+              <div style={{fontSize:12,color:"rgba(255,255,255,.6)",lineHeight:1.6}}>
+                <RubyText text={el
+                  ? "{通報|つうほう}は、{行|い}ってみるまでデマか{分|わ}からない。\nあなたの1{回|かい}のシェアが、この{状況|じょうきょう}を{生|う}みます。"
+                  : "通報は、行ってみるまでデマか分からない。\nあなたの1回のシェアが、この状況を生みます。"
+                }/>
+              </div>
+            </div>
+            <button
+              onClick={() => { feedback("complete"); onComplete(); }}
+              style={{
+                width:"100%",padding:16,borderRadius:14,border:"none",
+                background:"linear-gradient(135deg,#ffa940,#ff8c1a)",
+                color:"#fff",fontSize:16,fontWeight:900,
+                cursor:"pointer",fontFamily:"inherit",
+              }}>
+              次へ →
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ── 拡散パニックアニメーション ──
 function SpreadAnimPage({ ageMode, spreadData, spreadStep, setSpreadStep, onComplete }) {
   const [counter, setCounter] = useState(0);
@@ -8516,12 +8867,11 @@ function Episode2({ onComplete, onExit }) {
 
   // ── Spread Animation（パニック拡散アニメーション） ──
   if (phase === "spread_anim") return (
-    <SpreadAnimPage
-      ageMode={ageMode}
-      spreadData={spreadData}
-      spreadStep={spreadStep}
-      setSpreadStep={setSpreadStep}
-      onComplete={() => setPhase("checklist")}
+    <WorstCasePage
+      onComplete={() => {
+        feedback("tap");
+        setPhase("checklist");
+      }}
     />
   );
 
