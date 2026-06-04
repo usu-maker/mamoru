@@ -720,6 +720,7 @@ const GlobalStyle = () => (
     @keyframes typeReveal{from{clip-path:inset(0 100% 0 0)} to{clip-path:inset(0 0% 0 0)}}
     @keyframes slideCard {from{opacity:0;transform:translateX(60px)} to{opacity:1;transform:translateX(0)}}
     @keyframes glowPulse {0%,100%{box-shadow:0 0 20px rgba(255,169,64,.2)} 50%{box-shadow:0 0 40px rgba(255,169,64,.5)}}
+    @keyframes mamFadeUp {from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)}}
   `}</style>
 );
 
@@ -8486,6 +8487,993 @@ function SpreadAnimPage({ ageMode, spreadData, spreadStep, setSpreadStep, onComp
   );
 }
 
+function FakeNewsCasesScreen({ el, onComplete }) {
+  const [step, setStep] = useState(0);
+
+  const cases = [
+    {
+      year: el?"2016{年|ねん} {熊本|くまもと}{地震|じしん}":"2016年 熊本地震",
+      yearColor: "#f97316",
+      icon: "🦁",
+      dotBg: "rgba(249,115,22,.15)",
+      dotBorder: "#f97316",
+      lineBg: "linear-gradient(180deg,#f97316,#ef4444)",
+      title: el?"「ライオンが{動物園|どうぶつえん}から{逃|に}げ{出|だ}した」":"「ライオンが動物園から逃げ出した」",
+      img: "/images/ep2/fakenews_lion.jpg",
+      imgAlt: "ライオン投稿のフェイクニュース",
+      body: el?"{熊本|くまもと}{地震|じしん}の{混乱|こんらん}の{中|なか}、「ライオンが{逃|に}げた」という{偽|にせ}の{投稿|とうこう}が{拡散|かくさん}。{実際|じっさい}には{逃|に}げていなかったが、{多|おお}くの{人|ひと}がパニックに。":"熊本地震の混乱の中、「ライオンが逃げた」という偽の投稿が拡散。実際には逃げていなかったが、多くの人がパニックに。",
+      result: el?"⚖️ {投稿者|とうこうしゃ}が{偽計業務妨害罪|ぎけいぎょうむぼうがいざい}で{逮捕|たいほ}":"⚖️ 投稿者が偽計業務妨害罪で逮捕",
+      resultColor: "#fca5a5",
+      resultBg: "rgba(239,68,68,.1)",
+      resultBorder: "rgba(239,68,68,.3)",
+      source: el?"{出典|しゅってん}：{各報道機関|かくほうどうきかん} 2016{年|ねん}4{月|がつ}":"出典：各報道機関 2016年4月",
+    },
+    {
+      year: el?"2024{年|ねん}1{月|がつ} {能登半島|のとはんとう}{地震|じしん}":"2024年1月 能登半島地震",
+      yearColor: "#ef4444",
+      icon: "🆘",
+      dotBg: "rgba(239,68,68,.15)",
+      dotBorder: "#ef4444",
+      lineBg: "linear-gradient(180deg,#ef4444,#8b5cf6)",
+      title: el?"{虚偽|きょぎ}の{救助|きゅうじょ}{要請|ようせい}・{根拠|こんきょ}のないデマが{拡散|かくさん}":"虚偽の救助要請・根拠のないデマが拡散",
+      mapContent: true,
+      body: el?"{虚偽|きょぎ}の{救助|きゅうじょ}{要請|ようせい}が{相次|あいつ}ぎ、{警察|けいさつ}が{架空|かくう}の{現場|げんば}に{出動|しゅつどう}。{本物|ほんもの}の{被災者|ひさいしゃ}への{救助|きゅうじょ}が{遅|おく}れた。「{外国人|がいこくじん}が{集結|しゅうけつ}」などの{根拠|こんきょ}のないデマも{拡散|かくさん}し、{被災地|ひさいち}に{不安|ふあん}と{差別|さべつ}が{広|ひろ}がった。":"虚偽の救助要請が相次ぎ、警察が架空の現場に出動。本物の被災者への救助が遅れた。「外国人が集結」などの根拠のないデマも拡散し、被災地に不安と差別が広がった。",
+      result: el?"🚨 {本物|ほんもの}の{救助活動|きゅうじょかつどう}が{妨害|ぼうがい}された":"🚨 本物の救助活動が妨害された",
+      resultColor: "#fca5a5",
+      resultBg: "rgba(239,68,68,.1)",
+      resultBorder: "rgba(239,68,68,.3)",
+      source: el?"{出典|しゅってん}：{総務省|そうむしょう} {情報通信白書|じょうほうつうしんはくしょ}2024{年|ねん}{版|ばん}":"出典：総務省 情報通信白書2024年版",
+    },
+    {
+      year: el?"2024{年|ねん}〜{現在|げんざい}":"2024年〜現在",
+      yearColor: "#8b5cf6",
+      icon: "🤖",
+      dotBg: "rgba(139,92,246,.15)",
+      dotBorder: "#8b5cf6",
+      isNew: true,
+      title: el?"AI{合成型|ごうせいがた}（ディープフェイク）\n{本物|ほんもの}と{見分|みわ}けがつかない":"AI合成型（ディープフェイク）\n本物と見分けがつかない",
+      img: "/images/ep2/fakenews_deepfake.jpg",
+      imgAlt: "AI合成型フェイク動画の例",
+      body: el?"":"",
+      subCards: [
+        {
+          icon:"🗳️",
+          title: el?"{選挙|せんきょ}での{偽|にせ}{動画|どうが}":"選挙での偽動画",
+          desc: el?"2024{年|ねん}{衆院選|しゅういんせん}で{政治家|せいじか}のAI{合成|ごうせい}{偽|にせ}{動画|どうが}・{偽|にせ}{画像|がぞう}が{多数|たすう}{拡散|かくさん}。{岸田総理|きしだそうり}（{当時|とうじ}）の{偽|にせ}{動画|どうが}もSNSで{拡散|かくさん}した。":"2024年衆院選で政治家のAI合成偽動画・偽画像が多数拡散。岸田総理（当時）の偽動画もSNSで拡散した。",
+        },
+        {
+          icon:"⚾",
+          title: el?"{スポーツ選手|すぽーつせんしゅ}の{偽|にせ}{動画|どうが}":"スポーツ選手の偽動画",
+          desc: el?"{日本人|にほんじん}{大リーグ選手|だいりーぐせんしゅ}が{特定|とくてい}{政党|せいとう}への{投票|とうひょう}を{呼|よ}びかける{偽|にせ}{動画|どうが}が{拡散|かくさん}。{本人|ほんにん}は{一切|いっさい}{関係|かんけい}なかった。":"日本人大リーグ選手が特定政党への投票を呼びかける偽動画が拡散。本人は一切関係なかった。",
+        },
+      ],
+      warning: el?"⚠️ 「{動画|どうが}があるから{本物|ほんもの}だ」が{もう通用|もうつうよう}しない\nAIで{声|こえ}も{顔|かお}も{発言|はつげん}も{全|すべ}て{作|つく}れる{時代|じだい}になった":"⚠️ 「動画があるから本物だ」がもう通用しない\nAIで声も顔も発言も全て作れる時代になった",
+      source: el?"{出典|しゅってん}：{総務省|そうむしょう}{白書|はくしょ}2024{年|ねん}{版|ばん}・NHK・{時事通信|じじつうしん} 2024{年|ねん}":"出典：総務省白書2024年版・NHK・時事通信 2024年",
+      resultColor: "#c4b5fd",
+    },
+  ];
+
+  return (
+    <div style={{minHeight:"100vh",background:"linear-gradient(180deg,#1a0d2e,#120920)",padding:"20px 16px 40px",fontFamily:"'Zen Maru Gothic',sans-serif",color:"#fff"}}>
+      <div style={{maxWidth:440,margin:"0 auto"}}>
+
+        <div style={{fontSize:11,fontWeight:900,color:"rgba(124,58,237,.7)",marginBottom:6}}>
+          📋 <RubyText text={el?"{実際|じっさい}の{事例|じれい}":"実際の事例"}/>
+        </div>
+        <div style={{fontSize:16,fontWeight:900,marginBottom:4,lineHeight:1.5}}>
+          <RubyText text={el?"フェイクニュースは{昔|むかし}からあった。\nそして{今|いま}、もっと{巧妙|こうみょう}になっている。":"フェイクニュースは昔からあった。\nそして今、もっと巧妙になっている。"}/>
+        </div>
+        <div style={{fontSize:12,color:"rgba(255,255,255,.5)",marginBottom:20}}>
+          <RubyText text={el?"{事例|じれい}を{見|み}る →を{押|お}して{確認|かくにん}しよう":"事例を見る →を押して確認しよう"}/>
+        </div>
+
+        {cases.slice(0,step).map((c,i)=>(
+          <div key={i} style={{display:"flex",gap:12,marginBottom:0,animation:"mamFadeUp .6s ease"}}>
+            <div style={{display:"flex",flexDirection:"column",alignItems:"center",flexShrink:0,width:36}}>
+              <div style={{width:36,height:36,borderRadius:"50%",background:c.dotBg,border:`2px solid ${c.dotBorder}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}>
+                {c.icon}
+              </div>
+              {i<cases.slice(0,step).length-1 && (
+                <div style={{width:2,flex:1,minHeight:20,margin:"4px 0",borderRadius:2,background:c.lineBg}}/>
+              )}
+            </div>
+            <div style={{flex:1,paddingBottom:24}}>
+              <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:6}}>
+                <div style={{display:"inline-block",fontSize:11,fontWeight:900,padding:"2px 10px",borderRadius:99,background:`${c.dotBg}`,color:c.yearColor}}>
+                  <RubyText text={c.year}/>
+                </div>
+                {c.isNew && <span style={{fontSize:9,fontWeight:900,padding:"2px 6px",borderRadius:4,background:"#ef4444",color:"#fff"}}>NEW</span>}
+              </div>
+              <div style={{fontSize:14,fontWeight:900,marginBottom:8,lineHeight:1.5,whiteSpace:"pre-line"}}>
+                <RubyText text={c.title}/>
+              </div>
+
+              {c.img && (
+                <img src={c.img} alt={c.imgAlt} style={{width:"100%",borderRadius:10,display:"block",marginBottom:8}}/>
+              )}
+
+              {c.mapContent && (
+                <div style={{position:"relative",height:90,background:"#0d1424",borderRadius:10,overflow:"hidden",marginBottom:8}}>
+                  <div style={{position:"absolute",left:"18%",top:"30%",width:"64%",height:1,background:"rgba(255,255,255,.06)"}}/>
+                  <div style={{position:"absolute",left:"33%",top:"8%",width:1,height:"84%",background:"rgba(255,255,255,.06)"}}/>
+                  {[[20,22],[70,18],[45,66],[15,50],[78,56]].map((p,j)=>(
+                    <div key={j} style={{position:"absolute",left:`${p[0]}%`,top:`${p[1]}%`,transform:"translate(-50%,-50%)",width:16,height:16,borderRadius:"50%",background:"rgba(255,67,67,.2)",border:"1.5px solid #ff4343",display:"flex",alignItems:"center",justifyContent:"center",fontSize:8,color:"#ff6b6b"}}>✕</div>
+                  ))}
+                  <div style={{position:"absolute",left:"50%",top:"38%",transform:"translate(-50%,-50%)",width:18,height:18,borderRadius:"50%",background:"rgba(255,149,0,.2)",border:"2px solid #ff9500",display:"flex",alignItems:"center",justifyContent:"center",fontSize:9,color:"#ffb84d"}}>!</div>
+                  <div style={{position:"absolute",left:"25%",top:"30%",fontSize:14}}>🚓</div>
+                  <div style={{position:"absolute",left:"65%",top:"20%",fontSize:14}}>🚓</div>
+                  <div style={{position:"absolute",right:8,bottom:4,fontSize:9,color:"rgba(255,255,255,.3)"}}>
+                    <RubyText text={el?"← さっき{体験|たいけん}したのがこれ":"← さっき体験したのがこれ"}/>
+                  </div>
+                </div>
+              )}
+
+              {c.body && (
+                <div style={{fontSize:12,color:"rgba(255,255,255,.7)",lineHeight:1.7,marginBottom:8}}>
+                  <RubyText text={c.body}/>
+                </div>
+              )}
+
+              {c.subCards && c.subCards.map((s,j)=>(
+                <div key={j} style={{background:"rgba(139,92,246,.08)",border:"0.5px solid rgba(139,92,246,.2)",borderRadius:8,padding:"8px 10px",marginBottom:6,fontSize:11,color:"rgba(255,255,255,.75)",lineHeight:1.6}}>
+                  {s.icon} <b style={{color:"#c4b5fd"}}><RubyText text={s.title}/></b><br/>
+                  <RubyText text={s.desc}/>
+                </div>
+              ))}
+
+              {c.warning && (
+                <div style={{background:"rgba(239,68,68,.08)",border:"0.5px solid rgba(239,68,68,.2)",borderRadius:8,padding:"8px 10px",marginBottom:8,fontSize:11,color:"#fca5a5",lineHeight:1.6,whiteSpace:"pre-line"}}>
+                  <RubyText text={c.warning}/>
+                </div>
+              )}
+
+              {c.result && (
+                <div style={{display:"inline-flex",alignItems:"center",gap:5,fontSize:11,padding:"4px 10px",borderRadius:8,marginBottom:8,background:c.resultBg,border:`0.5px solid ${c.resultBorder}`,color:c.resultColor}}>
+                  <RubyText text={c.result}/>
+                </div>
+              )}
+
+              <div style={{fontSize:10,color:"rgba(255,255,255,.3)"}}>
+                <RubyText text={c.source}/>
+              </div>
+            </div>
+          </div>
+        ))}
+
+        {step < cases.length ? (
+          <button
+            onClick={()=>{feedback("tap");setStep(s=>s+1);}}
+            style={{width:"100%",padding:14,borderRadius:12,border:"none",background:"linear-gradient(135deg,#7c3aed,#4f46e5)",color:"#fff",fontSize:14,fontWeight:900,cursor:"pointer",fontFamily:"inherit",marginTop:4}}>
+            <RubyText text={el
+              ? step===0 ? "{事例|じれい}を{見|み}る →" : step<2 ? "{次|つぎ}の{事例|じれい}を{見|み}る →" : "さらに{次|つぎ}の{事例|じれい}を{見|み}る →"
+              : step===0 ? "事例を見る →" : step<2 ? "次の事例を見る →" : "さらに次の事例を見る →"
+            }/>
+          </button>
+        ) : (
+          <div style={{animation:"mamFadeUp .5s ease"}}>
+            <div style={{display:"flex",alignItems:"flex-start",gap:10,marginBottom:12}}>
+              <OwlMolly size={40}/>
+              <div style={{background:"#fff",borderRadius:"0 14px 14px 14px",padding:"10px 14px",flex:1}}>
+                <div style={{fontSize:12,color:"#1e293b",lineHeight:1.8}}>
+                  <RubyText text={el
+                    ?"フェイクニュースは{昔|むかし}からあった。でも{今|いま}はAIのせいで{本物|ほんもの}と{見分|みわ}けがつかなくなってきている。だからこそ、{見抜|みぬ}く{方法|ほうほう}をしっかり{覚|おぼ}えることが{大事|たいじ}なんだよ。"
+                    :"フェイクニュースは昔からあった。でも今はAIのせいで本物と見分けがつかなくなってきている。だからこそ、見抜く方法をしっかり覚えることが大事なんだよ。"
+                  }/>
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={()=>{feedback("tap");onComplete();}}
+              style={{width:"100%",padding:14,borderRadius:12,border:"none",background:"linear-gradient(135deg,#7c3aed,#4f46e5)",color:"#fff",fontSize:14,fontWeight:900,cursor:"pointer",fontFamily:"inherit"}}>
+              <RubyText text={el?"{見抜|みぬ}き{方|かた}を{学|まな}ぶ →":"見抜き方を学ぶ →"}/>
+            </button>
+          </div>
+        )}
+
+      </div>
+    </div>
+  );
+}
+
+function FakeNewsWhyScreen({ el, onComplete }) {
+  const [openCard, setOpenCard] = useState(null);
+  const [urgencyStep, setUrgencyStep] = useState(0);
+  const [choiceDone, setChoiceDone] = useState(null);
+  const [peopleShown, setPeopleShown] = useState(false);
+  const [lineStep, setLineStep] = useState(0);
+  const [allOpened, setAllOpened] = useState(false);
+  const timerRef = useRef(null);
+
+  const cards = [
+    { id:1, icon:"😱", label: el?`① {感情|かんじょう}に{訴|うった}える`:"① 感情に訴える" },
+    { id:2, icon:"⚡", label: el?`② {緊急性|きんきゅうせい}を{煽|あお}る`:"② 緊急性を煽る" },
+    { id:3, icon:"👥", label: el?`③ みんなが{信|しん}じてる`:"③ みんなが信じてる" },
+    { id:4, icon:"👨‍👩‍👧", label: el?`④ {身近|みぢか}な{人|ひと}から`:"④ 身近な人から" },
+  ];
+
+  const handleOpen = (id) => {
+    feedback("tap");
+    setOpenCard(openCard===id ? null : id);
+    setTimeout(()=>{
+      const opened = document.querySelectorAll('.why-card-opened');
+      if(opened.length >= 4) setAllOpened(true);
+    }, 300);
+  };
+
+  useEffect(()=>{
+    if(openCard===3 && !peopleShown){
+      setPeopleShown(true);
+    }
+  },[openCard]);
+
+  useEffect(()=>{
+    return ()=>{ if(timerRef.current) clearTimeout(timerRef.current); };
+  },[]);
+
+  const startTimer = () => {
+    let t = 3;
+    setUrgencyStep(1);
+    const tick = () => {
+      t--;
+      setUrgencyStep(t<=0 ? 99 : t);
+      if(t>0) timerRef.current = setTimeout(tick, 900);
+    };
+    timerRef.current = setTimeout(tick, 900);
+  };
+
+  const startLine = () => {
+    setLineStep(0);
+    [400,1200,2400,3400].forEach((d,i)=>{
+      setTimeout(()=>setLineStep(i+1), d);
+    });
+  };
+
+  return (
+    <div style={{minHeight:"100vh",background:"linear-gradient(180deg,#1a0d2e,#120920)",padding:"20px 16px 40px",fontFamily:"'Zen Maru Gothic',sans-serif",color:"#fff"}}>
+      <div style={{maxWidth:440,margin:"0 auto"}}>
+
+        <div style={{fontSize:11,fontWeight:900,color:"rgba(124,58,237,.7)",marginBottom:6}}>
+          🧠 <RubyText text={el?"{心理|しんり}の{仕掛|しか}け":"心理の仕掛け"}/>
+        </div>
+        <div style={{fontSize:17,fontWeight:900,marginBottom:4}}>
+          <RubyText text={el?"なぜ{人|ひと}は{信|しん}じてしまうのか？":"なぜ人は信じてしまうのか？"}/>
+        </div>
+        <div style={{fontSize:12,color:"rgba(255,255,255,.5)",marginBottom:16}}>
+          <RubyText text={el?"{カード|かーど}をタップして{理由|りゆう}を{確認|かくにん}しよう":"カードをタップして理由を確認しよう"}/>
+        </div>
+
+        {/* 4枚のカード */}
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:14}}>
+          {cards.map(c=>(
+            <div
+              key={c.id}
+              className={openCard===c.id?"why-card-opened":""}
+              onClick={()=>handleOpen(c.id)}
+              style={{
+                borderRadius:12,
+                border:`1px solid ${openCard===c.id?"rgba(124,58,237,.6)":"rgba(124,58,237,.3)"}`,
+                background:openCard===c.id?"rgba(124,58,237,.15)":"rgba(124,58,237,.08)",
+                padding:"16px 10px",textAlign:"center",cursor:"pointer",
+                transition:"all .3s",
+              }}>
+              <div style={{fontSize:28,marginBottom:6}}>{c.icon}</div>
+              <div style={{fontSize:11,fontWeight:900,color:"rgba(255,255,255,.7)"}}>
+                <RubyText text={c.label}/>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* カード①：感情 */}
+        {openCard===1 && (
+          <div style={{background:"rgba(255,255,255,.04)",border:"0.5px solid rgba(124,58,237,.2)",borderRadius:12,padding:14,marginBottom:12,animation:"mamFadeUp .4s ease"}}>
+            <div style={{fontSize:13,fontWeight:900,marginBottom:4}}>
+              <RubyText text={el?"😱 {感情|かんじょう}が{動|うご}くと{確認|かくにん}より{先|さき}にシェアしてしまう":"😱 感情が動くと確認より先にシェアしてしまう"}/>
+            </div>
+            <div style={{fontSize:12,color:"rgba(255,255,255,.7)",lineHeight:1.7,marginBottom:12}}>
+              <RubyText text={el?"フェイクニュースは「{恐怖|きょうふ}・{怒|いか}り・{驚|おどろ}き」などの{強|つよ}い{感情|かんじょう}を{刺激|しげき}するように{作|つく}られている。{感情|かんじょう}が{動|うご}いた{瞬間|しゅんかん}、{人|ひと}は{確認|かくにん}より{先|さき}に{行動|こうどう}してしまう。":"フェイクニュースは「恐怖・怒り・驚き」などの強い感情を刺激するように作られている。感情が動いた瞬間、人は確認より先に行動してしまう。"}/>
+            </div>
+            <div style={{fontSize:11,color:"rgba(255,255,255,.5)",marginBottom:8}}>
+              <RubyText text={el?"{感情|かんじょう}の{種類|しゅるい}と{拡散|かくさん}しやすさ（MITの{研究|けんきゅう}より）":"感情の種類と拡散しやすさ（MITの研究より）"}/>
+            </div>
+            {[
+              {emoji:"😡",label:el?"{怒|いか}り":"怒り",w:"92%",color:"#ef4444",note:el?"{怒|いか}りが一番{拡散|かくさん}する":"怒りが一番拡散する"},
+              {emoji:"😱",label:el?"{恐怖|きょうふ}":"恐怖",w:"72%",color:"#f97316"},
+              {emoji:"😲",label:el?"{驚|おどろ}き":"驚き",w:"58%",color:"#eab308"},
+              {emoji:"😊",label:el?"{喜|よろこ}び":"喜び",w:"22%",color:"rgba(255,255,255,.3)"},
+            ].map((b,i)=>(
+              <div key={i} style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
+                <div style={{width:52,fontSize:11,textAlign:"right",color:"rgba(255,255,255,.7)",flexShrink:0}}>
+                  {b.emoji} <RubyText text={b.label}/>
+                </div>
+                <div style={{flex:1,height:18,background:"rgba(255,255,255,.06)",borderRadius:4,overflow:"hidden"}}>
+                  <div style={{height:"100%",width:b.w,background:b.color,borderRadius:4,display:"flex",alignItems:"center",paddingLeft:6,fontSize:9,color:"#fff",fontWeight:700,transition:"width 1.2s cubic-bezier(.4,0,.2,1)"}}>
+                    {b.note&&<RubyText text={b.note}/>}
+                  </div>
+                </div>
+              </div>
+            ))}
+            <div style={{fontSize:10,color:"rgba(255,255,255,.3)",marginTop:6}}>
+              <RubyText text={el?"{出典|しゅってん}：MIT Sinan Aral{他|ほか}「The spread of true and false news online」Science 2018{年|ねん}":"出典：MIT Sinan Aral他「The spread of true and false news online」Science 2018年"}/>
+            </div>
+          </div>
+        )}
+
+        {/* カード②：緊急性 */}
+        {openCard===2 && (
+          <div style={{background:"rgba(255,255,255,.04)",border:"0.5px solid rgba(124,58,237,.2)",borderRadius:12,padding:14,marginBottom:12,animation:"mamFadeUp .4s ease"}}>
+            <div style={{fontSize:13,fontWeight:900,marginBottom:4}}>
+              <RubyText text={el?"⚡ 「{今|いま}すぐ！」で{冷静|れいせい}さを{奪|うば}う":"⚡ 「今すぐ！」で冷静さを奪う"}/>
+            </div>
+            <div style={{fontSize:12,color:"rgba(255,255,255,.7)",lineHeight:1.7,marginBottom:12}}>
+              <RubyText text={el?"「{今|いま}すぐ{避難|ひなん}！」「{急|いそ}いでシェアして！」という{言葉|ことば}が、{考|かんが}える{時間|じかん}を{奪|うば}ってしまう。":"「今すぐ避難！」「急いでシェアして！」という言葉が、考える時間を奪ってしまう。"}/>
+            </div>
+
+            {/* STEP1：スライダー */}
+            {urgencyStep===0 && (
+              <div>
+                <div style={{fontSize:11,color:"rgba(255,255,255,.5)",marginBottom:8,textAlign:"center"}}>
+                  <RubyText text={el?"← スライダーを{動|うご}かして{比|くら}べてみよう →":"← スライダーを動かして比べてみよう →"}/>
+                </div>
+                <div style={{position:"relative",height:140,borderRadius:12,overflow:"hidden",marginBottom:10,cursor:"ew-resize"}}
+                  id="sliderWrap2"
+                  onMouseDown={(e)=>{
+                    const move=(ev)=>{
+                      const r=document.getElementById('sliderWrap2').getBoundingClientRect();
+                      const pct=Math.max(5,Math.min(95,(ev.clientX-r.left)/r.width*100));
+                      document.getElementById('sliderDiv2').style.left=pct+'%';
+                      document.getElementById('sliderClip2').style.width=(100-pct)+'%';
+                    };
+                    const up=()=>{document.removeEventListener('mousemove',move);document.removeEventListener('mouseup',up);};
+                    document.addEventListener('mousemove',move);
+                    document.addEventListener('mouseup',up);
+                  }}
+                  onTouchStart={(e)=>{
+                    const move=(ev)=>{
+                      const r=document.getElementById('sliderWrap2').getBoundingClientRect();
+                      const pct=Math.max(5,Math.min(95,(ev.touches[0].clientX-r.left)/r.width*100));
+                      document.getElementById('sliderDiv2').style.left=pct+'%';
+                      document.getElementById('sliderClip2').style.width=(100-pct)+'%';
+                    };
+                    const up=()=>{document.removeEventListener('touchmove',move);document.removeEventListener('touchend',up);};
+                    document.addEventListener('touchmove',move);
+                    document.addEventListener('touchend',up);
+                  }}>
+                  {/* 本物 */}
+                  <div style={{position:"absolute",inset:0,background:"rgba(30,41,59,.8)",border:"1px solid rgba(59,130,246,.3)",borderRadius:12,padding:12,zIndex:1}}>
+                    <div style={{fontSize:10,fontWeight:900,color:"#93c5fd",marginBottom:6}}>📰 <RubyText text={el?"{本物|ほんもの}のニュース":"本物のニュース"}/></div>
+                    <div style={{fontSize:12,fontWeight:700,color:"#e2e8f0",lineHeight:1.5,marginBottom:4}}>
+                      <RubyText text={el?"{警察庁|けいさつちょう}、{詐欺|さぎ}{被害|ひがい}の{増加|ぞうか}を{発表|はっぴょう}。{前年比|ぜんねんひ}2{倍以上|ばいいじょう}に{急増|きゅうぞう}":"警察庁、詐欺被害の増加を発表。前年比2倍以上に急増"}/>
+                    </div>
+                    <div style={{fontSize:10,color:"rgba(255,255,255,.4)"}}>
+                      <RubyText text={el?"{警察庁|けいさつちょう} 2024{年|ねん}6{月|がつ}14{日|にち}":"警察庁 2024年6月14日"}/>
+                    </div>
+                  </div>
+                  {/* フェイク */}
+                  <div id="sliderClip2" style={{position:"absolute",top:0,right:0,bottom:0,width:"50%",overflow:"hidden",zIndex:2,pointerEvents:"none"}}>
+                    <div style={{position:"absolute",top:0,right:0,bottom:0,width:"100vw",maxWidth:440,background:"rgba(50,10,10,.85)",border:"1px solid rgba(255,67,67,.3)",borderRadius:12,padding:12}}>
+                      <div style={{fontSize:10,fontWeight:900,color:"#fca5a5",marginBottom:6}}>🚨 <RubyText text={el?"フェイクニュース{版|ばん}":"フェイクニュース版"}/></div>
+                      <div style={{fontSize:12,fontWeight:700,color:"#fca5a5",lineHeight:1.5,marginBottom:4}}>
+                        <RubyText text={el?"【{緊急速報|きんきゅうそくほう}】{詐欺|さぎ}{被害|ひがい}が{爆増中|ばくぞうちゅう}！！あなたの{家族|かぞく}も{狙|ねら}われてる！{今|いま}すぐ{確認|かくにん}！":"【緊急速報】詐欺被害が爆増中！！あなたの家族も狙われてる！今すぐ確認！"}/>
+                      </div>
+                      <div style={{fontSize:10,color:"rgba(255,100,100,.5)"}}>
+                        <RubyText text={el?"{出典|しゅってん}：なし　{発信者|はっしんしゃ}：{不明|ふめい}":"出典：なし　発信者：不明"}/>
+                      </div>
+                    </div>
+                  </div>
+                  {/* 仕切り */}
+                  <div id="sliderDiv2" style={{position:"absolute",top:0,bottom:0,left:"50%",width:3,background:"#fff",boxShadow:"0 0 8px rgba(255,255,255,.6)",zIndex:10,cursor:"ew-resize"}}>
+                    <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",width:28,height:28,background:"#fff",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,boxShadow:"0 2px 8px rgba(0,0,0,.3)"}}>⇔</div>
+                  </div>
+                  <div style={{position:"absolute",top:8,left:8,fontSize:10,fontWeight:700,padding:"2px 6px",borderRadius:99,background:"rgba(59,130,246,.25)",color:"#93c5fd",zIndex:5}}>
+                    <RubyText text={el?"{本物|ほんもの}":"本物"}/>
+                  </div>
+                  <div style={{position:"absolute",top:8,right:8,fontSize:10,fontWeight:700,padding:"2px 6px",borderRadius:99,background:"rgba(255,67,67,.25)",color:"#fca5a5",zIndex:11}}>
+                    <RubyText text={el?"フェイク":"フェイク"}/>
+                  </div>
+                </div>
+                <div style={{background:"rgba(255,169,64,.06)",border:"0.5px solid rgba(255,169,64,.2)",borderRadius:10,padding:10,marginBottom:10,fontSize:12,color:"rgba(255,255,255,.7)",lineHeight:1.7}}>
+                  🦉 <RubyText text={el?"{内容|ないよう}は{同|おな}じなのに、{言葉|ことば}の「{温度感|おんどかん}」が{違|ちが}うだけで{印象|いんしょう}が{変|か}わったよね。":"内容は同じなのに、言葉の「温度感」が違うだけで印象が変わったよね。"}/>
+                </div>
+                <button onClick={()=>{feedback("tap");startTimer();}}
+                  style={{width:"100%",padding:10,borderRadius:8,border:"none",background:"rgba(255,169,64,.2)",color:"#ffa940",fontSize:12,fontWeight:900,cursor:"pointer",fontFamily:"inherit"}}>
+                  <RubyText text={el?"{次|つぎ}：{緊急|きんきゅう}な{気持|きも}ちを{体験|たいけん}する →":"次：緊急な気持ちを体験する →"}/>
+                </button>
+              </div>
+            )}
+
+            {/* STEP2：カウントダウン */}
+            {urgencyStep>0 && (
+              <div style={{background:"rgba(255,169,64,.06)",border:"0.5px solid rgba(255,169,64,.2)",borderRadius:12,padding:14,textAlign:"center",animation:"mamFadeUp .4s ease"}}>
+                <div style={{fontSize:12,color:"rgba(255,255,255,.6)",marginBottom:4}}>
+                  <RubyText text={el?"「{今|いま}すぐシェアしないと{手遅|ておく}れ！」":"「今すぐシェアしないと手遅れ！」"}/>
+                </div>
+                <div style={{fontSize:52,fontWeight:900,color:urgencyStep===99||urgencyStep===1?"#ef4444":"#ffa940",lineHeight:1,marginBottom:4,transition:"color .3s"}}>
+                  {urgencyStep===99?"⏰":urgencyStep}
+                </div>
+                <div style={{fontSize:11,color:"rgba(255,255,255,.5)"}}>
+                  <RubyText text={el?"{秒|びょう}で{判断|はんだん}しなければならない…":"秒で判断しなければならない…"}/>
+                </div>
+                {urgencyStep===99 && (
+                  <div style={{marginTop:10,fontSize:12,color:"rgba(255,255,255,.7)",lineHeight:1.7,animation:"mamFadeUp .4s ease"}}>
+                    <RubyText text={el?"3{秒|びょう}では{確認|かくにん}できない。でも「{緊急|きんきゅう}！」という{言葉|ことば}がそれを{忘|わす}れさせてしまう。":"3秒では確認できない。でも「緊急！」という言葉がそれを忘れさせてしまう。"}/>
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div style={{fontSize:10,color:"rgba(255,255,255,.3)",marginTop:8}}>
+              <RubyText text={el?"{出典|しゅってん}：MIT「フェイクニュースの{目新|めあたら}しさ（novelty）」{分析|ぶんせき} Science 2018{年|ねん}":"出典：MIT「フェイクニュースの目新しさ（novelty）」分析 Science 2018年"}/>
+            </div>
+          </div>
+        )}
+
+        {/* カード③：みんな */}
+        {openCard===3 && (
+          <div style={{background:"rgba(255,255,255,.04)",border:"0.5px solid rgba(124,58,237,.2)",borderRadius:12,padding:14,marginBottom:12,animation:"mamFadeUp .4s ease"}}>
+            <div style={{fontSize:13,fontWeight:900,marginBottom:4}}>
+              <RubyText text={el?"👥 {周|まわ}りが{信|しん}じると{自分|じぶん}も{信|しん}じてしまう":"👥 周りが信じると自分も信じてしまう"}/>
+            </div>
+            <div style={{fontSize:12,color:"rgba(255,255,255,.7)",lineHeight:1.7,marginBottom:10}}>
+              <RubyText text={el?"RT{数|すう}・いいね{数|すう}が{増|ふ}えるほど「みんなが{正|ただ}しいと{思|おも}っているから{本物|ほんもの}だ」という{錯覚|さっかく}が{起|お}きる（エコーチェンバー{効果|こうか}）。":"RT数・いいね数が増えるほど「みんなが正しいと思っているから本物だ」という錯覚が起きる（エコーチェンバー効果）。"}/>
+            </div>
+            <div style={{fontSize:11,color:"rgba(255,255,255,.5)",marginBottom:8}}>
+              <RubyText text={el?"デマを{信|しん}じる{人|ひと}が{増|ふ}えると…":"デマを信じる人が増えると…"}/>
+            </div>
+            <div style={{display:"flex",flexWrap:"wrap",gap:4,padding:8,background:"rgba(255,255,255,.03)",borderRadius:10,minHeight:60,marginBottom:8}}>
+              {Array.from({length:20}).map((_,i)=>(
+                <span key={i} style={{
+                  fontSize:20,
+                  transition:"filter .4s, color .4s",
+                  opacity:peopleShown?1:0,
+                  filter:i<15?"sepia(1) saturate(3) hue-rotate(260deg)":"none",
+                }}>👤</span>
+              ))}
+            </div>
+            <div style={{display:"flex",gap:12,fontSize:11,marginBottom:10}}>
+              <span style={{color:"rgba(255,255,255,.5)"}}>👤 <RubyText text={el?"{まだ信|しん}じていない":"まだ信じていない"}/></span>
+              <span style={{color:"#a78bfa"}}>👤 <RubyText text={el?"{信|しん}じてしまった":"信じてしまった"}/></span>
+            </div>
+            <div style={{fontSize:10,color:"rgba(255,255,255,.3)"}}>
+              <RubyText text={el?"{出典|しゅってん}：{名古屋大学|なごやだいがく} {笹原|ささはら}{和俊|かずとし}{教授|きょうじゅ}「エコーチェンバー{効果|こうか}」の{研究|けんきゅう}":"出典：名古屋大学 笹原和俊教授「エコーチェンバー効果」の研究"}/>
+            </div>
+          </div>
+        )}
+
+        {/* カード④：身近な人 */}
+        {openCard===4 && (
+          <div style={{background:"rgba(255,255,255,.04)",border:"0.5px solid rgba(124,58,237,.2)",borderRadius:12,padding:14,marginBottom:12,animation:"mamFadeUp .4s ease"}}>
+            <div style={{fontSize:13,fontWeight:900,marginBottom:4}}>
+              <RubyText text={el?"👨‍👩‍👧 {友達|ともだち}・{家族|かぞく}からだと{信|しん}じてしまう":"👨‍👩‍👧 友達・家族からだと信じてしまう"}/>
+            </div>
+            <div style={{fontSize:12,color:"rgba(255,255,255,.7)",lineHeight:1.7,marginBottom:10}}>
+              <RubyText text={el?"{知|し}らない{人|ひと}からの{情報|じょうほう}は{疑|うたが}えても、{友達|ともだち}や{家族|かぞく}から{届|とど}いた{情報|じょうほう}は「{信頼|しんらい}できる{人|ひと}からだから{本物|ほんもの}だろう」と{思|おも}ってしまいがち。":"知らない人からの情報は疑えても、友達や家族から届いた情報は「信頼できる人からだから本物だろう」と思ってしまいがち。"}/>
+            </div>
+            <div style={{fontSize:11,color:"rgba(255,255,255,.5)",marginBottom:8}}>
+              <RubyText text={el?"{友達|ともだち}からこんなメッセージが{届|とど}いたら？":"友達からこんなメッセージが届いたら？"}/>
+            </div>
+            <div style={{background:"#1a2a1a",borderRadius:12,padding:10,display:"flex",flexDirection:"column",gap:8,marginBottom:8}}>
+              {lineStep>=1 && (
+                <div style={{display:"flex",alignItems:"flex-end",gap:6,animation:"mamFadeUp .4s ease"}}>
+                  <div style={{width:28,height:28,borderRadius:"50%",background:"#4ade80",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,flexShrink:0}}>👦</div>
+                  <div>
+                    <div style={{fontSize:10,color:"rgba(255,255,255,.4)",marginBottom:3}}>
+                      <RubyText text={el?"{仲良|なかよ}しの{友達|ともだち}":"仲良しの友達"}/>
+                    </div>
+                    <div style={{background:"#fff",borderRadius:"0 12px 12px 12px",padding:"8px 10px",fontSize:11,color:"#1a1a1a",maxWidth:"80%",lineHeight:1.6}}>
+                      <RubyText text={el?"ねえ{見|み}た？これやばくない？{早|はや}く{拡散|かくさん}して！🚨":"ねえ見た？これやばくない？早く拡散して！🚨"}/>
+                    </div>
+                  </div>
+                </div>
+              )}
+              {lineStep>=2 && (
+                <div style={{display:"flex",alignItems:"flex-end",gap:6,animation:"mamFadeUp .4s ease"}}>
+                  <div style={{width:28,height:28,borderRadius:"50%",background:"#4ade80",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,flexShrink:0}}>👦</div>
+                  <div style={{background:"#fffde7",borderRadius:"0 12px 12px 12px",padding:"8px 10px",fontSize:10,color:"#1a1a1a",maxWidth:"80%",lineHeight:1.6,border:"1px solid #f0c040"}}>
+                    <RubyText text={el?"【{速報|そくほう}】○○{市|し}の{水道水|すいどうすい}から{危険物質|きけんぶっしつ}が{検出|けんしゅつ}された{可能性|かのうせい}があります。{今|いま}すぐペットボトルの{水|みず}を{準備|じゅんび}して！":"【速報】○○市の水道水から危険物質が検出された可能性があります。今すぐペットボトルの水を準備して！"}/>
+                  </div>
+                </div>
+              )}
+              {lineStep>=3 && (
+                <div style={{display:"flex",justifyContent:"flex-end",animation:"mamFadeUp .4s ease"}}>
+                  <div style={{background:"#4ade80",borderRadius:"12px 0 12px 12px",padding:"8px 10px",fontSize:11,color:"#1a1a1a",maxWidth:"80%",lineHeight:1.6}}>
+                    <RubyText text={el?"え、{本当|ほんとう}に！？お{母|かあ}さんに{教|おし}えなきゃ！":"え、本当に！？お母さんに教えなきゃ！"}/>
+                  </div>
+                </div>
+              )}
+              {lineStep>=4 && (
+                <div style={{background:"rgba(255,67,67,.1)",border:"0.5px solid rgba(255,67,67,.3)",borderRadius:10,padding:"8px 10px",fontSize:11,color:"#ff9999",lineHeight:1.6,animation:"mamFadeUp .4s ease"}}>
+                  <RubyText text={el?"⚠️ でもこれはフェイクニュースでした。{信頼|しんらい}できる{人|ひと}からでも、{内容|ないよう}の{確認|かくにん}が{必要|ひつよう}です。":"⚠️ でもこれはフェイクニュースでした。信頼できる人からでも、内容の確認が必要です。"}/>
+                </div>
+              )}
+            </div>
+            <button onClick={startLine}
+              style={{width:"100%",padding:8,borderRadius:8,border:"none",background:"rgba(74,222,128,.15)",color:"#4ade80",fontSize:12,cursor:"pointer",fontFamily:"inherit",marginBottom:8}}>
+              ▶ <RubyText text={el?"{再生|さいせい}する":"再生する"}/>
+            </button>
+            <div style={{fontSize:10,color:"rgba(255,255,255,.3)"}}>
+              <RubyText text={el?"{出典|しゅってん}：{国際大学|こくさいだいがく}GLOCOM {山口|やまぐち}{真一|しんいち}{准教授|じゅんきょうじゅ}「フェイクニュース{拡散|かくさん}{手段|しゅだん}の{研究|けんきゅう}」2022{年|ねん}":"出典：国際大学GLOCOM 山口真一准教授「フェイクニュース拡散手段の研究」2022年"}/>
+            </div>
+          </div>
+        )}
+
+        {/* モリィまとめ＋次へ */}
+        {allOpened && (
+          <div style={{animation:"mamFadeUp .5s ease"}}>
+            <div style={{background:"rgba(124,58,237,.1)",border:"0.5px solid rgba(124,58,237,.3)",borderRadius:12,padding:"12px 14px",marginBottom:12}}>
+              <div style={{fontSize:12,fontWeight:900,color:"#a78bfa",marginBottom:5}}>🦉 <RubyText text={el?"モリィのまとめ":"モリィのまとめ"}/></div>
+              <div style={{fontSize:12,color:"rgba(255,255,255,.8)",lineHeight:1.7}}>
+                <RubyText text={el?"これは{全部|ぜんぶ}、{人間|にんげん}の{自然|しぜん}な{心|こころ}の{働|はたら}き。「{自分|じぶん}は{騙|だま}されない」と{思|おも}っている{人|ひと}ほど、{実|じつ}は{危|あぶ}ない。{次|つぎ}は{実際|じっさい}の{事例|じれい}を{見|み}てみよう。":"これは全部、人間の自然な心の働き。「自分は騙されない」と思っている人ほど、実は危ない。次は実際の事例を見てみよう。"}/>
+              </div>
+            </div>
+            <button
+              onClick={()=>{feedback("tap");onComplete();}}
+              style={{width:"100%",padding:14,borderRadius:12,border:"none",background:"linear-gradient(135deg,#7c3aed,#4f46e5)",color:"#fff",fontSize:14,fontWeight:900,cursor:"pointer",fontFamily:"inherit"}}>
+              <RubyText text={el?"{実際|じっさい}の{事例|じれい}を{見|み}る →":"実際の事例を見る →"}/>
+            </button>
+          </div>
+        )}
+
+      </div>
+    </div>
+  );
+}
+
+function FakeNewsCompareScreen({ el, onComplete }) {
+  const [fStep, setFStep] = useState(0);
+  const [rStep, setRStep] = useState(0);
+  const [phase, setPhase] = useState("fake"); // "fake" | "real"
+
+  const fakePoints = [
+    {
+      hlTarget: "badge",
+      badgeOn: true,
+      title: el?"{発信者|はっしんしゃ}が{不明|ふめい}・{認証|にんしょう}なし":"発信者が不明・認証なし",
+      desc: el?"{誰|だれ}が{書|か}いたか{分|わ}からないアカウント。{公式|こうしき}{機関|きかん}は{必|かなら}ず{名前|なまえ}を{明記|めいき}する":"誰が書いたか分からないアカウント。公式機関は必ず名前を明記する",
+    },
+    {
+      hlTarget: "hashtag",
+      title: el?"「{拡散|かくさん}{希望|きぼう}」は{要注意|ようちゅうい}サイン":"「拡散希望」は要注意サイン",
+      desc: el?"{本物|ほんもの}の{緊急|きんきゅう}{情報|じょうほう}が「{拡散|かくさん}{希望|きぼう}」と{書|か}くことはほぼない":"本物の緊急情報が「拡散希望」と書くことはほぼない",
+    },
+    {
+      hlTarget: "rt",
+      title: el?"RTが{いいね数|すう}より{多|おお}いのは{不自然|ふしぜん}":"RTがいいね数より多いのは不自然",
+      desc: el?"92,100RT vs 48,200{いいね}。{読|よ}まずにシェアされている{証拠|しょうこ}":"92,100RT vs 48,200いいね。読まずにシェアされている証拠",
+    },
+  ];
+
+  const realPoints = [
+    {
+      hlTarget: "name",
+      title: el?"{発信者|はっしんしゃ}が{明確|めいかく}":"発信者が明確",
+      desc: el?"「NHKニュース」という{実在|じつざい}するメディア{名|めい}が{明記|めいき}されている":"「NHKニュース」という実在するメディア名が明記されている",
+    },
+    {
+      hlTarget: "badge",
+      title: el?"バッジだけでは{判断|はんだん}しない":"バッジだけでは判断しない",
+      desc: el?"{認証|にんしょう}バッジは{有料|ゆうりょう}で{取得可能|しゅとくかのう}。{発信者名|はっしんしゃめい}・リンク{先|さき}も{合|あ}わせて{確認|かくにん}する":"認証バッジは有料で取得可能。発信者名・リンク先も合わせて確認する",
+    },
+    {
+      hlTarget: "date",
+      title: el?"{機関名|きかんめい}と{日付|ひづけ}が{明記|めいき}":"機関名と日付が明記",
+      desc: el?"「{警察庁|けいさつちょう}は14{日|にち}」← {誰|だれ}が・いつ{発表|はっぴょう}したかが{具体的|ぐたいてき}":"「警察庁は14日」← 誰が・いつ発表したかが具体的",
+    },
+    {
+      hlTarget: "number",
+      title: el?"{具体的|ぐたいてき}な{数字|すうじ}・{根拠|こんきょ}がある":"具体的な数字・根拠がある",
+      desc: el?"「{前年比|ぜんねんひ}2{倍以上|ばいいじょう}」← {曖昧|あいまい}でなく{根拠|こんきょ}のある{数字|すうじ}":"「前年比2倍以上」← 曖昧でなく根拠のある数字",
+    },
+  ];
+
+  const isFakeHL = (target) => {
+    if(target==="badge") return fStep>=1;
+    if(target==="hashtag") return fStep>=2;
+    if(target==="rt") return fStep>=3;
+    return false;
+  };
+  const isRealHL = (target) => {
+    if(target==="name") return rStep>=1;
+    if(target==="badge") return rStep>=2;
+    if(target==="date") return rStep>=3;
+    if(target==="number") return rStep>=4;
+    return false;
+  };
+
+  const hlStyleF = {background:"rgba(255,67,67,.3)",borderBottom:"2px solid #ff4343",color:"#ffaaaa",padding:"0 2px",borderRadius:3};
+  const hlStyleR = {background:"rgba(34,197,94,.25)",borderBottom:"2px solid #22c55e",color:"#86efac",padding:"0 2px",borderRadius:3};
+  const numBadge = (n,color) => ({
+    display:"inline-flex",alignItems:"center",justifyContent:"center",
+    width:18,height:18,borderRadius:"50%",
+    background:color,color:"#fff",
+    fontSize:10,fontWeight:900,
+    verticalAlign:"middle",marginLeft:4,flexShrink:0,
+  });
+
+  const sectionStyle = {
+    minHeight:"100vh",
+    background:"linear-gradient(180deg,#1a0d2e,#120920)",
+    padding:"20px 16px 40px",
+    fontFamily:"'Zen Maru Gothic',sans-serif",
+    color:"#fff",
+  };
+
+  if(phase==="fake") return (
+    <div style={sectionStyle}>
+      <div style={{maxWidth:440,margin:"0 auto"}}>
+        <div style={{fontSize:11,fontWeight:900,color:"rgba(239,68,68,.7)",marginBottom:6}}>
+          <RubyText text={el?"❌ これはフェイクニュースだった":"❌ これはフェイクニュースだった"}/>
+        </div>
+        <div style={{fontSize:15,fontWeight:900,marginBottom:14}}>
+          <RubyText text={el?"{直感|ちょっかん}で{判定|はんてい}した{投稿|とうこう}を{振|ふ}り{返|かえ}ろう":"直感で判定した投稿を振り返ろう"}/>
+        </div>
+
+        {/* 投稿カード */}
+        <div style={{background:"rgba(255,255,255,.04)",borderRadius:12,border:"0.5px solid rgba(255,67,67,.3)",overflow:"hidden",marginBottom:12}}>
+          <div style={{display:"flex",alignItems:"center",gap:8,padding:"10px 12px 6px"}}>
+            <div style={{width:36,height:36,borderRadius:"50%",background:"rgba(255,100,100,.15)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16}}>⚡</div>
+            <div style={{flex:1}}>
+              <div style={{fontSize:13,fontWeight:900,color:"#fff"}}>緊急速報_bot</div>
+              <div style={{display:"inline-flex",alignItems:"center"}}>
+                <span style={{
+                  fontSize:9,padding:"2px 8px",borderRadius:99,
+                  ...(isFakeHL("badge")?{background:"rgba(255,67,67,.25)",color:"#ff6b6b"}:{background:"rgba(255,255,255,.1)",color:"rgba(255,255,255,.5)"}),
+                  transition:"all .4s",
+                }}>
+                  <RubyText text={el?"{認証|にんしょう}なし":"認証なし"}/>
+                </span>
+                {fStep>=1 && <span style={{...numBadge(1,"#ff4343"),marginLeft:6}}>①</span>}
+              </div>
+            </div>
+          </div>
+          <div style={{padding:"4px 12px 8px",fontSize:12,color:"rgba(255,255,255,.85)",lineHeight:2}}>
+            <RubyText text={el?"【{緊急|きんきゅう}】○○{市|し}で{大規模|だいきぼ}{地震|じしん}{発生|はっせい}！マグニチュード7.8。{今|いま}すぐ{高台|たかだい}へ{避難|ひなん}してください。":"【緊急】○○市で大規模地震発生！マグニチュード7.8。今すぐ高台へ避難してください。"}/>
+            {" "}
+            <span style={{...(isFakeHL("hashtag")?hlStyleF:{}),transition:"all .4s"}}>
+              <RubyText text={el?"#緊急 #{拡散|かくさん}{希望|きぼう}":"#緊急 #拡散希望"}/>
+            </span>
+            {fStep>=2 && <span style={{...numBadge(2,"#ff4343"),marginLeft:4}}>②</span>}
+          </div>
+          <div style={{background:"#0d1424",height:70,display:"flex",alignItems:"center",justifyContent:"center",fontSize:28}}>🚨</div>
+          <div style={{padding:"6px 12px 10px",display:"flex",gap:12,fontSize:11,color:"rgba(255,255,255,.4)"}}>
+            <span>❤ 48,200</span>
+            <span style={{...(isFakeHL("rt")?{color:"#ff6b6b",fontWeight:900}:{}),transition:"all .4s"}}>
+              🔁 92,100
+              {fStep>=3 && <span style={{...numBadge(3,"#ff4343"),marginLeft:4}}>③</span>}
+            </span>
+            <span>💬 3,400</span>
+          </div>
+        </div>
+
+        {/* 解説ポイント */}
+        {fakePoints.slice(0,fStep).map((p,i)=>(
+          <div key={i} style={{
+            display:"flex",alignItems:"flex-start",gap:8,
+            padding:"8px 10px",borderRadius:8,marginBottom:6,
+            background:"rgba(255,67,67,.08)",border:"0.5px solid rgba(255,67,67,.2)",
+            animation:"mamFadeUp .4s ease",
+          }}>
+            <span style={{color:"#ff6b6b",fontWeight:900,flexShrink:0}}>{"①②③"[i]}</span>
+            <div>
+              <div style={{fontSize:12,fontWeight:900,color:"#ffaaaa"}}><RubyText text={p.title}/></div>
+              <div style={{fontSize:11,color:"rgba(255,255,255,.7)"}}><RubyText text={p.desc}/></div>
+            </div>
+          </div>
+        ))}
+
+        <button
+          onClick={()=>{
+            feedback("tap");
+            if(fStep<3){setFStep(s=>s+1);}
+            else{setPhase("real");}
+          }}
+          style={{width:"100%",padding:14,borderRadius:12,border:"none",background:"linear-gradient(135deg,#7c3aed,#4f46e5)",color:"#fff",fontSize:14,fontWeight:900,cursor:"pointer",fontFamily:"inherit",marginTop:4}}>
+          {fStep===0
+            ? <RubyText text={el?"{解説|かいせつ}を{見|み}る 🔍":"解説を見る 🔍"}/>
+            : fStep<3
+              ? <RubyText text={el?"{次|つぎ}へ →":"次へ →"}/>
+              : <RubyText text={el?"{本物|ほんもの}と{比|くら}べてみる →":"本物と比べてみる →"}/>
+          }
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div style={sectionStyle}>
+      <div style={{maxWidth:440,margin:"0 auto"}}>
+        <div style={{fontSize:11,fontWeight:900,color:"rgba(34,197,94,.7)",marginBottom:6}}>
+          ✅ <RubyText text={el?"これは{本物|ほんもの}のニュースだった":"これは本物のニュースだった"}/>
+        </div>
+        <div style={{fontSize:15,fontWeight:900,marginBottom:14}}>
+          <RubyText text={el?"{何|なに}が「{信頼|しんらい}できる」のか{確認|かくにん}しよう":"何が「信頼できる」のか確認しよう"}/>
+        </div>
+
+        {/* 本物投稿カード */}
+        <div style={{background:"rgba(255,255,255,.04)",borderRadius:12,border:"0.5px solid rgba(34,197,94,.3)",overflow:"hidden",marginBottom:12}}>
+          <div style={{display:"flex",alignItems:"center",gap:8,padding:"10px 12px 6px"}}>
+            <div style={{width:36,height:36,borderRadius:"50%",background:"rgba(34,197,94,.15)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16}}>🏛️</div>
+            <div style={{flex:1}}>
+              <div style={{fontSize:13,fontWeight:900,color:"#fff",display:"flex",alignItems:"center",gap:4}}>
+                <span style={{...(isRealHL("name")?hlStyleR:{}),transition:"all .4s"}}>NHKニュース</span>
+                {rStep>=1 && <span style={numBadge(1,"#22c55e")}>①</span>}
+              </div>
+              <div style={{display:"inline-flex",alignItems:"center"}}>
+                <span style={{
+                  fontSize:9,padding:"2px 8px",borderRadius:99,
+                  ...(isRealHL("badge")?{background:"rgba(34,197,94,.2)",color:"#4ade80"}:{background:"rgba(255,255,255,.1)",color:"rgba(255,255,255,.5)"}),
+                  transition:"all .4s",
+                }}>✓ <RubyText text={el?"{公式|こうしき}{確認済|かくにんず}み":"公式確認済み"}/></span>
+                {rStep>=2 && <span style={{...numBadge(2,"#22c55e"),marginLeft:6}}>②</span>}
+              </div>
+            </div>
+          </div>
+          <div style={{padding:"4px 12px 8px",fontSize:12,color:"rgba(255,255,255,.85)",lineHeight:2}}>
+            <span style={{...(isRealHL("date")?hlStyleR:{}),transition:"all .4s"}}>
+              <RubyText text={el?"{警察庁|けいさつちょう}は14{日|にち}":"警察庁は14日"}/>
+            </span>
+            {rStep>=3 && <span style={numBadge(3,"#22c55e")}>③</span>}
+            <RubyText text={el?"、SNS{型|がた}{詐欺|さぎ}の{被害|ひがい}が{今年|ことし}に{入|はい}り":"、SNS型詐欺の被害が今年に入り"}/>
+            {" "}
+            <span style={{...(isRealHL("number")?hlStyleR:{}),transition:"all .4s"}}>
+              <RubyText text={el?"{前年比|ぜんねんひ}2{倍以上|ばいいじょう}":"前年比2倍以上"}/>
+            </span>
+            {rStep>=4 && <span style={numBadge(4,"#22c55e")}>④</span>}
+            <RubyText text={el?"に{急増|きゅうぞう}していると{発表|はっぴょう}…":"に急増していると発表…"}/>
+          </div>
+          <div style={{background:"#0d1a2e",height:70,display:"flex",alignItems:"center",justifyContent:"center",fontSize:28}}>📊</div>
+          <div style={{padding:"6px 12px 10px",display:"flex",gap:12,fontSize:11,color:"rgba(255,255,255,.4)"}}>
+            <span>❤ 12,400</span><span>🔁 8,200</span><span>💬 1,100</span>
+          </div>
+        </div>
+
+        {/* 解説ポイント */}
+        {realPoints.slice(0,rStep).map((p,i)=>(
+          <div key={i} style={{
+            display:"flex",alignItems:"flex-start",gap:8,
+            padding:"8px 10px",borderRadius:8,marginBottom:6,
+            background:"rgba(34,197,94,.08)",border:"0.5px solid rgba(34,197,94,.2)",
+            animation:"mamFadeUp .4s ease",
+          }}>
+            <span style={{color:"#4ade80",fontWeight:900,flexShrink:0}}>{"①②③④"[i]}</span>
+            <div>
+              <div style={{fontSize:12,fontWeight:900,color:"#86efac"}}><RubyText text={p.title}/></div>
+              <div style={{fontSize:11,color:"rgba(255,255,255,.7)"}}><RubyText text={p.desc}/></div>
+            </div>
+          </div>
+        ))}
+
+        {rStep===4 && (
+          <div style={{background:"rgba(124,58,237,.1)",border:"0.5px solid rgba(124,58,237,.3)",borderRadius:12,padding:"12px 14px",marginBottom:10,animation:"mamFadeUp .5s ease"}}>
+            <div style={{fontSize:12,fontWeight:900,color:"#a78bfa",marginBottom:5}}>🦉 <RubyText text={el?"モリィのまとめ":"モリィのまとめ"}/></div>
+            <div style={{fontSize:12,color:"rgba(255,255,255,.8)",lineHeight:1.7}}>
+              <RubyText text={el
+                ?"「{誰|だれ}が・いつ・{根拠|こんきょ}は{何|なに}か」が{明確|めいかく}かどうかが{見分|みわ}けるカギ。{次|つぎ}は{実際|じっさい}に{見抜|みぬ}く{方法|ほうほう}を{学|まな}ぼう！"
+                :"「誰が・いつ・根拠は何か」が明確かどうかが見分けるカギ。次は実際に見抜く方法を学ぼう！"
+              }/>
+            </div>
+          </div>
+        )}
+
+        <button
+          onClick={()=>{
+            feedback("tap");
+            if(rStep<4){setRStep(s=>s+1);}
+            else{onComplete();}
+          }}
+          style={{width:"100%",padding:14,borderRadius:12,border:"none",
+            background:rStep===4?"linear-gradient(135deg,#059669,#047857)":"linear-gradient(135deg,#7c3aed,#4f46e5)",
+            color:"#fff",fontSize:14,fontWeight:900,cursor:"pointer",fontFamily:"inherit"}}>
+          {rStep===0
+            ? <RubyText text={el?"{本物|ほんもの}のポイントを{見|み}る ✅":"本物のポイントを見る ✅"}/>
+            : rStep<4
+              ? <RubyText text={el?"{次|つぎ}へ →":"次へ →"}/>
+              : <RubyText text={el?"{次|つぎ}へ →":"次へ →"}/>
+          }
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function FakeNewsLearnPage({ onComplete }) {
+  const ageMode = useAgeMode();
+  const el = ageMode === "elementary";
+  const [screen, setScreen] = useState("1a");
+
+  // 画面1-A：定義・データ・ライオン画像・4つの理由
+  if (screen === "1a") return (
+    <div style={{
+      minHeight:"100vh",
+      background:"linear-gradient(180deg,#1a0d2e,#120920)",
+      padding:"24px 20px 40px",
+      fontFamily:"'Zen Maru Gothic',sans-serif",
+      color:"#fff",
+    }}>
+      <div style={{maxWidth:440,margin:"0 auto"}}>
+
+        <div style={{fontSize:11,fontWeight:900,color:"rgba(124,58,237,.7)",letterSpacing:".05em",marginBottom:6}}>
+          📰 <RubyText text={el?"フェイクニュースって{何|なに}だろう？":"フェイクニュースって何だろう？"}/>
+        </div>
+        <div style={{fontSize:18,fontWeight:900,marginBottom:16,lineHeight:1.5}}>
+          <RubyText text={el?"フェイクニュースって\n{何|なに}だろう？":"フェイクニュースって\n何だろう？"}/>
+        </div>
+
+        {/* 定義カード */}
+        <div style={{background:"rgba(255,255,255,.06)",border:"0.5px solid rgba(255,255,255,.15)",borderRadius:12,padding:"12px 14px",marginBottom:12}}>
+          <div style={{fontSize:11,color:"rgba(124,58,237,.8)",marginBottom:6,fontWeight:900}}>
+            <RubyText text={el?"フェイクニュースとは":"フェイクニュースとは"}/>
+          </div>
+          <div style={{fontSize:14,fontWeight:900,color:"#fff",lineHeight:1.7}}>
+            <RubyText text={el
+              ?"SNSや{Web|ウェブ}サイトに\nわざと{公開|こうかい}された\n{本当|ほんとう}ではない{記事|きじ}のこと"
+              :"SNSやウェブサイトに\nわざと公開された\n本当ではない記事のこと"
+            }/>
+          </div>
+          <div style={{fontSize:10,color:"rgba(255,255,255,.35)",marginTop:6}}>
+            <RubyText text={el
+              ?"{出典|しゅってん}：{総務省|そうむしょう}「{情報通信白書|じょうほうつうしんはくしょ} for Kids」"
+              :"出典：総務省「情報通信白書 for Kids」"
+            }/>
+          </div>
+        </div>
+
+        {/* データカード */}
+        <div style={{background:"rgba(124,58,237,.12)",border:"1px solid rgba(124,58,237,.3)",borderRadius:12,padding:"12px 14px",marginBottom:12,textAlign:"center"}}>
+          <div style={{fontSize:28,fontWeight:900,color:"#a78bfa"}}>
+            <RubyText text={el?"{約|やく}80%":"約80%"}/>
+          </div>
+          <div style={{fontSize:13,color:"rgba(255,255,255,.8)",marginTop:4,lineHeight:1.6}}>
+            <RubyText text={el
+              ?"の{人|ひと}がフェイクニュースを{見|み}ても\n{偽物|にせもの}だと{気|き}づかない"
+              :"の人がフェイクニュースを見ても\n偽物だと気づかない"
+            }/>
+          </div>
+          <div style={{fontSize:10,color:"rgba(255,255,255,.35)",marginTop:6}}>
+            <RubyText text={el
+              ?"{出典|しゅってん}：{国際大学|こくさいだいがく}GLOCOM 2021{年|ねん}{調査|ちょうさ}（n=5,991{名|めい}）"
+              :"出典：国際大学GLOCOM 2021年調査（n=5,991名）"
+            }/>
+          </div>
+        </div>
+
+        {/* ライオン画像 */}
+        <img
+          src="/images/ep2/fakenews_lion.jpg"
+          alt="ライオン投稿のフェイクニュース例"
+          style={{width:"100%",borderRadius:10,display:"block",marginBottom:6}}
+        />
+        <div style={{fontSize:11,color:"rgba(255,255,255,.45)",marginBottom:14,textAlign:"center"}}>
+          <RubyText text={el
+            ?"{一見|いっけん}{普通|ふつう}のSNS{投稿|とうこう}…でもこれはデマでした"
+            :"一見普通のSNS投稿…でもこれはデマでした"
+          }/>
+        </div>
+
+        {/* モリィ：なぜ作られるか */}
+        <div style={{display:"flex",alignItems:"flex-start",gap:10,marginBottom:10}}>
+          <OwlMolly size={40}/>
+          <div style={{background:"#fff",borderRadius:"0 14px 14px 14px",padding:"10px 14px",flex:1,border:"1.5px solid rgba(124,58,237,.2)"}}>
+            <div style={{fontSize:12,color:"#1e293b",lineHeight:1.8}}>
+              <RubyText text={el
+                ?"なんでこんなものを{作|つく}るの？\n{理由|りゆう}を{調|しら}べてみたよ。"
+                :"なんでこんなものを作るの？\n理由を調べてみたよ。"
+              }/>
+            </div>
+          </div>
+        </div>
+
+        {[
+          {icon:"💰",key:el?"{お金|おかね}{目的|もくてき}":  "お金目的",val:el?"{話題|わだい}になるほど{広告|こうこく}でお{金|かね}が{稼|かせ}げる":"話題になるほど広告でお金が稼げる",color:"#fbbf24"},
+          {icon:"😈",key:"面白半分",val:el?"{世間|せけん}が{騒|さわ}ぐのを{見|み}て{楽|たの}しんでいる":"世間が騒ぐのを見て楽しんでいる",color:"#f87171"},
+          {icon:"🎯",key:el?"{誰|だれ}かを{攻撃|こうげき}したい":"誰かを攻撃したい",val:el?"{特定|とくてい}の{人|ひと}・{会社|かいしゃ}の{評判|ひょうばん}を{落|お}とそうとしている":"特定の人・会社の評判を落とそうとしている",color:"#fb923c"},
+          {icon:"🗳️",key:el?"{世論|せろん}を{操作|そうさ}したい":"世論を操作したい",val:el?"{選挙|せんきょ}や{政治|せいじ}を{自分|じぶん}に{有利|ゆうり}に{動|うご}かそうとしている":"選挙や政治を自分に有利に動かそうとしている",color:"#a78bfa"},
+        ].map((r,i)=>(
+          <div key={i} style={{display:"flex",alignItems:"flex-start",gap:8,padding:"8px 10px",borderRadius:8,background:"rgba(255,255,255,.05)",border:"0.5px solid rgba(255,255,255,.1)",marginBottom:6}}>
+            <span style={{fontSize:16}}>{r.icon}</span>
+            <div>
+              <div style={{fontSize:12,fontWeight:900,color:r.color}}><RubyText text={r.key}/></div>
+              <div style={{fontSize:11,color:"rgba(255,255,255,.65)"}}><RubyText text={r.val}/></div>
+            </div>
+          </div>
+        ))}
+
+        <button
+          onClick={()=>{feedback("tap");setScreen("1b");}}
+          style={{width:"100%",padding:14,borderRadius:12,border:"none",background:"linear-gradient(135deg,#7c3aed,#4f46e5)",color:"#fff",fontSize:14,fontWeight:900,cursor:"pointer",fontFamily:"inherit",marginTop:10}}>
+          次へ →
+        </button>
+      </div>
+    </div>
+  );
+
+  // 画面1-B：クリックベイト
+  if (screen === "1b") return (
+    <div style={{minHeight:"100vh",background:"linear-gradient(180deg,#1a0d2e,#120920)",padding:"24px 20px 40px",fontFamily:"'Zen Maru Gothic',sans-serif",color:"#fff"}}>
+      <div style={{maxWidth:440,margin:"0 auto"}}>
+
+        <div style={{fontSize:11,fontWeight:900,color:"rgba(124,58,237,.7)",letterSpacing:".05em",marginBottom:6}}>
+          📰 <RubyText text={el?"フェイクニュースって{何|なに}だろう？":"フェイクニュースって何だろう？"}/>
+        </div>
+        <div style={{fontSize:18,fontWeight:900,marginBottom:14,lineHeight:1.5}}>
+          <RubyText text={el?"{最近|さいきん}{多|おお}い「クリックベイト」\nという{手口|てぐち}":"最近多い「クリックベイト」\nという手口"}/>
+        </div>
+
+        <img
+          src="/images/ep2/fakenews_clickbait.jpg"
+          alt="クリックベイト型フェイクニュースの例"
+          style={{width:"100%",borderRadius:10,display:"block",marginBottom:6}}
+        />
+        <div style={{fontSize:11,color:"rgba(255,255,255,.45)",marginBottom:14,textAlign:"center"}}>
+          <RubyText text={el
+            ?"これは「クリックベイト」と{呼|よ}ばれる{手口|てぐち}です"
+            :"これは「クリックベイト」と呼ばれる手口です"
+          }/>
+        </div>
+
+        <div style={{display:"flex",alignItems:"flex-start",gap:10,marginBottom:12}}>
+          <OwlMolly size={40}/>
+          <div style={{background:"#fff",borderRadius:"0 14px 14px 14px",padding:"10px 14px",flex:1}}>
+            <div style={{fontSize:12,color:"#1e293b",lineHeight:1.8}}>
+              <RubyText text={el
+                ?"{最近|さいきん}{多|おお}いのが「クリックベイト」。\n\nクリックベイトとは、{思|おも}わずタップしたくなるような{衝撃的|しょうげきてき}な{見出|みだ}しをつけておいて、{実際|じっさい}に{読|よ}んでみると{中身|なかみ}は{全然|ぜんぜん}{違|ちが}う…という{手口|てぐち}のことだよ。\n\nほとんどの{人|ひと}は{見出|みだ}しだけ{見|み}てシェアしてしまうから、センセーショナルな{見出|みだ}しだけがどんどん{広|ひろ}まっていくんだ。"
+                :"最近多いのが「クリックベイト」。\n\nクリックベイトとは、思わずタップしたくなるような衝撃的な見出しをつけておいて、実際に読んでみると中身は全然違う…という手口のことだよ。\n\nほとんどの人は見出しだけ見てシェアしてしまうから、センセーショナルな見出しだけがどんどん広まっていくんだ。"
+              }/>
+            </div>
+          </div>
+        </div>
+
+        <div style={{background:"rgba(239,68,68,.08)",border:"0.5px solid rgba(239,68,68,.25)",borderRadius:12,padding:"12px 14px",marginBottom:14}}>
+          <div style={{fontSize:12,fontWeight:900,color:"#f87171",marginBottom:8}}>
+            <RubyText text={el?"クリックベイトの{特徴|とくちょう}":"クリックベイトの特徴"}/>
+          </div>
+          {[
+            el?"⚠️ {見出|みだ}しだけ{衝撃的|しょうげきてき}・{中身|なかみ}は{全然|ぜんぜん}{違|ちが}う":"⚠️ 見出しだけ衝撃的・中身は全然違う",
+            el?"⚠️ {普通|ふつう}のニュースそっくりで{見分|みわ}けにくい":"⚠️ 普通のニュースそっくりで見分けにくい",
+            el?"⚠️ {見出|みだ}しだけがSNSで{拡散|かくさん}されていく":"⚠️ 見出しだけがSNSで拡散されていく",
+          ].map((t,i)=>(
+            <div key={i} style={{display:"flex",gap:8,alignItems:"flex-start",fontSize:12,color:"rgba(255,255,255,.8)",marginBottom:i<2?6:0}}>
+              <RubyText text={t}/>
+            </div>
+          ))}
+        </div>
+
+        <button
+          onClick={()=>{feedback("tap");setScreen("2");}}
+          style={{width:"100%",padding:14,borderRadius:12,border:"none",background:"linear-gradient(135deg,#7c3aed,#4f46e5)",color:"#fff",fontSize:14,fontWeight:900,cursor:"pointer",fontFamily:"inherit"}}>
+          <RubyText text={el?"{比|くら}べてみよう →":"比べてみよう →"}/>
+        </button>
+      </div>
+    </div>
+  );
+
+  // 画面2：フェイクvs本物の比較（ステップ式ハイライト）
+  if (screen === "2") return (
+    <FakeNewsCompareScreen
+      el={el}
+      onComplete={()=>{feedback("tap");setScreen("3");}}
+    />
+  );
+
+  // 画面3：なぜ人は信じてしまうのか
+  if (screen === "3") return (
+    <FakeNewsWhyScreen
+      el={el}
+      onComplete={()=>{feedback("tap");setScreen("4");}}
+    />
+  );
+
+  // 画面4：実際の事例
+  if (screen === "4") return (
+    <FakeNewsCasesScreen
+      el={el}
+      onComplete={()=>{feedback("tap");onComplete();}}
+    />
+  );
+
+  return null;
+}
+
 function Episode2({ onComplete, onExit }) {
   const ageMode = useAgeMode();
   const [phase, setPhase] = useState("parent_intro"); // intro|swipe|judge|spread|checklist|dialogue|complete
@@ -8871,13 +9859,22 @@ function Episode2({ onComplete, onExit }) {
           <p style={{ fontSize: 12, color: "rgba(255,255,255,.5)", lineHeight: 1.7, textAlign: "center", margin: "0 0 14px" }}>
             <RubyText text={ageMode === "elementary" ? "1{件|けん}のRTが{世界中|せかいじゅう}に{広|ひろ}がるまでの{連鎖|れんさ}を{体験|たいけん}しよう" : "1件のRTが世界中に広がるまでの連鎖を体験しよう"} />
           </p>
-          <button onClick={() => { setSpreadStep(0); setPhase("spread_anim"); }}
+          <button onClick={() => { feedback("tap"); setPhase("fake_learn"); }}
             style={{ width: "100%", padding: 14, background: "linear-gradient(135deg,#ef4444,#dc2626)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", animation: "pulse 2s infinite" }}>
             <RubyText text={ageMode === "elementary" ? "😱 {拡散|かくさん}シミュレーションを{見|み}る →" : "😱 拡散シミュレーションを見る →"} />
           </button>
         </div>
       </div>
     </div>
+  );
+
+  if (phase === "fake_learn") return (
+    <FakeNewsLearnPage
+      onComplete={() => {
+        feedback("tap");
+        setPhase("spread_anim");
+      }}
+    />
   );
 
   // ── Spread Animation（パニック拡散アニメーション） ──
