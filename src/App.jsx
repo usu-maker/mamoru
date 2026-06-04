@@ -8681,7 +8681,7 @@ function FakeNewsWhyScreen({ el, onComplete }) {
   const [choiceDone, setChoiceDone] = useState(null);
   const [peopleShown, setPeopleShown] = useState(false);
   const [lineStep, setLineStep] = useState(0);
-  const [allOpened, setAllOpened] = useState(false);
+  const [openedSet, setOpenedSet] = useState(new Set());
   const timerRef = useRef(null);
 
   const cards = [
@@ -8693,11 +8693,12 @@ function FakeNewsWhyScreen({ el, onComplete }) {
 
   const handleOpen = (id) => {
     feedback("tap");
-    setOpenCard(openCard===id ? null : id);
-    setTimeout(()=>{
-      const opened = document.querySelectorAll('.why-card-opened');
-      if(opened.length >= 4) setAllOpened(true);
-    }, 300);
+    setOpenCard(prev => prev===id ? null : id);
+    setOpenedSet(prev => {
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
   };
 
   useEffect(()=>{
@@ -8998,7 +8999,7 @@ function FakeNewsWhyScreen({ el, onComplete }) {
         )}
 
         {/* モリィまとめ＋次へ */}
-        {allOpened && (
+        {openedSet.size >= 4 && (
           <div style={{animation:"mamFadeUp .5s ease"}}>
             <div style={{background:"rgba(124,58,237,.1)",border:"0.5px solid rgba(124,58,237,.3)",borderRadius:12,padding:"12px 14px",marginBottom:12}}>
               <div style={{fontSize:12,fontWeight:900,color:"#a78bfa",marginBottom:5}}>🦉 <RubyText text={el?"モリィのまとめ":"モリィのまとめ"}/></div>
