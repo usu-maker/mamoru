@@ -8007,6 +8007,7 @@ function WorstCasePage({ onComplete }) {
   const [shownReports, setShownReports] = useState([]);
   const [reportStatus, setReportStatus] = useState({});
   const [showEnd, setShowEnd] = useState(false);
+  const [playCount, setPlayCount] = useState(0);
   const [logs, setLogs] = useState([]);
   const [bubble, setBubble] = useState(null);
   const [policePos, setPolicePos] = useState([
@@ -8089,8 +8090,22 @@ function WorstCasePage({ onComplete }) {
   useEffect(() => {
     if(innerPhase !== "anim") return;
     if(eventIdx >= EVENTS.length) {
-      setShowEnd(true);
-      setBubble(null);
+      if(playCount < 1) {
+        timerRef.current = setTimeout(() => {
+          setBubble({type:'police',text:"もう一度見てみよう",bx:50,by:50});
+          setPlayCount(c => c + 1);
+          setEventIdx(0);
+          setShownReports([]);
+          const initialStatus = {};
+          REPORTS.forEach(r => { initialStatus[r.id] = 'unknown'; });
+          setReportStatus(initialStatus);
+          setLogs([]);
+          setPolicePos([{x:14,y:38},{x:48,y:58},{x:73,y:28}]);
+        }, 1000);
+      } else {
+        setShowEnd(true);
+        setBubble(null);
+      }
       return;
     }
     const e = EVENTS[eventIdx];
