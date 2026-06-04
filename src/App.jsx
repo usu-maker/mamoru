@@ -9475,6 +9475,147 @@ function FakeNewsLearnPage({ onComplete }) {
   return null;
 }
 
+function SummaryPage({ onComplete }) {
+  const ageMode = useAgeMode();
+  const el = ageMode === "elementary";
+
+  const cards = [
+    {
+      icon: "📱",
+      color: "#6366f1",
+      bg: "rgba(99,102,241,.1)",
+      border: "rgba(99,102,241,.15)",
+      title: el ? "フェイクニュースとは" : "フェイクニュースとは",
+      desc: el
+        ? "わざと{作|つく}られた{本当|ほんとう}ではない{記事|きじ}。クリックベイトやAI{合成|ごうせい}など{手口|てぐち}は{巧妙化|こうみょうか}している。"
+        : "わざと作られた本当ではない記事。クリックベイトやAI合成など手口は巧妙化している。",
+    },
+    {
+      icon: "😱",
+      color: "#f97316",
+      bg: "rgba(249,115,22,.1)",
+      border: "rgba(249,115,22,.15)",
+      title: el ? "なぜ{人|ひと}は{信|しん}じてしまうのか" : "なぜ人は信じてしまうのか",
+      desc: el
+        ? "{感情|かんじょう}・{緊急性|きんきゅうせい}・{同調|どうちょう}・{身近|みぢか}な{人|ひと}からのシェア。これらが{冷静|れいせい}な{判断|はんだん}を{奪|うば}ってしまう。"
+        : "感情・緊急性・同調・身近な人からのシェア。これらが冷静な判断を奪ってしまう。",
+    },
+    {
+      icon: "🗺️",
+      color: "#ef4444",
+      bg: "rgba(239,68,68,.1)",
+      border: "rgba(239,68,68,.15)",
+      title: el ? "デマが{広|ひろ}がると" : "デマが広がると",
+      desc: el
+        ? "{警察|けいさつ}が{振|ふ}り{回|まわ}されて{本物|ほんもの}の{救助|きゅうじょ}が{遅|おく}れる。{熊本|くまもと}・{能登|のと}で{実際|じっさい}に{起|お}きたこと。"
+        : "警察が振り回されて本物の救助が遅れる。熊本・能登で実際に起きたこと。",
+    },
+    {
+      icon: "✅",
+      color: "#10b981",
+      bg: "rgba(16,185,129,.1)",
+      border: "rgba(16,185,129,.15)",
+      title: el ? "シェアする{前|まえ}に" : "シェアする前に",
+      desc: el
+        ? "{感情|かんじょう}・{発信者|はっしんしゃ}・{検索|けんさく}・AI{確認|かくにん}・シェアしない。5つのステップで{自分|じぶん}を{守|まも}れる。"
+        : "感情・発信者・検索・AI確認・シェアしない。5つのステップで自分を守れる。",
+    },
+  ];
+
+  return (
+    <div style={{
+      minHeight: "100vh",
+      background: "linear-gradient(180deg,#f0f4ff,#e8f0fe)",
+      padding: "28px 20px 40px",
+      fontFamily: "'Zen Maru Gothic',sans-serif",
+    }}>
+      <div style={{maxWidth: 440, margin: "0 auto"}}>
+
+        {/* ヘッダー */}
+        <div style={{textAlign:"center",marginBottom:22}}>
+          <div style={{fontSize:40,marginBottom:8}}>📝</div>
+          <div style={{fontSize:11,fontWeight:900,color:"#6366f1",letterSpacing:".05em",marginBottom:4}}>
+            <RubyText text={el?"まとめ":"まとめ"}/>
+          </div>
+          <div style={{fontSize:20,fontWeight:900,color:"#1e1b4b",lineHeight:1.4}}>
+            <RubyText text={el?"{今日|きょう}{学|まな}んだこと":"今日学んだこと"}/>
+          </div>
+        </div>
+
+        {/* カード4枚 */}
+        <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:20}}>
+          {cards.map((c,i)=>(
+            <div key={i} style={{
+              background:"#fff",
+              border:`1px solid ${c.border}`,
+              borderRadius:14,
+              padding:"14px 16px",
+              display:"flex",
+              alignItems:"flex-start",
+              gap:12,
+              animation:`mamFadeUp .5s ${i*0.2}s ease both`,
+            }}>
+              <div style={{
+                width:40,height:40,borderRadius:10,
+                background:c.bg,
+                display:"flex",alignItems:"center",justifyContent:"center",
+                fontSize:20,flexShrink:0,
+              }}>
+                {c.icon}
+              </div>
+              <div>
+                <div style={{fontSize:13,fontWeight:900,color:"#1e1b4b",marginBottom:3}}>
+                  <RubyText text={c.title}/>
+                </div>
+                <div style={{fontSize:11,color:"#6b7280",lineHeight:1.6}}>
+                  <RubyText text={c.desc}/>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* モリィのセリフ */}
+        <div style={{display:"flex",alignItems:"flex-start",gap:10,marginBottom:20}}>
+          <OwlMolly size={44}/>
+          <div style={{
+            background:"#fff",
+            borderRadius:"0 14px 14px 14px",
+            padding:"10px 14px",
+            border:"1px solid rgba(99,102,241,.15)",
+          }}>
+            <div style={{fontSize:12,color:"#374151",lineHeight:1.8}}>
+              <RubyText text={el
+                ?"たくさん{学|まな}んだね！{最後|さいご}におうちの{人|ひと}と{話|はな}し{合|あ}ってみよう。"
+                :"たくさん学んだね！最後におうちの人と話し合ってみよう。"
+              }/>
+            </div>
+          </div>
+        </div>
+
+        {/* ボタン */}
+        <button
+          onClick={()=>{feedback("tap");onComplete();}}
+          style={{
+            width:"100%",
+            padding:16,
+            borderRadius:14,
+            border:"none",
+            background:"linear-gradient(135deg,#6366f1,#4f46e5)",
+            color:"#fff",
+            fontSize:15,
+            fontWeight:900,
+            cursor:"pointer",
+            fontFamily:"inherit",
+          }}>
+          <RubyText text={el?"おうちの{人|ひと}と{話|はな}す →":"おうちの人と話す →"}/>
+        </button>
+
+      </div>
+    </div>
+  );
+}
+
 function ChecklistPage({ onComplete }) {
   const ageMode = useAgeMode();
   const el = ageMode === "elementary";
@@ -10087,6 +10228,12 @@ function Episode2({ onComplete, onExit }) {
   // ── Checklist（シェアする前にやること5箇条） ──
   if (phase === "checklist") return (
     <ChecklistPage
+      onComplete={() => { feedback("tap"); setPhase("summary"); }}
+    />
+  );
+
+  if (phase === "summary") return (
+    <SummaryPage
       onComplete={() => { feedback("tap"); setPhase("pre_dialogue"); }}
     />
   );
