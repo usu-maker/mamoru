@@ -9475,6 +9475,202 @@ function FakeNewsLearnPage({ onComplete }) {
   return null;
 }
 
+function ChecklistPage({ onComplete }) {
+  const ageMode = useAgeMode();
+  const el = ageMode === "elementary";
+  const [checked, setChecked] = useState(new Set());
+
+  const steps = [
+    {
+      icon: "😱",
+      title: el ? "{感情|かんじょう}が{動|うご}いたら一度{止|と}まる" : "感情が動いたら一度止まる",
+      desc: el
+        ? "「{怖|こわ}い・{驚|おどろ}き・{怒|いか}り」を{感|かん}じたらシェアの{前|まえ}に3{秒|びょう}{待|ま}とう。それがフェイクのサインかもしれない。"
+        : "「怖い・驚き・怒り」を感じたらシェアの前に3秒待とう。それがフェイクのサインかもしれない。",
+      color: "#f97316",
+    },
+    {
+      icon: "👤",
+      title: el ? "{発信者|はっしんしゃ}と{日付|ひづけ}を{確認|かくにん}する" : "発信者と日付を確認する",
+      desc: el
+        ? "{公式|こうしき}{機関名|きかんめい}と{日付|ひづけ}が{明記|めいき}されているか{確認|かくにん}。「{緊急速報|きんきゅうそくほう}_bot」のような{名前|なまえ}が{不明|ふめい}なアカウントは{要注意|ようちゅうい}。"
+        : "公式機関名と日付が明記されているか確認。「緊急速報_bot」のような名前が不明なアカウントは要注意。",
+      color: "#8b5cf6",
+    },
+    {
+      icon: "🔍",
+      title: el ? "{他|ほか}のメディアでも{検索|けんさく}する" : "他のメディアでも検索する",
+      desc: el
+        ? "{本物|ほんもの}の{情報|じょうほう}は{複数|ふくすう}のメディアが{報|ほう}じる。NHKやGoogleで{同|おな}じニュースを{検索|けんさく}してみよう。"
+        : "本物の情報は複数のメディアが報じる。NHKやGoogleで同じニュースを検索してみよう。",
+      color: "#3b82f6",
+    },
+    {
+      icon: "🤖",
+      title: el ? "{画像|がぞう}・{動画|どうが}はAIかもしれない" : "画像・動画はAIかもしれない",
+      desc: el
+        ? "{手|て}・{指|ゆび}の{本数|ほんすう}がおかしくない？{背景|はいけい}の{文字|もじ}が{崩|くず}れていない？{動画|どうが}なら{口|くち}と{声|こえ}がズレていない？まばたきが{少|すく}なすぎない？{透|す}かしがあればAI{確定|かくてい}。なくてもAIの{可能性|かのうせい}はある。"
+        : "手・指の本数がおかしくない？背景の文字が崩れていない？動画なら口と声がズレていない？まばたきが少なすぎない？透かしがあればAI確定。なくてもAIの可能性はある。",
+      color: "#ec4899",
+      source: el
+        ? "{出典|しゅってん}：{日本|にほん}ファクトチェックセンター"
+        : "出典：日本ファクトチェックセンター",
+    },
+    {
+      icon: "🚫",
+      title: el ? "{確認|かくにん}できなければシェアしない" : "確認できなければシェアしない",
+      desc: el
+        ? "「シェアしない」は{正解|せいかい}の{選択肢|せんたくし}。{確認|かくにん}できるまで{待|ま}つだけでデマの{拡散|かくさん}を{止|と}められる。あなた一{人|り}の{判断|はんだん}が{変化|へんか}を{生|う}む。"
+        : "「シェアしない」は正解の選択肢。確認できるまで待つだけでデマの拡散を止められる。あなた一人の判断が変化を生む。",
+      color: "#10b981",
+    },
+  ];
+
+  const handleCheck = (i) => {
+    feedback("tap");
+    setChecked(prev => {
+      const next = new Set(prev);
+      next.add(i);
+      return next;
+    });
+  };
+
+  const allChecked = checked.size >= steps.length;
+
+  return (
+    <div style={{
+      minHeight: "100vh",
+      background: "linear-gradient(180deg,#1a0d2e,#120920)",
+      padding: "24px 20px 40px",
+      fontFamily: "'Zen Maru Gothic',sans-serif",
+      color: "#fff",
+    }}>
+      <div style={{maxWidth: 440, margin: "0 auto"}}>
+
+        <div style={{fontSize:11,fontWeight:900,color:"rgba(124,58,237,.7)",marginBottom:6}}>
+          ✅ <RubyText text={el?"シェアする{前|まえ}にやること":"シェアする前にやること"}/>
+        </div>
+        <div style={{fontSize:18,fontWeight:900,marginBottom:4}}>
+          <RubyText text={el?"シェアする{前|まえ}に\nやること5{箇条|かじょう}":"シェアする前に\nやること5箇条"}/>
+        </div>
+        <div style={{fontSize:12,color:"rgba(255,255,255,.5)",marginBottom:20}}>
+          <RubyText text={el?"「{分|わ}かった！」を{押|お}して{確認|かくにん}しよう":"「分かった！」を押して確認しよう"}/>
+        </div>
+
+        <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:16}}>
+          {steps.map((s,i) => (
+            <div key={i} style={{
+              background: checked.has(i)
+                ? `rgba(${s.color.replace('#','').match(/.{2}/g).map(x=>parseInt(x,16)).join(',')}, .08)`
+                : "rgba(255,255,255,.04)",
+              border: `0.5px solid ${checked.has(i) ? s.color + "55" : "rgba(255,255,255,.1)"}`,
+              borderRadius: 12,
+              padding: "12px 14px",
+              transition: "all .4s",
+            }}>
+              <div style={{display:"flex",alignItems:"center",gap:10}}>
+                <div style={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: "50%",
+                  background: checked.has(i) ? "#22c55e" : "rgba(255,255,255,.08)",
+                  border: `1.5px solid ${checked.has(i) ? "#22c55e" : "rgba(255,255,255,.2)"}`,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: checked.has(i) ? 14 : 12,
+                  flexShrink: 0,
+                  transition: "all .4s",
+                }}>
+                  {checked.has(i) ? "✅" : <span style={{fontSize:10,color:"rgba(255,255,255,.4)",fontWeight:900}}>{"STEP"+(i+1)}</span>}
+                </div>
+                <div style={{flex:1}}>
+                  <div style={{fontSize:13,fontWeight:900,color: checked.has(i) ? "#fff" : "rgba(255,255,255,.9)"}}>
+                    {s.icon} <RubyText text={s.title}/>
+                  </div>
+                </div>
+                {!checked.has(i) && (
+                  <button
+                    onClick={() => handleCheck(i)}
+                    style={{
+                      padding: "6px 12px",
+                      borderRadius: 8,
+                      border: "none",
+                      background: "rgba(124,58,237,.25)",
+                      color: "#a78bfa",
+                      fontSize: 11,
+                      fontWeight: 900,
+                      cursor: "pointer",
+                      fontFamily: "inherit",
+                      flexShrink: 0,
+                    }}>
+                    <RubyText text={el?"{分|わ}かった！":"分かった！"}/>
+                  </button>
+                )}
+              </div>
+
+              {checked.has(i) && (
+                <div style={{
+                  marginTop: 8,
+                  paddingLeft: 38,
+                  animation: "mamFadeUp .4s ease",
+                }}>
+                  <div style={{fontSize:12,color:"rgba(255,255,255,.75)",lineHeight:1.7}}>
+                    <RubyText text={s.desc}/>
+                  </div>
+                  {s.source && (
+                    <div style={{fontSize:10,color:"rgba(255,255,255,.35)",marginTop:4}}>
+                      <RubyText text={s.source}/>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {allChecked && (
+          <div style={{animation:"mamFadeUp .5s ease"}}>
+            <div style={{
+              background:"rgba(34,197,94,.1)",
+              border:"0.5px solid rgba(34,197,94,.3)",
+              borderRadius:12,
+              padding:"12px 14px",
+              marginBottom:14,
+              textAlign:"center",
+            }}>
+              <div style={{fontSize:20,marginBottom:6}}>🎉</div>
+              <div style={{fontSize:14,fontWeight:900,color:"#4ade80",marginBottom:4}}>
+                <RubyText text={el?"5つ{全部|ぜんぶ}チェックできた！":"5つ全部チェックできた！"}/>
+              </div>
+              <div style={{fontSize:12,color:"rgba(255,255,255,.6)",lineHeight:1.6}}>
+                <RubyText text={el?"{次|つぎ}から{使|つか}えるフェイクを{見抜|みぬ}く5ステップだよ！":"次から使えるフェイクを見抜く5ステップだよ！"}/>
+              </div>
+            </div>
+            <button
+              onClick={onComplete}
+              style={{
+                width:"100%",
+                padding:16,
+                borderRadius:14,
+                border:"none",
+                background:"linear-gradient(135deg,#7c3aed,#4f46e5)",
+                color:"#fff",
+                fontSize:15,
+                fontWeight:900,
+                cursor:"pointer",
+                fontFamily:"inherit",
+              }}>
+              <RubyText text={el?"{次|つぎ}へ →":"次へ →"}/>
+            </button>
+          </div>
+        )}
+
+      </div>
+    </div>
+  );
+}
+
 function Episode2({ onComplete, onExit }) {
   const ageMode = useAgeMode();
   const [phase, setPhase] = useState("parent_intro"); // intro|swipe|judge|spread|checklist|dialogue|complete
@@ -9888,138 +10084,12 @@ function Episode2({ onComplete, onExit }) {
     />
   );
 
-  // ── Checklist（フェイクの見抜き方 1項目ずつ） ──
-  if (phase === "checklist") {
-    const item = checklist[checkStep];
-    // 各項目のビジュアル
-    const checklistVisuals = [
-      // 1. 誰が発信しているか
-      <div style={{ background: "#0d1117", borderRadius: 12, padding: "12px 14px", border: "1px solid rgba(29,155,240,.3)", marginBottom: 4 }}>
-        <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 8 }}>
-          <div style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(29,155,240,.2)", border: "2px solid #1d9bf0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>🏛️</div>
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-              <span style={{ fontSize: 13, fontWeight: 900, color: "#fff" }}>NHKニュース</span>
-              <span style={{ background: "#1d9bf0", borderRadius: "50%", width: 16, height: 16, display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 9, color: "#fff" }}>✓</span>
-            </div>
-            <div style={{ fontSize: 10, color: "#22c55e" }}>✅ 認証済みアカウント</div>
-          </div>
-        </div>
-        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-          <div style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(239,68,68,.2)", border: "2px dashed rgba(239,68,68,.5)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>⚡</div>
-          <div>
-            <span style={{ fontSize: 13, color: "rgba(255,255,255,.7)" }}>緊急速報_bot</span>
-            <div style={{ fontSize: 10, color: "#ef4444" }}>❌ 認証なし — 誰でも作れる</div>
-          </div>
-        </div>
-      </div>,
-      // 2. いつの情報か
-      <div style={{ background: "#0d1117", borderRadius: 12, padding: "12px 14px", border: "1px solid rgba(167,139,250,.3)", marginBottom: 4 }}>
-        <div style={{ fontSize: 11, color: "#a78bfa", fontWeight: 700, marginBottom: 8 }}>📅 投稿の日付チェック</div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          <div style={{ background: "rgba(34,197,94,.1)", border: "1px solid rgba(34,197,94,.3)", borderRadius: 8, padding: "8px 12px" }}>
-            <div style={{ fontSize: 11, color: "#86efac", marginBottom: 2 }}>✅ 本物の例</div>
-            <div style={{ fontSize: 12, color: "#fff" }}>「警察庁は<strong style={{ color: "#86efac" }}>14日</strong>、…と発表しました。」</div>
-          </div>
-          <div style={{ background: "rgba(239,68,68,.1)", border: "1px solid rgba(239,68,68,.3)", borderRadius: 8, padding: "8px 12px" }}>
-            <div style={{ fontSize: 11, color: "#fca5a5", marginBottom: 2 }}>❌ 偽物の例</div>
-            <div style={{ fontSize: 12, color: "#fff" }}>「<strong style={{ color: "#fca5a5" }}>衝撃</strong>！○○さんが…」<span style={{ fontSize: 10, color: "rgba(255,255,255,.4)" }}>→ 日付なし</span></div>
-          </div>
-        </div>
-      </div>,
-      // 3. 一次情報源があるか
-      <div style={{ background: "#0d1117", borderRadius: 12, padding: "12px 14px", border: "1px solid rgba(167,139,250,.3)", marginBottom: 4 }}>
-        <div style={{ fontSize: 11, color: "#a78bfa", fontWeight: 700, marginBottom: 8 }}>🔍 公式サイトで確認する手順</div>
-        {[
-          { num: "①", text: "気象庁 jma.go.jp を開く", sub: "地震・台風・天気の公式情報" },
-          { num: "②", text: "NHKニュース nhk.or.jp を開く", sub: "社会・政治・経済ニュース" },
-          { num: "③", text: "同じ情報が出ているか検索", sub: "出ていなければフェイクの可能性が高い" },
-        ].map((s, i) => (
-          <div key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start", marginBottom: 8 }}>
-            <div style={{ width: 22, height: 22, borderRadius: "50%", background: "rgba(167,139,250,.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "#c4b5fd", fontWeight: 900, flexShrink: 0 }}>{s.num}</div>
-            <div>
-              <div style={{ fontSize: 12, color: "#e0d9ff", fontWeight: 700 }}>{s.text}</div>
-              <div style={{ fontSize: 10, color: "rgba(255,255,255,.4)" }}>{s.sub}</div>
-            </div>
-          </div>
-        ))}
-      </div>,
-      // 4. 写真の出典確認（Googleレンズ）
-      <div style={{ background: "#0d1117", borderRadius: 12, padding: "12px 14px", border: "1px solid rgba(167,139,250,.3)", marginBottom: 4 }}>
-        <div style={{ fontSize: 11, color: "#a78bfa", fontWeight: 700, marginBottom: 10 }}>📷 Googleレンズの使い方</div>
-        {[
-          { step: "①", icon: "👆", action: "怪しい写真を長押し", result: "→ メニューが出る" },
-          { step: "②", icon: "🔍", action: "「Googleで検索」を選ぶ", result: "→ 画像検索が始まる" },
-          { step: "③", icon: "📅", action: "結果で「いつ使われたか」確認", result: "→ 古い写真・別の国ならデマ" },
-        ].map((s, i) => (
-          <div key={i} style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 8 }}>
-            <div style={{ width: 30, height: 30, borderRadius: 8, background: "rgba(167,139,250,.15)", border: "1px solid rgba(167,139,250,.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }}>{s.icon}</div>
-            <div>
-              <div style={{ fontSize: 11, color: "#c4b5fd", fontWeight: 700 }}>{s.step} {s.action}</div>
-              <div style={{ fontSize: 10, color: "rgba(255,255,255,.4)" }}>{s.result}</div>
-            </div>
-          </div>
-        ))}
-        <div style={{ background: "rgba(239,68,68,.1)", border: "1px solid rgba(239,68,68,.3)", borderRadius: 8, padding: "6px 10px", marginTop: 4, fontSize: 10, color: "#fca5a5" }}>
-          💡 <RubyText text={ageMode === "elementary" ? "{古|ふる}い{写真|しゃしん}が「{今|いま}の{事件|じけん}」として{使|つか}い{回|まわ}されているケースが{多|おお}い" : "古い写真が「今の事件」として使い回されているケースが多い"} />
-        </div>
-      </div>,
-      // 5. 感情を煽っていないか
-      <div style={{ background: "#0d1117", borderRadius: 12, padding: "12px 14px", border: "1px solid rgba(167,139,250,.3)", marginBottom: 4 }}>
-        <div style={{ fontSize: 11, color: "#a78bfa", fontWeight: 700, marginBottom: 8 }}>⚠️ 危険なキーワード一覧</div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 10 }}>
-          {["拡散希望", "今すぐ", "衝撃", "緊急", "シェアして", "みんなに教えて"].map((word, i) => (
-            <div key={i} style={{ background: "rgba(239,68,68,.15)", border: "1px solid rgba(239,68,68,.4)", borderRadius: 99, padding: "3px 10px", fontSize: 11, color: "#fca5a5", fontWeight: 700 }}>⚠️ {word}</div>
-          ))}
-        </div>
-        <div style={{ fontSize: 12, color: "rgba(255,255,255,.6)", lineHeight: 1.7 }}>
-          <RubyText text={ageMode === "elementary" ? "これらの{言葉|ことば}を{見|み}たら「{一呼吸|ひといきいれ}おいて{確認|かくにん}」。{焦|あせ}りを{感|かん}じたら、それが{狙|ねら}い。" : "これらの言葉を見たら「一呼吸おいて確認」。焦りを感じたら、それが狙い。"} />
-        </div>
-      </div>,
-    ];
-
-    return (
-      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0f0a2e,#07041a)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
-        <div style={{ maxWidth: 440, margin: "0 auto" }}>
-          {/* 進捗バー */}
-          <div style={{ display: "flex", gap: 4, marginBottom: 18 }}>
-            {checklist.map((_, i) => (
-              <div key={i} style={{ flex: 1, height: 4, borderRadius: 2, background: i <= checkStep ? "#7c3aed" : "rgba(255,255,255,.1)", transition: "background .3s" }} />
-            ))}
-          </div>
-
-          <OwlSay mood="happy" e={ageMode === "elementary" ? `{情報|じょうほう}を{見|み}たときのポイント ${checkStep + 1}/${checklist.length}🦉` : `情報を見たときのポイント ${checkStep + 1}/${checklist.length}🦉`}>
-            {ageMode === "elementary" ? `情報を見たときのポイント ${checkStep + 1}/${checklist.length}🦉` : `情報を見たときのポイント ${checkStep + 1}/${checklist.length}🦉`}
-          </OwlSay>
-
-          {/* 項目カード */}
-          <div style={{ background: "rgba(167,139,250,.08)", border: "1px solid rgba(167,139,250,.25)", borderRadius: 18, padding: "18px 16px", marginBottom: 16, animation: "slideUp .4s ease" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
-              <div style={{ width: 46, height: 46, borderRadius: 14, background: "rgba(167,139,250,.2)", border: "1px solid rgba(167,139,250,.4)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>{item.icon}</div>
-              <div>
-                <div style={{ fontSize: 11, color: "rgba(167,139,250,.7)", fontFamily: "'DotGothic16',monospace", letterSpacing: ".1em" }}>CHECK {checkStep + 1}</div>
-                <div style={{ fontSize: 15, fontWeight: 900, color: "#e0d9ff" }}><RubyText text={item.title} /></div>
-              </div>
-            </div>
-            <p style={{ fontSize: 13, color: "rgba(255,255,255,.7)", lineHeight: 1.75, margin: "0 0 14px" }}><RubyText text={item.desc} /></p>
-            {/* ビジュアル */}
-            {checklistVisuals[checkStep]}
-          </div>
-
-          {checkStep < checklist.length - 1
-            ? <button onClick={() => setCheckStep(s => s + 1)}
-                style={{ width: "100%", padding: 15, background: "rgba(167,139,250,.2)", border: "1px solid rgba(167,139,250,.4)", borderRadius: 14, color: "#e0d9ff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
-                <RubyText text={ageMode === "elementary" ? "{次|つぎ}のポイント →" : "次のポイント →"} /> ({checkStep + 2}/{checklist.length})
-              </button>
-            : <button onClick={() => setPhase("quiz")}
-                style={{ width: "100%", padding: 15, background: "linear-gradient(135deg,#7c3aed,#4f46e5)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
-                <RubyText text={ageMode === "elementary" ? "{理解度|りかいど}チェック →" : "理解度チェック →"} />
-              </button>
-          }
-        </div>
-      </div>
-    );
-  }
+  // ── Checklist（シェアする前にやること5箇条） ──
+  if (phase === "checklist") return (
+    <ChecklistPage
+      onComplete={() => { feedback("tap"); setPhase("pre_dialogue"); }}
+    />
+  );
 
   // ── Quiz (EP2) ──
   if (phase === "quiz") return (
