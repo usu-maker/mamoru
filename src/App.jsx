@@ -8002,17 +8002,17 @@ const FAKE_POSTS = [
 function WorstCasePage({ onComplete }) {
   const ageMode = useAgeMode();
   const el = ageMode === "elementary";
-  const [innerPhase, setInnerPhase] = React.useState("intro");
-  const [eventIdx, setEventIdx] = React.useState(0);
-  const [shownReports, setShownReports] = React.useState([]);
-  const [reportStatus, setReportStatus] = React.useState({});
-  const [showEnd, setShowEnd] = React.useState(false);
-  const [logs, setLogs] = React.useState([]);
-  const [bubble, setBubble] = React.useState(null);
-  const [policePos, setPolicePos] = React.useState([
+  const [innerPhase, setInnerPhase] = useState("intro");
+  const [eventIdx, setEventIdx] = useState(0);
+  const [shownReports, setShownReports] = useState([]);
+  const [reportStatus, setReportStatus] = useState({});
+  const [showEnd, setShowEnd] = useState(false);
+  const [logs, setLogs] = useState([]);
+  const [bubble, setBubble] = useState(null);
+  const [policePos, setPolicePos] = useState([
     {x:14,y:38},{x:48,y:58},{x:73,y:28}
   ]);
-  const timerRef = React.useRef(null);
+  const timerRef = useRef(null);
 
   const REPORTS = [
     {id:0,x:50,y:38,type:'real'},
@@ -8086,7 +8086,7 @@ function WorstCasePage({ onComplete }) {
     setPolicePos([{x:14,y:38},{x:48,y:58},{x:73,y:28}]);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if(innerPhase !== "anim") return;
     if(eventIdx >= EVENTS.length) {
       setShowEnd(true);
