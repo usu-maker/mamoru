@@ -8681,12 +8681,11 @@ function FakeNewsCasesScreen({ el, onComplete }) {
 
 function FakeNewsWhyScreen({ el, onComplete }) {
   const [openCard, setOpenCard] = useState(null);
-  const [urgencyStep, setUrgencyStep] = useState(0);
   const [choiceDone, setChoiceDone] = useState(null);
   const [peopleShown, setPeopleShown] = useState(false);
+  const [peopleStarted, setPeopleStarted] = useState(false);
   const [lineStep, setLineStep] = useState(0);
   const [openedSet, setOpenedSet] = useState(new Set());
-  const timerRef = useRef(null);
 
   const cards = [
     { id:1, icon:"😱", label: el?`① {感情|かんじょう}に{訴|うった}える`:"① 感情に訴える" },
@@ -8703,27 +8702,6 @@ function FakeNewsWhyScreen({ el, onComplete }) {
       next.add(id);
       return next;
     });
-  };
-
-  useEffect(()=>{
-    if(openCard===3 && !peopleShown){
-      setPeopleShown(true);
-    }
-  },[openCard]);
-
-  useEffect(()=>{
-    return ()=>{ if(timerRef.current) clearTimeout(timerRef.current); };
-  },[]);
-
-  const startTimer = () => {
-    let t = 3;
-    setUrgencyStep(1);
-    const tick = () => {
-      t--;
-      setUrgencyStep(t<=0 ? 99 : t);
-      if(t>0) timerRef.current = setTimeout(tick, 900);
-    };
-    timerRef.current = setTimeout(tick, 900);
   };
 
   const startLine = () => {
@@ -8814,98 +8792,72 @@ function FakeNewsWhyScreen({ el, onComplete }) {
               <RubyText text={el?"「{今|いま}すぐ{避難|ひなん}！」「{急|いそ}いでシェアして！」という{言葉|ことば}が、{考|かんが}える{時間|じかん}を{奪|うば}ってしまう。":"「今すぐ避難！」「急いでシェアして！」という言葉が、考える時間を奪ってしまう。"}/>
             </div>
 
-            {/* STEP1：スライダー */}
-            {urgencyStep===0 && (
-              <div>
-                <div style={{fontSize:11,color:"rgba(255,255,255,.5)",marginBottom:8,textAlign:"center"}}>
-                  <RubyText text={el?"← スライダーを{動|うご}かして{比|くら}べてみよう →":"← スライダーを動かして比べてみよう →"}/>
-                </div>
-                <div style={{position:"relative",height:140,borderRadius:12,overflow:"hidden",marginBottom:10,cursor:"ew-resize"}}
-                  id="sliderWrap2"
-                  onMouseDown={(e)=>{
-                    const move=(ev)=>{
-                      const r=document.getElementById('sliderWrap2').getBoundingClientRect();
-                      const pct=Math.max(5,Math.min(95,(ev.clientX-r.left)/r.width*100));
-                      document.getElementById('sliderDiv2').style.left=pct+'%';
-                      document.getElementById('sliderClip2').style.width=(100-pct)+'%';
-                    };
-                    const up=()=>{document.removeEventListener('mousemove',move);document.removeEventListener('mouseup',up);};
-                    document.addEventListener('mousemove',move);
-                    document.addEventListener('mouseup',up);
-                  }}
-                  onTouchStart={(e)=>{
-                    const move=(ev)=>{
-                      const r=document.getElementById('sliderWrap2').getBoundingClientRect();
-                      const pct=Math.max(5,Math.min(95,(ev.touches[0].clientX-r.left)/r.width*100));
-                      document.getElementById('sliderDiv2').style.left=pct+'%';
-                      document.getElementById('sliderClip2').style.width=(100-pct)+'%';
-                    };
-                    const up=()=>{document.removeEventListener('touchmove',move);document.removeEventListener('touchend',up);};
-                    document.addEventListener('touchmove',move);
-                    document.addEventListener('touchend',up);
-                  }}>
-                  {/* 本物 */}
-                  <div style={{position:"absolute",inset:0,background:"rgba(30,41,59,.8)",border:"1px solid rgba(59,130,246,.3)",borderRadius:12,padding:12,zIndex:1}}>
-                    <div style={{fontSize:10,fontWeight:900,color:"#93c5fd",marginBottom:6}}>📰 <RubyText text={el?"{本物|ほんもの}のニュース":"本物のニュース"}/></div>
-                    <div style={{fontSize:12,fontWeight:700,color:"#e2e8f0",lineHeight:1.5,marginBottom:4}}>
-                      <RubyText text={el?"{警察庁|けいさつちょう}、{詐欺|さぎ}{被害|ひがい}の{増加|ぞうか}を{発表|はっぴょう}。{前年比|ぜんねんひ}2{倍以上|ばいいじょう}に{急増|きゅうぞう}":"警察庁、詐欺被害の増加を発表。前年比2倍以上に急増"}/>
-                    </div>
-                    <div style={{fontSize:10,color:"rgba(255,255,255,.4)"}}>
-                      <RubyText text={el?"{警察庁|けいさつちょう} 2024{年|ねん}6{月|がつ}14{日|にち}":"警察庁 2024年6月14日"}/>
-                    </div>
-                  </div>
-                  {/* フェイク */}
-                  <div id="sliderClip2" style={{position:"absolute",top:0,right:0,bottom:0,width:"50%",overflow:"hidden",zIndex:2,pointerEvents:"none"}}>
-                    <div style={{position:"absolute",top:0,right:0,bottom:0,width:"100vw",maxWidth:440,background:"rgba(50,10,10,.85)",border:"1px solid rgba(255,67,67,.3)",borderRadius:12,padding:12}}>
-                      <div style={{fontSize:10,fontWeight:900,color:"#fca5a5",marginBottom:6}}>🚨 <RubyText text={el?"フェイクニュース{版|ばん}":"フェイクニュース版"}/></div>
-                      <div style={{fontSize:12,fontWeight:700,color:"#fca5a5",lineHeight:1.5,marginBottom:4}}>
-                        <RubyText text={el?"【{緊急速報|きんきゅうそくほう}】{詐欺|さぎ}{被害|ひがい}が{爆増中|ばくぞうちゅう}！！あなたの{家族|かぞく}も{狙|ねら}われてる！{今|いま}すぐ{確認|かくにん}！":"【緊急速報】詐欺被害が爆増中！！あなたの家族も狙われてる！今すぐ確認！"}/>
-                      </div>
-                      <div style={{fontSize:10,color:"rgba(255,100,100,.5)"}}>
-                        <RubyText text={el?"{出典|しゅってん}：なし　{発信者|はっしんしゃ}：{不明|ふめい}":"出典：なし　発信者：不明"}/>
-                      </div>
-                    </div>
-                  </div>
-                  {/* 仕切り */}
-                  <div id="sliderDiv2" style={{position:"absolute",top:0,bottom:0,left:"50%",width:3,background:"#fff",boxShadow:"0 0 8px rgba(255,255,255,.6)",zIndex:10,cursor:"ew-resize"}}>
-                    <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",width:28,height:28,background:"#fff",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,boxShadow:"0 2px 8px rgba(0,0,0,.3)"}}>⇔</div>
-                  </div>
-                  <div style={{position:"absolute",top:8,left:8,fontSize:10,fontWeight:700,padding:"2px 6px",borderRadius:99,background:"rgba(59,130,246,.25)",color:"#93c5fd",zIndex:5}}>
-                    <RubyText text={el?"{本物|ほんもの}":"本物"}/>
-                  </div>
-                  <div style={{position:"absolute",top:8,right:8,fontSize:10,fontWeight:700,padding:"2px 6px",borderRadius:99,background:"rgba(255,67,67,.25)",color:"#fca5a5",zIndex:11}}>
-                    <RubyText text={el?"フェイク":"フェイク"}/>
-                  </div>
-                </div>
-                <div style={{background:"rgba(255,169,64,.06)",border:"0.5px solid rgba(255,169,64,.2)",borderRadius:10,padding:10,marginBottom:10,fontSize:12,color:"rgba(255,255,255,.7)",lineHeight:1.7}}>
-                  🦉 <RubyText text={el?"{内容|ないよう}は{同|おな}じなのに、{言葉|ことば}の「{温度感|おんどかん}」が{違|ちが}うだけで{印象|いんしょう}が{変|か}わったよね。":"内容は同じなのに、言葉の「温度感」が違うだけで印象が変わったよね。"}/>
-                </div>
-                <button onClick={()=>{feedback("tap");startTimer();}}
-                  style={{width:"100%",padding:10,borderRadius:8,border:"none",background:"rgba(255,169,64,.2)",color:"#ffa940",fontSize:12,fontWeight:900,cursor:"pointer",fontFamily:"inherit"}}>
-                  <RubyText text={el?"{次|つぎ}：{緊急|きんきゅう}な{気持|きも}ちを{体験|たいけん}する →":"次：緊急な気持ちを体験する →"}/>
-                </button>
+            {/* スライダー */}
+            <div>
+              <div style={{fontSize:11,color:"rgba(255,255,255,.5)",marginBottom:8,textAlign:"center"}}>
+                <RubyText text={el?"{同|おな}じ{内容|ないよう}なのに{言葉|ことば}の「{温度感|おんどかん}」が{違|ちが}うだけで{印象|いんしょう}が{変|か}わったよね。スライダーを{動|うご}かして{比|くら}べてみよう。":"同じ内容なのに言葉の「温度感」が違うだけで印象が変わったよね。スライダーを動かして比べてみよう。"}/>
               </div>
-            )}
-
-            {/* STEP2：カウントダウン */}
-            {urgencyStep>0 && (
-              <div style={{background:"rgba(255,169,64,.06)",border:"0.5px solid rgba(255,169,64,.2)",borderRadius:12,padding:14,textAlign:"center",animation:"mamFadeUp .4s ease"}}>
-                <div style={{fontSize:12,color:"rgba(255,255,255,.6)",marginBottom:4}}>
-                  <RubyText text={el?"「{今|いま}すぐシェアしないと{手遅|ておく}れ！」":"「今すぐシェアしないと手遅れ！」"}/>
-                </div>
-                <div style={{fontSize:52,fontWeight:900,color:urgencyStep===99||urgencyStep===1?"#ef4444":"#ffa940",lineHeight:1,marginBottom:4,transition:"color .3s"}}>
-                  {urgencyStep===99?"⏰":urgencyStep}
-                </div>
-                <div style={{fontSize:11,color:"rgba(255,255,255,.5)"}}>
-                  <RubyText text={el?"{秒|びょう}で{判断|はんだん}しなければならない…":"秒で判断しなければならない…"}/>
-                </div>
-                {urgencyStep===99 && (
-                  <div style={{marginTop:10,fontSize:12,color:"rgba(255,255,255,.7)",lineHeight:1.7,animation:"mamFadeUp .4s ease"}}>
-                    <RubyText text={el?"3{秒|びょう}では{確認|かくにん}できない。でも「{緊急|きんきゅう}！」という{言葉|ことば}がそれを{忘|わす}れさせてしまう。":"3秒では確認できない。でも「緊急！」という言葉がそれを忘れさせてしまう。"}/>
+              <div style={{position:"relative",height:140,borderRadius:12,overflow:"hidden",marginBottom:10,cursor:"ew-resize"}}
+                id="sliderWrap2"
+                onMouseDown={(e)=>{
+                  const move=(ev)=>{
+                    const r=document.getElementById('sliderWrap2').getBoundingClientRect();
+                    const pct=Math.max(5,Math.min(95,(ev.clientX-r.left)/r.width*100));
+                    document.getElementById('sliderDiv2').style.left=pct+'%';
+                    document.getElementById('sliderClip2').style.width=(100-pct)+'%';
+                  };
+                  const up=()=>{document.removeEventListener('mousemove',move);document.removeEventListener('mouseup',up);};
+                  document.addEventListener('mousemove',move);
+                  document.addEventListener('mouseup',up);
+                }}
+                onTouchStart={(e)=>{
+                  const move=(ev)=>{
+                    const r=document.getElementById('sliderWrap2').getBoundingClientRect();
+                    const pct=Math.max(5,Math.min(95,(ev.touches[0].clientX-r.left)/r.width*100));
+                    document.getElementById('sliderDiv2').style.left=pct+'%';
+                    document.getElementById('sliderClip2').style.width=(100-pct)+'%';
+                  };
+                  const up=()=>{document.removeEventListener('touchmove',move);document.removeEventListener('touchend',up);};
+                  document.addEventListener('touchmove',move);
+                  document.addEventListener('touchend',up);
+                }}>
+                {/* 本物 */}
+                <div style={{position:"absolute",inset:0,background:"rgba(30,41,59,.8)",border:"1px solid rgba(59,130,246,.3)",borderRadius:12,padding:12,zIndex:1}}>
+                  <div style={{fontSize:10,fontWeight:900,color:"#93c5fd",marginBottom:6}}>📰 <RubyText text={el?"{本物|ほんもの}のニュース":"本物のニュース"}/></div>
+                  <div style={{fontSize:12,fontWeight:700,color:"#e2e8f0",lineHeight:1.5,marginBottom:4}}>
+                    <RubyText text={el?"{警察庁|けいさつちょう}、{詐欺|さぎ}{被害|ひがい}の{増加|ぞうか}を{発表|はっぴょう}。{前年比|ぜんねんひ}2{倍以上|ばいいじょう}に{急増|きゅうぞう}":"警察庁、詐欺被害の増加を発表。前年比2倍以上に急増"}/>
                   </div>
-                )}
+                  <div style={{fontSize:10,color:"rgba(255,255,255,.4)"}}>
+                    <RubyText text={el?"{警察庁|けいさつちょう} 2024{年|ねん}6{月|がつ}14{日|にち}":"警察庁 2024年6月14日"}/>
+                  </div>
+                </div>
+                {/* フェイク */}
+                <div id="sliderClip2" style={{position:"absolute",top:0,right:0,bottom:0,width:"50%",overflow:"hidden",zIndex:2,pointerEvents:"none"}}>
+                  <div style={{position:"absolute",top:0,right:0,bottom:0,width:"100vw",maxWidth:440,background:"rgba(50,10,10,.85)",border:"1px solid rgba(255,67,67,.3)",borderRadius:12,padding:12}}>
+                    <div style={{fontSize:10,fontWeight:900,color:"#fca5a5",marginBottom:6}}>🚨 <RubyText text={el?"フェイクニュース{版|ばん}":"フェイクニュース版"}/></div>
+                    <div style={{fontSize:12,fontWeight:700,color:"#fca5a5",lineHeight:1.5,marginBottom:4}}>
+                      <RubyText text={el?"【{緊急速報|きんきゅうそくほう}】{詐欺|さぎ}{被害|ひがい}が{爆増中|ばくぞうちゅう}！！あなたの{家族|かぞく}も{狙|ねら}われてる！{今|いま}すぐ{確認|かくにん}！":"【緊急速報】詐欺被害が爆増中！！あなたの家族も狙われてる！今すぐ確認！"}/>
+                    </div>
+                    <div style={{fontSize:10,color:"rgba(255,100,100,.5)"}}>
+                      <RubyText text={el?"{出典|しゅってん}：なし　{発信者|はっしんしゃ}：{不明|ふめい}":"出典：なし　発信者：不明"}/>
+                    </div>
+                  </div>
+                </div>
+                {/* 仕切り */}
+                <div id="sliderDiv2" style={{position:"absolute",top:0,bottom:0,left:"50%",width:3,background:"#fff",boxShadow:"0 0 8px rgba(255,255,255,.6)",zIndex:10,cursor:"ew-resize"}}>
+                  <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",width:28,height:28,background:"#fff",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,boxShadow:"0 2px 8px rgba(0,0,0,.3)"}}>⇔</div>
+                </div>
+                <div style={{position:"absolute",top:8,left:8,fontSize:10,fontWeight:700,padding:"2px 6px",borderRadius:99,background:"rgba(59,130,246,.25)",color:"#93c5fd",zIndex:5}}>
+                  <RubyText text={el?"{本物|ほんもの}":"本物"}/>
+                </div>
+                <div style={{position:"absolute",top:8,right:8,fontSize:10,fontWeight:700,padding:"2px 6px",borderRadius:99,background:"rgba(255,67,67,.25)",color:"#fca5a5",zIndex:11}}>
+                  <RubyText text={el?"フェイク":"フェイク"}/>
+                </div>
               </div>
-            )}
+              <div style={{background:"rgba(255,169,64,.06)",border:"0.5px solid rgba(255,169,64,.2)",borderRadius:10,padding:10,marginBottom:10,fontSize:12,color:"rgba(255,255,255,.7)",lineHeight:1.7}}>
+                🦉 <RubyText text={el?"「{緊急|きんきゅう}！」「{爆増|ばくぞう}！」「{今|いま}すぐ！」という{言葉|ことば}が{冷静|れいせい}な{判断|はんだん}を{奪|うば}ってしまう。こういう{言葉|ことば}を{見|み}たら{一度|いちど}{立|た}ち{止|と}まるクセをつけよう。":"「緊急！」「爆増！」「今すぐ！」という言葉が冷静な判断を奪ってしまう。こういう言葉を見たら一度立ち止まるクセをつけよう。"}/>
+              </div>
+            </div>
 
             <div style={{fontSize:10,color:"rgba(255,255,255,.3)",marginTop:8}}>
               <RubyText text={el?"{出典|しゅってん}：MIT「フェイクニュースの{目新|めあたら}しさ（novelty）」{分析|ぶんせき} Science 2018{年|ねん}":"出典：MIT「フェイクニュースの目新しさ（novelty）」分析 Science 2018年"}/>
@@ -8930,11 +8882,15 @@ function FakeNewsWhyScreen({ el, onComplete }) {
                 <span key={i} style={{
                   fontSize:20,
                   transition:"filter .4s, color .4s",
-                  opacity:peopleShown?1:0,
-                  filter:i<15?"sepia(1) saturate(3) hue-rotate(260deg)":"none",
+                  opacity:peopleStarted?1:0,
+                  filter:peopleStarted && i<15?"sepia(1) saturate(3) hue-rotate(260deg)":"none",
                 }}>👤</span>
               ))}
             </div>
+            <button onClick={()=>{feedback("tap");setPeopleStarted(true);}}
+              style={{width:"100%",padding:8,borderRadius:8,border:"none",background:"rgba(124,58,237,.2)",color:"#a78bfa",fontSize:12,cursor:"pointer",fontFamily:"inherit",marginBottom:8}}>
+              ▶ <RubyText text={el?"アニメを{見|み}る":"アニメを見る"}/>
+            </button>
             <div style={{display:"flex",gap:12,fontSize:11,marginBottom:10}}>
               <span style={{color:"rgba(255,255,255,.5)"}}>👤 <RubyText text={el?"{まだ信|しん}じていない":"まだ信じていない"}/></span>
               <span style={{color:"#a78bfa"}}>👤 <RubyText text={el?"{信|しん}じてしまった":"信じてしまった"}/></span>
@@ -9139,7 +9095,11 @@ function FakeNewsCompareScreen({ el, onComplete }) {
             </span>
             {fStep>=2 && <span style={{...numBadge(2,"#ff4343"),marginLeft:4}}>②</span>}
           </div>
-          <div style={{background:"#0d1424",height:70,display:"flex",alignItems:"center",justifyContent:"center",fontSize:28}}>🚨</div>
+          <img
+            src="/images/ep2/post1.jpg"
+            alt="フェイクニュース投稿の例"
+            style={{width:"100%",height:120,objectFit:"cover",display:"block"}}
+          />
           <div style={{padding:"6px 12px 10px",display:"flex",gap:12,fontSize:11,color:"rgba(255,255,255,.4)"}}>
             <span>❤ 48,200</span>
             <span style={{...(isFakeHL("rt")?{color:"#ff6b6b",fontWeight:900}:{}),transition:"all .4s"}}>
@@ -9226,7 +9186,11 @@ function FakeNewsCompareScreen({ el, onComplete }) {
             {rStep>=4 && <span style={numBadge(4,"#22c55e")}>④</span>}
             <RubyText text={el?"に{急増|きゅうぞう}していると{発表|はっぴょう}…":"に急増していると発表…"}/>
           </div>
-          <div style={{background:"#0d1a2e",height:70,display:"flex",alignItems:"center",justifyContent:"center",fontSize:28}}>📊</div>
+          <img
+            src="/images/ep2/post4.jpg"
+            alt="本物のニュース投稿の例"
+            style={{width:"100%",height:120,objectFit:"cover",display:"block"}}
+          />
           <div style={{padding:"6px 12px 10px",display:"flex",gap:12,fontSize:11,color:"rgba(255,255,255,.4)"}}>
             <span>❤ 12,400</span><span>🔁 8,200</span><span>💬 1,100</span>
           </div>
