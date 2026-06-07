@@ -1374,10 +1374,14 @@ function SwipeJudge({ posts, onComplete, accentColor = "#7c3aed" }) {
           zIndex: 50, pointerEvents: "none",
         }}>
           <div style={{
-            fontSize: 72, animation: "popIn .3s ease",
+            display: "flex", flexDirection: "column", alignItems: "center", gap: 8,
+            animation: "popIn .3s ease",
             filter: `drop-shadow(0 0 20px ${lastChoice?.correct ? "#22c55e" : "#ef4444"})`,
           }}>
-            {lastChoice?.correct ? "✅" : "❌"}
+            <span style={{ fontSize: 72 }}>{lastChoice?.correct ? "✅" : "❌"}</span>
+            <span style={{ fontSize: 16, fontWeight: 900, color: lastChoice?.correct ? "#22c55e" : "#ef4444" }}>
+              {lastChoice?.correct ? "正解！" : "はずれ…"}
+            </span>
           </div>
         </div>
       )}
@@ -8167,8 +8171,8 @@ function WorstCasePage({ onComplete }) {
         }}>
           <p style={{fontSize:13,color:"rgba(255,255,255,.75)",lineHeight:1.9,whiteSpace:"pre-line"}}>
             <RubyText text={el
-              ? "あなたが{軽|かる}い{気持|きも}ちでシェアしたデマ。それが{災害|さいがい}のときに{広|ひろ}まると、{何|なに}が{起|お}きるのか。\n\n{通報|つうほう}が{入|はい}っても、{警察|けいさつ}は{行|い}ってみるまでそれがデマか{本物|ほんもの}か{分|わ}かりません。\n\nこれから、{実際|じっさい}に{起|お}きうる{最悪|さいあく}のケースを{見|み}てみよう。"
-              : "あなたが軽い気持ちでシェアしたデマ。それが災害のときに広まると、何が起きるのか。\n\n通報が入っても、警察は行ってみるまでそれがデマか本物か分かりません。\n\nこれから、実際に起きうる最悪のケースを見てみよう。"
+              ? "{有事|ゆうじ}の{際|さい}に{軽|かる}い{気持|きも}ちで{作|つく}られたデマ。それが{災害|さいがい}のときに{広|ひろ}まると、{何|なに}が{起|お}きるのか。\n\n{通報|つうほう}が{入|はい}っても、{警察|けいさつ}は{行|い}ってみるまでそれがデマか{本物|ほんもの}か{分|わ}かりません。\n\nこれから、デマと{本物|ほんもの}の{情報|じょうほう}が{交錯|こうさく}し、{本来|ほんらい}{対応|たいおう}すべきものにあたれなくなる…という{最悪|さいあく}なケースを{見|み}てみよう。\n\n{上|うえ}にアニメーション、{下|した}はタイムラインを{表現|ひょうげん}している。2{回|かい}{再生|さいせい}されるよ。"
+              : "有事の際に軽い気持ちで作られたデマ。それが災害のときに広まると、何が起きるのか。\n\n通報が入っても、警察は行ってみるまでそれがデマか本物か分かりません。\n\nこれから、デマと本物の情報が交錯し、本来対応すべきものにあたれなくなる…という最悪なケースを見てみよう。\n\n上にアニメーション、下はタイムラインを表現している。2回再生されるよ。"
             }/>
           </p>
         </div>
@@ -8355,7 +8359,10 @@ function WorstCasePage({ onComplete }) {
                 color:"#fff",fontSize:16,fontWeight:900,
                 cursor:"pointer",fontFamily:"inherit",
               }}>
-              次へ →
+              <RubyText text={el
+                ? "{次|つぎ}は、{情報|じょうほう}を{見|み}た{時|とき}の{判断|はんだん}ポイントを{見|み}てみよう"
+                : "次は、情報を見た時の判断ポイントを見てみよう"
+              }/>
             </button>
           </div>
         )}
@@ -8602,9 +8609,6 @@ function FakeNewsCasesScreen({ el, onComplete }) {
                   <div style={{position:"absolute",left:"50%",top:"38%",transform:"translate(-50%,-50%)",width:18,height:18,borderRadius:"50%",background:"rgba(255,149,0,.2)",border:"2px solid #ff9500",display:"flex",alignItems:"center",justifyContent:"center",fontSize:9,color:"#ffb84d"}}>!</div>
                   <div style={{position:"absolute",left:"25%",top:"30%",fontSize:14}}>🚓</div>
                   <div style={{position:"absolute",left:"65%",top:"20%",fontSize:14}}>🚓</div>
-                  <div style={{position:"absolute",right:8,bottom:4,fontSize:9,color:"rgba(255,255,255,.3)"}}>
-                    <RubyText text={el?"← さっき{体験|たいけん}したのがこれ":"← さっき体験したのがこれ"}/>
-                  </div>
                 </div>
               )}
 
@@ -8665,7 +8669,7 @@ function FakeNewsCasesScreen({ el, onComplete }) {
             <button
               onClick={()=>{feedback("tap");onComplete();}}
               style={{width:"100%",padding:14,borderRadius:12,border:"none",background:"linear-gradient(135deg,#7c3aed,#4f46e5)",color:"#fff",fontSize:14,fontWeight:900,cursor:"pointer",fontFamily:"inherit"}}>
-              <RubyText text={el?"{見抜|みぬ}き{方|かた}を{学|まな}ぶ →":"見抜き方を学ぶ →"}/>
+              <RubyText text={el?"{次|つぎ}はデマがもたらす{最悪|さいあく}のケースを{見|み}てみる →":"次はデマがもたらす最悪のケースを見てみる →"}/>
             </button>
           </div>
         )}
@@ -10188,18 +10192,14 @@ function Episode2({ onComplete, onExit }) {
           </div>
         )}
 
-        {/* もし拡散していたらボタン */}
+        {/* fake_learnへ遷移ボタン */}
         <div style={{ background: "rgba(239,68,68,.08)", border: "1px solid rgba(239,68,68,.3)", borderRadius: 18, padding: "18px 16px", marginBottom: 16 }}>
-          <div style={{ fontSize: 28, textAlign: "center", marginBottom: 8, animation: "blink 2s infinite" }}>📱</div>
-          <h3 style={{ fontSize: 16, fontWeight: 900, color: "#fca5a5", textAlign: "center", margin: "0 0 8px" }}>
-            <RubyText text={ageMode === "elementary" ? "もしこの{投稿|とうこう}を{拡散|かくさん}していたら…" : "もしこの投稿を拡散していたら…"} />
+          <h3 style={{ fontSize: 16, fontWeight: 900, color: "#fff", textAlign: "center", margin: "0 0 14px", lineHeight: 1.6 }}>
+            <RubyText text={ageMode === "elementary" ? "{次|つぎ}のページから、まずフェイクニュースとは{何|なに}か{学|まな}んでみよう！" : "次のページから、まずフェイクニュースとは何か学んでみよう！"} />
           </h3>
-          <p style={{ fontSize: 12, color: "rgba(255,255,255,.5)", lineHeight: 1.7, textAlign: "center", margin: "0 0 14px" }}>
-            <RubyText text={ageMode === "elementary" ? "1{件|けん}のRTが{世界中|せかいじゅう}に{広|ひろ}がるまでの{連鎖|れんさ}を{体験|たいけん}しよう" : "1件のRTが世界中に広がるまでの連鎖を体験しよう"} />
-          </p>
           <button onClick={() => { feedback("tap"); setPhase("fake_learn"); }}
-            style={{ width: "100%", padding: 14, background: "linear-gradient(135deg,#ef4444,#dc2626)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", animation: "pulse 2s infinite" }}>
-            <RubyText text={ageMode === "elementary" ? "😱 {拡散|かくさん}シミュレーションを{見|み}る →" : "😱 拡散シミュレーションを見る →"} />
+            style={{ width: "100%", padding: 14, background: "linear-gradient(135deg,#ef4444,#dc2626)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
+            <RubyText text={ageMode === "elementary" ? "{次|つぎ}へ →" : "次へ →"} />
           </button>
         </div>
       </div>
