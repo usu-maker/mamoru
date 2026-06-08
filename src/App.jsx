@@ -10883,8 +10883,7 @@ function DarkJobSimulation({ onComplete }) {
               await addDM(myText,"me",0);
               await addDM(theirText,"them",900);
               timerRef.current=setTimeout(()=>{
-                setTgMessages([]);
-                setInnerPhase("tg_start");
+                setInnerPhase("tg_install");
               },2000);
             }} style={{width:"100%",padding:"10px 14px",borderRadius:12,border:"1.5px solid #3797f0",background:"#fff",color:"#3797f0",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit",marginBottom:8,textAlign:"left"}}>
               <RubyText text={c.label}/>
@@ -10896,100 +10895,190 @@ function DarkJobSimulation({ onComplete }) {
   );
 
   // ─────────────────────────────────
-  // フェーズ4：Telegram開始
+  // フェーズ4a：Telegramインストール画面
   // ─────────────────────────────────
-  if (innerPhase === "tg_start") return (
-    <div style={{minHeight:"100vh",background:"#e8edf3",fontFamily:"'Zen Maru Gothic',sans-serif",display:"flex",flexDirection:"column"}}>
-      <div style={TG_BAR()}>
-        <span style={{fontSize:18}}>←</span>
-        <div style={{width:38,height:38,borderRadius:"50%",overflow:"hidden",flexShrink:0}}>
-          <img src={`${BASE}tanaka.jpg`} style={{width:"100%",height:"100%",objectFit:"cover"}} alt=""/>
+  if (innerPhase === "tg_install") return (
+    <div style={{
+      minHeight:"100vh",
+      background:"linear-gradient(180deg,#1a1a2e,#0d1424)",
+      fontFamily:"'Zen Maru Gothic',sans-serif",
+      display:"flex",
+      flexDirection:"column",
+      alignItems:"center",
+      justifyContent:"center",
+      padding:"32px 20px",
+    }}>
+      <div style={{maxWidth:360,width:"100%",textAlign:"center"}}>
+
+        {/* Telegramアイコン風 */}
+        <div style={{
+          width:80,height:80,borderRadius:"50%",
+          background:"linear-gradient(135deg,#2AABEE,#229ED9)",
+          display:"flex",alignItems:"center",justifyContent:"center",
+          fontSize:42,marginBottom:16,margin:"0 auto 16px",
+        }}>✈️</div>
+
+        <div style={{fontSize:20,fontWeight:900,color:"#fff",marginBottom:8}}>
+          Telegram
         </div>
-        <div>
-          <div style={{fontSize:13,fontWeight:600}}>田中 健一</div>
-          <div style={{fontSize:10,opacity:.8}}>オンライン</div>
-        </div>
-        <div style={{marginLeft:"auto",display:"flex",gap:14,fontSize:18}}>🔍 📞</div>
-      </div>
-      <div style={TG_BG()}>
-        <div style={{textAlign:"center",marginBottom:12}}>
-          <div style={{display:"inline-block",background:"rgba(0,0,0,.15)",color:"#fff",fontSize:10,padding:"4px 12px",borderRadius:99}}>今日</div>
-        </div>
-        <div style={tgThemStyle}>
+        <div style={{fontSize:13,color:"rgba(255,255,255,.6)",marginBottom:24,lineHeight:1.7}}>
           <RubyText text={el
-            ?"はじめまして。Misaki からご{紹介|しょうかい}いただきました、{担当|たんとう}の{田中|たなか}と{申|もう}します。よろしくお{願|ねが}いします😊"
-            :"はじめまして。Misakiからご紹介いただきました、担当の田中と申します。よろしくお願いします😊"
+            ?"Misakiから{紹介|しょうかい}された\n「{田中|たなか} {健一|けんいち}」という{人|ひと}から\nメッセージが{届|とど}いています"
+            :"Misakiから紹介された\n「田中 健一」という人から\nメッセージが届いています"
           }/>
         </div>
-        <div style={tgThemStyle}>
+
+        {/* タクヤの心理 */}
+        <div style={{
+          background:"rgba(255,200,0,.08)",
+          borderLeft:"3px solid #f5c842",
+          padding:"10px 14px",
+          fontSize:11,color:"#c9a227",
+          fontStyle:"italic",
+          borderRadius:"0 10px 10px 0",
+          lineHeight:1.7,
+          marginBottom:24,
+          textAlign:"left",
+        }}>
           <RubyText text={el
-            ?"お{仕事|しごと}の{詳細|しょうさい}をご{説明|せつめい}します。{内容|ないよう}は「{指定|してい}の{住所|じゅうしょ}への{配達|はいたつ}{業務|ぎょうむ}」です。{荷物|にもつ}を{受|う}け{取|と}り、{別|べつ}の{場所|ばしょ}に{届|とど}けるだけ。1{件|けん}につき5{万円|まんえん}お{支払|しはら}いします。"
-            :"お仕事の詳細をご説明します。内容は「指定の住所への配達業務」です。荷物を受け取り、別の場所に届けるだけ。1件につき5万円お支払いします。"
+            ?"タクヤ：「Telegramって{初|はじ}めて{使|つか}う…\nLINEとどう{違|ちが}うんだろ。\nまぁ、{話|はなし}だけ{聞|き}いてみるか」"
+            :"タクヤ：「Telegramって初めて使う…\nLINEとどう違うんだろ。\n話だけ聞いてみるか」"
           }/>
         </div>
-        {tgMessages.map((m,i)=>(
-          <div key={i} style={m.type==="me"?tgMeStyle:tgThemStyle}>
-            <RubyText text={m.text}/>
-          </div>
-        ))}
+
+        <button
+          onClick={()=>{
+            feedback("tap");
+            setTgMessages([]);
+            setTgStep(0);
+            setShowChoices(true);
+            setInnerPhase("tg_start");
+          }}
+          style={{
+            width:"100%",
+            padding:16,
+            borderRadius:14,
+            border:"none",
+            background:"linear-gradient(135deg,#2AABEE,#229ED9)",
+            color:"#fff",
+            fontSize:15,
+            fontWeight:900,
+            cursor:"pointer",
+            fontFamily:"inherit",
+          }}>
+          <RubyText text={el?"Telegramを{起動|きどう}する →":"Telegramを起動する →"}/>
+        </button>
+
+        <div style={{fontSize:10,color:"rgba(255,255,255,.25)",marginTop:12}}>
+          <RubyText text={el
+            ?"※この{操作|そうさ}が{後|あと}の{状況|じょうきょう}を{大|おお}きく{変|か}えることになる"
+            :"※この操作が後の状況を大きく変えることになる"
+          }/>
+        </div>
       </div>
-      {showChoices && tgStep===0 && (
-        <div style={{padding:"10px 12px",borderTop:"0.5px solid #ddd",background:"#fff"}}>
-          <div style={{fontSize:11,color:"#737373",marginBottom:8,textAlign:"center"}}>
-            <RubyText text={el?"どう{返信|へんしん}する？":"どう返信する？"}/>
-          </div>
-          {[
-            {label:el?"「どんな{荷物|にもつ}ですか？」":"「どんな荷物ですか？」",key:"a"},
-            {label:el?"「{簡単|かんたん}そうですね」":"「簡単そうですね」",key:"b"},
-          ].map(c=>(
-            <button key={c.key} onClick={async()=>{
-              feedback("tap");
-              setShowChoices(false);
-              const myText=c.key==="a"?"どんな荷物ですか？":"簡単そうですね";
-              const theirText=c.key==="a"
-                ?"主に現金や貴重品のお届けです。詳細は当日お伝えします。まず登録を進めましょう！"
-                :"そうです！難しいことは一切ないです😊 まず登録手続きをお願いします！";
-              await addTG(myText,"me",0);
-              await addTG(theirText,"them",900);
-              setTgStep(1);
-              setShowChoices(true);
-            }} style={choiceStyleTG()}>
-              <RubyText text={c.label}/>
-            </button>
-          ))}
-        </div>
-      )}
-      {showChoices && tgStep===1 && (
-        <div style={{padding:"10px 12px",borderTop:"0.5px solid #ddd",background:"#fff"}}>
-          <div style={{fontSize:11,color:"#737373",marginBottom:8,textAlign:"center"}}>
-            <RubyText text={el?"どう{返信|へんしん}する？":"どう返信する？"}/>
-          </div>
-          {[
-            {label:el?"「{わかりました|わかりました}」":"「わかりました」",key:"a"},
-            {label:el?"「もう{少|すこ}し{教|おし}えてください」":"「もう少し教えてください」",key:"b"},
-          ].map(c=>(
-            <button key={c.key} onClick={async()=>{
-              feedback("tap");
-              setShowChoices(false);
-              const myText=c.key==="a"?"わかりました":"もう少し教えてください";
-              const theirText=c.key==="a"
-                ?"ありがとうございます！では本人確認に進みましょう😊"
-                :"詳細は当日になります！まずは本人確認をお願いします。とても簡単ですよ😊";
-              await addTG(myText,"me",0);
-              await addTG(theirText,"them",900);
-              timerRef.current=setTimeout(()=>{
-                setTgMessages([]);
-                setTgStep(0);
-                setInnerPhase("tg_personal_info");
-              },1800);
-            }} style={choiceStyleTG()}>
-              <RubyText text={c.label}/>
-            </button>
-          ))}
-        </div>
-      )}
     </div>
   );
+
+  // ─────────────────────────────────
+  // フェーズ4：Telegram開始
+  // ─────────────────────────────────
+  if (innerPhase === "tg_start") {
+    const handleTgStart1 = async (key) => {
+      feedback("tap");
+      setShowChoices(false);
+      const myText = key==="a" ? "どんな荷物ですか？" : "簡単そうですね";
+      const theirText = key==="a"
+        ? "主に現金や貴重品のお届けです。詳細は当日お伝えします。まず登録を進めましょう！"
+        : "そうです！難しいことは一切ないです😊 まず登録手続きをお願いします！";
+      await addTG(myText, "me", 0);
+      await addTG(theirText, "them", 900);
+      setTgStep(1);
+      setTimeout(() => setShowChoices(true), 1000);
+    };
+
+    const handleTgStart2 = async (key) => {
+      feedback("tap");
+      setShowChoices(false);
+      const myText = key==="a" ? "わかりました" : "もう少し教えてください";
+      const theirText = key==="a"
+        ? "ありがとうございます！では本人確認に進みましょう😊"
+        : "詳細は当日になります！まずは本人確認をお願いします。とても簡単ですよ😊";
+      await addTG(myText, "me", 0);
+      await addTG(theirText, "them", 900);
+      timerRef.current = setTimeout(() => {
+        setTgMessages([]);
+        setTgStep(0);
+        setShowChoices(true);
+        setInnerPhase("tg_personal_info");
+      }, 1800);
+    };
+
+    return (
+      <div style={{minHeight:"100vh",background:"#e8edf3",fontFamily:"'Zen Maru Gothic',sans-serif",display:"flex",flexDirection:"column"}}>
+        <div style={TG_BAR()}>
+          <span style={{fontSize:18}}>←</span>
+          <div style={{width:38,height:38,borderRadius:"50%",overflow:"hidden",flexShrink:0}}>
+            <img src={`${BASE}tanaka.jpg`} style={{width:"100%",height:"100%",objectFit:"cover"}} alt=""/>
+          </div>
+          <div>
+            <div style={{fontSize:13,fontWeight:600}}>田中 健一</div>
+            <div style={{fontSize:10,opacity:.8}}>オンライン</div>
+          </div>
+          <div style={{marginLeft:"auto",display:"flex",gap:14,fontSize:18}}>🔍 📞</div>
+        </div>
+        <div style={TG_BG()}>
+          <div style={{textAlign:"center",marginBottom:12}}>
+            <div style={{display:"inline-block",background:"rgba(0,0,0,.15)",color:"#fff",fontSize:10,padding:"4px 12px",borderRadius:99}}>今日</div>
+          </div>
+          <div style={tgThemStyle}>
+            <RubyText text={el
+              ?"はじめまして。Misaki からご{紹介|しょうかい}いただきました、{担当|たんとう}の{田中|たなか}と{申|もう}します。よろしくお{願|ねが}いします😊"
+              :"はじめまして。Misakiからご紹介いただきました、担当の田中と申します。よろしくお願いします😊"
+            }/>
+          </div>
+          <div style={tgThemStyle}>
+            <RubyText text={el
+              ?"お{仕事|しごと}の{詳細|しょうさい}をご{説明|せつめい}します。{内容|ないよう}は「{指定|してい}の{住所|じゅうしょ}への{配達|はいたつ}{業務|ぎょうむ}」です。{荷物|にもつ}を{受|う}け{取|と}り、{別|べつ}の{場所|ばしょ}に{届|とど}けるだけ。1{件|けん}につき5{万円|まんえん}お{支払|しはら}いします。"
+              :"お仕事の詳細をご説明します。内容は「指定の住所への配達業務」です。荷物を受け取り、別の場所に届けるだけ。1件につき5万円お支払いします。"
+            }/>
+          </div>
+          {tgMessages.map((m,i)=>(
+            <div key={i} style={m.type==="me"?tgMeStyle:tgThemStyle}>
+              <RubyText text={m.text}/>
+            </div>
+          ))}
+        </div>
+
+        {showChoices && tgStep===0 && (
+          <div style={{padding:"10px 12px",borderTop:"0.5px solid #ddd",background:"#fff"}}>
+            <div style={{fontSize:11,color:"#737373",marginBottom:8,textAlign:"center"}}>
+              <RubyText text={el?"どう{返信|へんしん}する？":"どう返信する？"}/>
+            </div>
+            <button onClick={()=>handleTgStart1("a")} style={choiceStyleTG()}>
+              <RubyText text={el?"「どんな{荷物|にもつ}ですか？」":"「どんな荷物ですか？」"}/>
+            </button>
+            <button onClick={()=>handleTgStart1("b")} style={choiceStyleTG()}>
+              <RubyText text={el?"「{簡単|かんたん}そうですね」":"「簡単そうですね」"}/>
+            </button>
+          </div>
+        )}
+
+        {showChoices && tgStep===1 && (
+          <div style={{padding:"10px 12px",borderTop:"0.5px solid #ddd",background:"#fff"}}>
+            <div style={{fontSize:11,color:"#737373",marginBottom:8,textAlign:"center"}}>
+              <RubyText text={el?"どう{返信|へんしん}する？":"どう返信する？"}/>
+            </div>
+            <button onClick={()=>handleTgStart2("a")} style={choiceStyleTG()}>
+              <RubyText text={el?"「わかりました」":"「わかりました」"}/>
+            </button>
+            <button onClick={()=>handleTgStart2("b")} style={choiceStyleTG()}>
+              <RubyText text={el?"「もう{少|すこ}し{教|おし}えてください」":"「もう少し教えてください」"}/>
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   // ─────────────────────────────────
   // フェーズ5：個人情報要求
