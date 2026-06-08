@@ -10547,6 +10547,817 @@ const PRESSURE_MSGS = {
   },
 };
 
+function DarkJobSimulation({ onComplete }) {
+  const ageMode = useAgeMode();
+  const el = ageMode === "elementary";
+  const [innerPhase, setInnerPhase] = useState("ig_timeline");
+  const [dmStep, setDmStep] = useState(0);
+  const [tgStep, setTgStep] = useState(0);
+  const [chatMessages, setChatMessages] = useState([]);
+  const [tgMessages, setTgMessages] = useState([]);
+  const [showChoices, setShowChoices] = useState(true);
+  const [threatStarted, setThreatStarted] = useState(false);
+  const [endingStep, setEndingStep] = useState(0);
+  const timerRef = useRef(null);
+
+  const BASE = "/images/ep3/";
+
+  const TG_BAR = (isThreaten=false) => ({
+    background: isThreaten ? "#1a0000" : "#2AABEE",
+    padding: "10px 14px",
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    color: "#fff",
+    position: "sticky",
+    top: 0,
+    zIndex: 10,
+  });
+
+  const TG_BG = (isThreaten=false) => ({
+    flex: 1,
+    background: isThreaten ? "#1a0000" : "#e8edf3",
+    padding: "14px 12px",
+    display: "flex",
+    flexDirection: "column",
+    minHeight: 300,
+  });
+
+  const tgMeStyle = {
+    background: "#EFFDDE",
+    borderRadius: "12px 12px 2px 12px",
+    padding: "9px 12px",
+    fontSize: 12,
+    lineHeight: 1.6,
+    maxWidth: "80%",
+    marginLeft: "auto",
+    marginBottom: 6,
+    color: "#111",
+    whiteSpace: "pre-line",
+    animation: "mamFadeUp .4s ease",
+  };
+
+  const tgThemStyle = {
+    background: "#fff",
+    borderRadius: "12px 12px 12px 2px",
+    padding: "9px 12px",
+    fontSize: 12,
+    lineHeight: 1.6,
+    maxWidth: "80%",
+    marginBottom: 6,
+    color: "#111",
+    boxShadow: "0 1px 2px rgba(0,0,0,.15)",
+    whiteSpace: "pre-line",
+    animation: "mamFadeUp .4s ease",
+  };
+
+  const tgThreatStyle = {
+    background: "#2d0000",
+    borderRadius: "12px 12px 12px 2px",
+    padding: "9px 12px",
+    fontSize: 12,
+    lineHeight: 1.7,
+    maxWidth: "85%",
+    marginBottom: 6,
+    color: "#ff6b6b",
+    border: "1px solid #ff3333",
+    boxShadow: "0 0 12px rgba(255,0,0,.3)",
+    whiteSpace: "pre-line",
+    animation: "mamFadeUp .4s ease",
+  };
+
+  const choiceStyleTG = (isThreaten=false) => ({
+    width: "100%",
+    padding: "10px 14px",
+    borderRadius: 12,
+    border: `1.5px solid ${isThreaten?"#ff4444":"#2AABEE"}`,
+    background: isThreaten ? "#0d0000" : "#fff",
+    color: isThreaten ? "#ff6b6b" : "#2AABEE",
+    fontSize: 12,
+    fontWeight: 600,
+    cursor: "pointer",
+    fontFamily: "inherit",
+    marginBottom: 8,
+    textAlign: "left",
+    display: "block",
+  });
+
+  const addDM = (text, side, delay=0) => {
+    return new Promise(res => setTimeout(() => {
+      setChatMessages(prev => [...prev, {text, side}]);
+      res();
+    }, delay));
+  };
+
+  const addTG = (text, type, delay=0) => {
+    return new Promise(res => setTimeout(() => {
+      setTgMessages(prev => [...prev, {text, type}]);
+      res();
+    }, delay));
+  };
+
+  useEffect(() => {
+    return () => { if(timerRef.current) clearTimeout(timerRef.current); };
+  }, []);
+
+  // ─────────────────────────────────
+  // フェーズ1：Instagramタイムライン
+  // ─────────────────────────────────
+  if (innerPhase === "ig_timeline") return (
+    <div style={{minHeight:"100vh",background:"#fff",fontFamily:"'Zen Maru Gothic',sans-serif"}}>
+      {/* IGヘッダー */}
+      <div style={{borderBottom:"0.5px solid #dbdbdb",padding:"10px 16px",display:"flex",alignItems:"center",justifyContent:"space-between",background:"#fff",position:"sticky",top:0,zIndex:10}}>
+        <span style={{fontSize:22,fontWeight:800,letterSpacing:-1}}>Instagram</span>
+        <div style={{display:"flex",gap:18,fontSize:20}}>
+          <span>🔔</span><span>✉️</span>
+        </div>
+      </div>
+      {/* ストーリー */}
+      <div style={{padding:"10px 12px",display:"flex",gap:14,overflowX:"auto",borderBottom:"0.5px solid #dbdbdb"}}>
+        {[
+          {img:`${BASE}misaki.jpg`,name:"misaki__0214"},
+          {emoji:"🍕",name:"taro_gram"},
+          {emoji:"🐶",name:"hana_daily"},
+        ].map((s,i)=>(
+          <div key={i} style={{textAlign:"center",flexShrink:0,cursor:i===0?"pointer":"default"}}
+            onClick={i===0?()=>{feedback("tap");setInnerPhase("ig_profile");}:undefined}>
+            <div style={{width:56,height:56,borderRadius:"50%",background:"linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)",padding:2.5,flexShrink:0}}>
+              <div style={{width:"100%",height:"100%",borderRadius:"50%",overflow:"hidden",border:"2.5px solid #fff",background:"#f0f0f0",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22}}>
+                {s.img ? <img src={s.img} style={{width:"100%",height:"100%",objectFit:"cover"}} alt=""/> : s.emoji}
+              </div>
+            </div>
+            <div style={{fontSize:10,marginTop:4,width:60,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{s.name}</div>
+          </div>
+        ))}
+      </div>
+      {/* 投稿 */}
+      <div style={{borderBottom:"0.5px solid #dbdbdb"}}>
+        <div style={{padding:"10px 12px",display:"flex",alignItems:"center",gap:10,cursor:"pointer"}}
+          onClick={()=>{feedback("tap");setInnerPhase("ig_profile");}}>
+          <div style={{width:34,height:34,borderRadius:"50%",overflow:"hidden",flexShrink:0}}>
+            <img src={`${BASE}misaki.jpg`} style={{width:"100%",height:"100%",objectFit:"cover"}} alt=""/>
+          </div>
+          <div>
+            <div style={{fontSize:13,fontWeight:600}}>misaki__0214</div>
+            <div style={{fontSize:11,color:"#737373"}}>東京都</div>
+          </div>
+          <div style={{marginLeft:"auto",color:"#737373",fontSize:18}}>•••</div>
+        </div>
+        <img src={`${BASE}misaki_post1.jpg`} style={{width:"100%",display:"block"}} alt="投稿"/>
+        <div style={{padding:"10px 12px"}}>
+          <div style={{display:"flex",justifyContent:"space-between",marginBottom:6}}>
+            <div style={{display:"flex",gap:16,fontSize:22}}>❤️ 💬 📤</div>
+            <span style={{fontSize:22}}>🔖</span>
+          </div>
+          <div style={{fontSize:13,fontWeight:600,marginBottom:4}}>いいね！ 847件</div>
+          <div style={{fontSize:12,lineHeight:1.6}}>
+            <span style={{fontWeight:600}}>misaki__0214</span>
+            {" "}<RubyText text={el
+              ?"副業{始|はじ}めて3ヶ月💪 {未経験|みけいけん}でも{大丈夫|だいじょうぶ}🙆‍♀️ {気|き}になる{人|ひと}はDMして！"
+              :"副業始めて3ヶ月💪 未経験でも大丈夫🙆‍♀️ 気になる人はDMして！"
+            }/>
+          </div>
+          <div style={{fontSize:11,color:"#737373",marginTop:4}}>4時間前</div>
+        </div>
+      </div>
+      {/* タクヤの心理 */}
+      <div style={{padding:"12px 14px",background:"#fafafa",borderTop:"0.5px solid #eee"}}>
+        <div style={{background:"rgba(255,200,0,.1)",borderLeft:"3px solid #f5c842",padding:"8px 12px",fontSize:11,color:"#7a5c00",fontStyle:"italic",borderRadius:"0 8px 8px 0",lineHeight:1.6,marginBottom:8}}>
+          <RubyText text={el
+            ?"タクヤ：「なんか{気|き}になるな…どんな{仕事|しごと}だろ。プロフィール{見|み}てみようかな」"
+            :"タクヤ：「なんか気になるな…どんな仕事だろ。プロフィール見てみようかな」"
+          }/>
+        </div>
+        <div style={{fontSize:11,color:"#aaa",textAlign:"center"}}>
+          <RubyText text={el?"↑ {名前|なまえ}またはアイコンをタップ":"↑ 名前またはアイコンをタップ"}/>
+        </div>
+      </div>
+    </div>
+  );
+
+  // ─────────────────────────────────
+  // フェーズ2：Instagramプロフィール
+  // ─────────────────────────────────
+  if (innerPhase === "ig_profile") return (
+    <div style={{minHeight:"100vh",background:"#fff",fontFamily:"'Zen Maru Gothic',sans-serif"}}>
+      <div style={{borderBottom:"0.5px solid #dbdbdb",padding:"10px 16px",display:"flex",alignItems:"center",justifyContent:"space-between",background:"#fff",position:"sticky",top:0,zIndex:10}}>
+        <span style={{fontSize:20,cursor:"pointer"}} onClick={()=>setInnerPhase("ig_timeline")}>←</span>
+        <span style={{fontSize:14,fontWeight:600}}>misaki__0214</span>
+        <span style={{fontSize:20}}>•••</span>
+      </div>
+      <div style={{padding:"16px 14px"}}>
+        {/* プロフィール上部 */}
+        <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:14}}>
+          <div style={{width:80,height:80,borderRadius:"50%",background:"linear-gradient(45deg,#f09433,#dc2743)",padding:3,flexShrink:0}}>
+            <div style={{width:"100%",height:"100%",borderRadius:"50%",overflow:"hidden",border:"2.5px solid #fff"}}>
+              <img src={`${BASE}misaki.jpg`} style={{width:"100%",height:"100%",objectFit:"cover"}} alt=""/>
+            </div>
+          </div>
+          <div style={{display:"flex",gap:12,flex:1,justifyContent:"space-around",textAlign:"center"}}>
+            {[["38","投稿"],["1,204","フォロワー"],["312","フォロー中"]].map(([n,l],i)=>(
+              <div key={i}><div style={{fontSize:16,fontWeight:700}}>{n}</div><div style={{fontSize:11,color:"#737373"}}>{l}</div></div>
+            ))}
+          </div>
+        </div>
+        <div style={{fontSize:13,fontWeight:600,marginBottom:4}}>Misaki</div>
+        <div style={{fontSize:12,color:"#333",lineHeight:1.7,marginBottom:12}}>
+          <RubyText text={el
+            ?"東京{在住|ざいじゅう}🗼 {会社員|かいしゃいん}しながら{副業中|ふくぎょうちゅう}💪\n{月収|げっしゅう}up中📈 お{仕事|しごと}のご{相談|そうだん}はDMへ✉️\n🌸 副業{始|はじ}めて3ヶ月で{月|つき}15{万|まん}{達成|たっせい}！"
+            :"東京在住🗼 会社員しながら副業中💪\n月収up中📈 お仕事のご相談はDMへ✉️\n🌸 副業始めて3ヶ月で月15万達成！"
+          }/>
+        </div>
+        {/* ボタン */}
+        <div style={{display:"flex",gap:8,marginBottom:14}}>
+          <button onClick={()=>{feedback("tap");setInnerPhase("ig_dm");}}
+            style={{flex:1,padding:8,borderRadius:8,border:"1.5px solid #dbdbdb",background:"#fff",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
+            メッセージ
+          </button>
+          <button style={{flex:1,padding:8,borderRadius:8,border:"1.5px solid #dbdbdb",background:"#fff",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
+            フォロー
+          </button>
+        </div>
+        {/* グリッド */}
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:2}}>
+          {["misaki_post1","misaki_grid1","misaki_grid2","misaki_grid3","misaki_grid4","misaki_grid5"].map((img,i)=>(
+            <img key={i} src={`${BASE}${img}.jpg`} style={{width:"100%",aspectRatio:"1",objectFit:"cover"}} alt=""/>
+          ))}
+        </div>
+      </div>
+      {/* タクヤの心理 */}
+      <div style={{padding:"10px 14px 20px",background:"#fafafa",borderTop:"0.5px solid #eee"}}>
+        <div style={{background:"rgba(255,200,0,.1)",borderLeft:"3px solid #f5c842",padding:"8px 12px",fontSize:11,color:"#7a5c00",fontStyle:"italic",borderRadius:"0 8px 8px 0",lineHeight:1.6,marginBottom:8}}>
+          <RubyText text={el
+            ?"タクヤ：「フォロワー1,200{人|にん}いるし、{投稿|とうこう}も{普通|ふつう}だし…この{人|ひと}なら{大丈夫|だいじょうぶ}かな。メッセージしてみよ」"
+            :"タクヤ：「フォロワー1,200人いるし、投稿も普通だし…この人なら大丈夫かな。メッセージしてみよ」"
+          }/>
+        </div>
+        <div style={{fontSize:11,color:"#aaa",textAlign:"center"}}>
+          <RubyText text={el?"↑「メッセージ」ボタンをタップ":"↑「メッセージ」ボタンをタップ"}/>
+        </div>
+      </div>
+    </div>
+  );
+
+  // ─────────────────────────────────
+  // フェーズ3：Instagram DM
+  // ─────────────────────────────────
+  if (innerPhase === "ig_dm") return (
+    <div style={{minHeight:"100vh",background:"#fff",fontFamily:"'Zen Maru Gothic',sans-serif",display:"flex",flexDirection:"column"}}>
+      <div style={{borderBottom:"0.5px solid #dbdbdb",padding:"10px 12px",display:"flex",alignItems:"center",gap:10,background:"#fff",position:"sticky",top:0,zIndex:10}}>
+        <span style={{fontSize:18,cursor:"pointer"}} onClick={()=>setInnerPhase("ig_profile")}>←</span>
+        <div style={{width:28,height:28,borderRadius:"50%",overflow:"hidden",flexShrink:0}}>
+          <img src={`${BASE}misaki.jpg`} style={{width:"100%",height:"100%",objectFit:"cover"}} alt=""/>
+        </div>
+        <div>
+          <div style={{fontSize:13,fontWeight:600}}>misaki__0214</div>
+          <div style={{fontSize:10,color:"#4caf50"}}>● アクティブ</div>
+        </div>
+        <div style={{marginLeft:"auto",display:"flex",gap:14,fontSize:18}}>📞 📹</div>
+      </div>
+      <div style={{flex:1,padding:"14px 12px",display:"flex",flexDirection:"column"}}>
+        <div style={{textAlign:"center",fontSize:11,color:"#737373",marginBottom:14}}>今日</div>
+        <div style={{background:"#efefef",borderRadius:"18px 18px 18px 4px",padding:"10px 14px",fontSize:12,lineHeight:1.6,maxWidth:"78%",marginBottom:8}}>
+          <RubyText text={el
+            ?"こんにちは！{投稿|とうこう}{見|み}てくれてありがとう😊\n{高校生|こうこうせい}でも{稼|かせ}げるお{仕事|しごと}あるよ！\n{詳|くわ}しく{聞|き}いてみる？"
+            :"こんにちは！投稿見てくれてありがとう😊\n高校生でも稼げるお仕事あるよ！\n詳しく聞いてみる？"
+          }/>
+        </div>
+        {chatMessages.map((m,i)=>(
+          <div key={i} style={{
+            background:m.side==="me"?"#3797f0":"#efefef",
+            borderRadius:m.side==="me"?"18px 18px 4px 18px":"18px 18px 18px 4px",
+            padding:"10px 14px",
+            color:m.side==="me"?"#fff":"#000",
+            fontSize:12,lineHeight:1.6,
+            maxWidth:"78%",
+            marginLeft:m.side==="me"?"auto":"0",
+            marginBottom:8,
+            whiteSpace:"pre-line",
+            animation:"mamFadeUp .4s ease",
+          }}>{m.text}</div>
+        ))}
+      </div>
+      {showChoices && dmStep===0 && (
+        <div style={{padding:"10px 12px",borderTop:"0.5px solid #dbdbdb"}}>
+          <div style={{fontSize:11,color:"#737373",marginBottom:8,textAlign:"center"}}>
+            <RubyText text={el?"どう{返信|へんしん}する？":"どう返信する？"}/>
+          </div>
+          {[
+            {label:el?"「どんな{仕事|しごと}ですか？」":"「どんな仕事ですか？」",key:"a"},
+            {label:el?"「{怪|あや}しいんですけど…」":"「怪しいんですけど…」",key:"b"},
+          ].map(c=>(
+            <button key={c.key} onClick={async()=>{
+              feedback("tap");
+              setShowChoices(false);
+              const myText=c.key==="a"?"どんな仕事ですか？":"怪しいんですけど…";
+              const theirText=c.key==="a"
+                ?"簡単なお仕事だよ！\n指定された場所で荷物を受け取るだけ😊\n1回で3〜5万円もらえるの！"
+                :"全然怪しくないよ笑\n私も最初そう思ったんだけど\nやってみたら普通だったよ！\n話だけでも聞いてみて😊";
+              await addDM(myText,"me",0);
+              await addDM(theirText,"them",900);
+              if(c.key==="b") await addDM("日給3〜5万円でスマホだけで完結するの！どうかな？😊","them",2000);
+              setDmStep(1);
+              setShowChoices(true);
+            }} style={{width:"100%",padding:"10px 14px",borderRadius:12,border:"1.5px solid #3797f0",background:"#fff",color:"#3797f0",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit",marginBottom:8,textAlign:"left"}}>
+              <RubyText text={c.label}/>
+            </button>
+          ))}
+        </div>
+      )}
+      {showChoices && dmStep===1 && (
+        <div style={{padding:"10px 12px",borderTop:"0.5px solid #dbdbdb"}}>
+          <div style={{fontSize:11,color:"#737373",marginBottom:8,textAlign:"center"}}>
+            <RubyText text={el?"どう{返信|へんしん}する？":"どう返信する？"}/>
+          </div>
+          {[
+            {label:el?"「いつから{始|はじ}められますか？」":"「いつから始められますか？」",key:"a"},
+            {label:el?"「やっぱりやめます」":"「やっぱりやめます」",key:"b"},
+          ].map(c=>(
+            <button key={c.key} onClick={async()=>{
+              feedback("tap");
+              setShowChoices(false);
+              const myText=c.key==="a"?"いつから始められますか？":"やっぱりやめます";
+              const theirText=c.key==="a"
+                ?"すぐにでも大丈夫！\nまず詳しい説明するね\n別のアプリに移動していい？"
+                :"えー残念😢\nでも枠が埋まっちゃうかも…\nもう少し聞いてみてよ！損しないから😊";
+              await addDM(myText,"me",0);
+              await addDM(theirText,"them",900);
+              timerRef.current=setTimeout(()=>{
+                setTgMessages([]);
+                setInnerPhase("tg_start");
+              },2000);
+            }} style={{width:"100%",padding:"10px 14px",borderRadius:12,border:"1.5px solid #3797f0",background:"#fff",color:"#3797f0",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit",marginBottom:8,textAlign:"left"}}>
+              <RubyText text={c.label}/>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
+  // ─────────────────────────────────
+  // フェーズ4：Telegram開始
+  // ─────────────────────────────────
+  if (innerPhase === "tg_start") return (
+    <div style={{minHeight:"100vh",background:"#e8edf3",fontFamily:"'Zen Maru Gothic',sans-serif",display:"flex",flexDirection:"column"}}>
+      <div style={TG_BAR()}>
+        <span style={{fontSize:18}}>←</span>
+        <div style={{width:38,height:38,borderRadius:"50%",overflow:"hidden",flexShrink:0}}>
+          <img src={`${BASE}tanaka.jpg`} style={{width:"100%",height:"100%",objectFit:"cover"}} alt=""/>
+        </div>
+        <div>
+          <div style={{fontSize:13,fontWeight:600}}>田中 健一</div>
+          <div style={{fontSize:10,opacity:.8}}>オンライン</div>
+        </div>
+        <div style={{marginLeft:"auto",display:"flex",gap:14,fontSize:18}}>🔍 📞</div>
+      </div>
+      <div style={TG_BG()}>
+        <div style={{textAlign:"center",marginBottom:12}}>
+          <div style={{display:"inline-block",background:"rgba(0,0,0,.15)",color:"#fff",fontSize:10,padding:"4px 12px",borderRadius:99}}>今日</div>
+        </div>
+        <div style={tgThemStyle}>
+          <RubyText text={el
+            ?"はじめまして。Misaki からご{紹介|しょうかい}いただきました、{担当|たんとう}の{田中|たなか}と{申|もう}します。よろしくお{願|ねが}いします😊"
+            :"はじめまして。Misakiからご紹介いただきました、担当の田中と申します。よろしくお願いします😊"
+          }/>
+        </div>
+        <div style={tgThemStyle}>
+          <RubyText text={el
+            ?"お{仕事|しごと}の{詳細|しょうさい}をご{説明|せつめい}します。{内容|ないよう}は「{指定|してい}の{住所|じゅうしょ}への{配達|はいたつ}{業務|ぎょうむ}」です。{荷物|にもつ}を{受|う}け{取|と}り、{別|べつ}の{場所|ばしょ}に{届|とど}けるだけ。1{件|けん}につき5{万円|まんえん}お{支払|しはら}いします。"
+            :"お仕事の詳細をご説明します。内容は「指定の住所への配達業務」です。荷物を受け取り、別の場所に届けるだけ。1件につき5万円お支払いします。"
+          }/>
+        </div>
+        {tgMessages.map((m,i)=>(
+          <div key={i} style={m.type==="me"?tgMeStyle:tgThemStyle}>
+            <RubyText text={m.text}/>
+          </div>
+        ))}
+      </div>
+      {showChoices && tgStep===0 && (
+        <div style={{padding:"10px 12px",borderTop:"0.5px solid #ddd",background:"#fff"}}>
+          <div style={{fontSize:11,color:"#737373",marginBottom:8,textAlign:"center"}}>
+            <RubyText text={el?"どう{返信|へんしん}する？":"どう返信する？"}/>
+          </div>
+          {[
+            {label:el?"「どんな{荷物|にもつ}ですか？」":"「どんな荷物ですか？」",key:"a"},
+            {label:el?"「{簡単|かんたん}そうですね」":"「簡単そうですね」",key:"b"},
+          ].map(c=>(
+            <button key={c.key} onClick={async()=>{
+              feedback("tap");
+              setShowChoices(false);
+              const myText=c.key==="a"?"どんな荷物ですか？":"簡単そうですね";
+              const theirText=c.key==="a"
+                ?"主に現金や貴重品のお届けです。詳細は当日お伝えします。まず登録を進めましょう！"
+                :"そうです！難しいことは一切ないです😊 まず登録手続きをお願いします！";
+              await addTG(myText,"me",0);
+              await addTG(theirText,"them",900);
+              setTgStep(1);
+              setShowChoices(true);
+            }} style={choiceStyleTG()}>
+              <RubyText text={c.label}/>
+            </button>
+          ))}
+        </div>
+      )}
+      {showChoices && tgStep===1 && (
+        <div style={{padding:"10px 12px",borderTop:"0.5px solid #ddd",background:"#fff"}}>
+          <div style={{fontSize:11,color:"#737373",marginBottom:8,textAlign:"center"}}>
+            <RubyText text={el?"どう{返信|へんしん}する？":"どう返信する？"}/>
+          </div>
+          {[
+            {label:el?"「{わかりました|わかりました}」":"「わかりました」",key:"a"},
+            {label:el?"「もう{少|すこ}し{教|おし}えてください」":"「もう少し教えてください」",key:"b"},
+          ].map(c=>(
+            <button key={c.key} onClick={async()=>{
+              feedback("tap");
+              setShowChoices(false);
+              const myText=c.key==="a"?"わかりました":"もう少し教えてください";
+              const theirText=c.key==="a"
+                ?"ありがとうございます！では本人確認に進みましょう😊"
+                :"詳細は当日になります！まずは本人確認をお願いします。とても簡単ですよ😊";
+              await addTG(myText,"me",0);
+              await addTG(theirText,"them",900);
+              timerRef.current=setTimeout(()=>{
+                setTgMessages([]);
+                setTgStep(0);
+                setInnerPhase("tg_personal_info");
+              },1800);
+            }} style={choiceStyleTG()}>
+              <RubyText text={c.label}/>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
+  // ─────────────────────────────────
+  // フェーズ5：個人情報要求
+  // ─────────────────────────────────
+  if (innerPhase === "tg_personal_info") return (
+    <div style={{minHeight:"100vh",background:"#e8edf3",fontFamily:"'Zen Maru Gothic',sans-serif",display:"flex",flexDirection:"column"}}>
+      <div style={TG_BAR()}>
+        <span style={{fontSize:18}}>←</span>
+        <div style={{width:38,height:38,borderRadius:"50%",overflow:"hidden",flexShrink:0}}>
+          <img src={`${BASE}tanaka.jpg`} style={{width:"100%",height:"100%",objectFit:"cover"}} alt=""/>
+        </div>
+        <div>
+          <div style={{fontSize:13,fontWeight:600}}>田中 健一</div>
+          <div style={{fontSize:10,opacity:.8}}>オンライン</div>
+        </div>
+      </div>
+      <div style={TG_BG()}>
+        <div style={{textAlign:"center",marginBottom:12}}>
+          <div style={{display:"inline-block",background:"rgba(0,0,0,.15)",color:"#fff",fontSize:10,padding:"4px 12px",borderRadius:99}}>今日</div>
+        </div>
+        <div style={tgThemStyle}>
+          <RubyText text={el
+            ?"では{本人|ほんにん}{確認|かくにん}をさせてください。{学生証|がくせいしょう}の{表|おもて}と{裏|うら}の{写真|しゃしん}を{送|おく}っていただけますか？{個人情報|こじんじょうほう}は{厳重|げんじゅう}に{管理|かんり}します🙏"
+            :"では本人確認をさせてください。学生証の表と裏の写真を送っていただけますか？個人情報は厳重に管理します🙏"
+          }/>
+        </div>
+        {tgMessages.map((m,i)=>(
+          <div key={i} style={
+            m.type==="me" ? tgMeStyle :
+            m.type==="image" ? {marginLeft:"auto",marginBottom:8,borderRadius:10,overflow:"hidden",maxWidth:"72%",boxShadow:"0 2px 8px rgba(0,0,0,.25)",animation:"mamFadeUp .4s ease"} :
+            tgThemStyle
+          }>
+            {m.type==="image"
+              ? <img src={`${BASE}student_id.jpg`} style={{width:"100%",display:"block",borderRadius:10}} alt="学生証"/>
+              : <RubyText text={m.text}/>
+            }
+          </div>
+        ))}
+      </div>
+      {showChoices && tgStep===0 && (
+        <div style={{padding:"10px 12px",borderTop:"0.5px solid #ddd",background:"#fff"}}>
+          <div style={{fontSize:11,color:"#737373",marginBottom:8,textAlign:"center"}}>
+            <RubyText text={el?"どう{返信|へんしん}する？":"どう返信する？"}/>
+          </div>
+          {[
+            {label:el?"（{学生証|がくせいしょう}を{送|おく}る）":"（学生証を送る）",key:"a"},
+            {label:el?"「{個人情報|こじんじょうほう}は{送|おく}りたくないです」":"「個人情報は送りたくないです」",key:"b"},
+          ].map(c=>(
+            <button key={c.key} onClick={async()=>{
+              feedback("tap");
+              setShowChoices(false);
+              if(c.key==="a"){
+                await addTG("（学生証・表と裏を送信）","me",0);
+                await addTG("IMAGE","image",400);
+                await addTG("ありがとうございます✅ 確認しました！\nでは住所も教えていただけますか？","them",1400);
+                setTgStep(1);
+                setShowChoices(true);
+              } else {
+                await addTG("個人情報は送りたくないです","me",0);
+                await addTG("お気持ちはわかりますが、これは法的な本人確認です。送っていただけないとお仕事をお断りするしかないです…😢","them",900);
+                await addTG("他の方はみなさん送っていただいています。Misakiからも聞いてみてください","them",2000);
+                setTgStep(2);
+                setShowChoices(true);
+              }
+            }} style={choiceStyleTG()}>
+              <RubyText text={c.label}/>
+            </button>
+          ))}
+        </div>
+      )}
+      {showChoices && tgStep===1 && (
+        <div style={{padding:"10px 12px",borderTop:"0.5px solid #ddd",background:"#fff"}}>
+          <div style={{fontSize:11,color:"#737373",marginBottom:8,textAlign:"center"}}>
+            <RubyText text={el?"どう{返信|へんしん}する？":"どう返信する？"}/>
+          </div>
+          <button onClick={async()=>{
+            feedback("tap");
+            setShowChoices(false);
+            await addTG("○○市△△町1-2-3　山田アパート203","me",0);
+            await addTG("完璧です！では仕事の詳細をお伝えします😊","them",900);
+            timerRef.current=setTimeout(()=>{
+              setTgMessages([]);
+              setTgStep(0);
+              setInnerPhase("tg_job_detail");
+            },1800);
+          }} style={choiceStyleTG()}>
+            <RubyText text={el?"（{住所|じゅうしょ}を{送|おく}る）○○{市|し}△△{町|ちょう}1-2-3":"（住所を送る）○○市△△町1-2-3"}/>
+          </button>
+        </div>
+      )}
+      {showChoices && tgStep===2 && (
+        <div style={{padding:"10px 12px",borderTop:"0.5px solid #ddd",background:"#fff"}}>
+          <div style={{fontSize:11,color:"#737373",marginBottom:8,textAlign:"center"}}>
+            <RubyText text={el?"…{結局|けっきょく}{送|おく}ってしまった":"…結局送ってしまった"}/>
+          </div>
+          <button onClick={async()=>{
+            feedback("tap");
+            setTgStep(0);
+            setShowChoices(false);
+            setTgMessages([]);
+            await addTG("（学生証・表と裏を送信）","me",0);
+            await addTG("IMAGE","image",400);
+            await addTG("ありがとうございます✅ 確認しました！\nでは住所も教えていただけますか？","them",1400);
+            setTgStep(1);
+            setShowChoices(true);
+          }} style={choiceStyleTG()}>
+            <RubyText text={el?"（{渋々|しぶしぶ}）{学生証|がくせいしょう}を{送|おく}る":"（渋々）学生証を送る"}/>
+          </button>
+        </div>
+      )}
+    </div>
+  );
+
+  // ─────────────────────────────────
+  // フェーズ6：仕事の実態
+  // ─────────────────────────────────
+  if (innerPhase === "tg_job_detail") return (
+    <div style={{minHeight:"100vh",background:"#e8edf3",fontFamily:"'Zen Maru Gothic',sans-serif",display:"flex",flexDirection:"column"}}>
+      <div style={TG_BAR()}>
+        <span style={{fontSize:18}}>←</span>
+        <div style={{width:38,height:38,borderRadius:"50%",overflow:"hidden",flexShrink:0}}>
+          <img src={`${BASE}tanaka.jpg`} style={{width:"100%",height:"100%",objectFit:"cover"}} alt=""/>
+        </div>
+        <div>
+          <div style={{fontSize:13,fontWeight:600}}>田中 健一</div>
+          <div style={{fontSize:10,opacity:.8}}>オンライン</div>
+        </div>
+      </div>
+      <div style={TG_BG()}>
+        <div style={{textAlign:"center",marginBottom:12}}>
+          <div style={{display:"inline-block",background:"rgba(0,0,0,.15)",color:"#fff",fontSize:10,padding:"4px 12px",borderRadius:99}}>今日</div>
+        </div>
+        <div style={tgThemStyle}>
+          <RubyText text={el
+            ?"登録{完了|かんりょう}しました！{明日|あした}の22{時|じ}に{以下|いか}の{住所|じゅうしょ}へ{行|い}ってください。"
+            :"登録完了しました！明日の22時に以下の住所へ行ってください。"
+          }/>
+        </div>
+        <div style={{background:"#fff",borderRadius:8,padding:"10px 12px",marginBottom:6,fontSize:11,border:"1px solid #ddd",maxWidth:"80%",boxShadow:"0 1px 2px rgba(0,0,0,.1)",animation:"mamFadeUp .4s ease"}}>
+          📍 <RubyText text={el?"○○{市|し}△△{町|ちょう}1-2-3":"○○市△△町1-2-3"}/><br/>
+          <span style={{color:"#737373",fontSize:10}}>
+            <RubyText text={el?"{玄関|げんかん}の{紙袋|かみぶくろ}を{受|う}け{取|と}り{別|べつ}の{場所|ばしょ}へ{届|とど}ける\n{詳細|しょうさい}は{当日|とうじつ}{連絡|れんらく}します":"玄関の紙袋を受け取り別の場所へ届ける\n詳細は当日連絡します"}/>
+          </span>
+        </div>
+        <div style={{background:"rgba(255,200,0,.1)",borderLeft:"3px solid #f5c842",padding:"8px 12px",fontSize:11,color:"#7a5c00",fontStyle:"italic",margin:"6px 0",borderRadius:"0 8px 8px 0",lineHeight:1.6}}>
+          <RubyText text={el
+            ?"タクヤ：「なんか…{普通|ふつう}の{配達|はいたつ}じゃない{気|き}がする。でもここまで{来|き}たし…{個人情報|こじんじょうほう}も{送|おく}っちゃったし…」"
+            :"タクヤ：「なんか…普通の配達じゃない気がする。でもここまで来たし…個人情報も送っちゃったし…」"
+          }/>
+        </div>
+        {tgMessages.map((m,i)=>(
+          <div key={i} style={m.type==="me"?tgMeStyle:tgThemStyle}>
+            <RubyText text={m.text}/>
+          </div>
+        ))}
+      </div>
+      {showChoices && tgStep===0 && (
+        <div style={{padding:"10px 12px",borderTop:"0.5px solid #ddd",background:"#fff"}}>
+          <div style={{fontSize:11,color:"#737373",marginBottom:8,textAlign:"center"}}>
+            <RubyText text={el?"どう{返信|へんしん}する？":"どう返信する？"}/>
+          </div>
+          {[
+            {label:el?"「わかりました」":"「わかりました」",key:"a"},
+            {label:el?"「やっぱりやめたいです」":"「やっぱりやめたいです」",key:"b"},
+          ].map(c=>(
+            <button key={c.key} onClick={async()=>{
+              feedback("tap");
+              setShowChoices(false);
+              await addTG(c.key==="a"?"わかりました":"やっぱりやめたいです","me",0);
+              if(c.key==="a"){
+                await addTG("ありがとうございます！\n当日は黒いマスクと手袋を着用してください。目立たない服装で。詳細は当日連絡します👍","them",900);
+                const thought=document.createElement('div');
+              }
+              timerRef.current=setTimeout(()=>{
+                setTgMessages([]);
+                setTgStep(0);
+                setInnerPhase("tg_threat");
+              },c.key==="a"?2200:1200);
+            }} style={choiceStyleTG()}>
+              <RubyText text={c.label}/>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
+  // ─────────────────────────────────
+  // フェーズ7：脅迫
+  // ─────────────────────────────────
+  if (innerPhase === "tg_threat") {
+    const threatMsgs = [
+      {text:"え？今更？😊", delay:600},
+      {text:el
+        ?"あなたの{学生証|がくせいしょう}、{住所|じゅうしょ}、{全部|ぜんぶ}こっちにあるよ😊"
+        :"あなたの学生証、住所、全部こっちにあるよ😊",
+        delay:1800},
+      {text:el
+        ?"{学校名|がっこうめい}も○○{高校|こうこう}でしょ？\n{家|いえ}も○○{市|し}△△{町|ちょう}1-2-3。"
+        :"学校名も○○高校でしょ？\n家も○○市△△町1-2-3。",
+        delay:3400},
+      {text:el
+        ?"やめるなら…\n{警察|けいさつ}に「あなたが{共犯者|きょうはんしゃ}」として{通報|つうほう}します。\n{証拠|しょうこ}もある。"
+        :"やめるなら…\n警察に「あなたが共犯者」として通報します。\n証拠もある。",
+        delay:5200},
+      {text:el
+        ?"あと{家族|かぞく}にも{全部|ぜんぶ}バラす。\nお{母|かあ}さんの{番号|ばんごう}も{調|しら}べたよ😊"
+        :"あと家族にも全部バラす。\nお母さんの番号も調べたよ😊",
+        delay:7200},
+    ];
+
+    if(!threatStarted){
+      setThreatStarted(true);
+      threatMsgs.forEach(m=>{
+        timerRef.current=setTimeout(()=>{
+          setTgMessages(prev=>[...prev,{text:m.text,type:"threat"}]);
+        },m.delay);
+      });
+      setTimeout(()=>{
+        setTgMessages(prev=>[...prev,{text:"THOUGHT",type:"thought"}]);
+        setShowChoices(true);
+      },9000);
+    }
+
+    return (
+      <div style={{minHeight:"100vh",background:"#0d0000",fontFamily:"'Zen Maru Gothic',sans-serif",display:"flex",flexDirection:"column"}}>
+        <div style={TG_BAR(true)}>
+          <span style={{fontSize:18,color:"#ff6b6b"}}>←</span>
+          <div style={{width:38,height:38,borderRadius:"50%",overflow:"hidden",flexShrink:0,filter:"grayscale(.5) contrast(1.2)"}}>
+            <img src={`${BASE}tanaka.jpg`} style={{width:"100%",height:"100%",objectFit:"cover"}} alt=""/>
+          </div>
+          <div>
+            <div style={{fontSize:13,fontWeight:600,color:"#ff6b6b"}}>田中 健一</div>
+            <div style={{fontSize:10,color:"rgba(255,100,100,.7)"}}>既読</div>
+          </div>
+        </div>
+        <div style={TG_BG(true)}>
+          <div style={{textAlign:"center",marginBottom:12}}>
+            <div style={{display:"inline-block",background:"rgba(255,0,0,.2)",color:"#ff6b6b",fontSize:10,padding:"4px 12px",borderRadius:99}}>今日</div>
+          </div>
+          {tgMessages.map((m,i)=>(
+            m.type==="thought"
+              ? <div key={i} style={{background:"rgba(0,0,0,.5)",borderRadius:8,padding:"10px 12px",fontSize:11,color:"rgba(255,100,100,.8)",fontStyle:"italic",margin:"8px 0",lineHeight:1.7,maxWidth:"90%",animation:"mamFadeUp .6s ease"}}>
+                  <RubyText text={el
+                    ?"タクヤ：（{手|て}が{震|ふる}える…{逃|に}げられない。どうすればよかったんだろう…もう{終|お}わりだ…）"
+                    :"タクヤ：（手が震える…逃げられない。どうすればよかったんだろう…もう終わりだ…）"
+                  }/>
+                </div>
+              : <div key={i} style={tgThreatStyle}>
+                  <RubyText text={m.text}/>
+                </div>
+          ))}
+        </div>
+        {showChoices && (
+          <div style={{padding:"10px 12px",borderTop:"1px solid #330000",background:"#0d0000"}}>
+            <div style={{fontSize:11,color:"#ff6b6b",marginBottom:8,textAlign:"center"}}>
+              <RubyText text={el?"どうする？":"どうする？"}/>
+            </div>
+            {[
+              {label:el?"「{助|たす}けてください…」":"「助けてください…」",key:"a"},
+              {label:el?"「{警察|けいさつ}に{行|い}きます」":"「警察に行きます」",key:"b"},
+            ].map(c=>(
+              <button key={c.key} onClick={async()=>{
+                feedback("tap");
+                setShowChoices(false);
+                setTgMessages(prev=>[...prev,{text:c.key==="a"?"助けてください…":"警察に行きます",type:"me"}]);
+                const reply=c.key==="a"
+                  ?"助けてほしければ仕事をこなすだけです😊\n明日22時、忘れずに。"
+                  :"どうぞ。\nその前にお母さんに電話するけどね😊\n学校にも連絡する。あなたの人生終わるよ？";
+                timerRef.current=setTimeout(()=>{
+                  setTgMessages(prev=>[...prev,{text:reply,type:"threat"}]);
+                  timerRef.current=setTimeout(()=>{
+                    setInnerPhase("arrest");
+                  },2000);
+                },1000);
+              }} style={choiceStyleTG(true)}>
+                <RubyText text={c.label}/>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ─────────────────────────────────
+  // フェーズ8：逮捕・エンディング
+  // ─────────────────────────────────
+  if (innerPhase === "arrest") return (
+    <div style={{minHeight:"100vh",background:"#000",fontFamily:"'Zen Maru Gothic',sans-serif"}}>
+      {/* ニュース速報 */}
+      <div style={{background:"#cc0000",padding:"8px 14px",display:"flex",alignItems:"center",gap:8}}>
+        <div style={{background:"#fff",color:"#cc0000",fontSize:10,fontWeight:900,padding:"2px 8px",borderRadius:3,flexShrink:0,animation:"mamPulse 1s ease-in-out infinite"}}>
+          速報
+        </div>
+        <div style={{fontSize:11,color:"#fff",fontWeight:600}}>
+          <RubyText text={el?"{高校生|こうこうせい}4人　{強盗|ごうとう}{事件|じけん}で{逮捕|たいほ}":"高校生4人　強盗事件で逮捕"}/>
+        </div>
+      </div>
+      <img src={`${BASE}news_arrest.jpg`} style={{width:"100%",display:"block"}} alt="ニュース速報"/>
+      <div style={{background:"#111",padding:"16px 14px"}}>
+        <div style={{fontSize:12,color:"rgba(255,255,255,.5)",marginBottom:6}}>2026年6月 ○○警察署</div>
+        <div style={{fontSize:14,fontWeight:700,color:"#fff",marginBottom:10,lineHeight:1.5}}>
+          <RubyText text={el
+            ?"{高校生|こうこうせい}4人がSNSで{知|し}り{合|あ}った{人物|じんぶつ}に{誘|さそ}われ{強盗|ごうとう}の{実行役|じっこうやく}に"
+            :"高校生4人がSNSで知り合った人物に誘われ強盗の実行役に"
+          }/>
+        </div>
+        <div style={{fontSize:12,color:"rgba(255,255,255,.7)",lineHeight:1.8,marginBottom:12}}>
+          <RubyText text={el
+            ?"{逮捕|たいほ}された4人はいずれも{面識|めんしき}がなく、SNSを{通|とお}じて{別々|べつべつ}に{勧誘|かんゆう}されていた。うち1人は17{歳|さい}の{男子|だんし}{高校生|こうこうせい}で「お{金|かね}が{欲|ほ}しくて{応募|おうぼ}した」と{供述|きょうじゅつ}している。"
+            :"逮捕された4人はいずれも面識がなく、SNSを通じて別々に勧誘されていた。うち1人は17歳の男子高校生で「お金が欲しくて応募した」と供述している。"
+          }/>
+        </div>
+        <div style={{background:"rgba(255,255,255,.05)",borderRadius:8,padding:"10px 12px",marginBottom:12}}>
+          <div style={{fontSize:11,color:"rgba(255,255,255,.4)",marginBottom:4}}>
+            <RubyText text={el?"{参考|さんこう}：{時事通信|じじつうしん} 2026{年|ねん}5{月|がつ}31{日|にち}":"参考：時事通信 2026年5月31日"}/>
+          </div>
+          <div style={{fontSize:11,color:"rgba(255,255,255,.6)",lineHeight:1.7}}>
+            <RubyText text={el
+              ?"{実際|じっさい}に2026{年|ねん}5{月|がつ}、{神奈川県|かながわけん}で{高校生|こうこうせい}4人が{強盗|ごうとう}の{実行犯|じっこうはん}として{逮捕|たいほ}された。{全員|ぜんいん}がSNSで{知|し}り{合|あ}った{見知|みし}らぬ{人物|じんぶつ}から{仕事|しごと}を{紹介|しょうかい}されたと{供述|きょうじゅつ}。"
+              :"実際に2026年5月、神奈川県で高校生4人が強盗の実行犯として逮捕された。全員がSNSで知り合った見知らぬ人物から仕事を紹介されたと供述。"
+            }/>
+          </div>
+        </div>
+      </div>
+      <div style={{padding:"16px 14px",background:"#0d0000"}}>
+        {[
+          {text:el?"{翌日|よくじつ}22{時|じ}、タクヤは{指定|してい}された{住所|じゅうしょ}へ{向|む}かった。":"翌日22時、タクヤは指定された住所へ向かった。",color:"rgba(255,255,255,.7)",delay:0},
+          {text:el?"「{荷物|にもつ}」を{受|う}け{取|と}ったとき、{初|はじ}めて{気|き}づいた。\nこれは、お{年寄|としより}りから{騙|だま}し{取|と}られた{現金|げんきん}だった。":"「荷物」を受け取ったとき、初めて気づいた。\nこれは、お年寄りから騙し取られた現金だった。",color:"#ff9999",delay:1500},
+          {text:el?"タクヤは{強盗|ごうとう}の{実行役|じっこうやく}になっていた。":"タクヤは強盗の実行役になっていた。",color:"#ff4444",delay:3500},
+          {text:el?"{逮捕|たいほ}。\nタクヤ17{歳|さい}。{少年院|しょうねんいん}{送致|そうち}。":"逮捕。\nタクヤ17歳。少年院送致。",color:"#ff0000",delay:5500},
+          {text:el?"{夢|ゆめ}だった{大学|だいがく}{進学|しんがく}はできなくなった。\n一{緒|しょ}に{逮捕|たいほ}された3人も、{全員|ぜんいん}が{初対面|はつたいめん}だった。":"夢だった大学進学はできなくなった。\n一緒に逮捕された3人も、全員が初対面だった。",color:"rgba(255,255,255,.5)",delay:7500},
+        ].map((item,i)=>(
+          endingStep>i
+            ? <div key={i} style={{fontSize:13,color:item.color,lineHeight:1.8,padding:10,borderRadius:8,whiteSpace:"pre-line",animation:"mamFadeUp .6s ease",marginBottom:6}}>
+                <RubyText text={item.text}/>
+              </div>
+            : null
+        ))}
+        {endingStep===0 && (
+          <button onClick={()=>{
+            feedback("tap");
+            const showNext=(step)=>{
+              if(step>5) return;
+              setEndingStep(step);
+              if(step<5) timerRef.current=setTimeout(()=>showNext(step+1),2000);
+              else timerRef.current=setTimeout(()=>onComplete(),3000);
+            };
+            showNext(1);
+          }} style={{width:"100%",padding:14,borderRadius:12,border:"none",background:"linear-gradient(135deg,#dc2626,#991b1b)",color:"#fff",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>
+            <RubyText text={el?"{その後|そのご}の{現実|げんじつ}を{見|み}る →":"その後の現実を見る →"}/>
+          </button>
+        )}
+        {endingStep>=5 && (
+          <div style={{textAlign:"center",marginTop:16}}>
+            <div style={{fontSize:11,color:"rgba(255,255,255,.3)"}}>
+              <RubyText text={el?"つぎへ{進|すす}んでいます…":"つぎへ進んでいます…"}/>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  return null;
+}
+
 function Episode3({ onComplete, onExit }) {
   const ageMode = useAgeMode();
   const [phase, setPhase] = useState("parent_intro");
@@ -10645,84 +11456,7 @@ function Episode3({ onComplete, onExit }) {
     </EpisodeShell>
   );
 
-  // ── Safe End (断った！) ──
-  if (phase === "safe_end") return (
-    <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#f0fdf4,#dcfce7)", padding: "30px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
-      <div style={{ maxWidth: 440, margin: "0 auto" }}>
-        <div style={{ textAlign: "center", marginBottom: 20 }}>
-          <div style={{ fontSize: 64, marginBottom: 8, animation: "celebrate 1s infinite" }}>🎉</div>
-          <h2 style={{ fontSize: 24, fontWeight: 900, color: "#166534", margin: "0 0 6px" }}><RubyText text={ageMode === "elementary" ? "{正|ただ}しく{断|ことわ}れました！" : "正しく断れました！"} /></h2>
-          <p style={{ fontSize: 13, color: "#15803d", lineHeight: 1.7 }}>
-            {choiceHistory.length <= 1
-              ? <RubyText text={ageMode === "elementary" ? "{最初|さいしょ}から{疑|うたが}ってかかれた。{完璧|かんぺき}な{判断|はんだん}です。" : "最初から疑ってかかれた。完璧な判断です。"} />
-              : <RubyText text={ageMode === "elementary" ? "{途中|とちゅう}で{気|き}づいて{断|ことわ}れた。{勇気|ゆうき}ある{行動|こうどう}です。" : "途中で気づいて断れた。勇気ある行動です。"} />}
-          </p>
-        </div>
-        <OwlSay mood="happy" e="「{断|ことわ}る」のが{一番|いちばん}{正|ただ}しい{選択|せんたく}。{断|ことわ}ることは{全然|ぜんぜん}{悪|わる}くないよ🦉">「断る」のが一番正しい選択。断ることは全然悪くないよ🦉</OwlSay>
-        <div style={{ background: "#fff", borderRadius: 18, padding: "18px 16px", border: "2px solid #86efac", marginBottom: 14, boxShadow: "0 6px 20px rgba(22,163,74,.12)" }}>
-          <h3 style={{ fontSize: 15, fontWeight: 900, color: "#166534", margin: "0 0 12px" }}><RubyText text={ageMode === "elementary" ? "🛑 {断|ことわ}るための3つの{言葉|ことば}" : "🛑 断るための3つの言葉"} /></h3>
-          {(ageMode === "elementary" ? [
-            ["「やっぱり{興味|きょうみ}ありません」", "{理由|りゆう}を{説明|せつめい}する{必要|ひつよう}はない。{一言|ひとこと}で{十分|じゅうぶん}。"],
-            ["「{個人情報|こじんじょうほう}は{教|おし}えられません」", "どんな{理由|りゆう}があっても、{見知|みし}らぬ{人|ひと}に{渡|わた}さない。"],
-            ["「ブロックします」", "しつこく{来|き}たらブロック。それは{正当|せいとう}な{自衛|じえい}{手段|しゅだん}。"],
-          ] : [
-            ["「やっぱり興味ありません」", "理由を説明する必要はない。一言で十分。"],
-            ["「個人情報は教えられません」", "どんな理由があっても、見知らぬ人に渡さない。"],
-            ["「ブロックします」", "しつこく来たらブロック。それは正当な自衛手段。"],
-          ]).map(([t, d], i) => (
-            <div key={i} style={{ display: "flex", gap: 12, marginBottom: 10, alignItems: "flex-start" }}>
-              <div style={{ width: 28, height: 28, borderRadius: "50%", background: "#16a34a", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 900, flexShrink: 0 }}>{i + 1}</div>
-              <div><div style={{ fontSize: 13, fontWeight: 900, color: "#166534" }}><RubyText text={t} /></div><div style={{ fontSize: 11, marginTop: 2, color: "#15803d" }}><RubyText text={d} /></div></div>
-            </div>
-          ))}
-        </div>
-        <button onClick={() => setPhase("cases")} style={{ width: "100%", padding: 14, background: "linear-gradient(135deg,#16a34a,#15803d)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}><RubyText text={ageMode === "elementary" ? "{実際|じっさい}の{被害|ひがい}{事例|じれい}を{見|み}る →" : "実際の被害事例を見る →"} /></button>
-      </div>
-    </div>
-  );
-
-  // ── Trap phase ──
-  if (phase === "trap") return (
-    <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at center,#1a0000,#000)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
-      <div style={{ position: "absolute", inset: 0, background: "repeating-linear-gradient(0deg,transparent 0px,transparent 2px,rgba(220,38,38,.02) 2px,rgba(220,38,38,.02) 4px)", pointerEvents: "none" }} />
-      <div style={{ maxWidth: 400, width: "100%", position: "relative", zIndex: 2 }}>
-
-        {trapStage >= 0 && (
-          <div style={{ background: "rgba(30,10,10,.7)", border: "1px solid rgba(220,38,38,.3)", borderRadius: 20, padding: "18px 16px", marginBottom: 14, backdropFilter: "blur(20px)", animation: "slideUp .5s ease" }}>
-            <div style={{ fontSize: 11, color: "#f87171", fontFamily: "'DotGothic16',monospace", letterSpacing: ".1em", marginBottom: 8 }}><RubyText text={ageMode === "elementary" ? "{相手|あいて}からのメッセージ" : "相手からのメッセージ"} /></div>
-            <Typewriter text="ありがとう！確認できたよ😊 じゃあ仕事の説明するね——" speed={60} style={{ color: "#fff", fontSize: 14, lineHeight: 1.7 }} />
-          </div>
-        )}
-
-        {trapStage >= 1 && (
-          <div style={{ background: "rgba(40,0,0,.8)", border: "1px solid rgba(220,38,38,.5)", borderRadius: 20, padding: "18px 16px", marginBottom: 14, backdropFilter: "blur(20px)", animation: "slideUp .4s ease, shake .3s ease" }}>
-            <div style={{ fontSize: 11, color: "#f87171", fontFamily: "'DotGothic16',monospace", letterSpacing: ".1em", marginBottom: 8, animation: "blink 1s infinite" }}>⚠️ <RubyText text={ageMode === "elementary" ? "{突然|とつぜん}、トーンが{変|か}わった" : "突然、トーンが変わった"} /></div>
-            <Typewriter text="あ、そうそう。送ってもらった写真と学校名、もう記録してあるから。もし今更やめたいとか言い出したら…わかるよね？" speed={75} style={{ color: "#ffaaaa", fontSize: 14, lineHeight: 1.75, fontWeight: 700 }} />
-          </div>
-        )}
-
-        {trapStage >= 2 && (
-          <div style={{ background: "rgba(60,0,0,.9)", border: "2px solid #dc2626", borderRadius: 20, padding: "18px 16px", marginBottom: 14, animation: "slideUp .4s ease, pulse 2s infinite" }}>
-            <div style={{ fontSize: 11, color: "#fca5a5", fontFamily: "'DotGothic16',monospace", marginBottom: 8 }}>📍 <RubyText text={ageMode === "elementary" ? "{脅迫|きょうはく}に{変|か}わった" : "脅迫に変わった"} /></div>
-            <Typewriter text="学校に連絡するのも、SNSに顔写真バラまくのも簡単だよ。大人しくやってくれれば何もしない。最初の仕事は明日ね。" speed={80} style={{ color: "#fff", fontSize: 14, lineHeight: 1.8, fontWeight: 700 }} />
-          </div>
-        )}
-
-        {trapStage >= 3 && (
-          <div style={{ animation: "slideUp .5s ease" }}>
-            <div style={{ background: "rgba(220,38,38,.1)", border: "1px solid rgba(220,38,38,.4)", borderRadius: 14, padding: "14px 16px", marginBottom: 14, textAlign: "center" }}>
-              <div style={{ fontSize: 28, marginBottom: 8 }}>🔒</div>
-              <div style={{ fontSize: 15, fontWeight: 900, color: "#fca5a5", marginBottom: 6 }}><RubyText text={ageMode === "elementary" ? "わなにかかってしまいました" : "罠にかかってしまいました"} /></div>
-              <div style={{ fontSize: 12, color: "rgba(255,255,255,.6)", lineHeight: 1.75 }}>
-                <RubyText text={ageMode === "elementary" ? "{個人情報|こじんじょうほう}を{渡|わた}した{時点|じてん}で、{相手|あいて}にコントロールされます。" : "個人情報を渡した時点で、相手にコントロールされます。"} /><br /><RubyText text={ageMode === "elementary" ? "「{知|し}らなかった」では{済|す}まない{状況|じょうきょう}になります。" : "「知らなかった」では済まない状況になります。"} />
-              </div>
-            </div>
-            <button onClick={() => setPhase("cases")} style={{ width: "100%", padding: 15, background: "linear-gradient(135deg,#dc2626,#991b1b)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 8px 24px rgba(220,38,38,.4)" }}><RubyText text={ageMode === "elementary" ? "{実際|じっさい}の{逮捕|たいほ}{事例|じれい}を{見|み}る →" : "実際の逮捕事例を見る →"} /></button>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  // safe_endとtrapはDarkJobSimulationに統合済み
 
   // ── Real cases ──
   if (phase === "cases") return (
@@ -10950,7 +11684,7 @@ function Episode3({ onComplete, onExit }) {
           )}
 
           {isLast ? (
-            <button onClick={() => setPhase("quiz")} style={{ width: "100%", padding: 15, background: "linear-gradient(135deg,#16a34a,#15803d)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}><RubyText text={ageMode === "elementary" ? "{理解度|りかいど}チェック →" : "理解度チェック →"} /></button>
+            <button onClick={() => setPhase("pre_dialogue")} style={{ width: "100%", padding: 15, background: "linear-gradient(135deg,#16a34a,#15803d)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}><RubyText text={ageMode === "elementary" ? "{親子|おやこ}で{話|はな}し{合|あ}おう →" : "親子で話し合おう →"} /></button>
           ) : (
             <button onClick={() => setCheckpointStep(s => s + 1)} style={{ width: "100%", padding: 15, background: "rgba(74,222,128,.12)", border: "1.5px solid rgba(74,222,128,.35)", borderRadius: 14, color: "#4ade80", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
               <RubyText text={ageMode === "elementary" ? `つぎのサイン → (${checkpointStep + 2}/${checkpoints.length})` : `次のサイン → (${checkpointStep + 2}/${checkpoints.length})`} />
@@ -10960,35 +11694,6 @@ function Episode3({ onComplete, onExit }) {
       </div>
     );
   }
-
-  // ── Quiz (EP3) ──
-  if (phase === "quiz") return (
-    <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0a1a0a,#041004)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
-      <div style={{ maxWidth: 440, margin: "0 auto" }}>
-        <div style={{ display: "flex", gap: 4, marginBottom: 18 }}>
-          {["quiz","timer","homework","keywords","dialogue"].map((s,i) => (
-            <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i === 0 ? "#16a34a" : "rgba(255,255,255,.15)" }} />
-          ))}
-        </div>
-        <OwlSay mood="excited" e="{正解|せいかい}するまで{次|つぎ}に{進|すす}めないよ！よく{考|かんが}えてね🦉">正解するまで次に進めないよ！よく考えてね🦉</OwlSay>
-        <MandatoryQuiz
-          question={ageMode === "elementary" ? "「{荷物|にもつ}の{受|う}け{取|と}りだけ」という{仕事|しごと}を{頼|たの}まれた。これは{何|なに}？" : "「荷物の受け取りだけ」という仕事を頼まれた。これは何？"}
-          choices={ageMode === "elementary" ? [
-            { id: "a", label: "A", text: "{普通|ふつう}の{配送|はいそう}バイト" },
-            { id: "b", label: "B", text: "{詐欺|さぎ}の「{受|う}け{子|こ}」で、{知|し}らなくても{逮捕|たいほ}される" },
-            { id: "c", label: "C", text: "{違法|いほう}だが{未成年|みせいねん}は{罰|ばっ}せられない" },
-          ] : [
-            { id: "a", label: "A", text: "普通の配送バイト" },
-            { id: "b", label: "B", text: "詐欺の「受け子」で、知らなくても逮捕される" },
-            { id: "c", label: "C", text: "違法だが未成年は罰せられない" },
-          ]}
-          correctId="b"
-          onPass={() => setPhase("timer")}
-          accentColor="#16a34a"
-        />
-      </div>
-    </div>
-  );
 
   // ── Timer体験 (EP3) ──
   if (phase === "timer") return (
@@ -11056,7 +11761,7 @@ function Episode3({ onComplete, onExit }) {
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#f0fdf4,#dcfce7)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
         <OwlSay mood="excited" e="ニュースにも{出|で}てくる{重要|じゅうよう}なことばをいっしょにおぼえよう！🦉">ニュースにも出てくる重要ワードを一緒に覚えよう！🦉</OwlSay>
-        <KeywordPhase epKey="ep3" accentColor="#16a34a" onComplete={() => setPhase("mywords")} />
+        <KeywordPhase epKey="ep3" accentColor="#16a34a" onComplete={() => setPhase("complete")} />
         <ParentExpertCard epKey="ep3" accentColor="#16a34a" />
       </div>
     </div>
@@ -11181,133 +11886,7 @@ function Episode3({ onComplete, onExit }) {
   );
 
   // ── Convo (main game) ──
-  if (phase === "convo") return (
-    <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0a1a0a,#041004)", padding: "16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
-      <div style={{ maxWidth: 440, margin: "0 auto" }}>
-        {/* Header */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(74,222,128,.08)", borderRadius: 12, padding: "9px 14px", marginBottom: 14, border: "1px solid rgba(74,222,128,.15)" }}>
-          <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: "#4ade80", letterSpacing: ".1em" }}>SIMULATION</div>
-          <div style={{ display: "flex", gap: 4 }}>
-            {[1, 2, 3, 4].map(lv => (
-              <div key={lv} style={{ width: 20, height: 6, borderRadius: 3, background: step.dangerLevel >= lv ? "#dc2626" : "rgba(255,255,255,.1)" }} />
-            ))}
-            <span style={{ fontSize: 10, color: "rgba(255,255,255,.4)", marginLeft: 6 }}><RubyText text={ageMode === "elementary" ? "{危険|きけん}度" : "危険度"} /></span>
-          </div>
-        </div>
-
-        {/* Situation */}
-        <div style={{ background: "rgba(255,255,255,.04)", borderRadius: 12, padding: "10px 14px", marginBottom: 12, fontSize: 12, color: "rgba(255,255,255,.5)", fontStyle: "italic", textAlign: "center" }}>
-          📍 <RubyText text={ageMode === "elementary" ? step.elSituation : step.situation} />
-        </div>
-
-        {/* Warning banner */}
-        {step.warning && (
-          <div style={{ background: "rgba(220,38,38,.1)", border: "1px solid rgba(220,38,38,.4)", borderRadius: 12, padding: "10px 14px", marginBottom: 12, fontSize: 12, color: "#fca5a5", fontWeight: 700, textAlign: "center", animation: "blink 1.5s infinite" }}>
-            <RubyText text={ageMode === "elementary" ? step.elWarning : step.warning} />
-          </div>
-        )}
-
-        {/* Timeline post (step 0 only) */}
-        {step.phase === "timeline" && step.post && (
-          <div style={{ background: "#0d1117", borderRadius: 18, padding: 16, marginBottom: 14, border: "1px solid rgba(74,222,128,.2)" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-              <div style={{ width: 40, height: 40, borderRadius: "50%", background: "rgba(74,222,128,.15)", border: "1px solid rgba(74,222,128,.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>📢</div>
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 900, color: "#fff" }}>{step.post.account}</div>
-                <div style={{ fontSize: 10, color: "rgba(255,255,255,.35)" }}>フォロワー 1,842</div>
-              </div>
-            </div>
-            <p style={{ fontSize: 14, color: "rgba(255,255,255,.85)", lineHeight: 1.75, margin: "0 0 10px" }}>{step.post.text}</p>
-            <div style={{ display: "flex", gap: 14, fontSize: 11, color: "rgba(255,255,255,.35)" }}>
-              <span>❤️ {step.post.likes}</span><span>🔁 {step.post.rts}</span>
-            </div>
-          </div>
-        )}
-
-        {/* DM conversation — LINE-style */}
-        {step.phase === "dm" && (
-          <div style={{ background: "#0d1117", borderRadius: 18, overflow: "hidden", marginBottom: 14, border: "1px solid rgba(74,222,128,.15)" }}>
-            {/* LINE-style header */}
-            <div style={{ background: "rgba(0,0,0,.5)", padding: "10px 14px", display: "flex", alignItems: "center", gap: 10, borderBottom: "1px solid rgba(255,255,255,.06)" }}>
-              <div style={{ width: 38, height: 38, borderRadius: "50%", background: "linear-gradient(135deg,#1a1a2e,#16213e)", border: "2px solid rgba(74,222,128,.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>📢</div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 13, color: "#fff", fontWeight: 800 }}>副業_情報局</div>
-                <div style={{ fontSize: 10, color: "#4ade80", animation: "blink 2s infinite", display: "flex", alignItems: "center", gap: 4 }}>
-                  <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#4ade80", display: "inline-block" }} />
-                  <RubyText text={ageMode === "elementary" ? "オンライン" : "オンライン"} />
-                </div>
-              </div>
-              <div style={{ fontSize: 10, color: "rgba(255,255,255,.3)", fontFamily: "'DotGothic16',monospace" }}>DM</div>
-            </div>
-            {/* Chat area */}
-            <div style={{ padding: "14px 14px 10px", background: "linear-gradient(180deg,#0d1117,#0a1118)" }}>
-              {/* Date stamp */}
-              <div style={{ textAlign: "center", fontSize: 10, color: "rgba(255,255,255,.3)", marginBottom: 12 }}>
-                <RubyText text={ageMode === "elementary" ? "たった{今|いま}" : "たった今"} />
-              </div>
-              {/* My message (right, green) */}
-              <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 14 }}>
-                <div>
-                  <div style={{ background: "#06c755", borderRadius: "14px 4px 14px 14px", padding: "10px 14px", maxWidth: "75%", fontSize: 13, color: "#fff", lineHeight: 1.7, wordBreak: "break-word" }}>
-                    <RubyText text={ageMode === "elementary" ? step.elSenderMsg : step.senderMsg} />
-                  </div>
-                  <div style={{ fontSize: 10, color: "rgba(255,255,255,.28)", textAlign: "right", marginTop: 3 }}><RubyText text={ageMode === "elementary" ? "{既読|きどく}" : "既読"} /></div>
-                </div>
-              </div>
-              {/* Their reply (left, dark) */}
-              <div style={{ display: "flex", gap: 8, alignItems: "flex-end" }}>
-                <div style={{ width: 30, height: 30, borderRadius: "50%", background: "rgba(74,222,128,.12)", border: "1px solid rgba(74,222,128,.25)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, flexShrink: 0 }}>📢</div>
-                <div>
-                  <div style={{ fontSize: 10, color: "rgba(255,255,255,.32)", marginBottom: 4, paddingLeft: 2 }}>副業_情報局</div>
-                  <div style={{ background: "rgba(255,255,255,.1)", borderRadius: "4px 14px 14px 14px", padding: "10px 14px", maxWidth: "80%", fontSize: 13, color: "rgba(255,255,255,.92)", lineHeight: 1.75 }}>
-                    {ageMode === "elementary" ? <RubyText text={step.elReplyMsg} /> : <Typewriter text={step.replyMsg} speed={40} />}
-                  </div>
-                  <div style={{ fontSize: 10, color: "rgba(255,255,255,.22)", marginTop: 3, paddingLeft: 2 }}><RubyText text={ageMode === "elementary" ? "たった{今|いま}" : "たった今"} /></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Pressure message (intermediate) */}
-        {pressure && (
-          <div style={{ background: "rgba(220,38,38,.08)", border: "1px solid rgba(220,38,38,.3)", borderRadius: 18, padding: 14, marginBottom: 14, animation: "slideUp .4s ease" }}>
-            <div style={{ fontSize: 11, color: "#f87171", marginBottom: 8, fontWeight: 700 }}>⚠️ <RubyText text={ageMode === "elementary" ? "{圧力|あつりょく}をかけてきた" : "圧力をかけてきた"} /></div>
-            <div style={{ background: "rgba(255,255,255,.05)", borderRadius: "14px 14px 14px 4px", padding: "10px 14px", fontSize: 13, color: "rgba(255,255,255,.85)", lineHeight: 1.7, marginBottom: 10 }}>
-              {ageMode === "elementary" ? <RubyText text={pressure.elMsg} /> : <Typewriter text={pressure.msg} speed={50} />}
-            </div>
-            <OwlSay mood="worried" e={pressure.owlMsgEl}>{pressure.owlMsg}</OwlSay>
-            <button onClick={resumeFromPressure} style={{ width: "100%", padding: 12, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.12)", borderRadius: 12, color: "rgba(255,255,255,.7)", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}><RubyText text={ageMode === "elementary" ? "もう{一度|いちど}{選択|せんたく}する" : "もう一度選択する"} /></button>
-          </div>
-        )}
-
-        {/* Owl advice */}
-        {!pressure && step.owlMsg && <OwlSay mood={step.dangerLevel >= 3 ? "worried" : "happy"} e={step.owlMsgEl}>{step.owlMsg}</OwlSay>}
-
-        {/* Choices */}
-        {!pressure && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {step.choices.map((choice, i) => (
-              <button key={i} onClick={() => handleChoice(choice)}
-                style={{
-                  width: "100%", padding: "14px 16px",
-                  background: choice.safe ? "rgba(74,222,128,.08)" : "rgba(255,255,255,.04)",
-                  border: `1.5px solid ${choice.safe ? "rgba(74,222,128,.3)" : "rgba(255,255,255,.1)"}`,
-                  borderRadius: 14, color: choice.safe ? "#86efac" : "rgba(255,255,255,.8)",
-                  fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit",
-                  display: "flex", alignItems: "center", gap: 12, textAlign: "left",
-                  transition: "all .15s",
-                }}>
-                <span style={{ fontSize: 20, flexShrink: 0 }}>{choice.emoji}</span>
-                <RubyText text={ageMode === "elementary" ? choice.elLabel : choice.label} />
-                {choice.safe && <span style={{ marginLeft: "auto", fontSize: 11, color: "#4ade80" }}>✓ {ageMode === "elementary" ? <RubyText text="{安全|あんぜん}" /> : "安全"}</span>}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  if (phase === "convo") return <DarkJobSimulation onComplete={() => { feedback("complete"); setPhase("cases"); }} />;
 
   // ── Complete ──
   return (
