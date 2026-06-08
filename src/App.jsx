@@ -10550,7 +10550,7 @@ const PRESSURE_MSGS = {
 function DarkJobSimulation({ onComplete }) {
   const ageMode = useAgeMode();
   const el = ageMode === "elementary";
-  const [innerPhase, setInnerPhase] = useState("ig_timeline");
+  const [innerPhase, setInnerPhase] = useState("takuya_intro");
   const [dmStep, setDmStep] = useState(0);
   const [tgStep, setTgStep] = useState(0);
   const [chatMessages, setChatMessages] = useState([]);
@@ -10895,6 +10895,150 @@ function DarkJobSimulation({ onComplete }) {
   );
 
   // ─────────────────────────────────
+  // フェーズ0：タクヤ紹介
+  // ─────────────────────────────────
+  if (innerPhase === "takuya_intro") return (
+    <div style={{
+      minHeight:"100vh",
+      background:"linear-gradient(180deg,#1a0d2e,#120920)",
+      fontFamily:"'Zen Maru Gothic',sans-serif",
+      padding:"32px 24px 40px",
+      display:"flex",
+      flexDirection:"column",
+      alignItems:"center",
+    }}>
+      <div style={{maxWidth:380,width:"100%"}}>
+
+        {/* ヘッダー */}
+        <div style={{textAlign:"center",marginBottom:20}}>
+          <div style={{
+            fontSize:11,fontWeight:900,
+            color:"rgba(124,58,237,.7)",
+            letterSpacing:".05em",
+            marginBottom:8,
+          }}>
+            <RubyText text={el?"このEPの{主人公|しゅじんこう}":"このEPの主人公"}/>
+          </div>
+          <div style={{fontSize:18,fontWeight:900,color:"#fff",lineHeight:1.5}}>
+            <RubyText text={el
+              ?"{今回|こんかい}はこの{人物|じんぶつ}として\n{体験|たいけん}してみよう"
+              :"今回はこの人物として\n体験してみよう"
+            }/>
+          </div>
+        </div>
+
+        {/* キャラクターカード */}
+        <div style={{
+          background:"rgba(255,255,255,.06)",
+          border:"1px solid rgba(124,58,237,.3)",
+          borderRadius:20,
+          overflow:"hidden",
+          marginBottom:20,
+        }}>
+          {/* 学生証カード風の写真表示 */}
+          <div style={{
+            background:"linear-gradient(135deg,#1a3a6b,#2554a0)",
+            padding:20,
+            display:"flex",
+            alignItems:"center",
+            gap:16,
+          }}>
+            <div style={{
+              width:80,height:100,
+              borderRadius:8,
+              overflow:"hidden",
+              border:"2px solid rgba(255,255,255,.3)",
+              flexShrink:0,
+              background:"#1a2a4a",
+            }}>
+              <img
+                src="/images/ep3/student_id.jpg"
+                style={{
+                  width:"100%",height:"100%",
+                  objectFit:"cover",
+                  objectPosition:"15% 10%",
+                  transform:"scale(2.2)",
+                  transformOrigin:"20% 18%",
+                }}
+                alt="タクヤ"
+              />
+            </div>
+            <div>
+              <div style={{fontSize:11,color:"rgba(255,255,255,.5)",marginBottom:4}}>
+                <RubyText text={el?"{横浜市立|よこはましりつ}みなとみらい{高等学校|こうとうがっこう}":"横浜市立みなとみらい高等学校"}/>
+              </div>
+              <div style={{fontSize:22,fontWeight:900,color:"#fff",marginBottom:4}}>
+                <RubyText text={el?"{山田|やまだ} タクヤ":"山田 タクヤ"}/>
+              </div>
+              <div style={{fontSize:13,color:"rgba(255,255,255,.7)"}}>
+                <RubyText text={el?"17{歳|さい}・{高校|こうこう}2{年生|ねんせい}":"17歳・高校2年生"}/>
+              </div>
+            </div>
+          </div>
+
+          {/* プロフィール詳細 */}
+          <div style={{padding:"16px 20px",display:"flex",flexDirection:"column",gap:12}}>
+            {[
+              {icon:"🎮",label:el?"{趣味|しゅみ}":"趣味",value:el?"{大好|だいす}きなゲームに{毎日|まいにち}{熱中|ねっちゅう}":"大好きなゲームに毎日熱中"},
+              {icon:"💸",label:el?"{悩|なや}み":"悩み",value:el?"{今月|こんげつ}のお{小遣|こづか}いをガチャで{使|つか}い{切|き}った…":"今月のお小遣いをガチャで使い切った…"},
+              {icon:"🤔",label:el?"{考|かんが}えていること":"考えていること",value:el?"「あと5,000{円|えん}あれば{限定|げんてい}キャラが{引|ひ}けるのに」":"「あと5,000円あれば限定キャラが引けるのに」"},
+            ].map((item,i)=>(
+              <div key={i} style={{display:"flex",alignItems:"flex-start",gap:10}}>
+                <span style={{fontSize:18,flexShrink:0}}>{item.icon}</span>
+                <div>
+                  <div style={{fontSize:10,color:"rgba(255,255,255,.4)",marginBottom:2}}>
+                    <RubyText text={item.label}/>
+                  </div>
+                  <div style={{fontSize:12,color:"rgba(255,255,255,.8)",lineHeight:1.6}}>
+                    <RubyText text={item.value}/>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 導入テキスト */}
+        <div style={{
+          background:"rgba(255,255,255,.05)",
+          border:"0.5px solid rgba(255,255,255,.1)",
+          borderRadius:12,
+          padding:"14px 16px",
+          marginBottom:24,
+          fontSize:13,
+          color:"rgba(255,255,255,.75)",
+          lineHeight:1.8,
+          textAlign:"center",
+        }}>
+          <RubyText text={el
+            ?"ある{日|ひ}、タクヤはInstagramで\nある{投稿|とうこう}を{見|み}かけた…\n\nあなたがタクヤとして{体験|たいけん}してみよう。\n{選択肢|せんたくし}を{選|えら}びながら{進|すす}んでいくよ。"
+            :"ある日、タクヤはInstagramで\nある投稿を見かけた…\n\nあなたがタクヤとして体験してみよう。\n選択肢を選びながら進んでいくよ。"
+          }/>
+        </div>
+
+        {/* スタートボタン */}
+        <button
+          onClick={()=>{feedback("tap");setInnerPhase("ig_timeline");}}
+          style={{
+            width:"100%",
+            padding:16,
+            borderRadius:14,
+            border:"none",
+            background:"linear-gradient(135deg,#7c3aed,#4f46e5)",
+            color:"#fff",
+            fontSize:16,
+            fontWeight:900,
+            cursor:"pointer",
+            fontFamily:"inherit",
+          }}>
+          <RubyText text={el?"{体験|たいけん}スタート →":"体験スタート →"}/>
+        </button>
+
+      </div>
+    </div>
+  );
+
+  // ─────────────────────────────────
   // フェーズ4a：Telegramインストール画面
   // ─────────────────────────────────
   if (innerPhase === "tg_install") return (
@@ -11105,18 +11249,37 @@ function DarkJobSimulation({ onComplete }) {
             :"では本人確認をさせてください。学生証の表と裏の写真を送っていただけますか？個人情報は厳重に管理します🙏"
           }/>
         </div>
-        {tgMessages.map((m,i)=>(
-          <div key={i} style={
-            m.type==="me" ? tgMeStyle :
-            m.type==="image" ? {marginLeft:"auto",marginBottom:8,borderRadius:10,overflow:"hidden",maxWidth:"72%",boxShadow:"0 2px 8px rgba(0,0,0,.25)",animation:"mamFadeUp .4s ease"} :
-            tgThemStyle
-          }>
-            {m.type==="image"
-              ? <img src={`${BASE}student_id.jpg`} style={{width:"100%",display:"block",borderRadius:10}} alt="学生証"/>
-              : <RubyText text={m.text}/>
-            }
-          </div>
-        ))}
+        {tgMessages.map((m,i)=>{
+          if(m.type==="image"){
+            return (
+              <div key={i} style={{
+                marginLeft:"auto",
+                marginBottom:8,
+                borderRadius:10,
+                overflow:"hidden",
+                maxWidth:"72%",
+                boxShadow:"0 2px 8px rgba(0,0,0,.25)",
+                animation:"mamFadeUp .4s ease",
+              }}>
+                <img
+                  src="/images/ep3/student_id.jpg"
+                  style={{width:"100%",display:"block",borderRadius:10}}
+                  alt="学生証"
+                  onError={(e)=>{
+                    e.target.style.display='none';
+                    e.target.parentElement.innerHTML=
+                      '<div style="background:#1a3a6b;padding:12px;color:#fff;fontSize:11px;borderRadius:10px">📋 学生証を送信しました</div>';
+                  }}
+                />
+              </div>
+            );
+          }
+          return (
+            <div key={i} style={m.type==="me"?tgMeStyle:tgThemStyle}>
+              <RubyText text={m.text}/>
+            </div>
+          );
+        })}
       </div>
       {showChoices && tgStep===0 && (
         <div style={{padding:"10px 12px",borderTop:"0.5px solid #ddd",background:"#fff"}}>
