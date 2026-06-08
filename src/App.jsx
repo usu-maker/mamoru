@@ -11227,207 +11227,229 @@ function DarkJobSimulation({ onComplete }) {
   // ─────────────────────────────────
   // フェーズ5：個人情報要求
   // ─────────────────────────────────
-  if (innerPhase === "tg_personal_info") return (
-    <div style={{minHeight:"100vh",background:"#e8edf3",fontFamily:"'Zen Maru Gothic',sans-serif",display:"flex",flexDirection:"column"}}>
-      <div style={TG_BAR()}>
-        <span style={{fontSize:18}}>←</span>
-        <div style={{width:38,height:38,borderRadius:"50%",overflow:"hidden",flexShrink:0}}>
-          <img src={`${BASE}tanaka.jpg`} style={{width:"100%",height:"100%",objectFit:"cover"}} alt=""/>
+  if (innerPhase === "tg_personal_info") {
+
+    const handleSendID = async () => {
+      feedback("tap");
+      setShowChoices(false);
+      await addTG("（学生証・表と裏を送信）","me",0);
+      await addTG("IMAGE","image",400);
+      await addTG(
+        "ありがとうございます✅ 確認しました！\nでは住所も教えていただけますか？",
+        "them", 1400
+      );
+      setTgStep(1);
+      setTimeout(()=>setShowChoices(true), 1600);
+    };
+
+    const handleRefuseID = async () => {
+      feedback("tap");
+      setShowChoices(false);
+      await addTG("個人情報は送りたくないです","me",0);
+      await addTG(
+        "お気持ちはわかりますが、これは法的な本人確認です。送っていただけないとお仕事をお断りするしかないです…😢",
+        "them", 900
+      );
+      await addTG(
+        "他の方はみなさん送っていただいています。Misakiからも聞いてみてください",
+        "them", 2000
+      );
+      setTgStep(2);
+      setTimeout(()=>setShowChoices(true), 2200);
+    };
+
+    const handleSendAddress = async () => {
+      feedback("tap");
+      setShowChoices(false);
+      await addTG("○○市△△町1-2-3　山田アパート203","me",0);
+      await addTG("完璧です！では仕事の詳細をお伝えします😊","them",900);
+      timerRef.current = setTimeout(()=>{
+        setTgMessages([]);
+        setTgStep(0);
+        setShowChoices(true);
+        setInnerPhase("tg_job_detail");
+      },1800);
+    };
+
+    return (
+      <div style={{minHeight:"100vh",background:"#e8edf3",fontFamily:"'Zen Maru Gothic',sans-serif",display:"flex",flexDirection:"column"}}>
+        <div style={TG_BAR()}>
+          <span style={{fontSize:18}}>←</span>
+          <div style={{width:38,height:38,borderRadius:"50%",overflow:"hidden",flexShrink:0}}>
+            <img src={`${BASE}tanaka.jpg`} style={{width:"100%",height:"100%",objectFit:"cover"}} alt=""/>
+          </div>
+          <div>
+            <div style={{fontSize:13,fontWeight:600}}>田中 健一</div>
+            <div style={{fontSize:10,opacity:.8}}>オンライン</div>
+          </div>
         </div>
-        <div>
-          <div style={{fontSize:13,fontWeight:600}}>田中 健一</div>
-          <div style={{fontSize:10,opacity:.8}}>オンライン</div>
-        </div>
-      </div>
-      <div style={TG_BG()}>
-        <div style={{textAlign:"center",marginBottom:12}}>
-          <div style={{display:"inline-block",background:"rgba(0,0,0,.15)",color:"#fff",fontSize:10,padding:"4px 12px",borderRadius:99}}>今日</div>
-        </div>
-        <div style={tgThemStyle}>
-          <RubyText text={el
-            ?"では{本人|ほんにん}{確認|かくにん}をさせてください。{学生証|がくせいしょう}の{表|おもて}と{裏|うら}の{写真|しゃしん}を{送|おく}っていただけますか？{個人情報|こじんじょうほう}は{厳重|げんじゅう}に{管理|かんり}します🙏"
-            :"では本人確認をさせてください。学生証の表と裏の写真を送っていただけますか？個人情報は厳重に管理します🙏"
-          }/>
-        </div>
-        {tgMessages.map((m,i)=>{
-          if(m.type==="image"){
+        <div style={{...TG_BG(),flex:1}}>
+          <div style={{textAlign:"center",marginBottom:12}}>
+            <div style={{display:"inline-block",background:"rgba(0,0,0,.15)",color:"#fff",fontSize:10,padding:"4px 12px",borderRadius:99}}>今日</div>
+          </div>
+          <div style={tgThemStyle}>
+            <RubyText text={el
+              ?"では{本人|ほんにん}{確認|かくにん}をさせてください。{学生証|がくせいしょう}の{表|おもて}と{裏|うら}の{写真|しゃしん}を{送|おく}っていただけますか？{個人情報|こじんじょうほう}は{厳重|げんじゅう}に{管理|かんり}します🙏"
+              :"では本人確認をさせてください。学生証の表と裏の写真を送っていただけますか？個人情報は厳重に管理します🙏"
+            }/>
+          </div>
+          {tgMessages.map((m,i)=>{
+            if(m.type==="image"){
+              return (
+                <div key={i} style={{marginLeft:"auto",marginBottom:8,borderRadius:10,overflow:"hidden",maxWidth:"72%",boxShadow:"0 2px 8px rgba(0,0,0,.25)",animation:"mamFadeUp .4s ease"}}>
+                  <img
+                    src="/images/ep3/student_id.jpg"
+                    style={{width:"100%",display:"block",borderRadius:10}}
+                    alt="学生証"
+                    onError={(e)=>{
+                      e.target.parentElement.innerHTML='<div style="background:#1a3a6b;padding:12px;color:#fff;font-size:11px;border-radius:10px">📋 学生証を送信しました</div>';
+                    }}
+                  />
+                </div>
+              );
+            }
             return (
-              <div key={i} style={{
-                marginLeft:"auto",
-                marginBottom:8,
-                borderRadius:10,
-                overflow:"hidden",
-                maxWidth:"72%",
-                boxShadow:"0 2px 8px rgba(0,0,0,.25)",
-                animation:"mamFadeUp .4s ease",
-              }}>
-                <img
-                  src="/images/ep3/student_id.jpg"
-                  style={{width:"100%",display:"block",borderRadius:10}}
-                  alt="学生証"
-                  onError={(e)=>{
-                    e.target.style.display='none';
-                    e.target.parentElement.innerHTML=
-                      '<div style="background:#1a3a6b;padding:12px;color:#fff;fontSize:11px;borderRadius:10px">📋 学生証を送信しました</div>';
-                  }}
-                />
+              <div key={i} style={m.type==="me"?tgMeStyle:tgThemStyle}>
+                <RubyText text={m.text}/>
               </div>
             );
-          }
-          return (
-            <div key={i} style={m.type==="me"?tgMeStyle:tgThemStyle}>
-              <RubyText text={m.text}/>
+          })}
+        </div>
+
+        {/* tgStep===0：最初の選択肢 */}
+        {showChoices && tgStep===0 && (
+          <div style={{padding:"10px 12px",borderTop:"0.5px solid #ddd",background:"#fff"}}>
+            <div style={{fontSize:11,color:"#737373",marginBottom:8,textAlign:"center"}}>
+              <RubyText text={el?"どう{返信|へんしん}する？":"どう返信する？"}/>
             </div>
-          );
-        })}
-      </div>
-      {showChoices && tgStep===0 && (
-        <div style={{padding:"10px 12px",borderTop:"0.5px solid #ddd",background:"#fff"}}>
-          <div style={{fontSize:11,color:"#737373",marginBottom:8,textAlign:"center"}}>
-            <RubyText text={el?"どう{返信|へんしん}する？":"どう返信する？"}/>
-          </div>
-          {[
-            {label:el?"（{学生証|がくせいしょう}を{送|おく}る）":"（学生証を送る）",key:"a"},
-            {label:el?"「{個人情報|こじんじょうほう}は{送|おく}りたくないです」":"「個人情報は送りたくないです」",key:"b"},
-          ].map(c=>(
-            <button key={c.key} onClick={async()=>{
-              feedback("tap");
-              setShowChoices(false);
-              if(c.key==="a"){
-                await addTG("（学生証・表と裏を送信）","me",0);
-                await addTG("IMAGE","image",400);
-                await addTG("ありがとうございます✅ 確認しました！\nでは住所も教えていただけますか？","them",1400);
-                setTgStep(1);
-                setShowChoices(true);
-              } else {
-                await addTG("個人情報は送りたくないです","me",0);
-                await addTG("お気持ちはわかりますが、これは法的な本人確認です。送っていただけないとお仕事をお断りするしかないです…😢","them",900);
-                await addTG("他の方はみなさん送っていただいています。Misakiからも聞いてみてください","them",2000);
-                setTgStep(2);
-                setShowChoices(true);
-              }
-            }} style={choiceStyleTG()}>
-              <RubyText text={c.label}/>
+            <button onClick={handleSendID} style={choiceStyleTG()}>
+              <RubyText text={el?"（{学生証|がくせいしょう}を{送|おく}る）":"（学生証を送る）"}/>
             </button>
-          ))}
-        </div>
-      )}
-      {showChoices && tgStep===1 && (
-        <div style={{padding:"10px 12px",borderTop:"0.5px solid #ddd",background:"#fff"}}>
-          <div style={{fontSize:11,color:"#737373",marginBottom:8,textAlign:"center"}}>
-            <RubyText text={el?"どう{返信|へんしん}する？":"どう返信する？"}/>
+            <button onClick={handleRefuseID} style={choiceStyleTG()}>
+              <RubyText text={el?"「{個人情報|こじんじょうほう}は{送|おく}りたくないです」":"「個人情報は送りたくないです」"}/>
+            </button>
           </div>
-          <button onClick={async()=>{
-            feedback("tap");
-            setShowChoices(false);
-            await addTG("○○市△△町1-2-3　山田アパート203","me",0);
-            await addTG("完璧です！では仕事の詳細をお伝えします😊","them",900);
-            timerRef.current=setTimeout(()=>{
-              setTgMessages([]);
+        )}
+
+        {/* tgStep===1：住所の入力 */}
+        {showChoices && tgStep===1 && (
+          <div style={{padding:"10px 12px",borderTop:"0.5px solid #ddd",background:"#fff"}}>
+            <div style={{fontSize:11,color:"#737373",marginBottom:8,textAlign:"center"}}>
+              <RubyText text={el?"どう{返信|へんしん}する？":"どう返信する？"}/>
+            </div>
+            <button onClick={handleSendAddress} style={choiceStyleTG()}>
+              <RubyText text={el?"（{住所|じゅうしょ}を{送|おく}る）○○{市|し}△△{町|ちょう}1-2-3":"（住所を送る）○○市△△町1-2-3"}/>
+            </button>
+          </div>
+        )}
+
+        {/* tgStep===2：断ったが結局送る */}
+        {showChoices && tgStep===2 && (
+          <div style={{padding:"10px 12px",borderTop:"0.5px solid #ddd",background:"#fff"}}>
+            <div style={{fontSize:11,color:"#737373",marginBottom:8,textAlign:"center"}}>
+              <RubyText text={el?"…{結局|けっきょく}{送|おく}ってしまった":"…結局送ってしまった"}/>
+            </div>
+            <button onClick={async()=>{
+              feedback("tap");
               setTgStep(0);
-              setInnerPhase("tg_job_detail");
-            },1800);
-          }} style={choiceStyleTG()}>
-            <RubyText text={el?"（{住所|じゅうしょ}を{送|おく}る）○○{市|し}△△{町|ちょう}1-2-3":"（住所を送る）○○市△△町1-2-3"}/>
-          </button>
-        </div>
-      )}
-      {showChoices && tgStep===2 && (
-        <div style={{padding:"10px 12px",borderTop:"0.5px solid #ddd",background:"#fff"}}>
-          <div style={{fontSize:11,color:"#737373",marginBottom:8,textAlign:"center"}}>
-            <RubyText text={el?"…{結局|けっきょく}{送|おく}ってしまった":"…結局送ってしまった"}/>
+              setShowChoices(false);
+              setTgMessages([]);
+              await addTG("（学生証・表と裏を送信）","me",0);
+              await addTG("IMAGE","image",400);
+              await addTG(
+                "ありがとうございます✅ 確認しました！\nでは住所も教えていただけますか？",
+                "them",1400
+              );
+              setTgStep(1);
+              setTimeout(()=>setShowChoices(true),1600);
+            }} style={choiceStyleTG()}>
+              <RubyText text={el?"（{渋々|しぶしぶ}）{学生証|がくせいしょう}を{送|おく}る":"（渋々）学生証を送る"}/>
+            </button>
           </div>
-          <button onClick={async()=>{
-            feedback("tap");
-            setTgStep(0);
-            setShowChoices(false);
-            setTgMessages([]);
-            await addTG("（学生証・表と裏を送信）","me",0);
-            await addTG("IMAGE","image",400);
-            await addTG("ありがとうございます✅ 確認しました！\nでは住所も教えていただけますか？","them",1400);
-            setTgStep(1);
-            setShowChoices(true);
-          }} style={choiceStyleTG()}>
-            <RubyText text={el?"（{渋々|しぶしぶ}）{学生証|がくせいしょう}を{送|おく}る":"（渋々）学生証を送る"}/>
-          </button>
-        </div>
-      )}
-    </div>
-  );
+        )}
+      </div>
+    );
+  }
 
   // ─────────────────────────────────
   // フェーズ6：仕事の実態
   // ─────────────────────────────────
-  if (innerPhase === "tg_job_detail") return (
-    <div style={{minHeight:"100vh",background:"#e8edf3",fontFamily:"'Zen Maru Gothic',sans-serif",display:"flex",flexDirection:"column"}}>
-      <div style={TG_BAR()}>
-        <span style={{fontSize:18}}>←</span>
-        <div style={{width:38,height:38,borderRadius:"50%",overflow:"hidden",flexShrink:0}}>
-          <img src={`${BASE}tanaka.jpg`} style={{width:"100%",height:"100%",objectFit:"cover"}} alt=""/>
-        </div>
-        <div>
-          <div style={{fontSize:13,fontWeight:600}}>田中 健一</div>
-          <div style={{fontSize:10,opacity:.8}}>オンライン</div>
-        </div>
-      </div>
-      <div style={TG_BG()}>
-        <div style={{textAlign:"center",marginBottom:12}}>
-          <div style={{display:"inline-block",background:"rgba(0,0,0,.15)",color:"#fff",fontSize:10,padding:"4px 12px",borderRadius:99}}>今日</div>
-        </div>
-        <div style={tgThemStyle}>
-          <RubyText text={el
-            ?"登録{完了|かんりょう}しました！{明日|あした}の22{時|じ}に{以下|いか}の{住所|じゅうしょ}へ{行|い}ってください。"
-            :"登録完了しました！明日の22時に以下の住所へ行ってください。"
-          }/>
-        </div>
-        <div style={{background:"#fff",borderRadius:8,padding:"10px 12px",marginBottom:6,fontSize:11,border:"1px solid #ddd",maxWidth:"80%",boxShadow:"0 1px 2px rgba(0,0,0,.1)",animation:"mamFadeUp .4s ease"}}>
-          📍 <RubyText text={el?"○○{市|し}△△{町|ちょう}1-2-3":"○○市△△町1-2-3"}/><br/>
-          <span style={{color:"#737373",fontSize:10}}>
-            <RubyText text={el?"{玄関|げんかん}の{紙袋|かみぶくろ}を{受|う}け{取|と}り{別|べつ}の{場所|ばしょ}へ{届|とど}ける\n{詳細|しょうさい}は{当日|とうじつ}{連絡|れんらく}します":"玄関の紙袋を受け取り別の場所へ届ける\n詳細は当日連絡します"}/>
-          </span>
-        </div>
-        <div style={{background:"rgba(255,200,0,.1)",borderLeft:"3px solid #f5c842",padding:"8px 12px",fontSize:11,color:"#7a5c00",fontStyle:"italic",margin:"6px 0",borderRadius:"0 8px 8px 0",lineHeight:1.6}}>
-          <RubyText text={el
-            ?"タクヤ：「なんか…{普通|ふつう}の{配達|はいたつ}じゃない{気|き}がする。でもここまで{来|き}たし…{個人情報|こじんじょうほう}も{送|おく}っちゃったし…」"
-            :"タクヤ：「なんか…普通の配達じゃない気がする。でもここまで来たし…個人情報も送っちゃったし…」"
-          }/>
-        </div>
-        {tgMessages.map((m,i)=>(
-          <div key={i} style={m.type==="me"?tgMeStyle:tgThemStyle}>
-            <RubyText text={m.text}/>
+  if (innerPhase === "tg_job_detail") {
+
+    const handleJobDetail = async (key) => {
+      feedback("tap");
+      setShowChoices(false);
+      const myText = key==="a" ? "わかりました" : "やっぱりやめたいです";
+      await addTG(myText, "me", 0);
+      if(key==="a"){
+        await addTG(
+          "ありがとうございます！\n当日は黒いマスクと手袋を着用してください。目立たない服装で。詳細は当日連絡します👍",
+          "them", 900
+        );
+      }
+      timerRef.current = setTimeout(()=>{
+        setTgMessages([]);
+        setTgStep(0);
+        setShowChoices(true);
+        setThreatStarted(false);
+        setInnerPhase("tg_threat");
+      }, key==="a" ? 2200 : 1200);
+    };
+
+    return (
+      <div style={{minHeight:"100vh",background:"#e8edf3",fontFamily:"'Zen Maru Gothic',sans-serif",display:"flex",flexDirection:"column"}}>
+        <div style={TG_BAR()}>
+          <span style={{fontSize:18}}>←</span>
+          <div style={{width:38,height:38,borderRadius:"50%",overflow:"hidden",flexShrink:0}}>
+            <img src={`${BASE}tanaka.jpg`} style={{width:"100%",height:"100%",objectFit:"cover"}} alt=""/>
           </div>
-        ))}
-      </div>
-      {showChoices && tgStep===0 && (
+          <div>
+            <div style={{fontSize:13,fontWeight:600}}>田中 健一</div>
+            <div style={{fontSize:10,opacity:.8}}>オンライン</div>
+          </div>
+        </div>
+        <div style={{...TG_BG(),flex:1}}>
+          <div style={{textAlign:"center",marginBottom:12}}>
+            <div style={{display:"inline-block",background:"rgba(0,0,0,.15)",color:"#fff",fontSize:10,padding:"4px 12px",borderRadius:99}}>今日</div>
+          </div>
+          <div style={tgThemStyle}>
+            <RubyText text={el
+              ?"登録{完了|かんりょう}しました！{明日|あした}の22{時|じ}に{以下|いか}の{住所|じゅうしょ}へ{行|い}ってください。"
+              :"登録完了しました！明日の22時に以下の住所へ行ってください。"
+            }/>
+          </div>
+          <div style={{background:"#fff",borderRadius:8,padding:"10px 12px",marginBottom:6,fontSize:11,border:"1px solid #ddd",maxWidth:"80%",boxShadow:"0 1px 2px rgba(0,0,0,.1)"}}>
+            📍 <RubyText text={el?"○○{市|し}△△{町|ちょう}1-2-3":"○○市△△町1-2-3"}/><br/>
+            <span style={{color:"#737373",fontSize:10}}>
+              <RubyText text={el?"{玄関|げんかん}の{紙袋|かみぶくろ}を{受|う}け{取|と}り{別|べつ}の{場所|ばしょ}へ{届|とど}ける\n{詳細|しょうさい}は{当日|とうじつ}{連絡|れんらく}します":"玄関の紙袋を受け取り別の場所へ届ける\n詳細は当日連絡します"}/>
+            </span>
+          </div>
+          <div style={{background:"rgba(255,200,0,.1)",borderLeft:"3px solid #f5c842",padding:"8px 12px",fontSize:11,color:"#7a5c00",fontStyle:"italic",margin:"6px 0",borderRadius:"0 8px 8px 0",lineHeight:1.6}}>
+            <RubyText text={el
+              ?"タクヤ：「なんか…{普通|ふつう}の{配達|はいたつ}じゃない{気|き}がする。でもここまで{来|き}たし…{個人情報|こじんじょうほう}も{送|おく}っちゃったし…」"
+              :"タクヤ：「なんか…普通の配達じゃない気がする。でもここまで来たし…個人情報も送っちゃったし…」"
+            }/>
+          </div>
+          {tgMessages.map((m,i)=>(
+            <div key={i} style={m.type==="me"?tgMeStyle:tgThemStyle}>
+              <RubyText text={m.text}/>
+            </div>
+          ))}
+        </div>
         <div style={{padding:"10px 12px",borderTop:"0.5px solid #ddd",background:"#fff"}}>
           <div style={{fontSize:11,color:"#737373",marginBottom:8,textAlign:"center"}}>
             <RubyText text={el?"どう{返信|へんしん}する？":"どう返信する？"}/>
           </div>
-          {[
-            {label:el?"「わかりました」":"「わかりました」",key:"a"},
-            {label:el?"「やっぱりやめたいです」":"「やっぱりやめたいです」",key:"b"},
-          ].map(c=>(
-            <button key={c.key} onClick={async()=>{
-              feedback("tap");
-              setShowChoices(false);
-              await addTG(c.key==="a"?"わかりました":"やっぱりやめたいです","me",0);
-              if(c.key==="a"){
-                await addTG("ありがとうございます！\n当日は黒いマスクと手袋を着用してください。目立たない服装で。詳細は当日連絡します👍","them",900);
-                const thought=document.createElement('div');
-              }
-              timerRef.current=setTimeout(()=>{
-                setTgMessages([]);
-                setTgStep(0);
-                setInnerPhase("tg_threat");
-              },c.key==="a"?2200:1200);
-            }} style={choiceStyleTG()}>
-              <RubyText text={c.label}/>
-            </button>
-          ))}
+          <button onClick={()=>handleJobDetail("a")} style={choiceStyleTG()}>
+            <RubyText text={el?"「わかりました」":"「わかりました」"}/>
+          </button>
+          <button onClick={()=>handleJobDetail("b")} style={choiceStyleTG()}>
+            <RubyText text={el?"「やっぱりやめたいです」":"「やっぱりやめたいです」"}/>
+          </button>
         </div>
-      )}
-    </div>
-  );
+      </div>
+    );
+  }
 
   // ─────────────────────────────────
   // フェーズ7：脅迫
