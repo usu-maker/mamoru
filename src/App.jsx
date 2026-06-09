@@ -11353,21 +11353,38 @@ function DarkJobSimulation({ onComplete }) {
     const handleJobDetail = async (key) => {
       feedback("tap");
       setShowChoices(false);
-      const myText = key==="a" ? "わかりました" : "やっぱりやめたいです";
-      await addTG(myText, "me", 0);
-      if(key==="a"){
-        await addTG(
-          "ありがとうございます！\n当日は黒いマスクと手袋を着用してください。目立たない服装で。詳細は当日連絡します👍",
-          "them", 900
-        );
+
+      if(key === "b"){
+        // 「やっぱりやめたいです」→ 即脅迫へ
+        await addTG("やっぱりやめたいです", "me", 0);
+        timerRef.current = setTimeout(()=>{
+          setTgMessages([]);
+          setTgStep(0);
+          setShowChoices(true);
+          setThreatStarted(false);
+          setInnerPhase("tg_threat");
+        }, 1200);
+        return;
       }
-      timerRef.current = setTimeout(()=>{
-        setTgMessages([]);
-        setTgStep(0);
+
+      // 「わかりました」ルート
+      await addTG("わかりました", "me", 0);
+      await addTG(
+        el
+          ?"ありがとうございます！\n{当日|とうじつ}は{黒|くろ}いマスクと{手袋|てぶくろ}を{着用|ちゃくよう}してください。{目立|めだ}たない{服装|ふくそう}で。{詳細|しょうさい}は{当日|とうじつ}{連絡|れんらく}します👍"
+          :"ありがとうございます！\n当日は黒いマスクと手袋を着用してください。目立たない服装で。詳細は当日連絡します👍",
+        "them", 900
+      );
+
+      // タクヤの後悔・不安の心境を表示
+      setTimeout(()=>{
+        setTgMessages(prev=>[...prev,{
+          text:"REGRET",
+          type:"regret"
+        }]);
+        setTgStep(99);
         setShowChoices(true);
-        setThreatStarted(false);
-        setInnerPhase("tg_threat");
-      }, key==="a" ? 2200 : 1200);
+      }, 2200);
     };
 
     return (
@@ -11404,23 +11421,85 @@ function DarkJobSimulation({ onComplete }) {
               :"タクヤ：「なんか…普通の配達じゃない気がする。でもここまで来たし…個人情報も送っちゃったし…」"
             }/>
           </div>
-          {tgMessages.map((m,i)=>(
-            <div key={i} style={m.type==="me"?tgMeStyle:tgThemStyle}>
-              <RubyText text={m.text}/>
+          {tgMessages.map((m,i)=>{
+            if(m.type==="regret"){
+              return (
+                <div key={i} style={{
+                  background:"rgba(255,200,0,.08)",
+                  borderLeft:"3px solid #f5c842",
+                  padding:"10px 12px",
+                  fontSize:11,
+                  color:"#7a5c00",
+                  fontStyle:"italic",
+                  margin:"8px 0",
+                  borderRadius:"0 8px 8px 0",
+                  lineHeight:1.7,
+                  animation:"mamFadeUp .5s ease",
+                }}>
+                  <RubyText text={el
+                    ?"タクヤ：「マスクと{手袋|てぶくろ}…？\nなんか{普通|ふつう}の{仕事|しごと}じゃない{気|き}がする。\nやっぱりやめたい…でも{個人情報|こじんじょうほう}も\n{送|おく}っちゃったし…{怖|こわ}いな」"
+                    :"タクヤ：「マスクと手袋…？\nなんか普通の仕事じゃない気がする。\nやっぱりやめたい…でも個人情報も\n送っちゃったし…怖いな」"
+                  }/>
+                </div>
+              );
+            }
+            return (
+              <div key={i} style={m.type==="me"?tgMeStyle:tgThemStyle}>
+                <RubyText text={m.text}/>
+              </div>
+            );
+          })}
+        </div>
+        {showChoices && tgStep !== 99 && (
+          <div style={{padding:"10px 12px",borderTop:"0.5px solid #ddd",background:"#fff"}}>
+            <div style={{fontSize:11,color:"#737373",marginBottom:8,textAlign:"center"}}>
+              <RubyText text={el?"どう{返信|へんしん}する？":"どう返信する？"}/>
             </div>
-          ))}
-        </div>
-        <div style={{padding:"10px 12px",borderTop:"0.5px solid #ddd",background:"#fff"}}>
-          <div style={{fontSize:11,color:"#737373",marginBottom:8,textAlign:"center"}}>
-            <RubyText text={el?"どう{返信|へんしん}する？":"どう返信する？"}/>
+            <button onClick={()=>handleJobDetail("a")} style={choiceStyleTG()}>
+              <RubyText text={el?"「わかりました」":"「わかりました」"}/>
+            </button>
+            <button onClick={()=>handleJobDetail("b")} style={choiceStyleTG()}>
+              <RubyText text={el?"「やっぱりやめたいです」":"「やっぱりやめたいです」"}/>
+            </button>
           </div>
-          <button onClick={()=>handleJobDetail("a")} style={choiceStyleTG()}>
-            <RubyText text={el?"「わかりました」":"「わかりました」"}/>
-          </button>
-          <button onClick={()=>handleJobDetail("b")} style={choiceStyleTG()}>
-            <RubyText text={el?"「やっぱりやめたいです」":"「やっぱりやめたいです」"}/>
-          </button>
-        </div>
+        )}
+        {showChoices && tgStep===99 && (
+          <div style={{padding:"10px 12px",borderTop:"0.5px solid #ddd",background:"#fff"}}>
+            <div style={{fontSize:11,color:"#737373",marginBottom:8,textAlign:"center"}}>
+              <RubyText text={el?"どうする？":"どうする？"}/>
+            </div>
+            <button onClick={async()=>{
+              feedback("tap");
+              setShowChoices(false);
+              await addTG(
+                el?"やっぱりやめたいです…":"やっぱりやめたいです…",
+                "me", 0
+              );
+              timerRef.current = setTimeout(()=>{
+                setTgMessages([]);
+                setTgStep(0);
+                setShowChoices(true);
+                setThreatStarted(false);
+                setInnerPhase("tg_threat");
+              }, 1200);
+            }} style={{
+              width:"100%",
+              padding:"10px 14px",
+              borderRadius:12,
+              border:"1.5px solid #f97316",
+              background:"rgba(249,115,22,.05)",
+              color:"#f97316",
+              fontSize:12,
+              fontWeight:600,
+              cursor:"pointer",
+              fontFamily:"inherit",
+              marginBottom:8,
+              textAlign:"left",
+            }}>
+              <RubyText text={el?"「やっぱりやめたいです」と{伝|つた}える":"「やっぱりやめたいです」と伝える"}/>
+            </button>
+          </div>
+        )}
       </div>
     );
   }
@@ -11604,6 +11683,293 @@ function DarkJobSimulation({ onComplete }) {
   );
 
   return null;
+}
+
+function Ep3Checkpoints({ ageMode, onComplete }) {
+  const [cpStep, setCpStep] = useState(0);
+  const [foundSigns, setFoundSigns] = useState({});
+  const [revealed, setRevealed] = useState({});
+  const [showSummary, setShowSummary] = useState(false);
+
+  const el = ageMode === "elementary";
+
+  const signs = [
+    {
+      id:"d1",
+      text: el?"「{高校生|こうこうせい}でも{稼|かせ}げるお{仕事|しごと}あるよ！」":"「高校生でも稼げるお仕事あるよ！」",
+      isSign: true,
+      explain: el?"→ {未成年|みせいねん}を{狙|ねら}い{打|う}ちにしている。{合法|ごうほう}な{求人|きゅうじん}は{年齢制限|ねんれいせいげん}を{正|ただ}しく{記載|きさい}する。":"→ 未成年を狙い打ちにしている。合法な求人は年齢制限を正しく記載する。",
+    },
+    {
+      id:"d2",
+      text: el?"「{荷物|にもつ}を{受|う}け{取|と}るだけで3〜5{万円|まんえん}」":"「荷物を受け取るだけで3〜5万円」",
+      isSign: true,
+      explain: el?"→ {内容|ないよう}が{曖昧|あいまい}なのに{高額|こうがく}すぎる。{正当|せいとう}な{仕事|しごと}は{業務内容|ぎょうむないよう}を{明確|めいかく}に{説明|せつめい}する。":"→ 内容が曖昧なのに高額すぎる。正当な仕事は業務内容を明確に説明する。",
+    },
+    {
+      id:"d3",
+      text: el?"「Telegramに{移動|いどう}していい？」":"「Telegramに移動していい？」",
+      isSign: true,
+      explain: el?"→ {証拠|しょうこ}が{残|のこ}りにくいアプリへの{誘導|ゆうどう}。LINEや{普通|ふつう}のSNSを{使|つか}わない{理由|りゆう}がある。":"→ 証拠が残りにくいアプリへの誘導。LINEや普通のSNSを使わない理由がある。",
+    },
+    {
+      id:"d4",
+      text: el?"「{学生証|がくせいしょう}の{表|おもて}と{裏|うら}の{写真|しゃしん}を{送|おく}って」":"「学生証の表と裏の写真を送って」",
+      isSign: true,
+      explain: el?"→ {個人情報|こじんじょうほう}を{使|つか}って{逃|に}げられなくする。{仕事|しごと}{開始前|かいしまえ}に{個人情報|こじんじょうほう}は{不要|ふよう}なはず。":"→ 個人情報を使って逃げられなくする。仕事開始前に個人情報は不要なはず。",
+    },
+    {
+      id:"d5",
+      text: el?"「{住所|じゅうしょ}も{教|おし}えて」":"「住所も教えて」",
+      isSign: true,
+      explain: el?"→ {脅|おど}しに{使|つか}うための{情報収集|じょうほうしゅうしゅう}。{住所|じゅうしょ}を{知|し}られると{逃|に}げ{場|ば}がなくなる。":"→ 脅しに使うための情報収集。住所を知られると逃げ場がなくなる。",
+    },
+    {
+      id:"d6",
+      text: el?"「{黒|くろ}いマスクと{手袋|てぶくろ}を{着用|ちゃくよう}して」":"「黒いマスクと手袋を着用して」",
+      isSign: true,
+      explain: el?"→ {犯罪|はんざい}の{実行|じっこう}を{示唆|しさ}している。{普通|ふつう}の{配達員|はいたついん}にマスクや{手袋|てぶくろ}は{不要|ふよう}。":"→ 犯罪の実行を示唆している。普通の配達員にマスクや手袋は不要。",
+    },
+  ];
+
+  const step1Signs = signs.slice(0,3);
+  const step2Signs = signs.slice(3,6);
+  const allFound = Object.keys(foundSigns).length >= 6;
+  const step1Done = [0,1,2].every(i=>foundSigns[signs[i].id] || revealed[signs[i].id]);
+  const step2Done = [3,4,5].every(i=>foundSigns[signs[i].id] || revealed[signs[i].id]);
+
+  const tapSign = (id) => {
+    feedback("tap");
+    setFoundSigns(prev=>({...prev,[id]:true}));
+  };
+
+  const revealAll = (step) => {
+    feedback("tap");
+    const batch = step===1 ? step1Signs : step2Signs;
+    const newRevealed = {};
+    batch.forEach(s=>{ newRevealed[s.id]=true; });
+    setRevealed(prev=>({...prev,...newRevealed}));
+  };
+
+  const currentSigns = cpStep===0 ? step1Signs : step2Signs;
+  const currentDone = cpStep===0 ? step1Done : step2Done;
+
+  return (
+    <div style={{minHeight:"100vh",background:"linear-gradient(180deg,#0a0a0f,#0f0a14)",padding:"20px 16px 40px",fontFamily:"'Zen Maru Gothic',sans-serif",color:"#fff"}}>
+      <div style={{maxWidth:440,margin:"0 auto"}}>
+
+        {!showSummary ? (
+          <>
+            {/* ヘッダー */}
+            <div style={{textAlign:"center",marginBottom:16}}>
+              <div style={{fontSize:11,fontWeight:900,color:"rgba(74,222,128,.7)",letterSpacing:".05em",marginBottom:6}}>
+                <RubyText text={el?"{見抜|みぬ}き{方|かた}トレーニング":"見抜き方トレーニング"}/>
+              </div>
+              <div style={{fontSize:17,fontWeight:900,marginBottom:6}}>
+                <RubyText text={el
+                  ?cpStep===0?"Instagramの{会話|かいわ}に{戻|もど}ってみよう":"Telegramの{会話|かいわ}に{戻|もど}ってみよう"
+                  :cpStep===0?"Instagramの会話に戻ってみよう":"Telegramの会話に戻ってみよう"
+                }/>
+              </div>
+              <div style={{fontSize:12,color:"rgba(255,255,255,.5)"}}>
+                <RubyText text={el
+                  ?"🔴 {赤|あか}い{枠|わく}の{部分|ぶぶん}をタップして{危険|きけん}サインを{見|み}つけよう"
+                  :"🔴 赤い枠の部分をタップして危険サインを見つけよう"
+                }/>
+              </div>
+            </div>
+
+            {/* 進捗 */}
+            <div style={{display:"flex",justifyContent:"center",gap:8,marginBottom:16}}>
+              {[0,1].map(i=>(
+                <div key={i} style={{
+                  width:10,height:10,borderRadius:"50%",
+                  background:i<=cpStep?"#4ade80":"rgba(255,255,255,.15)",
+                  transition:"background .3s",
+                }}/>
+              ))}
+            </div>
+
+            {/* 会話カード */}
+            <div style={{
+              background:"rgba(255,255,255,.04)",
+              border:"0.5px solid rgba(255,255,255,.1)",
+              borderRadius:14,
+              padding:"14px 12px",
+              marginBottom:12,
+            }}>
+              {/* 発信者 */}
+              <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10,paddingBottom:8,borderBottom:"0.5px solid rgba(255,255,255,.08)"}}>
+                <div style={{
+                  width:32,height:32,borderRadius:"50%",overflow:"hidden",flexShrink:0,
+                  background:cpStep===0?"rgba(249,115,22,.2)":"rgba(42,171,238,.2)",
+                }}>
+                  {cpStep===0
+                    ? <img src="/images/ep3/misaki.jpg" style={{width:"100%",height:"100%",objectFit:"cover"}} alt=""/>
+                    : <img src="/images/ep3/tanaka.jpg" style={{width:"100%",height:"100%",objectFit:"cover"}} alt=""/>
+                  }
+                </div>
+                <div>
+                  <div style={{fontSize:12,fontWeight:700}}>
+                    {cpStep===0?"misaki__0214":"田中 健一"}
+                  </div>
+                  <div style={{fontSize:10,color:"rgba(255,255,255,.4)"}}>
+                    {cpStep===0?"Instagram DM":"Telegram"}
+                  </div>
+                </div>
+              </div>
+
+              {/* 危険サイン一覧 */}
+              <div style={{display:"flex",flexDirection:"column",gap:8}}>
+                {currentSigns.map((s,i)=>{
+                  const isFound = foundSigns[s.id];
+                  const isRevealed = revealed[s.id];
+                  const isHighlighted = isFound || isRevealed;
+                  return (
+                    <div key={s.id}>
+                      <div
+                        onClick={!isHighlighted ? ()=>tapSign(s.id) : undefined}
+                        style={{
+                          display:"inline-block",
+                          padding:"8px 12px",
+                          borderRadius:10,
+                          fontSize:12,
+                          lineHeight:1.6,
+                          cursor:isHighlighted?"default":"pointer",
+                          background:isHighlighted
+                            ?"rgba(239,68,68,.15)"
+                            :"rgba(255,255,255,.06)",
+                          border:isHighlighted
+                            ?"1.5px solid rgba(239,68,68,.5)"
+                            :"1.5px dashed rgba(255,100,100,.4)",
+                          color:isHighlighted?"#fca5a5":"rgba(255,255,255,.8)",
+                          transition:"all .3s",
+                          width:"100%",
+                        }}>
+                        <RubyText text={s.text}/>
+                        {isFound && <span style={{marginLeft:6,fontSize:10}}>👆 {el?"{見|み}つけた！":"見つけた！"}</span>}
+                        {isRevealed && !isFound && <span style={{marginLeft:6,fontSize:10,color:"#fbbf24"}}>← {el?"{ここ|ここ}がサイン":"ここがサイン"}</span>}
+                      </div>
+                      {isHighlighted && (
+                        <div style={{
+                          fontSize:11,
+                          color:"rgba(255,255,255,.6)",
+                          lineHeight:1.6,
+                          padding:"6px 12px",
+                          background:"rgba(239,68,68,.06)",
+                          borderRadius:"0 0 8px 8px",
+                          animation:"mamFadeUp .4s ease",
+                        }}>
+                          <RubyText text={s.explain}/>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* 発見数 */}
+            <div style={{fontSize:12,color:"rgba(255,255,255,.5)",marginBottom:10,textAlign:"center"}}>
+              <RubyText text={el
+                ?`{発見|はっけん}した{危険|きけん}サイン：${Object.keys(foundSigns).filter(id=>currentSigns.find(s=>s.id===id)).length} / 3`
+                :`発見した危険サイン：${Object.keys(foundSigns).filter(id=>currentSigns.find(s=>s.id===id)).length} / 3`
+              }/>
+            </div>
+
+            {/* ボタン */}
+            {currentDone ? (
+              cpStep===0 ? (
+                <button
+                  onClick={()=>{feedback("tap");setCpStep(1);}}
+                  style={{width:"100%",padding:14,borderRadius:12,border:"none",background:"linear-gradient(135deg,#16a34a,#15803d)",color:"#fff",fontSize:14,fontWeight:900,cursor:"pointer",fontFamily:"inherit"}}>
+                  <RubyText text={el?"Telegramの{会話|かいわ}も{確認|かくにん}する →":"Telegramの会話も確認する →"}/>
+                </button>
+              ) : (
+                <button
+                  onClick={()=>{feedback("tap");setShowSummary(true);}}
+                  style={{width:"100%",padding:14,borderRadius:12,border:"none",background:"linear-gradient(135deg,#16a34a,#15803d)",color:"#fff",fontSize:14,fontWeight:900,cursor:"pointer",fontFamily:"inherit"}}>
+                  <RubyText text={el?"{まとめ|まとめ}を{見|み}る →":"まとめを見る →"}/>
+                </button>
+              )
+            ) : (
+              <button
+                onClick={()=>revealAll(cpStep+1)}
+                style={{width:"100%",padding:12,borderRadius:12,border:"1px solid rgba(255,255,255,.15)",background:"rgba(255,255,255,.06)",color:"rgba(255,255,255,.6)",fontSize:12,cursor:"pointer",fontFamily:"inherit"}}>
+                <RubyText text={el?"{全部|ぜんぶ}{見|み}る":"全部見る"}/>
+              </button>
+            )}
+          </>
+        ) : (
+          /* まとめ画面 */
+          <>
+            <div style={{textAlign:"center",marginBottom:16}}>
+              <div style={{fontSize:17,fontWeight:900,marginBottom:6}}>
+                <RubyText text={el?"{全|すべ}ての{危険|きけん}サイン":"全ての危険サイン"}/>
+              </div>
+              <div style={{fontSize:12,color:"rgba(255,255,255,.5)"}}>
+                <RubyText text={el?"{最初|さいしょ}の1つで{断|ことわ}るのが{正解|せいかい}だった":"最初の1つで断るのが正解だった"}/>
+              </div>
+            </div>
+
+            {signs.map((s,i)=>(
+              <div key={s.id} style={{
+                background:"rgba(239,68,68,.08)",
+                border:"0.5px solid rgba(239,68,68,.25)",
+                borderRadius:10,
+                padding:"10px 14px",
+                marginBottom:8,
+                animation:`mamFadeUp .4s ${i*0.1}s ease both`,
+              }}>
+                <div style={{display:"flex",alignItems:"flex-start",gap:8}}>
+                  <span style={{
+                    fontSize:10,fontWeight:900,color:"#f87171",
+                    background:"rgba(239,68,68,.2)",
+                    padding:"2px 6px",borderRadius:4,flexShrink:0,marginTop:2,
+                  }}>
+                    ⚠️ {i+1}
+                  </span>
+                  <div>
+                    <div style={{fontSize:12,color:"#fca5a5",marginBottom:3}}>
+                      <RubyText text={s.text}/>
+                    </div>
+                    <div style={{fontSize:11,color:"rgba(255,255,255,.55)",lineHeight:1.6}}>
+                      <RubyText text={s.explain}/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            <div style={{
+              background:"rgba(74,222,128,.1)",
+              border:"0.5px solid rgba(74,222,128,.3)",
+              borderRadius:12,
+              padding:"14px 16px",
+              marginTop:12,
+              marginBottom:16,
+            }}>
+              <div style={{fontSize:13,fontWeight:900,color:"#4ade80",marginBottom:6}}>
+                🦉 <RubyText text={el?"モリィのまとめ":"モリィのまとめ"}/>
+              </div>
+              <div style={{fontSize:12,color:"rgba(255,255,255,.8)",lineHeight:1.8}}>
+                <RubyText text={el
+                  ?"「{高校生|こうこうせい}でも{稼|かせ}げる」「{荷物|にもつ}を{受|う}け{取|と}るだけ」のどちらかの{時点|じてん}で{断|ことわ}るべきだった。Telegramに{移動|いどう}した{時点|じてん}で{状況|じょうきょう}は{一変|いっぺん}した。{最初|さいしょ}の{小|ちい}さなサインに{気|き}づけば{防|ふせ}げた。"
+                  :"「高校生でも稼げる」「荷物を受け取るだけ」のどちらかの時点で断るべきだった。Telegramに移動した時点で状況は一変した。最初の小さなサインに気づけば防げた。"
+                }/>
+              </div>
+            </div>
+
+            <button
+              onClick={()=>{feedback("tap");onComplete();}}
+              style={{width:"100%",padding:14,borderRadius:12,border:"none",background:"linear-gradient(135deg,#16a34a,#15803d)",color:"#fff",fontSize:14,fontWeight:900,cursor:"pointer",fontFamily:"inherit"}}>
+              <RubyText text={el?"{親子|おやこ}で{話|はな}し{合|あ}おう →":"親子で話し合おう →"}/>
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
 }
 
 function Episode3({ onComplete, onExit }) {
@@ -11875,72 +12241,7 @@ function Episode3({ onComplete, onExit }) {
 
   // ── Checkpoints ──
   if (phase === "checkpoints") {
-    const cp = checkpoints[checkpointStep];
-    const isLast = checkpointStep === checkpoints.length - 1;
-    return (
-      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0a1a0a,#041004)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
-        <div style={{ maxWidth: 440, margin: "0 auto" }}>
-          {/* Progress dots */}
-          <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: 16 }}>
-            {checkpoints.map((_, i) => (
-              <div key={i} style={{ width: 10, height: 10, borderRadius: "50%", background: i <= checkpointStep ? "#4ade80" : "rgba(255,255,255,.15)", transition: "background .3s" }} />
-            ))}
-          </div>
-
-          <div style={{ textAlign: "center", marginBottom: 10 }}>
-            <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: "#4ade80", letterSpacing: ".15em" }}>
-              <RubyText text={ageMode === "elementary" ? "{見抜|みぬ}き{方|かた}のサイン" : "見抜き方のサイン"} /> {checkpointStep + 1} / {checkpoints.length}
-            </div>
-          </div>
-
-          {/* Single checkpoint card */}
-          <div style={{ background: "rgba(74,222,128,.06)", border: "1.5px solid rgba(74,222,128,.28)", borderRadius: 20, padding: "22px 20px", marginBottom: 14, animation: "slideUp .4s ease" }}>
-            <div style={{ display: "flex", gap: 14, alignItems: "flex-start", marginBottom: 14 }}>
-              <div style={{ width: 52, height: 52, borderRadius: 16, background: "rgba(74,222,128,.15)", border: "1.5px solid rgba(74,222,128,.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, flexShrink: 0 }}>{cp.icon}</div>
-              <div>
-                <div style={{ fontSize: 11, color: "#4ade80", fontWeight: 700, marginBottom: 4, fontFamily: "'DotGothic16',monospace" }}>🚨 DANGER SIGN</div>
-                <div style={{ fontSize: 15, fontWeight: 900, color: "#fff", lineHeight: 1.4 }}><RubyText text={cp.sign} /></div>
-              </div>
-            </div>
-            <div style={{ background: "rgba(0,0,0,.25)", borderRadius: 12, padding: "12px 14px", fontSize: 13, color: "rgba(255,255,255,.82)", lineHeight: 1.85 }}>
-              <RubyText text={cp.desc} />
-            </div>
-          </div>
-
-          {/* On last checkpoint, show contact info */}
-          {isLast && (
-            <div style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.1)", borderRadius: 16, padding: "16px", marginBottom: 14 }}>
-              <div style={{ fontSize: 13, fontWeight: 900, color: "#4ade80", marginBottom: 12 }}>📞 <RubyText text={ageMode === "elementary" ? "もし{誘|さそ}われたら — すぐに{相談|そうだん}しよう" : "もし誘われたら — すぐに相談しよう"} /></div>
-              {(ageMode === "elementary" ? [
-                { name: "{警察|けいさつ}{相談|そうだん}{専用|せんよう}", num: "#9110", note: "{24|にじゅうし}{時間|じかん}{対応|たいおう}。「あやしいDMが{来|き}た」だけでも{相談|そうだん}OK" },
-                { name: "{子|こ}どもの{人権|じんけん}110{番|ばん}", num: "0120-007-110", note: "{無料|むりょう}・{平日|へいじつ}8〜17{時|じ}。いじめ・{犯罪|はんざい}の{巻|ま}き{込|こ}まれも{対応|たいおう}" },
-                { name: "{学校|がっこう}の{先生|せんせい}・おうちの{人|ひと}", num: "まず{話|はな}して！", note: "「こういうDMが{来|き}た」と{見|み}せるだけでOK。{一人|ひとり}で{悩|なや}まないで" },
-              ] : [
-                { name: "警察相談専用", num: "#9110", note: "24時間対応。「怪しいDMが来た」だけでも相談OK" },
-                { name: "子どもの人権110番", num: "0120-007-110", note: "無料・平日8〜17時。犯罪への巻き込まれも対応" },
-                { name: "学校の先生・家族", num: "まず話して！", note: "「こういうDMが来た」と見せるだけでOK。一人で悩まないで" },
-              ]).map((c, i) => (
-                <div key={i} style={{ padding: "10px 0", borderBottom: i < 2 ? "1px solid rgba(255,255,255,.07)" : "none" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 3 }}>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,.8)" }}><RubyText text={c.name} /></span>
-                    <span style={{ fontSize: 13, fontWeight: 900, color: "#4ade80", fontFamily: "'DotGothic16',monospace" }}><RubyText text={c.num} /></span>
-                  </div>
-                  <div style={{ fontSize: 11, color: "rgba(255,255,255,.45)", lineHeight: 1.6 }}><RubyText text={c.note} /></div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {isLast ? (
-            <button onClick={() => setPhase("pre_dialogue")} style={{ width: "100%", padding: 15, background: "linear-gradient(135deg,#16a34a,#15803d)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}><RubyText text={ageMode === "elementary" ? "{親子|おやこ}で{話|はな}し{合|あ}おう →" : "親子で話し合おう →"} /></button>
-          ) : (
-            <button onClick={() => setCheckpointStep(s => s + 1)} style={{ width: "100%", padding: 15, background: "rgba(74,222,128,.12)", border: "1.5px solid rgba(74,222,128,.35)", borderRadius: 14, color: "#4ade80", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
-              <RubyText text={ageMode === "elementary" ? `つぎのサイン → (${checkpointStep + 2}/${checkpoints.length})` : `次のサイン → (${checkpointStep + 2}/${checkpoints.length})`} />
-            </button>
-          )}
-        </div>
-      </div>
-    );
+    return <Ep3Checkpoints ageMode={ageMode} onComplete={() => setPhase("pre_dialogue")} />;
   }
 
   // ── Timer体験 (EP3) ──
