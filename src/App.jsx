@@ -13117,6 +13117,244 @@ function Ep4Countermeasures({ el, red, onComplete }) {
   );
 }
 
+function Ep4FakeLogin({ el, red, emailInput, setEmailInput, passwordInput, setPasswordInput, onNext }) {
+  const [showBubble, setShowBubble] = useState(false);
+  const [bubbleText, setBubbleText] = useState("");
+
+  useEffect(()=>{
+    const t = setTimeout(()=>{
+      setShowBubble(true);
+      setBubbleText(el
+        ?"「メールアドレスとパスワードで\nログインするんだよね…」"
+        :"「メールアドレスとパスワードで\nログインするんだよね…」"
+      );
+    }, 1000);
+    return ()=>clearTimeout(t);
+  },[]);
+
+  const handleEmailChange = (e) => {
+    setEmailInput(e.target.value);
+    if(e.target.value.length > 0){
+      setShowBubble(false);
+    }
+  };
+
+  const handlePasswordChange = (e) => {
+    setPasswordInput(e.target.value);
+  };
+
+  const handleOtherCardTap = () => {
+    setShowBubble(true);
+    setBubbleText(el
+      ?"「あ、こっちじゃないよね…\nメアドとパスワードで\nログインしなきゃ」"
+      :"「あ、こっちじゃないよね…\nメアドとパスワードで\nログインしなきゃ」"
+    );
+  };
+
+  const canLogin = emailInput.length > 0 && passwordInput.length > 0;
+
+  return (
+    <div style={{
+      minHeight:"100vh",
+      background:"#f0f0f0",
+      fontFamily:"-apple-system,'Hiragino Sans',sans-serif",
+      position:"relative",
+    }}>
+      {/* URLバー */}
+      <div style={{background:"#f2f2f7",padding:"6px 10px",borderBottom:"0.5px solid #e0e0e0"}}>
+        <div style={{
+          background:"#fff",borderRadius:10,padding:"5px 10px",
+          display:"flex",alignItems:"center",gap:6,
+        }}>
+          <span style={{fontSize:11,color:"#ff3b30"}}>⚠️</span>
+          <span style={{
+            fontSize:11,color:"#ff3b30",
+            fontFamily:"monospace",
+            overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",
+          }}>
+            nintendo-account-verify.com
+          </span>
+        </div>
+      </div>
+
+      {/* Nintendoヘッダー */}
+      <div style={{background:red,padding:"10px 16px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+        <span style={{color:"#fff",fontSize:15,fontWeight:900,letterSpacing:1}}>Nintendo</span>
+        <span style={{color:"rgba(255,255,255,.7)",fontSize:11}}>
+          <RubyText text={el?"{アカウント新規作成|あかうんとしんきさくせい}":"アカウント新規作成"}/>
+        </span>
+      </div>
+
+      <div style={{padding:"14px 14px 24px",position:"relative"}}>
+        <div style={{textAlign:"center",fontSize:15,fontWeight:700,color:"#333",marginBottom:14}}>
+          <RubyText text={el?"ニンテンドーアカウント":"ニンテンドーアカウント"}/>
+        </div>
+
+        {/* ハナの吹き出し */}
+        {showBubble && (
+          <div style={{
+            position:"relative",
+            background:"#fff",
+            border:"2px solid #f5c842",
+            borderRadius:14,
+            padding:"10px 14px",
+            fontSize:12,
+            color:"#7a5c00",
+            fontStyle:"italic",
+            lineHeight:1.6,
+            marginBottom:10,
+            boxShadow:"0 4px 16px rgba(0,0,0,.12)",
+            animation:"mamFadeUp .5s ease",
+            whiteSpace:"pre-line",
+          }}>
+            <RubyText text={bubbleText}/>
+            <div style={{fontSize:10,color:"#999",marginTop:4}}>🧒 ハナ</div>
+            <div style={{
+              position:"absolute",
+              bottom:-10,left:20,
+              borderWidth:"5px 5px 0",
+              borderStyle:"solid",
+              borderColor:"#f5c842 transparent transparent",
+            }}/>
+          </div>
+        )}
+
+        {/* パスワードでログインカード */}
+        <div style={{
+          background:"#fff",borderRadius:8,padding:18,
+          marginBottom:10,boxShadow:"0 1px 4px rgba(0,0,0,.1)",
+          border: showBubble && bubbleText.includes("メアドとパスワード")
+            ? "2px solid #f5c842" : "2px solid transparent",
+          transition:"border .3s",
+        }}>
+          <div style={{fontSize:13,fontWeight:700,color:"#333",marginBottom:12}}>
+            <RubyText text={el?"パスワードでログイン":"パスワードでログイン"}/>
+          </div>
+          <div style={{marginBottom:10}}>
+            <div style={{
+              fontSize:12,color:"#333",marginBottom:4,
+              display:"flex",alignItems:"center",gap:4,
+            }}>
+              <span style={{display:"inline-block",width:3,height:14,background:red,borderRadius:2}}/>
+              <RubyText text={el?"メールアドレス / ログインID":"メールアドレス / ログインID"}/>
+            </div>
+            <input
+              value={emailInput}
+              onChange={handleEmailChange}
+              placeholder="メールアドレス / ログインID"
+              style={{
+                width:"100%",border:"1px solid #ccc",borderRadius:4,
+                padding:"8px 10px",fontSize:13,fontFamily:"inherit",
+                outline:"none",color:"#333",boxSizing:"border-box",
+              }}
+            />
+          </div>
+          <div style={{marginBottom:14}}>
+            <div style={{
+              fontSize:12,color:"#333",marginBottom:4,
+              display:"flex",alignItems:"center",gap:4,
+            }}>
+              <span style={{display:"inline-block",width:3,height:14,background:red,borderRadius:2}}/>
+              <RubyText text={el?"パスワード":"パスワード"}/>
+            </div>
+            <input
+              type="password"
+              value={passwordInput}
+              onChange={handlePasswordChange}
+              placeholder="パスワード"
+              style={{
+                width:"100%",border:"1px solid #ccc",borderRadius:4,
+                padding:"8px 10px",fontSize:13,fontFamily:"inherit",
+                outline:"none",boxSizing:"border-box",
+              }}
+            />
+          </div>
+          <div style={{textAlign:"center"}}>
+            <button
+              onClick={()=>{
+                feedback("tap");
+                if(canLogin) onNext();
+              }}
+              style={{
+                background:canLogin ? red : "#ccc",
+                color:"#fff",border:"none",borderRadius:99,
+                padding:"8px 36px",fontSize:14,fontWeight:700,
+                cursor:canLogin?"pointer":"default",
+                fontFamily:"inherit",transition:"background .3s",
+              }}>
+              <RubyText text={el?"ログイン":"ログイン"}/>
+            </button>
+          </div>
+        </div>
+
+        <div style={{textAlign:"center",marginBottom:10}}>
+          <a style={{fontSize:12,color:"#1a6ecc",display:"block",marginBottom:4}}>
+            ● <RubyText text={el?"メールアドレス/ログインIDを{忘|わす}れた{場合|ばあい}":"メールアドレス/ログインIDを忘れた場合"}/>
+          </a>
+          <a style={{fontSize:12,color:"#1a6ecc",display:"block"}}>
+            ● <RubyText text={el?"パスワードを{忘|わす}れた{場合|ばあい}":"パスワードを忘れた場合"}/>
+          </a>
+        </div>
+
+        {/* パスキーカード（タップで吹き出し変化） */}
+        <div
+          onClick={handleOtherCardTap}
+          style={{
+            background:"#fff",borderRadius:8,padding:14,
+            marginBottom:10,textAlign:"center",
+            boxShadow:"0 1px 4px rgba(0,0,0,.1)",
+            cursor:"pointer",opacity:.6,
+          }}>
+          <div style={{fontSize:13,fontWeight:700,color:"#333",marginBottom:10}}>
+            <RubyText text={el?"パスキーでログイン":"パスキーでログイン"}/>
+          </div>
+          <div style={{display:"flex",justifyContent:"center",gap:14,marginBottom:10}}>
+            <div style={{
+              width:32,height:32,borderRadius:"50%",
+              background:"#e8f0fe",display:"flex",
+              alignItems:"center",justifyContent:"center",fontSize:16,
+            }}>🙂</div>
+            <div style={{
+              width:32,height:32,borderRadius:"50%",
+              background:"#e8f0fe",display:"flex",
+              alignItems:"center",justifyContent:"center",fontSize:16,
+            }}>🔒</div>
+          </div>
+          <button style={{
+            background:"#fff",color:"#333",
+            border:"1px solid #ccc",borderRadius:99,
+            padding:"5px 22px",fontSize:13,
+            cursor:"pointer",fontFamily:"inherit",
+          }}>
+            <RubyText text={el?"ログイン":"ログイン"}/>
+          </button>
+        </div>
+
+        {/* Google/Appleカード（タップで吹き出し変化） */}
+        <div
+          onClick={handleOtherCardTap}
+          style={{
+            background:"#fff",borderRadius:8,padding:14,
+            boxShadow:"0 1px 4px rgba(0,0,0,.1)",
+            cursor:"pointer",opacity:.6,
+          }}>
+          <div style={{fontSize:12,fontWeight:700,color:"#333",marginBottom:10,textAlign:"center"}}>
+            <RubyText text={el?"ほかのアカウントでかんたんログイン":"ほかのアカウントでかんたんログイン"}/>
+          </div>
+          <div style={{
+            border:"1px solid #ddd",borderRadius:6,padding:8,
+            textAlign:"center",marginBottom:8,fontSize:13,color:"#333",
+          }}>G &nbsp; Google</div>
+          <div style={{
+            background:"#000",borderRadius:6,padding:8,
+            textAlign:"center",fontSize:13,color:"#fff",
+          }}>🍎 &nbsp; <RubyText text={el?"Appleでサインイン":"Appleでサインイン"}/></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ═══════════════════════════════════════════════════════════════
 function Episode4({ onComplete, onExit }) {
   const ageMode = useAgeMode();
@@ -13437,176 +13675,15 @@ function Episode4({ onComplete, onExit }) {
   );
 
   if (phase === "fake_login") return (
-    <div style={{
-      minHeight:"100vh",
-      background:"#f0f0f0",
-      fontFamily:"-apple-system,'Hiragino Sans',sans-serif",
-    }}>
-      {/* URLバー */}
-      <div style={{background:"#f2f2f7",padding:"6px 10px",borderBottom:"0.5px solid #e0e0e0"}}>
-        <div style={{
-          background:"#fff",borderRadius:10,padding:"5px 10px",
-          display:"flex",alignItems:"center",gap:6,
-        }}>
-          <span style={{fontSize:11,color:"#ff3b30"}}>⚠️</span>
-          <span style={{
-            fontSize:11,color:"#ff3b30",
-            fontFamily:"monospace",
-            overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",
-          }}>
-            nintendo-account-verify.com
-          </span>
-        </div>
-      </div>
-      {/* Nintendoヘッダー */}
-      <div style={{background:red,padding:"10px 16px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-        <span style={{color:"#fff",fontSize:16,fontWeight:900,letterSpacing:1}}>Nintendo</span>
-        <span style={{color:"rgba(255,255,255,.7)",fontSize:11}}>
-          <RubyText text={el?"{アカウント新規作成|あかうんとしんきさくせい}":"アカウント新規作成"}/>
-        </span>
-      </div>
-      {/* メインコンテンツ */}
-      <div style={{padding:"16px 16px 24px"}}>
-        <div style={{
-          textAlign:"center",fontSize:16,fontWeight:700,
-          color:"#333",marginBottom:16,
-        }}>
-          <RubyText text={el?"ニンテンドーアカウント":"ニンテンドーアカウント"}/>
-        </div>
-
-        {/* パスワードでログインカード */}
-        <div style={{
-          background:"#fff",borderRadius:8,padding:20,
-          marginBottom:12,boxShadow:"0 1px 4px rgba(0,0,0,.1)",
-        }}>
-          <div style={{fontSize:13,fontWeight:700,color:"#333",marginBottom:14}}>
-            <RubyText text={el?"パスワードでログイン":"パスワードでログイン"}/>
-          </div>
-          <div style={{marginBottom:12}}>
-            <div style={{
-              fontSize:12,color:"#333",marginBottom:4,
-              display:"flex",alignItems:"center",gap:4,
-            }}>
-              <span style={{
-                display:"inline-block",width:3,height:14,
-                background:red,borderRadius:2,
-              }}/>
-              <RubyText text={el?"メールアドレス / ログインID":"メールアドレス / ログインID"}/>
-            </div>
-            <input
-              value={emailInput}
-              onChange={e=>setEmailInput(e.target.value)}
-              placeholder="メールアドレス / ログインID"
-              style={{
-                width:"100%",border:"1px solid #ccc",borderRadius:4,
-                padding:"9px 12px",fontSize:13,fontFamily:"inherit",
-                outline:"none",color:"#333",
-              }}
-            />
-          </div>
-          <div style={{marginBottom:16}}>
-            <div style={{
-              fontSize:12,color:"#333",marginBottom:4,
-              display:"flex",alignItems:"center",gap:4,
-            }}>
-              <span style={{
-                display:"inline-block",width:3,height:14,
-                background:red,borderRadius:2,
-              }}/>
-              <RubyText text={el?"パスワード":"パスワード"}/>
-            </div>
-            <input
-              type="password"
-              value={passwordInput}
-              onChange={e=>setPasswordInput(e.target.value)}
-              placeholder="パスワード"
-              style={{
-                width:"100%",border:"1px solid #ccc",borderRadius:4,
-                padding:"9px 12px",fontSize:13,fontFamily:"inherit",
-                outline:"none",
-              }}
-            />
-          </div>
-          <div style={{textAlign:"center"}}>
-            <button
-              onClick={()=>{
-                feedback("tap");
-                if(emailInput.length>0 && passwordInput.length>0){
-                  setPhase("code_input");
-                }
-              }}
-              style={{
-                background: emailInput.length>0 && passwordInput.length>0
-                  ? red : "#ccc",
-                color:"#fff",border:"none",borderRadius:99,
-                padding:"8px 40px",fontSize:14,fontWeight:700,
-                cursor:"pointer",fontFamily:"inherit",
-                transition:"background .3s",
-              }}>
-              <RubyText text={el?"ログイン":"ログイン"}/>
-            </button>
-          </div>
-        </div>
-
-        <div style={{textAlign:"center",marginBottom:12}}>
-          <a style={{fontSize:12,color:"#1a6ecc",display:"block",marginBottom:6}}>
-            ● <RubyText text={el?"メールアドレス/ログインIDを{忘|わす}れた{場合|ばあい}":"メールアドレス/ログインIDを忘れた場合"}/>
-          </a>
-          <a style={{fontSize:12,color:"#1a6ecc",display:"block"}}>
-            ● <RubyText text={el?"パスワードを{忘|わす}れた{場合|ばあい}":"パスワードを忘れた場合"}/>
-          </a>
-        </div>
-
-        {/* パスキーカード */}
-        <div style={{
-          background:"#fff",borderRadius:8,padding:16,
-          marginBottom:12,textAlign:"center",
-          boxShadow:"0 1px 4px rgba(0,0,0,.1)",
-        }}>
-          <div style={{fontSize:13,fontWeight:700,color:"#333",marginBottom:12}}>
-            <RubyText text={el?"パスキーでログイン":"パスキーでログイン"}/>
-          </div>
-          <div style={{display:"flex",justifyContent:"center",gap:16,marginBottom:12}}>
-            <div style={{
-              width:36,height:36,borderRadius:"50%",
-              background:"#e8f0fe",display:"flex",
-              alignItems:"center",justifyContent:"center",fontSize:20,
-            }}>🙂</div>
-            <div style={{
-              width:36,height:36,borderRadius:"50%",
-              background:"#e8f0fe",display:"flex",
-              alignItems:"center",justifyContent:"center",fontSize:20,
-            }}>🔒</div>
-          </div>
-          <button style={{
-            background:"#fff",color:"#333",
-            border:"1px solid #ccc",borderRadius:99,
-            padding:"6px 28px",fontSize:13,cursor:"pointer",
-            fontFamily:"inherit",
-          }}>
-            <RubyText text={el?"ログイン":"ログイン"}/>
-          </button>
-        </div>
-
-        {/* Google/Apple */}
-        <div style={{
-          background:"#fff",borderRadius:8,padding:16,
-          boxShadow:"0 1px 4px rgba(0,0,0,.1)",
-        }}>
-          <div style={{fontSize:13,fontWeight:700,color:"#333",marginBottom:12,textAlign:"center"}}>
-            <RubyText text={el?"ほかのアカウントでかんたんログイン":"ほかのアカウントでかんたんログイン"}/>
-          </div>
-          <div style={{
-            border:"1px solid #ddd",borderRadius:6,padding:"10px",
-            textAlign:"center",marginBottom:8,fontSize:13,color:"#333",
-          }}>G &nbsp; Google</div>
-          <div style={{
-            background:"#000",borderRadius:6,padding:"10px",
-            textAlign:"center",fontSize:13,color:"#fff",
-          }}>🍎 &nbsp; Appleでサインイン</div>
-        </div>
-      </div>
-    </div>
+    <Ep4FakeLogin
+      el={el}
+      red={red}
+      emailInput={emailInput}
+      setEmailInput={setEmailInput}
+      passwordInput={passwordInput}
+      setPasswordInput={setPasswordInput}
+      onNext={()=>setPhase("code_input")}
+    />
   );
 
   if (phase === "code_input") return (
