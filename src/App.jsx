@@ -13263,81 +13263,198 @@ function Episode4({ onComplete, onExit }) {
   if (phase === "sms_receive") return (
     <div style={{
       minHeight:"100vh",
-      background:"#1c1c1e",
+      background:"#000",
       fontFamily:"-apple-system,'Hiragino Sans',sans-serif",
-      color:"#fff",
+      display:"flex",
+      flexDirection:"column",
+      maxWidth:"100%",
     }}>
-      {/* ステータスバー */}
-      <div style={{padding:"12px 20px 6px",display:"flex",justifyContent:"space-between",fontSize:12}}>
-        <span>21:34</span><span>📶 🔋</span>
-      </div>
-      {/* ヘッダー */}
-      <div style={{padding:"6px 16px 12px",textAlign:"center",borderBottom:"0.5px solid rgba(255,255,255,.1)"}}>
-        <div style={{fontSize:11,color:"rgba(255,255,255,.5)",marginBottom:2}}>
-          <RubyText text={el?"メッセージ":"メッセージ"}/>
+
+      {/* iPhoneステータスバー */}
+      <div style={{
+        background:"#000",
+        padding:"14px 20px 6px",
+        display:"flex",
+        justifyContent:"space-between",
+        alignItems:"center",
+      }}>
+        <span style={{fontSize:15,fontWeight:600,color:"#fff"}}>21:34</span>
+        <div style={{display:"flex",gap:6,alignItems:"center"}}>
+          <span style={{fontSize:13,color:"#fff"}}>●●●</span>
+          <span style={{fontSize:13,color:"#fff"}}>WiFi</span>
+          <span style={{fontSize:13,color:"#fff"}}>🔋</span>
         </div>
-        <div style={{fontSize:16,fontWeight:600}}>任天堂</div>
       </div>
-      {/* チャット */}
-      <div style={{padding:"16px 12px"}}>
-        <div style={{textAlign:"center",fontSize:11,color:"rgba(255,255,255,.3)",marginBottom:14}}>
+
+      {/* メッセージアプリヘッダー */}
+      <div style={{
+        background:"#1c1c1e",
+        borderBottom:"0.5px solid rgba(255,255,255,.15)",
+        padding:"8px 16px 12px",
+        display:"flex",
+        flexDirection:"column",
+        alignItems:"center",
+        position:"relative",
+      }}>
+        <span style={{
+          position:"absolute",left:16,top:10,
+          fontSize:16,color:"#007aff",fontWeight:400,
+        }}>＜</span>
+
+        {/* 送信者アイコン */}
+        <div style={{
+          width:52,height:52,borderRadius:"50%",
+          background:"#3a3a3c",
+          display:"flex",alignItems:"center",
+          justifyContent:"center",
+          marginBottom:4,
+        }}>
+          <span style={{fontSize:22}}>🎮</span>
+        </div>
+        <div style={{fontSize:13,fontWeight:600,color:"#fff"}}>任天堂</div>
+        <div style={{
+          fontSize:11,color:"rgba(255,255,255,.4)",marginTop:2,
+        }}>
+          <RubyText text={el
+            ?"{短縮番号|たんしゅくばんごう} +81-120-059-161"
+            :"短縮番号 +81-120-059-161"
+          }/>
+        </div>
+      </div>
+
+      {/* チャットエリア */}
+      <div style={{
+        flex:1,
+        background:"#000",
+        padding:"16px 12px 12px",
+      }}>
+        {/* 日付 */}
+        <div style={{
+          textAlign:"center",
+          fontSize:11,
+          color:"rgba(255,255,255,.4)",
+          marginBottom:16,
+        }}>
           <RubyText text={el?"{今日|きょう} 21:34":"今日 21:34"}/>
         </div>
+
         {/* SMS吹き出し */}
         <div style={{
           background:"#3a3a3c",
           borderRadius:"18px 18px 18px 4px",
           padding:"12px 14px",
-          fontSize:13,color:"#fff",lineHeight:1.7,
-          maxWidth:"85%",marginBottom:16,
+          fontSize:14,
+          color:"#fff",
+          lineHeight:1.7,
+          maxWidth:"82%",
+          marginBottom:8,
         }}>
           <RubyText text={el
-            ?"【{任天堂|にんてんどう}】お{客様|きゃくさま}のニンテンドーアカウントで{不正|ふせい}アクセスが{検知|けんち}されました。\n\n24{時間以内|じかんいない}にご{確認|かくにん}ください。\n"
-            :"【任天堂】お客様のニンテンドーアカウントで不正アクセスが検知されました。\n\n24時間以内にご確認ください。\n"
+            ?"【{任天堂|にんてんどう}】お{客様|きゃくさま}のニンテンドーアカウントで{不正|ふせい}アクセスが{検知|けんち}されました。\n\n24{時間以内|じかんいない}にご{確認|かくにん}ください。"
+            :"【任天堂】お客様のニンテンドーアカウントで不正アクセスが検知されました。\n\n24時間以内にご確認ください。"
           }/>
-          <span style={{color:"#4db8ff",textDecoration:"underline",fontSize:12}}>
-            https://nintendo-account-verify.com/check
-          </span>
+          <div style={{marginTop:8}}>
+            <span style={{
+              color:"#4db8ff",
+              textDecoration:"underline",
+              fontSize:13,
+              wordBreak:"break-all",
+            }}>
+              https://nintendo-account-verify.com/check
+            </span>
+          </div>
         </div>
+
+        {/* 既読・時刻 */}
+        <div style={{
+          fontSize:11,
+          color:"rgba(255,255,255,.3)",
+          marginBottom:20,
+          paddingLeft:4,
+        }}>
+          <RubyText text={el?"{配信済|はいしんず}み 21:34":"配信済み 21:34"}/>
+        </div>
+
         {/* ハナの心理 */}
         <div style={{
           background:"rgba(255,200,0,.08)",
           borderLeft:"3px solid #f5c842",
-          padding:"10px 12px",
-          fontSize:11,color:"#f5c842",fontStyle:"italic",
-          borderRadius:"0 8px 8px 0",lineHeight:1.7,marginBottom:20,
+          padding:"10px 14px",
+          fontSize:12,
+          color:"#f5c842",
+          fontStyle:"italic",
+          borderRadius:"0 10px 10px 0",
+          lineHeight:1.7,
+          marginBottom:24,
         }}>
           <RubyText text={el
             ?"ハナ：「え…{不正|ふせい}アクセス？！Switchが{使|つか}えなくなっちゃう…！{急|いそ}がないと！」"
             :"ハナ：「え…不正アクセス？！Switchが使えなくなっちゃう…！急がないと！」"
           }/>
         </div>
+
         {/* 選択肢 */}
-        <div style={{fontSize:11,color:"rgba(255,255,255,.4)",marginBottom:10,textAlign:"center"}}>
+        <div style={{
+          fontSize:11,
+          color:"rgba(255,255,255,.4)",
+          marginBottom:10,
+          textAlign:"center",
+        }}>
           <RubyText text={el?"どうする？":"どうする？"}/>
         </div>
+
         <button
           onClick={()=>{feedback("tap");setPhase("fake_login");}}
           style={{
-            width:"100%",padding:13,borderRadius:12,border:"none",
-            background:"#4db8ff",color:"#fff",
-            fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"inherit",
-            marginBottom:10,
+            width:"100%",padding:14,borderRadius:14,border:"none",
+            background:"#007aff",
+            color:"#fff",fontSize:15,fontWeight:600,
+            cursor:"pointer",fontFamily:"inherit",marginBottom:10,
           }}>
-          <RubyText text={el?"{リンクを開|ひら}く":"リンクを開く"}/>
+          <RubyText text={el?"{リンク|りんく}を{開|ひら}く":"リンクを開く"}/>
         </button>
+
         <button
           onClick={()=>{feedback("tap");setPhase("fake_login");}}
           style={{
-            width:"100%",padding:13,borderRadius:12,
+            width:"100%",padding:14,borderRadius:14,
             border:"1px solid rgba(255,255,255,.2)",
-            background:"transparent",color:"rgba(255,255,255,.6)",
+            background:"rgba(255,255,255,.06)",
+            color:"rgba(255,255,255,.6)",
             fontSize:13,cursor:"pointer",fontFamily:"inherit",
           }}>
-          <RubyText text={el?"「{怖|こわ}いけど…{確認|かくにん}しないとSwitchが…」":
-            "「怖いけど…確認しないとSwitchが…」"
+          <RubyText text={el
+            ?"「{怖|こわ}いけど…{確認|かくにん}しないとSwitchが…」"
+            :"「怖いけど…確認しないとSwitchが…」"
           }/>
         </button>
+      </div>
+
+      {/* iPhoneのテキスト入力バー風 */}
+      <div style={{
+        background:"#1c1c1e",
+        borderTop:"0.5px solid rgba(255,255,255,.15)",
+        padding:"8px 12px",
+        display:"flex",
+        alignItems:"center",
+        gap:10,
+      }}>
+        <div style={{
+          flex:1,
+          background:"#2c2c2e",
+          borderRadius:20,
+          padding:"8px 14px",
+          fontSize:14,
+          color:"rgba(255,255,255,.3)",
+        }}>
+          <RubyText text={el?"SMS":"SMS"}/>
+        </div>
+        <div style={{
+          width:32,height:32,borderRadius:"50%",
+          background:"#007aff",
+          display:"flex",alignItems:"center",
+          justifyContent:"center",fontSize:16,
+        }}>↑</div>
       </div>
     </div>
   );
