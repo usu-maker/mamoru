@@ -11983,6 +11983,9 @@ function Episode3({ onComplete, onExit }) {
   const [caseIdx, setCaseIdx] = useState(0);
   const [debriefStep, setDebriefStep] = useState(0);
   const [checkpointStep, setCheckpointStep] = useState(0);
+  const [contactName, setContactName] = useState("");
+
+  const el = ageMode === "elementary";
 
   const step = CONVO_STEPS.find(s => s.id === stepId) || CONVO_STEPS[0];
   const pressure = pressureKey ? PRESSURE_MSGS[pressureKey] : null;
@@ -12241,7 +12244,7 @@ function Episode3({ onComplete, onExit }) {
 
   // ── Checkpoints ──
   if (phase === "checkpoints") {
-    return <Ep3Checkpoints ageMode={ageMode} onComplete={() => setPhase("pre_dialogue")} />;
+    return <Ep3Checkpoints ageMode={ageMode} onComplete={() => setPhase("icebreak")} />;
   }
 
   // ── Timer体験 (EP3) ──
@@ -12282,6 +12285,197 @@ function Episode3({ onComplete, onExit }) {
         <OwlSay mood="excited" e="ニュースにも{出|で}てくる{重要|じゅうよう}なことばをいっしょにおぼえよう！🦉">ニュースにも出てくる重要ワードを一緒に覚えよう！🦉</OwlSay>
         <KeywordPhase epKey="ep3" accentColor="#16a34a" onComplete={() => setPhase("complete")} />
         <ParentExpertCard epKey="ep3" accentColor="#16a34a" />
+      </div>
+    </div>
+  );
+
+  // ── Icebreak (EP3) ──
+  if (phase === "icebreak") return (
+    <div style={{
+      minHeight:"100vh",
+      background:"linear-gradient(180deg,#1a0d2e,#120920)",
+      padding:"20px 16px 40px",
+      fontFamily:"'Zen Maru Gothic',sans-serif",
+      color:"#fff",
+    }}>
+      <div style={{maxWidth:440,margin:"0 auto"}}>
+
+        <h2 style={{
+          fontSize:20,fontWeight:900,color:"#fff",
+          textAlign:"center",marginBottom:8,
+        }}>
+          <RubyText text={el
+            ?"{我|わ}が{家|や}の{約束|やくそく}を{作|つく}ろう"
+            :"我が家の約束を作ろう"
+          }/>
+        </h2>
+
+        {/* モリィのセリフ */}
+        <div style={{
+          display:"flex",alignItems:"flex-start",gap:10,
+          marginBottom:20,
+        }}>
+          <OwlMolly size={44}/>
+          <div style={{
+            background:"#fff",
+            borderRadius:"0 14px 14px 14px",
+            padding:"10px 14px",
+            flex:1,
+            border:"1.5px solid rgba(124,58,237,.2)",
+          }}>
+            <div style={{fontSize:12,color:"#1e293b",lineHeight:1.8}}>
+              <RubyText text={el
+                ?"{今回|こんかい}の{学|まな}びを{経|へ}て、{怪|あや}しいお{仕事|しごと}の{誘|さそ}いが{来|き}たとき、{一人|ひとり}で{悩|なや}まないようにしよう。{相談|そうだん}できる{人|ひと}の{名前|なまえ}を{入力|にゅうりょく}してね。🦉"
+                :"今回の学びを経て、怪しいお仕事の誘いが来たとき、一人で悩まないようにしよう。相談できる人の名前を入力してね。🦉"
+              }/>
+            </div>
+          </div>
+        </div>
+
+        {/* 入力エリア */}
+        <div style={{
+          background:"rgba(124,58,237,.08)",
+          border:"1px solid rgba(124,58,237,.25)",
+          borderRadius:16,
+          padding:"16px",
+          marginBottom:14,
+        }}>
+          <div style={{
+            fontSize:13,color:"rgba(255,255,255,.6)",marginBottom:10,
+          }}>
+            <RubyText text={el
+              ?"{怪|あや}しいお{仕事|しごと}の{誘|さそ}いを{見|み}たら…"
+              :"怪しいお仕事の誘いを見たら…"
+            }/>
+          </div>
+          <input
+            value={contactName}
+            onChange={e=>setContactName(e.target.value)}
+            placeholder={el
+              ?"例：お{父|とう}さん・お{母|かあ}さん・◯◯{先生|せんせい}"
+              :"例：お父さん・お母さん・◯◯先生"
+            }
+            style={{
+              width:"100%",
+              padding:"12px 14px",
+              background:"rgba(255,255,255,.06)",
+              border:"1px solid rgba(124,58,237,.4)",
+              borderRadius:12,
+              color:"#fff",
+              fontSize:14,
+              fontFamily:"inherit",
+              outline:"none",
+              boxSizing:"border-box",
+            }}
+          />
+        </div>
+
+        {/* 名前入力後に表示 */}
+        {contactName.length > 0 && (
+          <>
+            {/* 約束カード */}
+            <div style={{
+              background:"rgba(124,58,237,.1)",
+              border:"2px solid rgba(124,58,237,.4)",
+              borderRadius:16,
+              padding:"18px 16px",
+              marginBottom:14,
+              animation:"mamFadeUp .4s ease",
+            }}>
+              <div style={{
+                fontSize:13,fontWeight:900,
+                color:"#a78bfa",marginBottom:10,
+              }}>
+                🛡️ <RubyText text={el?"{我|わ}が{家|や}の{約束|やくそく}":"我が家の約束"}/>
+              </div>
+              <div style={{fontSize:13,color:"rgba(255,255,255,.8)",lineHeight:1.9}}>
+                <RubyText text={el
+                  ?"{怪|あや}しいお{仕事|しごと}の{誘|さそ}いが{来|き}たら"
+                  :"怪しいお仕事の誘いが来たら"
+                }/>
+                <br/>
+                <strong style={{color:"#c4b5fd",fontSize:16}}>
+                  「{contactName}」
+                </strong>
+                <RubyText text={el?"に{すぐ}{相談|そうだん}する！":"にすぐ相談する！"}/>
+                <br/>
+                <span style={{fontSize:11,color:"rgba(255,255,255,.35)"}}>
+                  {new Date().toLocaleDateString("ja-JP")}
+                </span>
+              </div>
+            </div>
+
+            {/* 電話番号リスト */}
+            <div style={{
+              background:"rgba(255,255,255,.04)",
+              border:"1px solid rgba(255,255,255,.08)",
+              borderRadius:14,
+              padding:"14px 16px",
+              marginBottom:14,
+            }}>
+              <div style={{
+                fontSize:12,fontWeight:900,
+                color:"#fcd34d",marginBottom:8,
+              }}>
+                📞 <RubyText text={el
+                  ?"{困|こま}ったらここに{電話|でんわ}しよう"
+                  :"困ったらここに電話しよう"
+                }/>
+              </div>
+              {[
+                {
+                  name:"#9110",
+                  desc:el?"{警察|けいさつ}{相談|そうだん}{専用|せんよう}{電話|でんわ}":"警察相談専用電話"
+                },
+                {
+                  name:"0120-007-110",
+                  desc:el?"{子|こ}どもの{人権|じんけん}110{番|ばん}":"子どもの人権110番"
+                },
+                {
+                  name:"0120-279-338",
+                  desc:"よりそいホットライン"
+                },
+              ].map((c,i)=>(
+                <div key={i} style={{
+                  display:"flex",gap:10,marginBottom:6,alignItems:"center",
+                }}>
+                  <a href={`tel:${c.name}`} style={{
+                    fontSize:14,fontWeight:900,
+                    color:"#a78bfa",textDecoration:"none",
+                  }}>
+                    {c.name}
+                  </a>
+                  <span style={{fontSize:12,color:"rgba(255,255,255,.5)"}}>
+                    <RubyText text={c.desc}/>
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* 次へボタン */}
+            <button
+              onClick={()=>{feedback("tap");setPhase("pre_dialogue");}}
+              style={{
+                width:"100%",
+                padding:16,
+                background:"linear-gradient(135deg,#7c3aed,#4f46e5)",
+                border:"none",
+                borderRadius:14,
+                color:"#fff",
+                fontSize:16,
+                fontWeight:900,
+                cursor:"pointer",
+                fontFamily:"inherit",
+                boxShadow:"0 8px 24px rgba(124,58,237,.4)",
+              }}>
+              <RubyText text={el
+                ?"{親子|おやこ}で{話|はな}し{合|あ}おう →"
+                :"親子で話し合おう →"
+              }/>
+            </button>
+          </>
+        )}
+
       </div>
     </div>
   );
