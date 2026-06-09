@@ -10882,13 +10882,56 @@ function DarkJobSimulation({ onComplete }) {
                 :"えー残念😢\nでも枠が埋まっちゃうかも…\nもう少し聞いてみてよ！損しないから😊";
               await addDM(myText,"me",0);
               await addDM(theirText,"them",900);
-              timerRef.current=setTimeout(()=>{
-                setInnerPhase("tg_install");
-              },2000);
+              setTimeout(()=>{
+                setDmStep(2);
+                setShowChoices(true);
+              },1800);
             }} style={{width:"100%",padding:"10px 14px",borderRadius:12,border:"1.5px solid #3797f0",background:"#fff",color:"#3797f0",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit",marginBottom:8,textAlign:"left"}}>
               <RubyText text={c.label}/>
             </button>
           ))}
+        </div>
+      )}
+      {showChoices && dmStep===2 && (
+        <div style={{padding:"12px 14px",borderTop:"0.5px solid #dbdbdb",background:"#fff"}}>
+          <div style={{
+            background:"rgba(255,200,0,.08)",
+            borderLeft:"3px solid #f5c842",
+            padding:"10px 12px",
+            fontSize:11,
+            color:"#7a5c00",
+            fontStyle:"italic",
+            borderRadius:"0 8px 8px 0",
+            lineHeight:1.7,
+            marginBottom:12,
+          }}>
+            <RubyText text={el
+              ?"タクヤ：「Telegramって{初|はじ}めて{使|つか}う…\nLINEとどう{違|ちが}うんだろ。\n{話|はなし}だけ{聞|き}いてみるか」"
+              :"タクヤ：「Telegramって初めて使う…\nLINEとどう違うんだろ。\n話だけ聞いてみるか」"
+            }/>
+          </div>
+          <button
+            onClick={()=>{
+              feedback("tap");
+              setShowChoices(false);
+              setTgMessages([]);
+              setTgStep(0);
+              setInnerPhase("tg_start");
+            }}
+            style={{
+              width:"100%",
+              padding:"12px 14px",
+              borderRadius:12,
+              border:"none",
+              background:"linear-gradient(135deg,#2AABEE,#229ED9)",
+              color:"#fff",
+              fontSize:13,
+              fontWeight:900,
+              cursor:"pointer",
+              fontFamily:"inherit",
+            }}>
+            📱 <RubyText text={el?"Telegramを{インストール|いんすとーる}する →":"Telegramをインストールする →"}/>
+          </button>
         </div>
       )}
     </div>
@@ -10952,13 +10995,12 @@ function DarkJobSimulation({ onComplete }) {
               background:"#1a2a4a",
             }}>
               <img
-                src="/images/ep3/student_id.jpg"
+                src="/images/ep3/takuya.jpg"
                 style={{
-                  width:"100%",height:"100%",
+                  width:"100%",
+                  height:"100%",
                   objectFit:"cover",
-                  objectPosition:"15% 10%",
-                  transform:"scale(2.2)",
-                  transformOrigin:"20% 18%",
+                  objectPosition:"center top",
                 }}
                 alt="タクヤ"
               />
@@ -11034,91 +11076,6 @@ function DarkJobSimulation({ onComplete }) {
           <RubyText text={el?"{体験|たいけん}スタート →":"体験スタート →"}/>
         </button>
 
-      </div>
-    </div>
-  );
-
-  // ─────────────────────────────────
-  // フェーズ4a：Telegramインストール画面
-  // ─────────────────────────────────
-  if (innerPhase === "tg_install") return (
-    <div style={{
-      minHeight:"100vh",
-      background:"linear-gradient(180deg,#1a1a2e,#0d1424)",
-      fontFamily:"'Zen Maru Gothic',sans-serif",
-      display:"flex",
-      flexDirection:"column",
-      alignItems:"center",
-      justifyContent:"center",
-      padding:"32px 20px",
-    }}>
-      <div style={{maxWidth:360,width:"100%",textAlign:"center"}}>
-
-        {/* Telegramアイコン風 */}
-        <div style={{
-          width:80,height:80,borderRadius:"50%",
-          background:"linear-gradient(135deg,#2AABEE,#229ED9)",
-          display:"flex",alignItems:"center",justifyContent:"center",
-          fontSize:42,marginBottom:16,margin:"0 auto 16px",
-        }}>✈️</div>
-
-        <div style={{fontSize:20,fontWeight:900,color:"#fff",marginBottom:8}}>
-          Telegram
-        </div>
-        <div style={{fontSize:13,color:"rgba(255,255,255,.6)",marginBottom:24,lineHeight:1.7}}>
-          <RubyText text={el
-            ?"Misakiから{紹介|しょうかい}された\n「{田中|たなか} {健一|けんいち}」という{人|ひと}から\nメッセージが{届|とど}いています"
-            :"Misakiから紹介された\n「田中 健一」という人から\nメッセージが届いています"
-          }/>
-        </div>
-
-        {/* タクヤの心理 */}
-        <div style={{
-          background:"rgba(255,200,0,.08)",
-          borderLeft:"3px solid #f5c842",
-          padding:"10px 14px",
-          fontSize:11,color:"#c9a227",
-          fontStyle:"italic",
-          borderRadius:"0 10px 10px 0",
-          lineHeight:1.7,
-          marginBottom:24,
-          textAlign:"left",
-        }}>
-          <RubyText text={el
-            ?"タクヤ：「Telegramって{初|はじ}めて{使|つか}う…\nLINEとどう{違|ちが}うんだろ。\nまぁ、{話|はなし}だけ{聞|き}いてみるか」"
-            :"タクヤ：「Telegramって初めて使う…\nLINEとどう違うんだろ。\n話だけ聞いてみるか」"
-          }/>
-        </div>
-
-        <button
-          onClick={()=>{
-            feedback("tap");
-            setTgMessages([]);
-            setTgStep(0);
-            setShowChoices(true);
-            setInnerPhase("tg_start");
-          }}
-          style={{
-            width:"100%",
-            padding:16,
-            borderRadius:14,
-            border:"none",
-            background:"linear-gradient(135deg,#2AABEE,#229ED9)",
-            color:"#fff",
-            fontSize:15,
-            fontWeight:900,
-            cursor:"pointer",
-            fontFamily:"inherit",
-          }}>
-          <RubyText text={el?"Telegramを{起動|きどう}する →":"Telegramを起動する →"}/>
-        </button>
-
-        <div style={{fontSize:10,color:"rgba(255,255,255,.25)",marginTop:12}}>
-          <RubyText text={el
-            ?"※この{操作|そうさ}が{後|あと}の{状況|じょうきょう}を{大|おお}きく{変|か}えることになる"
-            :"※この操作が後の状況を大きく変えることになる"
-          }/>
-        </div>
       </div>
     </div>
   );
@@ -11301,9 +11258,6 @@ function DarkJobSimulation({ onComplete }) {
                     src="/images/ep3/student_id.jpg"
                     style={{width:"100%",display:"block",borderRadius:10}}
                     alt="学生証"
-                    onError={(e)=>{
-                      e.target.parentElement.innerHTML='<div style="background:#1a3a6b;padding:12px;color:#fff;font-size:11px;border-radius:10px">📋 学生証を送信しました</div>';
-                    }}
                   />
                 </div>
               );
