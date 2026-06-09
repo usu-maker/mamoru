@@ -11944,36 +11944,6 @@ function Episode3({ onComplete, onExit }) {
   }
 
   // ── Timer体験 (EP3) ──
-  if (phase === "timer") return (
-    <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0a1a0a,#041004)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
-      <div style={{ maxWidth: 440, margin: "0 auto" }}>
-        <div style={{ display: "flex", gap: 4, marginBottom: 18 }}>
-          {["quiz","timer","homework","keywords","dialogue"].map((s,i) => (
-            <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= 1 ? "#16a34a" : "rgba(255,255,255,.15)" }} />
-          ))}
-        </div>
-        <OwlSay mood="scared" e="{実際|じっさい}にこんなメッセージが{来|き}たら…どうする？{体験|たいけん}してみよう🦉">実際にこんなメッセージが来たら…どうする？体験してみよう🦉</OwlSay>
-        <div style={{ fontSize: 12, color: "rgba(255,255,255,.5)", marginBottom: 10, fontStyle: "italic", textAlign: "center" }}>
-          — <RubyText text={ageMode === "elementary" ? "{焦|あせ}らせる{圧力|あつりょく}に{負|ま}けない{練習|れんしゅう}" : "焦らせる圧力に負けない練習"} /> —
-        </div>
-        <TimerChoice
-          prompt={ageMode === "elementary" ? "「{今|いま}{決|き}めないと{別|べつ}の{人|ひと}にお{願|ねが}いするよ。5{秒|びょう}で{答|こた}えて」と{来|き}た。どうする？" : "「今決めないと別の人にお願いするよ。5秒で答えて」と来た。どうする？"}
-          seconds={15}
-          choices={ageMode === "elementary" ? [
-            { id: "safe", label: "{無視|むし}してブロックする", emoji: "🚫", safe: true },
-            { id: "wait", label: "「{少|すこ}し{考|かんが}えさせて」と{返|かえ}す", emoji: "🤔", safe: true },
-          ] : [
-            { id: "safe", label: "無視してブロックする", emoji: "🚫", safe: true },
-            { id: "wait", label: "「少し考えさせて」と返す", emoji: "🤔", safe: true },
-          ]}
-          onChoice={() => setPhase("homework")}
-          onTimeout={() => setPhase("homework")}
-          accentColor="#16a34a"
-        />
-      </div>
-    </div>
-  );
-
   // ── Homework (EP3) ──
   if (phase === "homework") return (
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0a1a0a,#041004)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
@@ -11996,9 +11966,9 @@ function Episode3({ onComplete, onExit }) {
             { title: "おうちの人と「闇バイト」について話す", desc: "「こういう手口があるんだって」と教えてあげよう" },
           ]}
         />
-        <button onClick={() => setPhase("pre_dialogue")}
+        <button onClick={() => setPhase("keywords")}
           style={{ width: "100%", marginTop: 14, padding: 15, background: "linear-gradient(135deg,#16a34a,#15803d)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
-          <RubyText text={ageMode === "elementary" ? "おうちの{人|ひと}と{話|はな}そう 💬 →" : "おうちの人と話そう 💬 →"} />
+          <RubyText text={ageMode === "elementary" ? "{次|つぎ}へ →" : "次へ →"} />
         </button>
       </div>
     </div>
@@ -12108,7 +12078,7 @@ function Episode3({ onComplete, onExit }) {
             questions={ep3Questions}
             epKey="ep3"
             accentColor="#16a34a"
-            onComplete={() => setPhase("keywords")}
+            onComplete={() => setPhase("homework")}
           />
 
           {/* 相談窓口 */}
