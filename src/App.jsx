@@ -10558,6 +10558,7 @@ function DarkJobSimulation({ onComplete }) {
   const [showChoices, setShowChoices] = useState(true);
   const [threatStarted, setThreatStarted] = useState(false);
   const [endingStep, setEndingStep] = useState(0);
+  const [tgStartStep, setTgStartStep] = useState(0);
   const timerRef = useRef(null);
 
   const BASE = "/images/ep3/";
@@ -10877,15 +10878,30 @@ function DarkJobSimulation({ onComplete }) {
               feedback("tap");
               setShowChoices(false);
               const myText=c.key==="a"?"いつから始められますか？":"やっぱりやめます";
-              const theirText=c.key==="a"
-                ?"すぐにでも大丈夫！\nまず詳しい説明するね\n別のアプリに移動していい？"
-                :"えー残念😢\nでも枠が埋まっちゃうかも…\nもう少し聞いてみてよ！損しないから😊";
               await addDM(myText,"me",0);
-              await addDM(theirText,"them",900);
+              if(c.key==="a"){
+                await addDM(
+                  "詳しい説明は私の知り合いの担当者に代わるね！\nその人の方が詳しいから😊",
+                  "them", 900
+                );
+                await addDM(
+                  "Telegramってアプリで連絡取れるから\n入れてみて！無料だよ📱",
+                  "them", 1900
+                );
+              } else {
+                await addDM(
+                  "そうだ、担当の田中っていう人が\nもっと詳しく説明してくれるよ！\nやめる前に一度話してみて😊",
+                  "them", 900
+                );
+                await addDM(
+                  "Telegramで連絡できるから\n入れてみて！話だけでもOK📱",
+                  "them", 1900
+                );
+              }
               setTimeout(()=>{
                 setDmStep(2);
                 setShowChoices(true);
-              },1800);
+              },3000);
             }} style={{width:"100%",padding:"10px 14px",borderRadius:12,border:"1.5px solid #3797f0",background:"#fff",color:"#3797f0",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit",marginBottom:8,textAlign:"left"}}>
               <RubyText text={c.label}/>
             </button>
@@ -11084,34 +11100,37 @@ function DarkJobSimulation({ onComplete }) {
   // フェーズ4：Telegram開始
   // ─────────────────────────────────
   if (innerPhase === "tg_start") {
-    const handleTgStart1 = async (key) => {
+
+    const goToPersonalInfo = () => {
+      setTgMessages([]);
+      setTgStep(0);
+      setTgStartStep(0);
+      setShowChoices(true);
+      setInnerPhase("tg_personal_info");
+    };
+
+    const handleStep1 = async (key) => {
       feedback("tap");
-      setShowChoices(false);
+      setTgStartStep(-1);
       const myText = key==="a" ? "どんな荷物ですか？" : "簡単そうですね";
       const theirText = key==="a"
         ? "主に現金や貴重品のお届けです。詳細は当日お伝えします。まず登録を進めましょう！"
         : "そうです！難しいことは一切ないです😊 まず登録手続きをお願いします！";
       await addTG(myText, "me", 0);
       await addTG(theirText, "them", 900);
-      setTgStep(1);
-      setTimeout(() => setShowChoices(true), 1000);
+      setTimeout(()=>setTgStartStep(1), 1100);
     };
 
-    const handleTgStart2 = async (key) => {
+    const handleStep2 = async (key) => {
       feedback("tap");
-      setShowChoices(false);
+      setTgStartStep(-1);
       const myText = key==="a" ? "わかりました" : "もう少し教えてください";
       const theirText = key==="a"
         ? "ありがとうございます！では本人確認に進みましょう😊"
         : "詳細は当日になります！まずは本人確認をお願いします。とても簡単ですよ😊";
       await addTG(myText, "me", 0);
       await addTG(theirText, "them", 900);
-      timerRef.current = setTimeout(() => {
-        setTgMessages([]);
-        setTgStep(0);
-        setShowChoices(true);
-        setInnerPhase("tg_personal_info");
-      }, 1800);
+      setTimeout(goToPersonalInfo, 1800);
     };
 
     return (
@@ -11127,7 +11146,8 @@ function DarkJobSimulation({ onComplete }) {
           </div>
           <div style={{marginLeft:"auto",display:"flex",gap:14,fontSize:18}}>🔍 📞</div>
         </div>
-        <div style={TG_BG()}>
+
+        <div style={{...TG_BG(),flex:1}}>
           <div style={{textAlign:"center",marginBottom:12}}>
             <div style={{display:"inline-block",background:"rgba(0,0,0,.15)",color:"#fff",fontSize:10,padding:"4px 12px",borderRadius:99}}>今日</div>
           </div>
@@ -11150,29 +11170,29 @@ function DarkJobSimulation({ onComplete }) {
           ))}
         </div>
 
-        {showChoices && tgStep===0 && (
+        {tgStartStep===0 && (
           <div style={{padding:"10px 12px",borderTop:"0.5px solid #ddd",background:"#fff"}}>
             <div style={{fontSize:11,color:"#737373",marginBottom:8,textAlign:"center"}}>
               <RubyText text={el?"どう{返信|へんしん}する？":"どう返信する？"}/>
             </div>
-            <button onClick={()=>handleTgStart1("a")} style={choiceStyleTG()}>
+            <button onClick={()=>handleStep1("a")} style={choiceStyleTG()}>
               <RubyText text={el?"「どんな{荷物|にもつ}ですか？」":"「どんな荷物ですか？」"}/>
             </button>
-            <button onClick={()=>handleTgStart1("b")} style={choiceStyleTG()}>
+            <button onClick={()=>handleStep1("b")} style={choiceStyleTG()}>
               <RubyText text={el?"「{簡単|かんたん}そうですね」":"「簡単そうですね」"}/>
             </button>
           </div>
         )}
 
-        {showChoices && tgStep===1 && (
+        {tgStartStep===1 && (
           <div style={{padding:"10px 12px",borderTop:"0.5px solid #ddd",background:"#fff"}}>
             <div style={{fontSize:11,color:"#737373",marginBottom:8,textAlign:"center"}}>
               <RubyText text={el?"どう{返信|へんしん}する？":"どう返信する？"}/>
             </div>
-            <button onClick={()=>handleTgStart2("a")} style={choiceStyleTG()}>
+            <button onClick={()=>handleStep2("a")} style={choiceStyleTG()}>
               <RubyText text={el?"「わかりました」":"「わかりました」"}/>
             </button>
-            <button onClick={()=>handleTgStart2("b")} style={choiceStyleTG()}>
+            <button onClick={()=>handleStep2("b")} style={choiceStyleTG()}>
               <RubyText text={el?"「もう{少|すこ}し{教|おし}えてください」":"「もう少し教えてください」"}/>
             </button>
           </div>
