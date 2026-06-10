@@ -721,6 +721,7 @@ const GlobalStyle = () => (
     @keyframes slideCard {from{opacity:0;transform:translateX(60px)} to{opacity:1;transform:translateX(0)}}
     @keyframes glowPulse {0%,100%{box-shadow:0 0 20px rgba(255,169,64,.2)} 50%{box-shadow:0 0 40px rgba(255,169,64,.5)}}
     @keyframes mamFadeUp {from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)}}
+    @keyframes mamShake {0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-4px)} 40%,80%{transform:translateX(4px)}}
   `}</style>
 );
 
@@ -13843,6 +13844,337 @@ function Ep4Stolen({ el, red, onComplete }) {
   );
 }
 
+function Ep4AftermathSwitch({ el, red, onComplete }) {
+  const [step, setStep] = useState(0);
+  const [shaking, setShaking] = useState(false);
+
+  const shake = () => {
+    setShaking(true);
+    setTimeout(()=>setShaking(false), 500);
+  };
+
+  const joyconStyle = (side) => ({
+    width:44, flexShrink:0,
+    background:"#f0f0f0",
+    borderRadius: side==="l" ? "16px 4px 4px 16px" : "4px 16px 16px 4px",
+    height:160,
+    border:"2px solid #d0d0d0",
+    display:"flex",
+    flexDirection:"column",
+    alignItems:"center",
+    padding:"10px 4px",
+    gap:8,
+  });
+
+  const stickStyle = {
+    width:18,height:18,borderRadius:"50%",
+    background:"radial-gradient(circle at 40% 35%,#999,#555)",
+    border:"1.5px solid #444",flexShrink:0,
+  };
+
+  const btnSm = (color="#bbb") => ({
+    width:10,height:10,borderRadius:"50%",
+    background:color,border:"1px solid #999",
+  });
+
+  const dialogStyle = {
+    position:"absolute",
+    top:"50%",left:"50%",
+    transform:"translate(-50%,-50%)",
+    background:"#f0f0f0",
+    border:"2px solid #aaa",
+    borderRadius:4,
+    width:"82%",
+    zIndex:10,
+    animation:"mamFadeUp .3s ease",
+  };
+
+  return (
+    <div style={{
+      minHeight:"100vh",
+      background:"linear-gradient(180deg,#1a1a2e,#0d0d1a)",
+      padding:"24px 16px 40px",
+      fontFamily:"-apple-system,'Hiragino Sans',sans-serif",
+      display:"flex",
+      flexDirection:"column",
+      alignItems:"center",
+    }}>
+
+      {/* Switch本体 */}
+      <div style={{
+        display:"flex",
+        alignItems:"center",
+        background:"#e8e8e8",
+        borderRadius:16,
+        padding:6,
+        boxShadow:"0 8px 24px rgba(0,0,0,.5)",
+        animation:shaking?"mamShake .4s ease":"none",
+        marginBottom:14,
+        maxWidth:340,
+        width:"100%",
+      }}>
+
+        {/* Joy-Con L */}
+        <div style={joyconStyle("l")}>
+          <div style={stickStyle}/>
+          <div style={{
+            width:28,height:28,background:"#bbb",
+            borderRadius:2,flexShrink:0,
+          }}/>
+          <div style={{display:"flex",gap:4}}>
+            <div style={btnSm()}/>
+            <div style={btnSm()}/>
+          </div>
+        </div>
+
+        {/* スクリーン */}
+        <div style={{
+          flex:1,background:"#000",
+          height:160,position:"relative",
+          overflow:"hidden",border:"2px solid #888",
+        }}>
+          {/* ホーム画面（背景） */}
+          <div style={{
+            position:"absolute",inset:0,
+            background:"linear-gradient(180deg,#1a1a3e,#0a0a1a)",
+            padding:6,
+          }}>
+            <div style={{fontSize:8,color:"rgba(255,255,255,.4)",textAlign:"right",marginBottom:4}}>07:23</div>
+            <div style={{display:"flex",gap:4,justifyContent:"center",marginBottom:4}}>
+              {["🏝️","⚔️","🐾","🎮"].map((e,i)=>(
+                <div key={i} style={{
+                  width:36,height:36,borderRadius:6,
+                  background:["#3d8b3d","#2d4b8a","#8b2d5e","#5a2d8b"][i],
+                  display:"flex",alignItems:"center",
+                  justifyContent:"center",fontSize:16,
+                }}>{e}</div>
+              ))}
+            </div>
+            <div style={{
+              position:"absolute",bottom:6,left:6,
+              display:"flex",alignItems:"center",gap:4,
+            }}>
+              <div style={{
+                width:16,height:16,borderRadius:"50%",
+                background:"#ff7043",
+                border:"1px solid rgba(255,255,255,.3)",
+              }}/>
+              <span style={{fontSize:7,color:"rgba(255,255,255,.5)"}}>ハナ</span>
+            </div>
+          </div>
+
+          {/* ダイアログ1：再ログイン */}
+          {step===0 && (
+            <div style={dialogStyle}>
+              <div style={{
+                padding:"14px 10px",fontSize:10,
+                color:"#333",lineHeight:1.6,
+                textAlign:"center",
+                borderBottom:"1px solid #ccc",
+              }}>
+                <RubyText text={el
+                  ?"ニンテンドーアカウントの\n{再|さい}ログインが{必要|ひつよう}です。"
+                  :"ニンテンドーアカウントの\n再ログインが必要です。"
+                }/>
+              </div>
+              <button
+                onClick={()=>{feedback("tap");setStep(1);}}
+                style={{
+                  width:"100%",padding:8,
+                  textAlign:"center",color:"#007aff",
+                  fontSize:11,fontWeight:700,
+                  cursor:"pointer",background:"transparent",
+                  border:"none",fontFamily:"inherit",
+                }}>
+                OK
+              </button>
+            </div>
+          )}
+
+          {/* ダイアログ2：ログイン失敗 */}
+          {step===1 && (
+            <div style={dialogStyle}>
+              <div style={{
+                padding:"10px 10px 4px",fontSize:10,
+                color:"#cc0000",fontWeight:600,
+                textAlign:"center",
+                borderBottom:"1px solid #ccc",
+              }}>
+                <RubyText text={el?"ログインに{失敗|しっぱい}しました。":"ログインに失敗しました。"}/>
+              </div>
+              <div style={{
+                padding:"6px 10px 10px",fontSize:9,
+                color:"#555",textAlign:"center",
+                lineHeight:1.6,borderBottom:"1px solid #ccc",
+              }}>
+                <RubyText text={el
+                  ?"メールアドレスまたは\nパスワードが{違|ちが}います。"
+                  :"メールアドレスまたは\nパスワードが違います。"
+                }/>
+              </div>
+              <button
+                onClick={()=>{feedback("tap");shake();setStep(2);}}
+                style={{
+                  width:"100%",padding:8,
+                  textAlign:"center",color:"#007aff",
+                  fontSize:11,fontWeight:700,
+                  cursor:"pointer",background:"transparent",
+                  border:"none",fontFamily:"inherit",
+                }}>
+                OK
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Joy-Con R */}
+        <div style={joyconStyle("r")}>
+          <div style={{
+            display:"flex",gap:3,
+            flexWrap:"wrap",justifyContent:"center",width:28,
+          }}>
+            <div style={btnSm("#aed6f1")}/>
+            <div style={btnSm("#f9e79f")}/>
+            <div style={btnSm("#a9dfbf")}/>
+            <div style={btnSm("#f1948a")}/>
+          </div>
+          <div style={stickStyle}/>
+          <div style={{display:"flex",gap:4}}>
+            <div style={btnSm()}/>
+            <div style={btnSm()}/>
+          </div>
+        </div>
+      </div>
+
+      {/* ハナの心理（step別） */}
+      {step===0 && (
+        <div style={{
+          background:"rgba(255,200,0,.08)",
+          borderLeft:"3px solid #f5c842",
+          padding:"10px 14px",fontSize:12,
+          color:"#f5c842",fontStyle:"italic",
+          borderRadius:"0 8px 8px 0",
+          lineHeight:1.7,width:"100%",maxWidth:340,
+          animation:"mamFadeUp .5s ease",
+        }}>
+          <RubyText text={el
+            ?"ハナ：「あれ…Switchを{起動|きどう}したら\nログインしろって{出|で}てる…？\n{昨日|きのう}まで{普通|ふつう}に{使|つか}えてたのに」"
+            :"ハナ：「あれ…Switchを起動したら\nログインしろって出てる…？\n昨日まで普通に使えてたのに」"
+          }/>
+        </div>
+      )}
+
+      {step===1 && (
+        <div style={{
+          background:"rgba(255,200,0,.08)",
+          borderLeft:"3px solid #f5c842",
+          padding:"10px 14px",fontSize:12,
+          color:"#f5c842",fontStyle:"italic",
+          borderRadius:"0 8px 8px 0",
+          lineHeight:1.7,width:"100%",maxWidth:340,
+          animation:"mamFadeUp .4s ease",
+        }}>
+          <RubyText text={el
+            ?"ハナ：「え…パスワード{合|あ}ってるのに\nログインできない？！」"
+            :"ハナ：「え…パスワード合ってるのに\nログインできない？！」"
+          }/>
+        </div>
+      )}
+
+      {/* セーブデータ画面 */}
+      {step>=2 && (
+        <div style={{
+          width:"100%",maxWidth:340,
+          animation:"mamFadeUp .6s ease",
+        }}>
+          <div style={{
+            background:"#1c1c1e",
+            borderRadius:14,padding:14,
+            border:"1px solid rgba(255,255,255,.08)",
+            marginBottom:10,
+          }}>
+            <div style={{
+              fontSize:12,color:"rgba(255,255,255,.5)",
+              marginBottom:12,textAlign:"center",
+            }}>
+              <RubyText text={el?"セーブデータ":"セーブデータ"}/>
+            </div>
+            <div style={{display:"flex",gap:8,justifyContent:"center",marginBottom:12}}>
+              {[
+                {e:"🏝️",bg:"#2d5a2d",name:el?"あつ{森|もり}":"あつ森"},
+                {e:"⚔️",bg:"#2d3a6b",name:el?"ゼルダの{伝説|でんせつ}":"ゼルダの伝説"},
+                {e:"🐾",bg:"#5e2d6b",name:el?"ポケモン":"ポケモン"},
+              ].map((g,i)=>(
+                <div key={i} style={{textAlign:"center"}}>
+                  <div style={{
+                    width:40,height:40,borderRadius:8,
+                    background:g.bg,
+                    display:"flex",alignItems:"center",
+                    justifyContent:"center",fontSize:20,
+                    margin:"0 auto 4px",
+                    position:"relative",
+                  }}>
+                    {g.e}
+                    <div style={{
+                      position:"absolute",inset:0,
+                      background:"rgba(0,0,0,.65)",
+                      borderRadius:8,
+                      display:"flex",alignItems:"center",
+                      justifyContent:"center",
+                      fontSize:8,color:"#ff3b30",fontWeight:700,
+                    }}>
+                      <RubyText text={el?"{消去|しょうきょ}":"消去"}/>
+                    </div>
+                  </div>
+                  <div style={{fontSize:8,color:"rgba(255,255,255,.4)"}}>
+                    <RubyText text={g.name}/>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div style={{
+              fontSize:12,color:"#ff3b30",
+              fontWeight:700,textAlign:"center",
+            }}>
+              <RubyText text={el
+                ?"{全|すべ}てのセーブデータが{削除|さくじょ}されました"
+                :"全てのセーブデータが削除されました"
+              }/>
+            </div>
+          </div>
+
+          {/* ハナの心理 */}
+          <div style={{
+            background:"rgba(255,59,48,.08)",
+            borderLeft:"3px solid #ff3b30",
+            padding:"10px 14px",fontSize:12,
+            color:"#ff9999",fontStyle:"italic",
+            borderRadius:"0 8px 8px 0",
+            lineHeight:1.7,marginBottom:16,
+          }}>
+            <RubyText text={el
+              ?"ハナ：「あつ{森|もり}のデータが…{消|き}えた。\n300{時間|じかん}{遊|あそ}んだのに…{全部|ぜんぶ}…」"
+              :"ハナ：「あつ森のデータが…消えた。\n300時間遊んだのに…全部…」"
+            }/>
+          </div>
+
+          <button
+            onClick={()=>{feedback("tap");onComplete();}}
+            style={{
+              width:"100%",padding:14,
+              borderRadius:12,border:"none",
+              background:`linear-gradient(135deg,${red},#b00010)`,
+              color:"#fff",fontSize:14,fontWeight:700,
+              cursor:"pointer",fontFamily:"inherit",
+            }}>
+            <RubyText text={el?"{何|なに}が{起|お}きたのか{知|し}る →":"何が起きたのか知る →"}/>
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ═══════════════════════════════════════════════════════════════
 function Episode4({ onComplete, onExit }) {
   const ageMode = useAgeMode();
@@ -14360,124 +14692,11 @@ function Episode4({ onComplete, onExit }) {
   }
 
   if (phase === "aftermath_switch") return (
-    <div style={{
-      minHeight:"100vh",
-      background:"#1a1a2e",
-      fontFamily:"-apple-system,'Hiragino Sans',sans-serif",
-      color:"#fff",
-      display:"flex",flexDirection:"column",
-    }}>
-      {/* Switch起動演出 */}
-      <div style={{
-        background:"#1a1a2e",
-        padding:"32px 20px 24px",
-        textAlign:"center",
-        borderBottom:"0.5px solid rgba(255,255,255,.08)",
-      }}>
-        <div style={{fontSize:48,marginBottom:12}}>🎮</div>
-        <div style={{fontSize:16,fontWeight:700,marginBottom:4}}>Nintendo Switch</div>
-        <div style={{fontSize:11,color:"rgba(255,255,255,.5)"}}>
-          <RubyText text={el?"{起動中|きどうちゅう}…":"起動中…"}/>
-        </div>
-      </div>
-
-      {/* エラー */}
-      <div style={{padding:"20px 20px 0"}}>
-        <div style={{
-          background:"#fff",borderRadius:14,padding:20,
-          textAlign:"center",marginBottom:14,
-        }}>
-          <div style={{fontSize:32,marginBottom:10}}>⚠️</div>
-          <div style={{
-            fontSize:15,fontWeight:700,color:red,marginBottom:8,
-            whiteSpace:"pre-line",
-          }}>
-            <RubyText text={el?"このユーザーでは\nログインできません":"このユーザーでは\nログインできません"}/>
-          </div>
-          <div style={{fontSize:12,color:"#555",lineHeight:1.7,whiteSpace:"pre-line"}}>
-            <RubyText text={el
-              ?"ニンテンドーアカウントの\n{情報|じょうほう}が{変更|へんこう}されました。\n{再度|さいど}ログインしてください。"
-              :"ニンテンドーアカウントの\n情報が変更されました。\n再度ログインしてください。"
-            }/>
-          </div>
-        </div>
-
-        {/* セーブデータ */}
-        <div style={{
-          background:"rgba(255,255,255,.06)",
-          border:"0.5px solid rgba(255,255,255,.1)",
-          borderRadius:14,padding:"14px 16px",marginBottom:14,
-        }}>
-          <div style={{
-            fontSize:12,color:"rgba(255,255,255,.5)",
-            marginBottom:12,textAlign:"center",
-          }}>
-            <RubyText text={el?"セーブデータ":"セーブデータ"}/>
-          </div>
-          <div style={{
-            display:"flex",gap:8,justifyContent:"center",
-            marginBottom:12,
-          }}>
-            {[
-              {emoji:"🏝️",name:el?"あつまれ\nどうぶつの{森|もり}":"あつまれ\nどうぶつの森"},
-              {emoji:"⚔️",name:el?"ゼルダの{伝説|でんせつ}":"ゼルダの伝説"},
-              {emoji:"🐾",name:el?"ポケモン\nスカーレット":"ポケモン\nスカーレット"},
-            ].map((g,i)=>(
-              <div key={i} style={{
-                background:"rgba(255,255,255,.06)",
-                borderRadius:10,padding:"10px 8px",
-                textAlign:"center",flex:1,
-              }}>
-                <div style={{fontSize:24,marginBottom:6}}>{g.emoji}</div>
-                <div style={{
-                  fontSize:9,color:"rgba(255,255,255,.4)",
-                  marginBottom:6,whiteSpace:"pre-line",lineHeight:1.4,
-                }}>
-                  <RubyText text={g.name}/>
-                </div>
-                <div style={{
-                  fontSize:9,color:"#ff3b30",fontWeight:700,
-                }}>
-                  <RubyText text={el?"{削除済|さくじょず}み":"削除済み"}/>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div style={{
-            textAlign:"center",fontSize:12,
-            color:"#ff3b30",fontWeight:700,
-          }}>
-            <RubyText text={el?"{全|すべ}てのセーブデータが{削除|さくじょ}されました":"全てのセーブデータが削除されました"}/>
-          </div>
-        </div>
-
-        {/* ハナの心理 */}
-        <div style={{
-          background:"rgba(255,59,48,.08)",
-          borderLeft:"3px solid #ff3b30",
-          padding:"10px 14px",fontSize:12,
-          color:"#ff6b6b",fontStyle:"italic",
-          borderRadius:"0 10px 10px 0",lineHeight:1.7,
-          marginBottom:20,
-        }}>
-          <RubyText text={el
-            ?"ハナ：「あつ{森|もり}のデータが…{消|き}えた。300{時間|じかん}{遊|あそ}んだのに…{全部|ぜんぶ}…お{母|かあ}さんのクレカで60,000{円|えん}以上{使|つか}われて…」"
-            :"ハナ：「あつ森のデータが…消えた。300時間遊んだのに…全部…お母さんのクレカで60,000円以上使われて…」"
-          }/>
-        </div>
-
-        <button
-          onClick={()=>{feedback("tap");setPhase("reveal");}}
-          style={{
-            width:"100%",padding:14,borderRadius:12,border:"none",
-            background:`linear-gradient(135deg,${red},#b00010)`,
-            color:"#fff",fontSize:14,fontWeight:700,
-            cursor:"pointer",fontFamily:"inherit",marginBottom:20,
-          }}>
-          <RubyText text={el?"{何|なに}が{起|お}きたのか{知|し}る →":"何が起きたのか知る →"}/>
-        </button>
-      </div>
-    </div>
+    <Ep4AftermathSwitch
+      el={el}
+      red={red}
+      onComplete={()=>{feedback("tap");setPhase("reveal");}}
+    />
   );
 
   if (phase === "reveal") return (
