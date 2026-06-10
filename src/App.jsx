@@ -14175,6 +14175,808 @@ function Ep4AftermathSwitch({ el, red, onComplete }) {
   );
 }
 
+function Ep4Reveal({ el, red, onComplete }) {
+  const [step, setStep] = useState(-1);
+  const BASE = "/images/ep4/";
+
+  const next = () => { feedback("tap"); setStep(s => s+1); };
+
+  // ─────────────────────────────
+  // step -1：イントロ
+  // ─────────────────────────────
+  if(step === -1) return (
+    <div style={{
+      minHeight:"100vh",
+      background:"linear-gradient(180deg,#0f0f1a,#0a0a14)",
+      padding:"32px 20px 40px",
+      fontFamily:"'Zen Maru Gothic',sans-serif",
+      color:"#fff",
+      display:"flex",flexDirection:"column",alignItems:"center",
+    }}>
+      <div style={{maxWidth:360,width:"100%",textAlign:"center"}}>
+        <div style={{fontSize:11,color:"rgba(230,0,18,.7)",fontWeight:900,marginBottom:6}}>
+          🔍 <RubyText text={el?"これは「フィッシング{詐欺|さぎ}」だった":"これは「フィッシング詐欺」だった"}/>
+        </div>
+        <div style={{fontSize:19,fontWeight:900,lineHeight:1.4,marginBottom:8,whiteSpace:"pre-line"}}>
+          <RubyText text={el?"ハナちゃんと{攻撃|こうげき}{者|しゃ}の\n{動|うご}きを{追|お}ってみよう":"ハナちゃんと攻撃者の\n動きを追ってみよう"}/>
+        </div>
+        <div style={{fontSize:12,color:"rgba(255,255,255,.5)",marginBottom:22,lineHeight:1.7}}>
+          <RubyText text={el
+            ?"{同|おな}じ{時間|じかん}に2{人|にん}の{間|あいだ}で\n{何|なに}が{起|お}きていたのかを\nタイムラインで{見|み}ていきます"
+            :"同じ時間に2人の間で\n何が起きていたのかを\nタイムラインで見ていきます"
+          }/>
+        </div>
+        <div style={{display:"flex",alignItems:"center",gap:20,justifyContent:"center",marginBottom:16}}>
+          <div style={{textAlign:"center"}}>
+            <div style={{width:60,height:60,borderRadius:"50%",overflow:"hidden",border:"2.5px solid #60a5fa",margin:"0 auto 5px"}}>
+              <img src={`${BASE}hana.jpg`} style={{width:"100%",height:"100%",objectFit:"cover",objectPosition:"center top",transform:"scale(2.2)",transformOrigin:"50% 18%"}} alt=""/>
+            </div>
+            <div style={{fontSize:11,color:"#60a5fa",fontWeight:700}}>ハナ</div>
+            <div style={{fontSize:9,color:"rgba(255,255,255,.4)"}}><RubyText text={el?"{小学|しょうがく}5{年生|ねんせい}":"小学5年生"}/></div>
+          </div>
+          <div style={{fontSize:22,color:"rgba(255,255,255,.3)"}}>VS</div>
+          <div style={{textAlign:"center"}}>
+            <div style={{width:60,height:60,borderRadius:"50%",overflow:"hidden",border:"2.5px solid #ef4444",margin:"0 auto 5px"}}>
+              <img src={`${BASE}attacker.jpg`} style={{width:"100%",height:"100%",objectFit:"cover"}} alt=""/>
+            </div>
+            <div style={{fontSize:11,color:"#ef4444",fontWeight:700}}><RubyText text={el?"{攻撃|こうげき}{者|しゃ}":"攻撃者"}/></div>
+            <div style={{fontSize:9,color:"rgba(255,255,255,.4)"}}>フィッシング犯</div>
+          </div>
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:24}}>
+          <div style={{background:"rgba(96,165,250,.1)",border:"1px solid rgba(96,165,250,.3)",borderRadius:8,padding:"7px",textAlign:"center",fontSize:10,color:"#60a5fa",lineHeight:1.5}}>
+            ←<RubyText text={el?"ハナの{動|うご}き\n{左|ひだり}に{表示|ひょうじ}":"ハナの動き\n左に表示"}/>
+          </div>
+          <div style={{background:"rgba(239,68,68,.1)",border:"1px solid rgba(239,68,68,.3)",borderRadius:8,padding:"7px",textAlign:"center",fontSize:10,color:"#ef4444",lineHeight:1.5}}>
+            <RubyText text={el?"{攻撃|こうげき}{者|しゃ}の{動|うご}き\n{右|みぎ}に{表示|ひょうじ}→":"攻撃者の動き\n右に表示→"}/>
+          </div>
+        </div>
+        <button onClick={next} style={{width:"100%",padding:16,borderRadius:14,border:"none",background:`linear-gradient(135deg,${red},#b00010)`,color:"#fff",fontSize:15,fontWeight:900,cursor:"pointer",fontFamily:"inherit"}}>
+          <RubyText text={el?"{次|つぎ}へ →":"次へ →"}/>
+        </button>
+      </div>
+    </div>
+  );
+
+  const tlCardBase = {
+    borderRadius:10,
+    padding:"8px 10px",
+    animation:"mamFadeUp .4s ease both",
+  };
+  const tlHanaCard = {
+    ...tlCardBase,
+    background:"rgba(96,165,250,.05)",
+    border:"0.5px solid rgba(96,165,250,.2)",
+  };
+  const tlAttCard = {
+    ...tlCardBase,
+    background:"rgba(239,68,68,.05)",
+    border:"0.5px solid rgba(239,68,68,.2)",
+  };
+  const tlBothCard = {
+    ...tlCardBase,
+    background:"rgba(251,191,36,.04)",
+    border:"0.5px solid rgba(251,191,36,.25)",
+  };
+  const sceneNumH = {fontSize:8,color:"#60a5fa",fontWeight:900,marginBottom:2};
+  const sceneNumA = {fontSize:8,color:"#ef4444",fontWeight:900,marginBottom:2};
+  const sceneNumB = {fontSize:8,color:"#fbbf24",fontWeight:900,marginBottom:2};
+  const sceneLabel = {fontSize:11,fontWeight:700,color:"#fff",marginBottom:6,lineHeight:1.3};
+  const sceneDesc = {fontSize:9,color:"rgba(255,255,255,.5)",lineHeight:1.5,marginTop:6};
+  const pmD = {background:"#1c1c1e",borderRadius:6,overflow:"hidden",border:"1px solid #3a3a3a"};
+  const pmL = {background:"#f0f0f0",borderRadius:6,overflow:"hidden",border:"1px solid #ccc"};
+  const ntHdrStyle = {background:"#e60012",padding:"3px 7px"};
+  const ntCardStyle = {background:"#fff",borderRadius:3,padding:"5px 6px",margin:"3px 4px"};
+  const smsBubbleStyle = {
+    background:"#3a3a3c",borderRadius:"8px 8px 8px 2px",
+    padding:"5px 7px",fontSize:7,color:"#fff",lineHeight:1.4,margin:"5px 6px",
+  };
+  const thoughtStyle = {
+    background:"rgba(255,200,0,.08)",borderLeft:"2px solid #f5c842",
+    padding:"4px 7px",fontSize:8,color:"#f5c842",fontStyle:"italic",
+    borderRadius:"0 5px 5px 0",lineHeight:1.4,marginTop:5,
+  };
+  const flowLineStyle = {
+    flex:1,height:2,
+    background:"linear-gradient(90deg,#ef4444,#ff6b35)",
+    borderRadius:99,position:"relative",overflow:"hidden",
+  };
+
+  // ─────────────────────────────
+  // step 0：2段階認証の解説
+  // ─────────────────────────────
+  if(step === 0) return (
+    <div style={{
+      minHeight:"100vh",
+      background:"linear-gradient(180deg,#0f0f1a,#0a0a14)",
+      padding:"24px 20px 40px",
+      fontFamily:"'Zen Maru Gothic',sans-serif",
+      color:"#fff",
+    }}>
+      <div style={{maxWidth:380,margin:"0 auto"}}>
+
+        {/* モリィの案内 */}
+        <div style={{display:"flex",alignItems:"flex-start",gap:10,marginBottom:16}}>
+          <OwlMolly size={44}/>
+          <div style={{background:"#fff",borderRadius:"0 14px 14px 14px",padding:"10px 14px",flex:1}}>
+            <div style={{fontSize:12,color:"#1e293b",lineHeight:1.8}}>
+              <RubyText text={el
+                ?"タイムラインを{見|み}る{前|まえ}に、1つだけ{説明|せつめい}するよ！\n「2{段階認証|だんかいにんしょう}」って{聞|き}いたことある？🦉"
+                :"タイムラインを見る前に、1つだけ説明するよ！\n「2段階認証」って聞いたことある？🦉"
+              }/>
+            </div>
+          </div>
+        </div>
+
+        {/* タイトル */}
+        <div style={{fontSize:18,fontWeight:900,marginBottom:4,textAlign:"center"}}>
+          <RubyText text={el?"2{段階認証|だんかいにんしょう}ってなに？":"2段階認証ってなに？"}/>
+        </div>
+        <div style={{fontSize:12,color:"rgba(255,255,255,.5)",textAlign:"center",marginBottom:18}}>
+          <RubyText text={el?"{普通|ふつう}のログインとどう{違|ちが}うの？":"普通のログインとどう違うの？"}/>
+        </div>
+
+        {/* 普通のログイン */}
+        <div style={{
+          background:"rgba(255,255,255,.04)",
+          border:"0.5px solid rgba(255,255,255,.1)",
+          borderRadius:14,padding:"12px 14px",marginBottom:10,
+        }}>
+          <div style={{fontSize:12,fontWeight:700,color:"rgba(255,255,255,.8)",marginBottom:8}}>
+            <RubyText text={el?"🔑 {普通|ふつう}のログイン":"🔑 普通のログイン"}/>
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
+            <div style={{background:"rgba(255,255,255,.1)",borderRadius:6,padding:"5px 10px",fontSize:11,color:"#fff"}}>
+              <RubyText text={el?"パスワード":"パスワード"}/>
+            </div>
+            <div style={{fontSize:16,color:"#22c55e"}}>→</div>
+            <div style={{background:"rgba(34,197,94,.15)",border:"1px solid #22c55e",borderRadius:6,padding:"5px 10px",fontSize:11,color:"#4ade80",fontWeight:700}}>
+              <RubyText text={el?"ログイン{成功|せいこう}！":"ログイン成功！"}/>
+            </div>
+          </div>
+          <div style={{fontSize:10,color:"rgba(255,59,48,.7)",marginTop:4}}>
+            <RubyText text={el?"⚠️ パスワードを{盗|ぬす}まれたら{即座|そくざ}に{侵入|しんにゅう}される":"⚠️ パスワードを盗まれたら即座に侵入される"}/>
+          </div>
+        </div>
+
+        {/* 2段階認証 */}
+        <div style={{
+          background:"rgba(96,165,250,.06)",
+          border:"1px solid rgba(96,165,250,.3)",
+          borderRadius:14,padding:"12px 14px",marginBottom:10,
+        }}>
+          <div style={{fontSize:12,fontWeight:700,color:"#60a5fa",marginBottom:8}}>
+            <RubyText text={el?"🔐 2{段階認証|だんかいにんしょう}（2ステップ{確認|かくにん}）":"🔐 2段階認証（2ステップ確認）"}/>
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap",marginBottom:6}}>
+            <div style={{background:"rgba(255,255,255,.1)",borderRadius:6,padding:"4px 8px",fontSize:10,color:"#fff"}}>
+              <RubyText text={el?"パスワード":"パスワード"}/>
+            </div>
+            <div style={{fontSize:14}}>＋</div>
+            <div style={{background:"rgba(96,165,250,.2)",border:"1px solid #60a5fa",borderRadius:6,padding:"4px 8px",fontSize:10,color:"#93c5fd"}}>
+              <RubyText text={el?"{毎回変わる|まいかいかわる}{コード|こーど}":"毎回変わるコード"}/>
+            </div>
+            <div style={{fontSize:12,color:"#22c55e"}}>→</div>
+            <div style={{background:"rgba(34,197,94,.15)",border:"1px solid #22c55e",borderRadius:6,padding:"4px 8px",fontSize:10,color:"#4ade80",fontWeight:700}}>
+              <RubyText text={el?"ログイン{成功|せいこう}！":"ログイン成功！"}/>
+            </div>
+          </div>
+          <div style={{fontSize:10,color:"#93c5fd",lineHeight:1.6}}>
+            <RubyText text={el
+              ?"✅ パスワードを{盗|ぬす}まれても、{コード|こーど}がないと{入|はい}れない！\n{コード|こーど}はSMSやメールに{届|とど}く6{桁|けた}の{数字|すうじ}で\n{毎回|まいかい}{変|か}わる"
+              :"✅ パスワードを盗まれても、コードがないと入れない！\nコードはSMSやメールに届く6桁の数字で毎回変わる"
+            }/>
+          </div>
+        </div>
+
+        {/* 今回の問題 */}
+        <div style={{
+          background:"rgba(239,68,68,.08)",
+          border:"1px solid rgba(239,68,68,.3)",
+          borderRadius:14,padding:"12px 14px",marginBottom:16,
+        }}>
+          <div style={{fontSize:12,fontWeight:700,color:"#f87171",marginBottom:8}}>
+            <RubyText text={el?"😱 でも{今回|こんかい}は…":"😱 でも今回は…"}/>
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap",marginBottom:8}}>
+            <div style={{background:"rgba(239,68,68,.15)",border:"1px solid #ef4444",borderRadius:6,padding:"4px 8px",fontSize:10,color:"#fca5a5"}}>
+              <RubyText text={el?"パスワード（{偽|にせ}サイトに{入力|にゅうりょく}）":"パスワード（偽サイトに入力）"}/>
+            </div>
+            <div style={{fontSize:14,color:"#ef4444"}}>＋</div>
+            <div style={{background:"rgba(239,68,68,.15)",border:"1px solid #ef4444",borderRadius:6,padding:"4px 8px",fontSize:10,color:"#fca5a5"}}>
+              <RubyText text={el?"{コード|こーど}も（{偽|にせ}サイトに{入力|にゅうりょく}）":"コードも（偽サイトに入力）"}/>
+            </div>
+          </div>
+          <div style={{fontSize:11,color:"#fca5a5",lineHeight:1.7}}>
+            <RubyText text={el
+              ?"→ {攻撃|こうげき}{者|しゃ}が{裏|うら}でリアルタイムに\n  {本物|ほんもの}のNintendoサイトに{入力|にゅうりょく}していたから\n  {本物|ほんもの}のコードが{届|とど}いてしまった！"
+              :"→ 攻撃者が裏でリアルタイムに\n  本物のNintendoサイトに入力していたから\n  本物のコードが届いてしまった！"
+            }/>
+          </div>
+        </div>
+
+        {/* モリィのまとめ */}
+        <div style={{display:"flex",alignItems:"flex-start",gap:10,marginBottom:20}}>
+          <OwlMolly size={36}/>
+          <div style={{background:"#fff",borderRadius:"0 12px 12px 12px",padding:"8px 12px",flex:1}}>
+            <div style={{fontSize:11,color:"#1e293b",lineHeight:1.7}}>
+              <RubyText text={el
+                ?"2{段階認証|だんかいにんしょう}は{強力|きょうりょく}な{守|まも}りだけど、{偽|にせ}サイトに{両方|りょうほう}{入力|にゅうりょく}してしまうと{意味|いみ}がなくなるよ。{詳|くわ}しくはタイムラインで{確認|かくにん}してみよう！"
+                :"2段階認証は強力な守りだけど、偽サイトに両方入力してしまうと意味がなくなるよ。詳しくはタイムラインで確認してみよう！"
+              }/>
+            </div>
+          </div>
+        </div>
+
+        <button onClick={next} style={{width:"100%",padding:15,borderRadius:14,border:"none",background:`linear-gradient(135deg,${red},#b00010)`,color:"#fff",fontSize:14,fontWeight:900,cursor:"pointer",fontFamily:"inherit"}}>
+          <RubyText text={el?"タイムラインを{見|み}る →":"タイムラインを見る →"}/>
+        </button>
+      </div>
+    </div>
+  );
+
+  // step 1以降はタイムライン
+  // step-1がシーンインデックス（step=1→scene[0]まで表示）
+
+  const allScenes = [
+
+    // ─────────── SCENE 1 ───────────
+    {
+      who:"att",time:"21:30",
+      left:null,
+      right:(
+        <div style={tlAttCard}>
+          <div style={sceneNumA}>SCENE 1</div>
+          <div style={sceneLabel}>
+            <RubyText text={el?"{攻撃|こうげき}{者|しゃ}が{大量|たいりょう}SMSを{一斉|いっせい}{送信|そうしん}":"攻撃者が大量SMSを一斉送信"}/>
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:6}}>
+            <div style={{width:26,height:26,borderRadius:"50%",overflow:"hidden",border:"1.5px solid #ef4444",flexShrink:0}}>
+              <img src={`${BASE}attacker.jpg`} style={{width:"100%",height:"100%",objectFit:"cover"}} alt=""/>
+            </div>
+            <div style={{fontSize:9,color:"#ef4444"}}>→→→</div>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:3}}>
+              <span style={{fontSize:12,opacity:.3}}>📱</span>
+              <span style={{fontSize:12,opacity:.3}}>📱</span>
+              <span style={{fontSize:12,border:"1px solid #60a5fa",borderRadius:4,textAlign:"center"}}>📱</span>
+              <span style={{fontSize:12,opacity:.3}}>📱</span>
+            </div>
+            <div style={{fontSize:8,color:"#60a5fa"}}>← ハナ</div>
+          </div>
+          <div style={sceneDesc}>
+            <RubyText text={el?"{自動|じどう}ツールで{任天堂|にんてんどう}をかたるSMSを{大量|たいりょう}{送信|そうしん}。ハナもその{中|なか}の1{人|にん}だった。":"自動ツールで任天堂をかたるSMSを大量送信。ハナもその中の1人だった。"}/>
+          </div>
+        </div>
+      ),
+    },
+
+    // ─────────── SCENE 2 ───────────
+    {
+      who:"hana",time:"21:34",
+      left:(
+        <div style={tlHanaCard}>
+          <div style={sceneNumH}>SCENE 2</div>
+          <div style={sceneLabel}><RubyText text={el?"SMSが{届|とど}く":"SMSが届く"}/></div>
+          <div style={pmD}>
+            <div style={{background:"#1c1c1e",padding:"3px 8px",textAlign:"center",borderBottom:".5px solid rgba(255,255,255,.1)"}}>
+              <div style={{fontSize:6,color:"rgba(255,255,255,.4)"}}>メッセージ</div>
+              <div style={{fontSize:8,fontWeight:700,color:"#fff"}}>任天堂</div>
+            </div>
+            <div style={smsBubbleStyle}>
+              <RubyText text={el?"【{任天堂|にんてんどう}】{不正|ふせい}アクセスが{検知|けんち}されました。24{時間以内|じかんいない}にご{確認|かくにん}ください。":"【任天堂】不正アクセスが検知されました。24時間以内にご確認ください。"}/>
+              <br/><span style={{color:"#4db8ff",textDecoration:"underline",fontSize:6}}>https://nintendo-account-verify.com</span>
+            </div>
+            <div style={{fontSize:6,color:"rgba(255,255,255,.3)",padding:"0 6px 4px"}}>
+              <RubyText text={el?"{差出人|さしだしにん}が{連絡先|れんらくさき}に{存在|そんざい}しません":"差出人が連絡先に存在しません"}/>
+            </div>
+          </div>
+          <div style={thoughtStyle}>
+            <RubyText text={el?"「Switchが{使|つか}えなくなっちゃう！{急|いそ}がないと！」":"「Switchが使えなくなっちゃう！急がないと！」"}/>
+          </div>
+          <div style={sceneDesc}>
+            <RubyText text={el?"{緊急|きんきゅう}の{言葉|ことば}でハナは{焦|あせ}った。URLを{確認|かくにん}する{余裕|よゆう}がない。":"緊急の言葉でハナは焦った。URLを確認する余裕がない。"}/>
+          </div>
+        </div>
+      ),
+      right:null,
+    },
+
+    // ─────────── SCENE 3 ───────────
+    {
+      who:"hana",time:"21:34",
+      left:(
+        <div style={tlHanaCard}>
+          <div style={sceneNumH}>SCENE 3</div>
+          <div style={sceneLabel}><RubyText text={el?"{偽|にせ}サイトへ{誘導|ゆうどう}される":"偽サイトへ誘導される"}/></div>
+          <div style={pmL}>
+            <div style={{background:"#f2f2f7",padding:"2px 5px"}}>
+              <div style={{background:"#fff",borderRadius:4,padding:"2px 5px",display:"flex",alignItems:"center",gap:2}}>
+                <span style={{fontSize:7,color:"#ff3b30"}}>⚠️</span>
+                <span style={{fontSize:6,color:"#ff3b30",fontFamily:"monospace"}}>nintendo-account-verify.com</span>
+              </div>
+            </div>
+            <div style={ntHdrStyle}><span style={{color:"#fff",fontSize:7,fontWeight:900}}>Nintendo</span></div>
+            <div style={ntCardStyle}>
+              <div style={{fontSize:6,fontWeight:700,color:"#333",marginBottom:3}}>ニンテンドーアカウント</div>
+              <div style={{border:"1px solid #ccc",borderRadius:2,padding:"2px 4px",fontSize:6,color:"#999",marginBottom:2}}>メールアドレス</div>
+              <div style={{border:"1px solid #ccc",borderRadius:2,padding:"2px 4px",fontSize:6,color:"#999",marginBottom:3}}>パスワード</div>
+              <div style={{textAlign:"center"}}><span style={{background:"#ccc",color:"#fff",borderRadius:99,padding:"1px 8px",fontSize:6}}>ログイン</span></div>
+            </div>
+          </div>
+          <div style={{background:"rgba(255,59,48,.1)",border:"1px solid rgba(255,59,48,.3)",borderRadius:5,padding:"4px 6px",fontSize:7,color:"#ff9999",lineHeight:1.5,marginTop:4}}>
+            ⚠️ <RubyText text={el?"{本物|ほんもの}：accounts.nintendo.com\n{偽物|にせもの}：nintendo-account-verify.com":"本物：accounts.nintendo.com\n偽物：nintendo-account-verify.com"}/>
+          </div>
+          <div style={sceneDesc}>
+            <RubyText text={el?"{本物|ほんもの}そっくりの{偽|にせ}ログイン{画面|がめん}。URLが{違|ちが}う！":"本物そっくりの偽ログイン画面。URLが違う！"}/>
+          </div>
+        </div>
+      ),
+      right:null,
+    },
+
+    // ─────────── SCENE 4（BOTH） ───────────
+    {
+      who:"both",time:"21:35",
+      full:(
+        <div style={tlBothCard}>
+          <div style={sceneNumB}>SCENE 4</div>
+          <div style={sceneLabel}>
+            <RubyText text={el?"ID・パスワード{入力|にゅうりょく} → {偽|にせ}サイトが{攻撃|こうげき}{者|しゃ}へ{送信|そうしん}":"ID・パスワード入力 → 偽サイトが攻撃者へ送信"}/>
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:6}}>
+            <div style={{flex:1}}>
+              <div style={{fontSize:7,color:"#60a5fa",fontWeight:700,marginBottom:3}}>← ハナ（<RubyText text={el?"{入力|にゅうりょく}":"入力"}/>）</div>
+              <div style={pmL}>
+                <div style={ntHdrStyle}><span style={{color:"#fff",fontSize:6,fontWeight:900}}>Nintendo</span></div>
+                <div style={ntCardStyle}>
+                  <div style={{border:"1px solid #4a90d9",borderRadius:2,padding:"1px 3px",fontSize:6,color:"#333",marginBottom:1}}>hana@gmail.com</div>
+                  <div style={{border:"1px solid #4a90d9",borderRadius:2,padding:"1px 3px",fontSize:6,color:"#333",marginBottom:3}}>●●●●●●</div>
+                  <div style={{textAlign:"center"}}><span style={{background:"#e60012",color:"#fff",borderRadius:99,padding:"1px 8px",fontSize:6}}>ログイン</span></div>
+                </div>
+              </div>
+            </div>
+            <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:2,flexShrink:0}}>
+              <div style={{...flowLineStyle,width:36,height:2}}/>
+              <div style={{fontSize:10,color:"#ef4444"}}>→</div>
+              <div style={{fontSize:7,color:"#ef4444"}}>送信中</div>
+            </div>
+            <div style={{flex:1}}>
+              <div style={{fontSize:7,color:"#ef4444",fontWeight:700,marginBottom:3}}>
+                <RubyText text={el?"{攻撃|こうげき}{者|しゃ}に{届|とど}く →":"攻撃者に届く →"}/>
+              </div>
+              <div style={{background:"rgba(239,68,68,.2)",border:"1px solid #ef4444",borderRadius:6,padding:"6px",fontSize:8,color:"#ff9999",textAlign:"center"}}>
+                🔔 <RubyText text={el?"{偽|にせ}サイトに\n{入力|にゅうりょく}があった！":"偽サイトに\n入力があった！"}/><br/>
+                <span style={{fontSize:7,color:"rgba(255,255,255,.4)"}}>ID・PW受信</span>
+              </div>
+            </div>
+          </div>
+          <div style={sceneDesc}>
+            <RubyText text={el?"{入力|にゅうりょく}した{瞬間|しゅんかん}、{偽|にせ}サイトが{攻撃|こうげき}{者|しゃ}のサーバーへリアルタイム{送信|そうしん}。":"入力した瞬間、偽サイトが攻撃者のサーバーへリアルタイム送信。"}/>
+          </div>
+        </div>
+      ),
+    },
+
+    // ─────────── SCENE 5 ───────────
+    {
+      who:"att",time:"21:35",
+      left:null,
+      right:(
+        <div style={tlAttCard}>
+          <div style={sceneNumA}>SCENE 5</div>
+          <div style={sceneLabel}>
+            <RubyText text={el?"{本物|ほんもの}サイトへ{入力|にゅうりょく} → 2FA{待機|たいき}":"本物サイトへ入力 → 2FA待機"}/>
+          </div>
+          <div style={pmL}>
+            <div style={ntHdrStyle}><span style={{color:"#fff",fontSize:7,fontWeight:900}}>Nintendo（<RubyText text={el?"{本物|ほんもの}":"本物"}/>）</span></div>
+            <div style={{background:"#f0f0f0",padding:5}}>
+              <div style={{fontSize:6,fontWeight:700,color:"#333",textAlign:"center",marginBottom:3}}>
+                <RubyText text={el?"{本人|ほんにん}{確認|かくにん}コードを{入力|にゅうりょく}":"本人確認コードを入力"}/>
+              </div>
+              <div style={ntCardStyle}>
+                <div style={{border:"1.5px solid #4a90d9",borderRadius:2,padding:3,fontSize:9,fontFamily:"monospace",letterSpacing:4,textAlign:"center",color:"#ccc"}}>_ _ _ _ _ _</div>
+              </div>
+              <div style={{textAlign:"center",fontSize:7,color:"#e60012"}}>⏳ コード待機中…</div>
+            </div>
+          </div>
+          <div style={sceneDesc}>
+            <RubyText text={el?"{盗|ぬす}んだIDとPWで{本物|ほんもの}のNintendoへ{入力|にゅうりょく}。コードが{届|とど}くのを{待|ま}っている。":"盗んだIDとPWで本物のNintendoへ入力。コードが届くのを待っている。"}/>
+          </div>
+        </div>
+      ),
+    },
+
+    // ─────────── SCENE 6 ───────────
+    {
+      who:"hana",time:"21:35",
+      left:(
+        <div style={tlHanaCard}>
+          <div style={sceneNumH}>SCENE 6</div>
+          <div style={sceneLabel}>
+            <RubyText text={el?"{本物|ほんもの}のコードが{届|とど}く":"本物のコードが届く"}/>
+          </div>
+          <div style={pmD}>
+            <div style={{background:"rgba(50,50,52,.95)",borderRadius:5,padding:"6px 7px",display:"flex",gap:5,alignItems:"flex-start",margin:5}}>
+              <div style={{width:20,height:20,borderRadius:4,background:"#1a73e8",display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,flexShrink:0}}>✉️</div>
+              <div>
+                <div style={{fontSize:7,fontWeight:700,color:"#fff"}}>Nintendo</div>
+                <div style={{fontSize:7,color:"rgba(255,255,255,.7)"}}>
+                  <RubyText text={el?"{認証|にんしょう}コード：":"認証コード："}/><strong style={{color:"#ffd700",letterSpacing:2}}>482916</strong>
+                </div>
+              </div>
+            </div>
+            <div style={{padding:"0 7px 5px",fontSize:7,color:"rgba(255,255,255,.4)"}}>
+              <RubyText text={el?"「{本物|ほんもの}のコードが{届|とど}いた！{入力|にゅうりょく}しよう」":"「本物のコードが届いた！入力しよう」"}/>
+            </div>
+          </div>
+          <div style={sceneDesc}>
+            <RubyText text={el?"{攻撃|こうげき}{者|しゃ}が{本物|ほんもの}サイトにIDを{入力|にゅうりょく}したことで、{本物|ほんもの}のNintendoからコードが{送|おく}られた。":"攻撃者が本物サイトにIDを入力したことで、本物のNintendoからコードが送られた。"}/>
+          </div>
+        </div>
+      ),
+      right:null,
+    },
+
+    // ─────────── SCENE 7（BOTH） ───────────
+    {
+      who:"both",time:"21:36",
+      full:(
+        <div style={tlBothCard}>
+          <div style={sceneNumB}>SCENE 7</div>
+          <div style={sceneLabel}>
+            <RubyText text={el?"{偽|にせ}サイトにコードを{入力|にゅうりょく} → {攻撃|こうげき}{者|しゃ}へ{転送|てんそう}":"偽サイトにコードを入力 → 攻撃者へ転送"}/>
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:6}}>
+            <div style={{flex:1}}>
+              <div style={{fontSize:7,color:"#60a5fa",fontWeight:700,marginBottom:3}}>← ハナ</div>
+              <div style={pmL}>
+                <div style={ntHdrStyle}><span style={{color:"#fff",fontSize:6,fontWeight:900}}>Nintendo</span></div>
+                <div style={{background:"#f0f0f0",padding:4}}>
+                  <div style={{border:"1.5px solid #4a90d9",borderRadius:2,padding:2,fontSize:9,fontFamily:"monospace",fontWeight:700,letterSpacing:3,textAlign:"center",color:"#e60012",marginBottom:2}}>482916</div>
+                  <div style={{textAlign:"center"}}><span style={{background:"#e60012",color:"#fff",borderRadius:99,padding:"1px 7px",fontSize:6}}>認証する</span></div>
+                </div>
+              </div>
+            </div>
+            <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:2,flexShrink:0}}>
+              <div style={{...flowLineStyle,width:36,height:2}}/>
+              <div style={{fontSize:10,color:"#ef4444"}}>→</div>
+              <div style={{fontSize:7,color:"#ef4444"}}>転送中</div>
+            </div>
+            <div style={{flex:1}}>
+              <div style={{fontSize:7,color:"#ef4444",fontWeight:700,marginBottom:3}}>
+                <RubyText text={el?"{攻撃|こうげき}{者|しゃ}が{受信|じゅしん} →":"攻撃者が受信 →"}/>
+              </div>
+              <div style={{background:"rgba(255,215,0,.15)",border:"1px solid #ffd700",borderRadius:6,padding:6,fontSize:8,color:"#ffd700",textAlign:"center"}}>
+                <RubyText text={el?"コード{受信|じゅしん}！":"コード受信！"}/><br/>
+                <strong style={{letterSpacing:2,fontSize:11}}>482916</strong>
+              </div>
+            </div>
+          </div>
+          <div style={sceneDesc}>
+            <RubyText text={el?"ハナが{入力|にゅうりょく}したコードは{即座|そくざ}に{攻撃|こうげき}{者|しゃ}へ。{攻撃|こうげき}{者|しゃ}はそのコードを{本物|ほんもの}サイトへ{入力|にゅうりょく}。":"ハナが入力したコードは即座に攻撃者へ。攻撃者はそのコードを本物サイトへ入力。"}/>
+          </div>
+        </div>
+      ),
+    },
+
+    // ─────────── SCENE 8 ───────────
+    {
+      who:"att",time:"21:36",
+      left:null,
+      right:(
+        <div style={tlAttCard}>
+          <div style={sceneNumA}>SCENE 8</div>
+          <div style={sceneLabel}>
+            <RubyText text={el?"ログイン{成功|せいこう}！メール・PW{変更|へんこう}":"ログイン成功！メール・PW変更"}/>
+          </div>
+          <div style={pmL}>
+            <div style={ntHdrStyle}><span style={{color:"#fff",fontSize:7,fontWeight:900}}>Nintendo Account</span></div>
+            <div style={{background:"#f0f0f0",padding:4}}>
+              <div style={ntCardStyle}>
+                <div style={{fontSize:6,fontWeight:700,color:"#4ade80",marginBottom:3}}>✓ ログイン成功</div>
+                <div style={{background:"rgba(230,0,18,.08)",borderRadius:2,padding:"2px 4px",fontSize:6,color:"#e60012",marginBottom:2}}>📧 メールアドレス変更中…</div>
+                <div style={{background:"rgba(230,0,18,.08)",borderRadius:2,padding:"2px 4px",fontSize:6,color:"#e60012"}}>🔐 パスワード変更中…</div>
+              </div>
+            </div>
+          </div>
+          <div style={sceneDesc}>
+            <RubyText text={el?"ログイン{成功|せいこう}。すぐにメール・PW{変更|へんこう}。ハナはもうログインできない。":"ログイン成功。すぐにメール・PW変更。ハナはもうログインできない。"}/>
+          </div>
+        </div>
+      ),
+    },
+
+    // ─────────── SCENE 9 ───────────
+    {
+      who:"att",time:"21:40",
+      left:null,
+      right:(
+        <div style={tlAttCard}>
+          <div style={sceneNumA}>SCENE 9</div>
+          <div style={sceneLabel}>
+            <RubyText text={el?"eShopで{大量|たいりょう}{購入|こうにゅう}":"eShopで大量購入"}/>
+          </div>
+          <div style={{background:"#1a1a2e",borderRadius:6,padding:"6px 7px"}}>
+            <div style={{fontSize:8,color:"#fff",fontWeight:700,marginBottom:4}}>🛒 Nintendo eShop</div>
+            {[
+              {e:"🎮",n:el?"Switch{本体|ほんたい}":"Switch本体",p:"¥37,980"},
+              {e:"🎯",n:el?"Proコントローラー":"Proコントローラー",p:"¥8,978"},
+              {e:"⚔️",n:el?"ゼルダの{伝説|でんせつ}":"ゼルダの伝説",p:"¥7,700"},
+            ].map((item,i)=>(
+              <div key={i} style={{display:"flex",alignItems:"center",gap:3,padding:"2px 3px",borderRadius:3,background:"rgba(255,255,255,.06)",marginBottom:2,fontSize:7,color:"#fff"}}>
+                <span>{item.e}</span>
+                <div style={{flex:1}}><RubyText text={item.n}/></div>
+                <span style={{color:"#ff6b6b",fontWeight:700}}>{item.p}</span>
+                <span style={{color:"#4ade80",fontSize:9}}>✓</span>
+              </div>
+            ))}
+            <div style={{background:"rgba(255,59,48,.25)",borderRadius:3,padding:"4px",marginTop:3,textAlign:"center"}}>
+              <div style={{fontSize:6,color:"rgba(255,255,255,.5)"}}>合計</div>
+              <div style={{fontSize:14,color:"#ff3b30",fontWeight:900}}>¥54,658</div>
+            </div>
+          </div>
+          <div style={sceneDesc}>
+            <RubyText text={el?"{登録|とうろく}{済|ず}みのクレジットカードで{次々|つぎつぎ}と{購入|こうにゅう}。":"登録済みのクレジットカードで次々と購入。"}/>
+          </div>
+        </div>
+      ),
+    },
+
+    // ─────────── SCENE 10 ───────────
+    {
+      who:"hana",time:"21:41",
+      left:(
+        <div style={tlHanaCard}>
+          <div style={sceneNumH}>SCENE 10</div>
+          <div style={sceneLabel}>
+            <RubyText text={el?"「{完了|かんりょう}」{画面|がめん}で{安心|あんしん}":"「完了」画面で安心"}/>
+          </div>
+          <div style={pmL}>
+            <div style={ntHdrStyle}><span style={{color:"#fff",fontSize:7,fontWeight:900}}>Nintendo</span></div>
+            <div style={{background:"#f0f0f0",padding:"10px 8px",textAlign:"center"}}>
+              <div style={{fontSize:22,marginBottom:3}}>✅</div>
+              <div style={{fontSize:7,fontWeight:700,color:"#333",marginBottom:2}}>
+                <RubyText text={el?"{確認|かくにん}が{完了|かんりょう}しました":"確認が完了しました"}/>
+              </div>
+              <div style={{fontSize:6,color:"#555",lineHeight:1.4}}>
+                <RubyText text={el?"{引|ひ}き{続|つづ}きNintendoをお{楽|たの}しみください":"引き続きNintendoをお楽しみください"}/>
+              </div>
+            </div>
+          </div>
+          <div style={thoughtStyle}>
+            <RubyText text={el?"「よかった！Switchは{大丈夫|だいじょうぶ}かな😊」":"「よかった！Switchは大丈夫かな😊」"}/>
+          </div>
+          <div style={sceneDesc}>
+            <RubyText text={el?"{偽|にせ}サイトはハナを{安心|あんしん}させる。{実際|じっさい}には{全|すべ}てが{盗|ぬす}まれていた。":"偽サイトはハナを安心させる。実際には全てが盗まれていた。"}/>
+          </div>
+        </div>
+      ),
+      right:null,
+    },
+
+    // ─────────── SCENE 11 ───────────
+    {
+      who:"att",time:"数日後",
+      left:null,
+      right:(
+        <div style={tlAttCard}>
+          <div style={sceneNumA}>SCENE 11</div>
+          <div style={sceneLabel}>
+            <RubyText text={el?"{偽|にせ}サイトが{跡形|あとかた}もなく{消|き}えた":"偽サイトが跡形もなく消えた"}/>
+          </div>
+          <div style={pmL}>
+            <div style={{background:"#f2f2f7",padding:"2px 5px"}}>
+              <div style={{background:"#fff",borderRadius:4,padding:"2px 5px",display:"flex",alignItems:"center",gap:2}}>
+                <span style={{fontSize:6}}>🔍</span>
+                <span style={{fontSize:6,color:"#333",fontFamily:"monospace"}}>nintendo-account-verify.com</span>
+              </div>
+            </div>
+            <div style={{background:"#fff",padding:"10px",textAlign:"center"}}>
+              <div style={{fontSize:22,marginBottom:3}}>🚫</div>
+              <div style={{fontSize:9,fontWeight:700,color:"#333",marginBottom:2}}>404 Not Found</div>
+              <div style={{fontSize:7,color:"#999",lineHeight:1.4}}>
+                <RubyText text={el?"サイトが{削除|さくじょ}されました":"サイトが削除されました"}/>
+              </div>
+            </div>
+          </div>
+          <div style={sceneDesc}>
+            <RubyText text={el?"{証拠|しょうこ}を{残|のこ}さないため{偽|にせ}サイトを{閉鎖|へいさ}。ハナはこの{事実|じじつ}に{気|き}づいていない。":"証拠を残さないため偽サイトを閉鎖。ハナはこの事実に気づいていない。"}/>
+          </div>
+        </div>
+      ),
+    },
+
+    // ─────────── SCENE 12（BOTH） ───────────
+    {
+      who:"both",time:"翌朝 07:23",
+      full:(
+        <div style={tlBothCard}>
+          <div style={sceneNumB}>SCENE 12</div>
+          <div style={sceneLabel}>
+            <RubyText text={el?"{翌朝|よくあさ}、お{母|かあ}さんに{怒|おこ}られた":"翌朝、お母さんに怒られた"}/>
+          </div>
+          <div style={{display:"flex",gap:6,alignItems:"flex-start"}}>
+            <div style={{flex:1}}>
+              <div style={{fontSize:7,color:"#c084fc",fontWeight:700,marginBottom:3}}>
+                ← <RubyText text={el?"お{母|かあ}さん":"お母さん"}/>
+              </div>
+              <div style={{width:28,height:28,borderRadius:"50%",overflow:"hidden",border:"1.5px solid #c084fc",marginBottom:4}}>
+                <img src={`${BASE}mom.jpg`} style={{width:"100%",height:"100%",objectFit:"cover"}} alt=""/>
+              </div>
+              <div style={pmD}>
+                <div style={{background:"#1c1c1e",padding:"5px 6px"}}>
+                  <div style={{fontSize:6,color:"rgba(255,255,255,.5)",marginBottom:3}}>📧 カード明細</div>
+                  {["¥37,980","¥8,978","¥7,700"].map((p,i)=>(
+                    <div key={i} style={{display:"flex",justifyContent:"space-between",fontSize:6,color:"rgba(255,255,255,.8)",padding:"1px 0",borderBottom:".5px solid rgba(255,255,255,.1)"}}>
+                      <span>Nintendo eShop</span><span style={{color:"#ff3b30"}}>{p}</span>
+                    </div>
+                  ))}
+                  <div style={{textAlign:"right",marginTop:3,fontSize:9,fontWeight:900,color:"#ff3b30"}}>¥54,658</div>
+                </div>
+              </div>
+            </div>
+            <div style={{flex:1}}>
+              <div style={{fontSize:7,color:"#60a5fa",fontWeight:700,marginBottom:3}}>ハナ →</div>
+              <div style={{width:28,height:28,borderRadius:"50%",overflow:"hidden",border:"1.5px solid #60a5fa",marginBottom:4}}>
+                <img src={`${BASE}hana.jpg`} style={{width:"100%",height:"100%",objectFit:"cover",objectPosition:"center top",transform:"scale(2.2)",transformOrigin:"50% 18%"}} alt=""/>
+              </div>
+              <div style={{background:"rgba(239,68,68,.1)",border:"1px solid rgba(239,68,68,.3)",borderRadius:6,padding:"5px 6px",fontSize:8,color:"#fca5a5",fontStyle:"italic",lineHeight:1.5}}>
+                <RubyText text={el?"「わたし、{何|なに}もしてない…」":"「わたし、何もしてない…」"}/>
+              </div>
+            </div>
+          </div>
+          <div style={{background:"rgba(239,68,68,.1)",border:"1px solid rgba(239,68,68,.2)",borderRadius:8,padding:"7px 10px",marginTop:8,fontSize:10,color:"#fca5a5",fontStyle:"italic",lineHeight:1.6}}>
+            <RubyText text={el
+              ?"お{母|かあ}さん：「5{万円以上|まんえんいじょう}！{身|み}に{覚|おぼ}えのない{購入|こうにゅう}があるんだけど！！」"
+              :"お母さん：「5万円以上！身に覚えのない購入があるんだけど！！」"
+            }/>
+          </div>
+          <div style={sceneDesc}>
+            <RubyText text={el?"ここで{初|はじ}めてハナは{気|き}づいた。あの{夜|よる}に{全|すべ}てが{盗|ぬす}まれていたことを。":"ここで初めてハナは気づいた。あの夜に全てが盗まれていたことを。"}/>
+          </div>
+        </div>
+      ),
+    },
+  ];
+
+  // ─────────────────────────────
+  // タイムラインrender
+  // step 1〜12で各シーンを1つずつ表示
+  // ─────────────────────────────
+  const visibleScenes = allScenes.slice(0, step);
+  const dotColors = {hana:"#60a5fa",att:"#ef4444",both:"#fbbf24"};
+
+  return (
+    <div style={{
+      minHeight:"100vh",
+      background:"linear-gradient(180deg,#0f0f1a,#0a0a14)",
+      fontFamily:"'Zen Maru Gothic',sans-serif",
+      color:"#fff",
+      paddingBottom:80,
+    }}>
+
+      {/* ヘッダー */}
+      <div style={{
+        display:"grid",gridTemplateColumns:"1fr 32px 1fr",
+        alignItems:"center",padding:"10px 10px 6px",
+        position:"sticky",top:0,
+        background:"#0f0f1a",zIndex:10,
+        borderBottom:".5px solid rgba(255,255,255,.08)",
+      }}>
+        <div style={{textAlign:"center",fontSize:9,fontWeight:900,padding:"3px 6px",borderRadius:5,background:"rgba(96,165,250,.15)",color:"#60a5fa"}}>
+          👧 <RubyText text={el?"ハナの{動|うご}き":"ハナの動き"}/>
+        </div>
+        <div/>
+        <div style={{textAlign:"center",fontSize:9,fontWeight:900,padding:"3px 6px",borderRadius:5,background:"rgba(239,68,68,.15)",color:"#ef4444"}}>
+          <RubyText text={el?"{攻撃|こうげき}{者|しゃ}の{動|うご}き":"攻撃者の動き"}/> 🦹
+        </div>
+      </div>
+
+      {/* タイムライン本体 */}
+      <div style={{padding:"0 0 8px",position:"relative"}}>
+        {/* 縦線 */}
+        <div style={{
+          position:"absolute",left:"50%",top:0,bottom:0,
+          width:2,background:"rgba(255,255,255,.08)",
+          transform:"translateX(-50%)",zIndex:0,
+        }}/>
+
+        {visibleScenes.map((scene,i)=>(
+          <div key={i} data-scene style={{position:"relative",zIndex:1}}>
+            {scene.who === "both" ? (
+              /* 全幅 */
+              <div style={{padding:"6px 10px",position:"relative"}}>
+                <div style={{
+                  position:"absolute",left:"50%",top:10,
+                  transform:"translateX(-50%)",
+                  width:14,height:14,borderRadius:"50%",
+                  background:dotColors[scene.who],
+                  boxShadow:`0 0 0 3px ${dotColors[scene.who]}33`,
+                  zIndex:2,
+                }}/>
+                <div style={{fontSize:7,color:"rgba(255,255,255,.3)",fontFamily:"monospace",textAlign:"center",marginBottom:4,marginTop:18}}>
+                  {scene.time}
+                </div>
+                {scene.full}
+              </div>
+            ) : (
+              /* 左右レイアウト */
+              <div style={{display:"grid",gridTemplateColumns:"1fr 32px 1fr",alignItems:"start"}}>
+                <div style={{padding:"6px 6px 6px 10px"}}>
+                  {scene.left}
+                </div>
+                <div style={{display:"flex",flexDirection:"column",alignItems:"center",padding:"10px 0",position:"relative",zIndex:1}}>
+                  <div style={{
+                    width:14,height:14,borderRadius:"50%",
+                    background:dotColors[scene.who],
+                    boxShadow:`0 0 0 3px ${dotColors[scene.who]}33`,
+                    flexShrink:0,
+                  }}/>
+                  <div style={{fontSize:6,color:"rgba(255,255,255,.3)",fontFamily:"monospace",marginTop:3,textAlign:"center",lineHeight:1.3}}>
+                    {scene.time}
+                  </div>
+                </div>
+                <div style={{padding:"6px 10px 6px 6px"}}>
+                  {scene.right}
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* ナビゲーション */}
+      <div style={{
+        position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",
+        width:"100%",maxWidth:400,
+        background:"#0f0f1a",
+        borderTop:".5px solid rgba(255,255,255,.1)",
+        padding:"10px 14px",
+        display:"flex",gap:8,
+      }}>
+        {step > 1 && (
+          <button
+            onClick={()=>{
+              const items=document.querySelectorAll('[data-scene]');
+              if(items.length>1) items[items.length-2].scrollIntoView({behavior:"smooth",block:"center"});
+            }}
+            style={{
+              padding:"10px 12px",borderRadius:10,
+              border:"1px solid rgba(255,255,255,.2)",
+              background:"transparent",color:"rgba(255,255,255,.6)",
+              fontSize:11,cursor:"pointer",fontFamily:"inherit",
+              whiteSpace:"nowrap",
+            }}>
+            ↑ 前を見る
+          </button>
+        )}
+        <button
+          onClick={()=>{
+            if(step < allScenes.length){
+              next();
+              setTimeout(()=>{
+                window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"});
+              },100);
+            } else {
+              onComplete();
+            }
+          }}
+          style={{
+            flex:1,padding:12,borderRadius:10,border:"none",
+            background:`linear-gradient(135deg,${red},#b00010)`,
+            color:"#fff",fontSize:12,fontWeight:700,
+            cursor:"pointer",fontFamily:"inherit",
+          }}>
+          {step >= allScenes.length
+            ? <RubyText text={el?"{見抜|みぬ}き{方|かた}を{学|まな}ぶ →":"見抜き方を学ぶ →"}/>
+            : <RubyText text={el?"{次|つぎ}のシーンへ →":"次のシーンへ →"}/>
+          }
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // ═══════════════════════════════════════════════════════════════
 function Episode4({ onComplete, onExit }) {
   const ageMode = useAgeMode();
@@ -14700,118 +15502,11 @@ function Episode4({ onComplete, onExit }) {
   );
 
   if (phase === "reveal") return (
-    <div style={{
-      minHeight:"100vh",
-      background:"linear-gradient(180deg,#1a0d2e,#120920)",
-      padding:"24px 20px 40px",
-      fontFamily:"'Zen Maru Gothic',sans-serif",
-      color:"#fff",
-    }}>
-      <div style={{maxWidth:440,margin:"0 auto"}}>
-
-        <div style={{fontSize:11,fontWeight:900,color:"rgba(230,0,18,.7)",marginBottom:6}}>
-          🔍 <RubyText text={el?"{何|なに}が{起|お}きていたのか":"何が起きていたのか"}/>
-        </div>
-        <div style={{fontSize:18,fontWeight:900,marginBottom:16,lineHeight:1.5}}>
-          <RubyText text={el
-            ?"これは「フィッシング{詐欺|さぎ}」だった"
-            :"これは「フィッシング詐欺」だった"
-          }/>
-        </div>
-
-        {/* 攻撃の流れ図 */}
-        {[
-          {
-            step:"1",
-            icon:"📱",
-            title:el?"{偽|にせ}SMSで{誘導|ゆうどう}":"偽SMSで誘導",
-            desc:el?"{本物|ほんもの}そっくりの{緊急|きんきゅう}メッセージを{送|おく}り、{偽|にせ}サイトへ{誘|さそ}う。{焦|あせ}りを{利用|りよう}する{手口|てぐち}。":"本物そっくりの緊急メッセージを送り、偽サイトへ誘う。焦りを利用する手口。",
-            color:"#f97316",
-          },
-          {
-            step:"2",
-            icon:"🌐",
-            title:el?"{偽|にせ}サイトでID・パスワードを{盗|ぬす}む":"偽サイトでID・パスワードを盗む",
-            desc:el?"{本物|ほんもの}そっくりの{偽|にせ}ログイン{画面|がめん}。URLが{違|ちが}うのが{唯一|ゆいいつ}の{見分|みわ}け{方|かた}。":"本物そっくりの偽ログイン画面。URLが違うのが唯一の見分け方。",
-            color:"#ef4444",
-          },
-          {
-            step:"3",
-            icon:"⚡",
-            title:el?"{リアルタイムで|りあるたいむで}2{段階|だんかい}{認証|にんしょう}も{突破|とっぱ}":"リアルタイムで2段階認証も突破",
-            desc:el?"{攻撃|こうげき}{者|しゃ}が{裏|うら}で{同時|どうじ}に{本物|ほんもの}サイトへ{入力|にゅうりょく}。{届|とど}いた{本物|ほんもの}のコードを{偽|にせ}サイトに{入力|にゅうりょく}させる。":"攻撃者が裏で同時に本物サイトへ入力。届いた本物のコードを偽サイトに入力させる。",
-            color:"#dc2626",
-          },
-          {
-            step:"4",
-            icon:"💳",
-            title:el?"{登録|とうろく}クレジットカードで{大量|たいりょう}{購入|こうにゅう}":"登録クレジットカードで大量購入",
-            desc:el?"アカウントを{乗|の}っ{取|と}った{後|あと}、{登録|とうろく}済みのクレカで{即座|そくざ}に{購入|こうにゅう}。{返金|へんきん}されないケースも。":"アカウントを乗っ取った後、登録済みのクレカで即座に購入。返金されないケースも。",
-            color:"#b91c1c",
-          },
-        ].map((s,i)=>(
-          <div key={i} style={{
-            display:"flex",gap:12,marginBottom:12,
-            animation:`mamFadeUp .5s ${i*0.1}s ease both`,
-          }}>
-            <div style={{
-              width:36,height:36,borderRadius:"50%",
-              background:`rgba(${s.color.replace('#','').match(/.{2}/g).map(x=>parseInt(x,16)).join(',')}, .15)`,
-              border:`2px solid ${s.color}`,
-              display:"flex",alignItems:"center",justifyContent:"center",
-              fontSize:18,flexShrink:0,
-            }}>
-              {s.icon}
-            </div>
-            <div style={{
-              background:"rgba(255,255,255,.04)",
-              border:"0.5px solid rgba(255,255,255,.1)",
-              borderRadius:12,padding:"10px 14px",flex:1,
-            }}>
-              <div style={{
-                fontSize:12,fontWeight:900,
-                color:s.color,marginBottom:4,
-              }}>
-                STEP{s.step}：<RubyText text={s.title}/>
-              </div>
-              <div style={{fontSize:11,color:"rgba(255,255,255,.65)",lineHeight:1.6}}>
-                <RubyText text={s.desc}/>
-              </div>
-            </div>
-          </div>
-        ))}
-
-        {/* モリィのまとめ */}
-        <div style={{
-          display:"flex",alignItems:"flex-start",gap:10,
-          marginBottom:14,marginTop:4,
-        }}>
-          <OwlMolly size={44}/>
-          <div style={{
-            background:"#fff",borderRadius:"0 14px 14px 14px",
-            padding:"10px 14px",flex:1,
-          }}>
-            <div style={{fontSize:12,color:"#1e293b",lineHeight:1.8}}>
-              <RubyText text={el
-                ?"「{本物|ほんもの}からのメールだ」と{思|おも}っても、{必|かなら}ずURLを{確認|かくにん}しよう。{公式|こうしき}サイトのURLと{少|すこ}しでも{違|ちが}えば{偽物|にせもの}。{絶対|ぜったい}にパスワードや{認証|にんしょう}コードを{入力|にゅうりょく}しないで！"
-                :"「本物からのメールだ」と思っても、必ずURLを確認しよう。公式サイトのURLと少しでも違えば偽物。絶対にパスワードや認証コードを入力しないで！"
-              }/>
-            </div>
-          </div>
-        </div>
-
-        <button
-          onClick={()=>{feedback("tap");setPhase("countermeasures");}}
-          style={{
-            width:"100%",padding:14,borderRadius:12,border:"none",
-            background:`linear-gradient(135deg,${red},#b00010)`,
-            color:"#fff",fontSize:14,fontWeight:900,
-            cursor:"pointer",fontFamily:"inherit",
-          }}>
-          <RubyText text={el?"{見抜|みぬ}き{方|かた}を{学|まな}ぶ →":"見抜き方を学ぶ →"}/>
-        </button>
-      </div>
-    </div>
+    <Ep4Reveal
+      el={el}
+      red={red}
+      onComplete={()=>setPhase("countermeasures")}
+    />
   );
 
   if (phase === "countermeasures") return (
