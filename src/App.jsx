@@ -13355,6 +13355,303 @@ function Ep4FakeLogin({ el, red, emailInput, setEmailInput, passwordInput, setPa
   );
 }
 
+function Ep4CodeInput({ el, red, emailInput, onComplete }) {
+  const CORRECT_CODE = "482916";
+  const [codeValue, setCodeValue] = useState("");
+  const [showBanner, setShowBanner] = useState(false);
+  const [showMailPreview, setShowMailPreview] = useState(false);
+  const [bannerVisible, setBannerVisible] = useState(true);
+  const [showError, setShowError] = useState(false);
+  const [errorText, setErrorText] = useState("");
+  const [showBubble, setShowBubble] = useState(false);
+  const bubbleTimer = useRef(null);
+
+  useEffect(()=>{
+    const t1 = setTimeout(()=>setShowBanner(true), 1500);
+    const t2 = setTimeout(()=>setShowMailPreview(true), 3500);
+    const t3 = setTimeout(()=>setBannerVisible(false), 5000);
+    return ()=>{clearTimeout(t1);clearTimeout(t2);clearTimeout(t3);};
+  },[]);
+
+  const handleBubble = () => {
+    setShowBubble(true);
+    if(bubbleTimer.current) clearTimeout(bubbleTimer.current);
+    bubbleTimer.current = setTimeout(()=>setShowBubble(false), 3000);
+  };
+
+  const handleCodeChange = (e) => {
+    const val = e.target.value.replace(/\D/g,'').slice(0,6);
+    setCodeValue(val);
+    setShowError(false);
+  };
+
+  const handleAuth = () => {
+    feedback("tap");
+    if(codeValue.length < 6){
+      setShowError(true);
+      setErrorText(el
+        ?"⚠️ {認証|にんしょう}コードは6{桁|けた}で{入力|にゅうりょく}してください。"
+        :"⚠️ 認証コードは6桁で入力してください。");
+      return;
+    }
+    if(codeValue === CORRECT_CODE){
+      onComplete();
+    } else {
+      setShowError(true);
+      setErrorText(el
+        ?"⚠️ {認証|にんしょう}コードが{正|ただ}しくありません。\nメールに{届|とど}いたコードを{確認|かくにん}してください。"
+        :"⚠️ 認証コードが正しくありません。\nメールに届いたコードを確認してください。");
+    }
+  };
+
+  return (
+    <div style={{
+      minHeight:"100vh",
+      background:"#f0f0f0",
+      fontFamily:"-apple-system,'Hiragino Sans',sans-serif",
+      position:"relative",
+      overflow:"hidden",
+    }}>
+
+      {/* メール通知バナー（上からスライドイン） */}
+      {showBanner && (
+        <div style={{
+          position:"fixed",
+          top: bannerVisible ? 8 : -100,
+          left:"50%",
+          transform:"translateX(-50%)",
+          width:"calc(100% - 16px)",
+          maxWidth:360,
+          background:"rgba(50,50,52,.95)",
+          borderRadius:14,
+          padding:"12px 14px",
+          display:"flex",
+          gap:10,
+          alignItems:"flex-start",
+          transition:"top .5s cubic-bezier(.4,0,.2,1)",
+          zIndex:200,
+        }}>
+          <div style={{
+            width:34,height:34,borderRadius:8,
+            background:"#1a73e8",
+            display:"flex",alignItems:"center",
+            justifyContent:"center",fontSize:18,flexShrink:0,
+          }}>✉️</div>
+          <div style={{flex:1}}>
+            <div style={{fontSize:12,fontWeight:700,color:"#fff",marginBottom:2}}>Nintendo</div>
+            <div style={{fontSize:11,color:"rgba(255,255,255,.75)",lineHeight:1.5}}>
+              <RubyText text={el
+                ?"ニンテンドーアカウント {認証|にんしょう}コード\n{認証|にんしょう}コード："
+                :"ニンテンドーアカウント 認証コード\n認証コード："
+              }/>
+              <strong style={{color:"#ffd700",letterSpacing:2,fontSize:13}}>
+                {CORRECT_CODE}
+              </strong>
+            </div>
+          </div>
+          <div style={{fontSize:10,color:"rgba(255,255,255,.4)"}}>今</div>
+        </div>
+      )}
+
+      {/* Nintendoヘッダー */}
+      <div style={{background:red,padding:"10px 16px"}}>
+        <span style={{color:"#fff",fontSize:15,fontWeight:900}}>Nintendo</span>
+      </div>
+
+      <div style={{padding:"16px 14px"}}>
+        <div style={{
+          textAlign:"center",fontSize:14,fontWeight:700,
+          color:"#333",marginBottom:6,
+        }}>
+          <RubyText text={el
+            ?"メールアドレスによる{本人|ほんにん}{確認|かくにん}"
+            :"メールアドレスによる本人確認"
+          }/>
+        </div>
+        <div style={{
+          fontSize:10,color:"#555",lineHeight:1.6,
+          marginBottom:14,textAlign:"center",
+        }}>
+          <RubyText text={el
+            ?"{登録|とうろく}されているメールアドレス{宛|あて}に\n「{認証|にんしょう}コード」をお{送|おく}りしました。"
+            :"登録されているメールアドレス宛に\n「認証コード」をお送りしました。"
+          }/>
+        </div>
+
+        {/* グレーアバター */}
+        <div style={{textAlign:"center",marginBottom:14}}>
+          <div style={{
+            width:52,height:52,borderRadius:"50%",
+            background:"#c7c7cc",
+            margin:"0 auto",
+            display:"flex",alignItems:"center",
+            justifyContent:"center",fontSize:22,
+          }}>👤</div>
+        </div>
+
+        {/* フォームカード */}
+        <div style={{
+          background:"#fff",borderRadius:8,
+          padding:16,marginBottom:10,
+          boxShadow:"0 1px 4px rgba(0,0,0,.1)",
+        }}>
+          <div style={{fontSize:12,color:"#555",fontWeight:700,marginBottom:4}}>
+            <RubyText text={el?"ニンテンドーアカウント":"ニンテンドーアカウント"}/>
+          </div>
+          <div style={{fontSize:12,color:"#555",marginBottom:10}}>
+            {emailInput || "h.***@gmail.com"}
+          </div>
+
+          <div style={{
+            fontSize:12,color:"#333",marginBottom:4,
+            display:"flex",alignItems:"center",gap:4,
+          }}>
+            <span style={{
+              display:"inline-block",width:3,height:14,
+              background:red,borderRadius:2,
+            }}/>
+            <RubyText text={el?"{認証|にんしょう}コード":"認証コード"}/>
+          </div>
+
+          {/* メールプレビュー */}
+          {showMailPreview && (
+            <div style={{
+              background:"#e8f4fd",
+              border:"1px solid #b3d9f7",
+              borderRadius:8,padding:"10px 12px",
+              marginBottom:10,
+              fontSize:11,
+              animation:"mamFadeUp .4s ease",
+            }}>
+              <div style={{fontWeight:700,color:"#1565c0",marginBottom:4}}>
+                📧 <RubyText text={el?"{届|とど}いたメールを{確認|かくにん}":"届いたメールを確認"}/>
+              </div>
+              <div style={{color:"#333",lineHeight:1.7}}>
+                <RubyText text={el
+                  ?"{差出人|さしだしにん}：no-reply@nintendo.com\n{認証|にんしょう}コード："
+                  :"差出人：no-reply@nintendo.com\n認証コード："
+                }/>
+                <strong style={{
+                  fontSize:16,color:red,
+                  letterSpacing:3,
+                }}>
+                  {CORRECT_CODE}
+                </strong>
+              </div>
+            </div>
+          )}
+
+          <input
+            type="text"
+            value={codeValue}
+            onChange={handleCodeChange}
+            placeholder="------"
+            maxLength={6}
+            style={{
+              width:"100%",
+              border:`1.5px solid ${showError?"#e60012":"#4a90d9"}`,
+              borderRadius:4,padding:"9px 12px",
+              fontSize:22,fontFamily:"monospace",
+              letterSpacing:8,outline:"none",
+              textAlign:"center",boxSizing:"border-box",
+            }}
+          />
+
+          {/* エラーメッセージ */}
+          {showError && (
+            <div style={{
+              background:"#fff3f3",
+              border:"1px solid #ffcccc",
+              borderRadius:8,padding:"8px 12px",
+              marginTop:8,
+              fontSize:11,color:"#cc0000",
+              lineHeight:1.6,
+              whiteSpace:"pre-line",
+              animation:"mamFadeUp .3s ease",
+            }}>
+              <RubyText text={errorText}/>
+            </div>
+          )}
+        </div>
+
+        {/* 吹き出し */}
+        {showBubble && (
+          <div style={{
+            background:"#fff",
+            border:"2px solid #f5c842",
+            borderRadius:12,
+            padding:"8px 12px",
+            fontSize:11,
+            color:"#7a5c00",
+            fontStyle:"italic",
+            lineHeight:1.6,
+            marginBottom:10,
+            position:"relative",
+            animation:"mamFadeUp .4s ease",
+          }}>
+            <RubyText text={el
+              ?"「{届|とど}いたコードを{入|い}れればいいんだよね…」"
+              :"「届いたコードを入れればいいんだよね…」"
+            }/>
+            <div style={{fontSize:10,color:"#999",marginTop:2}}>🧒 ハナ</div>
+            <div style={{
+              position:"absolute",bottom:-9,left:14,
+              borderWidth:"5px 5px 0",
+              borderStyle:"solid",
+              borderColor:"#f5c842 transparent transparent",
+            }}/>
+          </div>
+        )}
+
+        {/* ボタン */}
+        <div style={{display:"flex",gap:8,marginBottom:12}}>
+          <button
+            onClick={handleBubble}
+            style={{
+              flex:1,padding:10,
+              background:"#fff",border:"1px solid #ccc",
+              borderRadius:99,fontSize:13,
+              cursor:"pointer",color:"#333",fontFamily:"inherit",
+            }}>
+            <RubyText text={el?"キャンセル":"キャンセル"}/>
+          </button>
+          <button
+            onClick={handleAuth}
+            style={{
+              flex:1,padding:10,
+              background:codeValue.length===6 ? red : "#ccc",
+              border:"none",borderRadius:99,
+              fontSize:13,fontWeight:700,
+              cursor:"pointer",color:"#fff",
+              fontFamily:"inherit",transition:"background .3s",
+            }}>
+            <RubyText text={el?"{認証|にんしょう}する":"認証する"}/>
+          </button>
+        </div>
+
+        <div style={{textAlign:"center"}}>
+          <a
+            onClick={handleBubble}
+            style={{
+              fontSize:12,color:"#1a6ecc",
+              display:"block",marginBottom:4,cursor:"pointer",
+            }}>
+            ● <RubyText text={el?"{認証|にんしょう}コードを{再送|さいそう}する":"認証コードを再送する"}/>
+          </a>
+          <a
+            onClick={handleBubble}
+            style={{
+              fontSize:12,color:"#1a6ecc",
+              display:"block",cursor:"pointer",
+            }}>
+            ● <RubyText text={el?"{別|べつ}の{本人確認|ほんにんかくにん}{方法|ほうほう}を{使|つか}う":"別の本人確認方法を使う"}/>
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ═══════════════════════════════════════════════════════════════
 function Episode4({ onComplete, onExit }) {
   const ageMode = useAgeMode();
@@ -13687,162 +13984,12 @@ function Episode4({ onComplete, onExit }) {
   );
 
   if (phase === "code_input") return (
-    <div style={{
-      minHeight:"100vh",
-      background:"#f0f0f0",
-      fontFamily:"-apple-system,'Hiragino Sans',sans-serif",
-    }}>
-      {/* URLバー */}
-      <div style={{background:"#f2f2f7",padding:"6px 10px",borderBottom:"0.5px solid #e0e0e0"}}>
-        <div style={{
-          background:"#fff",borderRadius:10,padding:"5px 10px",
-          display:"flex",alignItems:"center",gap:6,
-        }}>
-          <span style={{fontSize:11,color:"#ff3b30"}}>⚠️</span>
-          <span style={{fontSize:11,color:"#ff3b30",fontFamily:"monospace"}}>
-            nintendo-account-verify.com
-          </span>
-        </div>
-      </div>
-      {/* Nintendoヘッダー */}
-      <div style={{background:red,padding:"10px 16px"}}>
-        <span style={{color:"#fff",fontSize:16,fontWeight:900}}>Nintendo</span>
-      </div>
-      <div style={{padding:"16px"}}>
-        <div style={{
-          textAlign:"center",fontSize:15,fontWeight:700,
-          color:"#333",marginBottom:8,
-        }}>
-          <RubyText text={el?"メールアドレスによる{本人|ほんにん}{確認|かくにん}":"メールアドレスによる本人確認"}/>
-        </div>
-        <div style={{
-          fontSize:11,color:"#555",lineHeight:1.6,
-          marginBottom:14,textAlign:"center",
-        }}>
-          <RubyText text={el
-            ?"{登録|とうろく}されているメールアドレス{宛|あて}に「{認証|にんしょう}コード」をお{送|おく}りしました。\nメールの{本文|ほんぶん}に{記載|きさい}されている「{認証|にんしょう}コード」を{入力|にゅうりょく}してください。\n※「{認証|にんしょう}コード」の{有効期限|ゆうこうきげん}は、メールをお{送|おく}りしてから1{時間|じかん}です。"
-            :"登録されているメールアドレス宛に「認証コード」をお送りしました。\nメールの本文に記載されている「認証コード」を入力してください。\n※「認証コード」の有効期限は、メールをお送りしてから1時間です。"
-          }/>
-        </div>
-
-        {/* Miiアバター */}
-        <div style={{textAlign:"center",marginBottom:14}}>
-          <div style={{
-            width:64,height:64,borderRadius:"50%",
-            background:"#e0d0b0",margin:"0 auto",
-            display:"flex",alignItems:"center",
-            justifyContent:"center",fontSize:32,
-          }}>🧒</div>
-        </div>
-
-        {/* フォーム */}
-        <div style={{
-          background:"#fff",borderRadius:8,padding:16,
-          marginBottom:14,boxShadow:"0 1px 4px rgba(0,0,0,.1)",
-        }}>
-          <div style={{fontSize:12,color:"#555",fontWeight:700,marginBottom:4}}>
-            <RubyText text={el?"ニンテンドーアカウント":"ニンテンドーアカウント"}/>
-          </div>
-          <div style={{fontSize:12,color:"#555",marginBottom:12}}>
-            {emailInput || "h.***@gmail.com"}
-          </div>
-          <div style={{
-            fontSize:12,color:"#333",marginBottom:4,
-            display:"flex",alignItems:"center",gap:4,
-          }}>
-            <span style={{
-              display:"inline-block",width:3,height:14,
-              background:red,borderRadius:2,
-            }}/>
-            <RubyText text={el?"{認証|にんしょう}コード":"{認証}コード"}/>
-          </div>
-          <input
-            value={codeInput}
-            onChange={e=>setCodeInput(e.target.value.replace(/\D/g,'').slice(0,6))}
-            placeholder="------"
-            maxLength={6}
-            style={{
-              width:"100%",
-              border:`1px solid ${codeInput.length>0?"#4a90d9":"#ccc"}`,
-              borderRadius:4,padding:"9px 12px",
-              fontSize:22,fontFamily:"monospace",
-              letterSpacing:8,outline:"none",textAlign:"center",
-            }}
-          />
-        </div>
-
-        {/* 実際に届いたメール通知演出 */}
-        <div style={{
-          background:"#e8f4fd",border:"1px solid #b3d9f7",
-          borderRadius:10,padding:"12px",marginBottom:14,
-        }}>
-          <div style={{
-            fontSize:11,fontWeight:700,color:"#1565c0",marginBottom:6,
-          }}>
-            📧 <RubyText text={el?"メールが{届|とど}いています":"メールが届いています"}/>
-          </div>
-          <div style={{fontSize:11,color:"#333",lineHeight:1.7}}>
-            <RubyText text={el
-              ?"{差出人|さしだしにん}：no-reply@nintendo.com\n{件名|けんめい}：ニンテンドーアカウント {認証|にんしょう}コード\n\n{認証|にんしょう}コード："
-              :"差出人：no-reply@nintendo.com\n件名：ニンテンドーアカウント 認証コード\n\n認証コード："
-            }/>
-            <strong style={{fontSize:18,color:red,letterSpacing:3}}>482916</strong><br/>
-            <span style={{color:"#999",fontSize:10}}>
-              <RubyText text={el?"{有効期限|ゆうこうきげん}：1{時間|じかん}":"有効期限：1時間"}/>
-            </span>
-          </div>
-        </div>
-
-        {/* 警告（コードを入力したら表示） */}
-        {codeInput.length===6 && (
-          <div style={{
-            background:"#fff3f3",border:"1px solid #ffcccc",
-            borderRadius:8,padding:"10px 12px",marginBottom:14,
-            fontSize:11,color:"#cc0000",lineHeight:1.6,
-            animation:"mamFadeUp .4s ease",
-          }}>
-            <RubyText text={el
-              ?"⚠️ なぜ{本物|ほんもの}のコードが{届|とど}いたの？\n{攻撃|こうげき}{者|しゃ}が{裏|うら}でリアルタイムに{本物|ほんもの}サイトへ{入力|にゅうりょく}しているから！"
-              :"⚠️ なぜ本物のコードが届いたの？\n攻撃者が裏でリアルタイムに本物サイトへ入力しているから！"
-            }/>
-          </div>
-        )}
-
-        <div style={{display:"flex",gap:8,marginBottom:12}}>
-          <button style={{
-            flex:1,padding:10,background:"#fff",
-            border:"1px solid #ccc",borderRadius:99,
-            fontSize:13,cursor:"pointer",color:"#333",fontFamily:"inherit",
-          }}>
-            <RubyText text={el?"キャンセル":"キャンセル"}/>
-          </button>
-          <button
-            onClick={()=>{
-              feedback("tap");
-              if(codeInput.length===6) setPhase("stolen");
-            }}
-            style={{
-              flex:1,padding:10,
-              background:codeInput.length===6 ? red : "#ccc",
-              border:"none",borderRadius:99,
-              fontSize:13,fontWeight:700,
-              cursor:"pointer",color:"#fff",fontFamily:"inherit",
-              transition:"background .3s",
-            }}>
-            <RubyText text={el?"{認証|にんしょう}する":"認証する"}/>
-          </button>
-        </div>
-
-        <div style={{textAlign:"center"}}>
-          <a style={{fontSize:12,color:"#1a6ecc",display:"block",marginBottom:4}}>
-            ● <RubyText text={el?"{認証|にんしょう}コードを{再送|さいそう}する":"認証コードを再送する"}/>
-          </a>
-          <a style={{fontSize:12,color:"#1a6ecc",display:"block"}}>
-            ● <RubyText text={el?"{別|べつ}の{本人確認|ほんにんかくにん}{方法|ほうほう}を{使|つか}う":"別の本人確認方法を使う"}/>
-          </a>
-        </div>
-      </div>
-    </div>
+    <Ep4CodeInput
+      el={el}
+      red={red}
+      emailInput={emailInput}
+      onComplete={()=>{feedback("tap");setPhase("stolen");}}
+    />
   );
 
   if (phase === "stolen") return (
