@@ -13652,6 +13652,197 @@ function Ep4CodeInput({ el, red, emailInput, onComplete }) {
   );
 }
 
+function Ep4Stolen({ el, red, onComplete }) {
+  const [termLines, setTermLines] = useState([]);
+  const [showNote, setShowNote] = useState(false);
+  const [innerPhase, setInnerPhase] = useState("complete");
+
+  const LINES = [
+    {text:"[●] 認証コード取得: 482916", color:"#4ade80", delay:300},
+    {text:"[✓] Nintendoサーバーへログイン成功", color:"#4ade80", delay:1000},
+    {text:"[●] メールアドレス変更中...", color:"#fbbf24", delay:1800},
+    {text:"[✓] → attacker@proton.me に変更完了", color:"#60a5fa", delay:2800},
+    {text:"[●] パスワード変更中...", color:"#fbbf24", delay:3600},
+    {text:"[✓] パスワード変更完了", color:"#60a5fa", delay:4400},
+    {text:"    ※ハナはもうログインできない", color:"#ff6b6b", delay:4800},
+    {text:"[●] eShop 購入処理中...", color:"#fbbf24", delay:5600},
+    {text:"    （転売価値を上げるための購入）", color:"rgba(255,255,255,.4)", delay:6000},
+    {text:"[✓] ゲームソフト×3本 購入完了", color:"#ff6b6b", delay:7000},
+    {text:"[●] 盗んだアカウントを転売リストに追加中...", color:"#fbbf24", delay:8000},
+    {text:"[✓] 完了 → 闇フリマへ出品", color:"#ff6b6b", delay:9200},
+  ];
+
+  useEffect(()=>{
+    const timers = LINES.map((l)=>
+      setTimeout(()=>setTermLines(prev=>[...prev, l]), l.delay)
+    );
+    const t = setTimeout(()=>setShowNote(true), 10500);
+    return ()=>{timers.forEach(clearTimeout);clearTimeout(t);};
+  },[]);
+
+  if(innerPhase === "complete") return (
+    <div style={{
+      minHeight:"100vh",
+      background:"#f0f0f0",
+      fontFamily:"-apple-system,'Hiragino Sans',sans-serif",
+      display:"flex",flexDirection:"column",
+    }}>
+      <div style={{background:red,padding:"10px 16px"}}>
+        <span style={{color:"#fff",fontSize:15,fontWeight:900}}>Nintendo</span>
+      </div>
+      <div style={{padding:"28px 20px",textAlign:"center",flex:1}}>
+        <div style={{fontSize:48,marginBottom:16,animation:"mamFadeUp .6s ease"}}>✅</div>
+        <div style={{
+          fontSize:18,fontWeight:700,color:"#333",
+          marginBottom:10,animation:"mamFadeUp .6s .2s ease both",
+        }}>
+          <RubyText text={el?"{確認|かくにん}が{完了|かんりょう}しました":"確認が完了しました"}/>
+        </div>
+        <div style={{
+          fontSize:13,color:"#555",lineHeight:1.8,
+          marginBottom:24,animation:"mamFadeUp .6s .4s ease both",
+          whiteSpace:"pre-line",
+        }}>
+          <RubyText text={el
+            ?"ニンテンドーアカウントの\nセキュリティ{確認|かくにん}が{完了|かんりょう}しました。\n{引|ひ}き{続|つづ}きNintendoをお{楽|たの}しみください。"
+            :"ニンテンドーアカウントの\nセキュリティ確認が完了しました。\n引き続きNintendoをお楽しみください。"
+          }/>
+        </div>
+        <div style={{
+          background:"rgba(255,200,0,.08)",
+          borderLeft:"3px solid #f5c842",
+          padding:"10px 14px",fontSize:12,
+          color:"#7a5c00",fontStyle:"italic",
+          borderRadius:"0 10px 10px 0",
+          textAlign:"left",marginBottom:28,
+          animation:"mamFadeUp .6s .6s ease both",
+          lineHeight:1.7,
+        }}>
+          <RubyText text={el
+            ?"ハナ：「よかった、{確認|かくにん}できた！\nこれでSwitchは{大丈夫|だいじょうぶ}かな😊」"
+            :"ハナ：「よかった、確認できた！\nこれでSwitchは大丈夫かな😊」"
+          }/>
+        </div>
+        <button
+          onClick={()=>{feedback("tap");setInnerPhase("dark");}}
+          style={{
+            background:"linear-gradient(135deg,#333,#111)",
+            color:"#fff",border:"none",
+            borderRadius:12,padding:"13px 32px",
+            fontSize:14,fontWeight:700,
+            cursor:"pointer",fontFamily:"inherit",
+            animation:"mamFadeUp .6s .8s ease both",
+          }}>
+          <RubyText text={el?"ページを{閉|と}じる":"ページを閉じる"}/>
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div style={{
+      minHeight:"100vh",
+      background:"#0a0a0a",
+      fontFamily:"'Zen Maru Gothic',sans-serif",
+      color:"#fff",
+      padding:"20px 16px 40px",
+    }}>
+      <div style={{maxWidth:440,margin:"0 auto"}}>
+
+        {/* 「その裏で…」ヘッダー */}
+        <div style={{
+          textAlign:"center",marginBottom:16,
+          animation:"mamFadeUp .6s ease",
+        }}>
+          <div style={{
+            fontSize:11,color:"rgba(255,255,255,.4)",
+            letterSpacing:".1em",marginBottom:6,
+          }}>
+            ── <RubyText text={el?"その{裏|うら}で":"その裏で"}/> ──
+          </div>
+          <div style={{
+            fontSize:14,fontWeight:700,color:"#ff6b6b",
+          }}>
+            <RubyText text={el
+              ?"{攻撃|こうげき}{者|しゃ}のPCでは…"
+              :"攻撃者のPCでは…"
+            }/>
+          </div>
+        </div>
+
+        {/* ターミナル */}
+        <div style={{
+          background:"#0d1117",
+          borderRadius:10,
+          padding:14,
+          marginBottom:16,
+          border:"1px solid rgba(255,255,255,.08)",
+        }}>
+          <div style={{display:"flex",gap:6,marginBottom:10}}>
+            <div style={{width:10,height:10,borderRadius:"50%",background:"#ff5f56"}}/>
+            <div style={{width:10,height:10,borderRadius:"50%",background:"#ffbd2e"}}/>
+            <div style={{width:10,height:10,borderRadius:"50%",background:"#27c93f"}}/>
+            <span style={{
+              fontSize:10,color:"rgba(255,255,255,.3)",
+              marginLeft:6,fontFamily:"monospace",
+            }}>attack_tool.sh</span>
+          </div>
+
+          {termLines.map((l,i)=>(
+            <div key={i} style={{
+              fontFamily:"monospace",fontSize:12,
+              lineHeight:1.8,color:l.color,
+              animation:"mamFadeUp .4s ease",
+            }}>
+              {l.text}
+            </div>
+          ))}
+
+          {!showNote && (
+            <div style={{
+              display:"inline-block",width:8,height:14,
+              background:"#4ade80",
+              verticalAlign:"middle",
+              animation:"mamPulse .8s ease-in-out infinite",
+            }}/>
+          )}
+        </div>
+
+        {/* ハナは知らない */}
+        {showNote && (
+          <div style={{animation:"mamFadeUp .6s ease"}}>
+            <div style={{
+              background:"rgba(255,59,48,.08)",
+              borderLeft:"3px solid #ff3b30",
+              padding:"12px 14px",
+              fontSize:12,color:"#ff9999",
+              fontStyle:"italic",
+              borderRadius:"0 10px 10px 0",
+              lineHeight:1.7,marginBottom:20,
+            }}>
+              <RubyText text={el
+                ?"ハナ：（{何|なに}も{知|し}らずにSwitchで{遊|あそ}んでいる）\nこの{後|あと}、{翌朝|よくあさ}まで{何|なに}も{気|き}づかなかった。"
+                :"ハナ：（何も知らずにSwitchで遊んでいる）\nこの後、翌朝まで何も気づかなかった。"
+              }/>
+            </div>
+            <button
+              onClick={()=>{feedback("tap");onComplete();}}
+              style={{
+                width:"100%",padding:14,
+                borderRadius:12,border:"none",
+                background:"linear-gradient(135deg,#333,#111)",
+                color:"#fff",fontSize:14,fontWeight:700,
+                cursor:"pointer",fontFamily:"inherit",
+              }}>
+              <RubyText text={el?"{翌朝|よくあさ}… →":"翌朝… →"}/>
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ═══════════════════════════════════════════════════════════════
 function Episode4({ onComplete, onExit }) {
   const ageMode = useAgeMode();
@@ -13993,89 +14184,11 @@ function Episode4({ onComplete, onExit }) {
   );
 
   if (phase === "stolen") return (
-    <div style={{
-      minHeight:"100vh",
-      background:"#f0f0f0",
-      fontFamily:"-apple-system,'Hiragino Sans',sans-serif",
-      display:"flex",flexDirection:"column",
-    }}>
-      {/* Nintendoヘッダー */}
-      <div style={{background:red,padding:"10px 16px"}}>
-        <span style={{color:"#fff",fontSize:16,fontWeight:900}}>Nintendo</span>
-      </div>
-
-      {/* 「確認完了」偽画面 */}
-      <div style={{padding:24,textAlign:"center"}}>
-        <div style={{
-          background:"#fff",borderRadius:12,padding:28,
-          boxShadow:"0 1px 4px rgba(0,0,0,.1)",marginBottom:20,
-        }}>
-          <div style={{fontSize:40,marginBottom:12}}>✅</div>
-          <div style={{fontSize:16,fontWeight:700,color:"#333",marginBottom:8}}>
-            <RubyText text={el?"{確認|かくにん}が{完了|かんりょう}しました":"確認が完了しました"}/>
-          </div>
-          <div style={{fontSize:12,color:"#666",lineHeight:1.7}}>
-            <RubyText text={el
-              ?"ありがとうございました。\nアカウントの{安全性|あんぜんせい}を{確認|かくにん}しました。\nそのままご{利用|りよう}いただけます。"
-              :"ありがとうございました。\nアカウントの安全性を確認しました。\nそのままご利用いただけます。"
-            }/>
-          </div>
-        </div>
-
-        {/* ハナの心理 */}
-        <div style={{
-          background:"rgba(255,200,0,.08)",
-          borderLeft:"3px solid #f5c842",
-          padding:"10px 14px",fontSize:12,color:"#7a5c00",
-          fontStyle:"italic",borderRadius:"0 10px 10px 0",
-          lineHeight:1.7,marginBottom:20,textAlign:"left",
-        }}>
-          <RubyText text={el
-            ?"ハナ：「よかった、{確認|かくにん}できた。これでSwitchは{大丈夫|だいじょうぶ}かな…」"
-            :"ハナ：「よかった、確認できた。これでSwitchは大丈夫かな…」"
-          }/>
-        </div>
-
-        {/* 実際は… */}
-        <div style={{
-          background:"rgba(230,0,18,.06)",
-          border:"1px solid rgba(230,0,18,.2)",
-          borderRadius:12,padding:"14px 16px",
-          textAlign:"left",marginBottom:20,
-        }}>
-          <div style={{
-            fontSize:12,fontWeight:700,color:red,
-            marginBottom:8,
-          }}>
-            <RubyText text={el?"{実際|じっさい}には…":"実際には…"}/>
-          </div>
-          {[
-            el?"攻撃者がハナのアカウントに侵入完了":"攻撃者がハナのアカウントに侵入完了",
-            el?"登録メールアドレスを攻撃者のものに変更":"登録メールアドレスを攻撃者のものに変更",
-            el?"親のクレジットカードでeShop購入を開始":"親のクレジットカードでeShop購入を開始",
-          ].map((t,i)=>(
-            <div key={i} style={{
-              display:"flex",gap:8,marginBottom:6,
-              fontSize:12,color:"#555",alignItems:"flex-start",
-            }}>
-              <span style={{color:red,flexShrink:0}}>▶</span>
-              <RubyText text={t}/>
-            </div>
-          ))}
-        </div>
-
-        <button
-          onClick={()=>{feedback("tap");setPhase("aftermath_email");}}
-          style={{
-            width:"100%",padding:14,borderRadius:12,border:"none",
-            background:"linear-gradient(135deg,#333,#111)",
-            color:"#fff",fontSize:14,fontWeight:700,
-            cursor:"pointer",fontFamily:"inherit",
-          }}>
-          <RubyText text={el?"{翌朝|よくあさ}…":"翌朝…"}/>
-        </button>
-      </div>
-    </div>
+    <Ep4Stolen
+      el={el}
+      red={red}
+      onComplete={()=>setPhase("aftermath_email")}
+    />
   );
 
   if (phase === "aftermath_email") {
