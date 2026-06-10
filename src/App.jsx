@@ -15711,11 +15711,13 @@ function Episode4({ onComplete, onExit }) {
   );
 
   if (phase === "keywords") return (
-    <KeywordPhase
-      epKey="ep4"
-      accentColor={red}
-      onComplete={() => setPhase("pre_dialogue")}
-    />
+    <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fff0f0,#ffd6d6)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+      <div style={{ maxWidth: 440, margin: "0 auto" }}>
+        <OwlSay mood="excited" e="フィッシング{詐欺|さぎ}から{身|み}を{守|まも}るための{重要|じゅうよう}なことばをいっしょにおぼえよう！🦉">フィッシング詐欺から身を守るための重要ワードを一緒に覚えよう！🦉</OwlSay>
+        <KeywordPhase epKey="ep4" accentColor={red} onComplete={() => setPhase("pre_dialogue")} />
+        <ParentExpertCard epKey="ep4" accentColor={red} />
+      </div>
+    </div>
   );
 
   if (phase === "pre_dialogue") return (
