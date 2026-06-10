@@ -12966,43 +12966,193 @@ function Episode3_2({ onComplete, onExit }) {
 
 function Ep4Countermeasures({ el, red, onComplete }) {
   const [checked, setChecked] = useState(new Set());
+  const BASE = "/images/ep4/";
 
-  const steps = [
+  const rules = [
     {
       icon:"🌐",
-      title:el?"URLを{必|かなら}ず{確認|かくにん}する":"URLを必ず確認する",
-      desc:el
-        ?"「nintendo.com」以{外|がい}のURLは{全部|ぜんぶん}{偽物|にせもの}。{短縮URL|たんしゅくURL}や{不自然|ふしぜんな}な{文字|もじ}{列|れつ}に{注意|ちゅうい}。"
-        :"「nintendo.com」以外のURLは全部偽物。短縮URLや不自然な文字列に注意。",
-      color:red,
+      color:"#e60012",
+      title: el
+        ?"URLを{必|かなら}ず{確認|かくにん}する"
+        :"URLを必ず確認する",
+      source:"フィッシング対策協議会 2024年版ガイドライン",
+      visual:(
+        <div style={{marginBottom:8}}>
+          {/* 偽物URL */}
+          <div style={{
+            background:"#f2f2f7",borderRadius:"8px 8px 0 0",
+            padding:"4px 8px",border:"1px solid #ffcccc",
+            borderBottom:"none",
+          }}>
+            <div style={{
+              background:"#fff",borderRadius:6,
+              padding:"4px 8px",
+              display:"flex",alignItems:"center",gap:4,
+            }}>
+              <span style={{fontSize:11,color:"#ff3b30"}}>⚠️</span>
+              <span style={{fontSize:10,color:"#ff3b30",fontFamily:"monospace"}}>
+                nintendo-account-<strong>verify.com</strong>
+              </span>
+            </div>
+          </div>
+          <div style={{
+            background:"rgba(255,59,48,.06)",
+            border:"1px solid #ffcccc",
+            borderTop:"none",
+            borderRadius:"0 0 6px 6px",
+            padding:"4px 10px",
+            fontSize:10,color:"#cc0000",
+          }}>
+            ← <RubyText text={el?"{偽物|にせもの}":"偽物"}/>
+          </div>
+
+          <div style={{margin:"6px 0",textAlign:"center",fontSize:12,color:"rgba(255,255,255,.3)"}}>vs</div>
+
+          {/* 本物URL */}
+          <div style={{
+            background:"#f2f2f7",borderRadius:"8px 8px 0 0",
+            padding:"4px 8px",border:"1px solid #a7f3d0",
+            borderBottom:"none",
+          }}>
+            <div style={{
+              background:"#fff",borderRadius:6,
+              padding:"4px 8px",
+              display:"flex",alignItems:"center",gap:4,
+            }}>
+              <span style={{fontSize:11,color:"#22c55e"}}>🔒</span>
+              <span style={{fontSize:10,color:"#16a34a",fontFamily:"monospace"}}>
+                <strong>accounts.nintendo.com</strong>
+              </span>
+            </div>
+          </div>
+          <div style={{
+            background:"rgba(34,197,94,.06)",
+            border:"1px solid #a7f3d0",
+            borderTop:"none",
+            borderRadius:"0 0 6px 6px",
+            padding:"4px 10px",
+            fontSize:10,color:"#16a34a",
+          }}>
+            ← <RubyText text={el?"{本物|ほんもの}":"本物"}/>
+          </div>
+        </div>
+      ),
+      desc: el
+        ?"「nintendo」という{文字|もじ}が{入|はい}っていても{本物|ほんもの}とは{限|かぎ}らない。Amazon・{楽天|らくてん}・{銀行|ぎんこう}も{同|おな}じ。{公式|こうしき}ドメインと1{文字|もじ}でも{違|ちが}えば{偽物|にせもの}。"
+        :"「nintendo」という文字が入っていても本物とは限らない。Amazon・楽天・銀行も同じ。公式ドメインと1文字でも違えば偽物。",
     },
     {
       icon:"🔖",
-      title:el?"{公式|こうしき}サイトはブックマークから{開|ひら}く":"公式サイトはブックマークから開く",
-      desc:el
-        ?"SMSや{メール|めーる}のリンクは{使|つか}わない。{必|かなら}ずブックマークや{公式|こうしき}アプリから{ログイン|ろぐいん}する。"
-        :"SMSやメールのリンクは使わない。必ずブックマークや公式アプリからログインする。",
       color:"#7c3aed",
-    },
-    {
-      icon:"🔑",
-      title:el?"{パスワード|ぱすわーど}を{使|つか}い{回|まわ}さない":"パスワードを使い回さない",
-      desc:el
-        ?"1つの{サービス|さーびす}で{漏|も}れると{全部|ぜんぶ}危険。{パスワードマネージャー|ぱすわーどまねーじゃー}を{使|つか}おう。"
-        :"1つのサービスで漏れると全部危険。パスワードマネージャーを使おう。",
-      color:"#0ea5e9",
+      title: el
+        ?"{公式|こうしき}アプリやブックマークから{直接|ちょくせつ}アクセスする"
+        :"公式アプリやブックマークから直接アクセスする",
+      source:"警察庁・フィッシング対策協議会",
+      visual:(
+        <div style={{marginBottom:8}}>
+          {/* SMSのNG例 */}
+          <div style={{
+            background:"#1c1c1e",borderRadius:8,
+            padding:"8px 10px",marginBottom:6,
+          }}>
+            <div style={{
+              fontSize:9,color:"rgba(255,255,255,.4)",
+              marginBottom:4,
+            }}>
+              <RubyText text={el?"❌ これはNG：SMSのリンクをタップ":"❌ これはNG：SMSのリンクをタップ"}/>
+            </div>
+            <div style={{
+              background:"#3a3a3c",borderRadius:"8px 8px 8px 2px",
+              padding:"6px 8px",fontSize:9,color:"#fff",
+              lineHeight:1.5,maxWidth:"90%",
+            }}>
+              <RubyText text={el?"【{任天堂|にんてんどう}】{不正|ふせい}アクセスを{検知|けんち}。":"【任天堂】不正アクセスを検知。"}/>
+              <span style={{color:"#4db8ff",textDecoration:"underline",fontSize:8}}> https://nintendo-account-verify.com</span>
+            </div>
+          </div>
+          {/* ブックマークのOK例 */}
+          <div style={{
+            background:"rgba(124,58,237,.08)",
+            border:"1px solid rgba(124,58,237,.3)",
+            borderRadius:8,padding:"8px 10px",
+          }}>
+            <div style={{
+              fontSize:9,color:"#a78bfa",marginBottom:4,
+            }}>
+              <RubyText text={el?"✅ これが{正解|せいかい}：{公式|こうしき}アプリかブックマークから":"✅ これが正解：公式アプリかブックマークから"}/>
+            </div>
+            <div style={{display:"flex",gap:6,alignItems:"center"}}>
+              <div style={{
+                background:"rgba(124,58,237,.2)",
+                borderRadius:6,padding:"4px 8px",
+                fontSize:9,color:"#c4b5fd",
+              }}>🔖 ブックマーク</div>
+              <div style={{fontSize:9,color:"rgba(255,255,255,.4)"}}>または</div>
+              <div style={{
+                background:"rgba(124,58,237,.2)",
+                borderRadius:6,padding:"4px 8px",
+                fontSize:9,color:"#c4b5fd",
+              }}>📱 <RubyText text={el?"{公式|こうしき}アプリ":"公式アプリ"}/></div>
+            </div>
+          </div>
+        </div>
+      ),
+      desc: el
+        ?"{本物|ほんもの}のサービスは「24{時間以内|じかんいない}に」「{今|いま}すぐ{確認|かくにん}して」とSMSで{急|いそ}かすことはしない。SMSやメールのリンクは{使|つか}わず、{公式|こうしき}アプリかブックマークから{直接|ちょくせつ}アクセスしよう。"
+        :"本物のサービスは「24時間以内に」「今すぐ確認して」とSMSで急かすことはしない。SMSやメールのリンクは使わず、公式アプリかブックマークから直接アクセスしよう。",
     },
     {
       icon:"👨‍👩‍👧",
-      title:el?"{怪|あや}しいと{思|おも}ったらすぐ{大人|おとな}に{相談|そうだん}":"怪しいと思ったらすぐ大人に相談",
-      desc:el
-        ?"「{急|いそ}いで」「{今|いま}すぐ」という{言葉|ことば}ほど{危険|きけん}。{一人|ひとり}で{判断|はんだん}しないで{親|おや}に{相談|そうだん}しよう。"
-        :"「急いで」「今すぐ」という言葉ほど危険。一人で判断しないで親に相談しよう。",
       color:"#10b981",
+      title: el
+        ?"{怪|あや}しいと{思|おも}ったらすぐ{大人|おとな}に{相談|そうだん}"
+        :"怪しいと思ったらすぐ大人に相談",
+      source:"警察庁",
+      visual:(
+        <div style={{
+          display:"flex",alignItems:"center",
+          gap:10,marginBottom:8,
+          background:"rgba(16,185,129,.06)",
+          border:"1px solid rgba(16,185,129,.2)",
+          borderRadius:10,padding:"10px 12px",
+        }}>
+          <div style={{
+            width:36,height:36,borderRadius:"50%",
+            overflow:"hidden",border:"2px solid #c084fc",
+            flexShrink:0,
+          }}>
+            <img src={`${BASE}mom.jpg`} style={{
+              width:"100%",height:"100%",objectFit:"cover",
+            }} alt=""/>
+          </div>
+          <div style={{
+            width:36,height:36,borderRadius:"50%",
+            overflow:"hidden",
+            border:"2px solid #60a5fa",
+            flexShrink:0,
+          }}>
+            <img src={`${BASE}hana.jpg`} style={{
+              width:"100%",height:"100%",objectFit:"cover",
+              objectPosition:"center top",
+              transform:"scale(2.2)",
+              transformOrigin:"50% 18%",
+            }} alt=""/>
+          </div>
+          <div style={{fontSize:11,color:"rgba(255,255,255,.7)",lineHeight:1.6}}>
+            <RubyText text={el
+              ?"「{怪|あや}しいと{思|おも}う…」\n→ {一人|ひとり}で{判断|はんだん}せず\n  {親|おや}や{先生|せんせい}にすぐ{相談|そうだん}！"
+              :"「怪しいと思う…」\n→ 一人で判断せず\n  親や先生にすぐ相談！"
+            }/>
+          </div>
+        </div>
+      ),
+      desc: el
+        ?"「{急|いそ}いで」「{今|いま}すぐ」という{言葉|ことば}ほど{怪|あや}しい。{一人|ひとり}で{判断|はんだん}しないで{親|おや}や{信頼|しんらい}できる{大人|おとな}にすぐ{相談|そうだん}しよう。{困|こま}ったら #9110（{警察|けいさつ}{相談|そうだん}{専用|せんよう}{電話|でんわ}）へ。"
+        :"「急いで」「今すぐ」という言葉ほど怪しい。一人で判断しないで親や信頼できる大人にすぐ相談しよう。困ったら #9110（警察相談専用電話）へ。",
     },
   ];
 
-  const allChecked = checked.size >= steps.length;
+  const allChecked = checked.size >= rules.length;
 
   return (
     <div style={{
@@ -13013,42 +13163,70 @@ function Ep4Countermeasures({ el, red, onComplete }) {
       color:"#fff",
     }}>
       <div style={{maxWidth:440,margin:"0 auto"}}>
-        <div style={{fontSize:11,fontWeight:900,color:"rgba(230,0,18,.7)",marginBottom:6}}>
+
+        <div style={{
+          fontSize:11,fontWeight:900,
+          color:"rgba(230,0,18,.7)",marginBottom:6,
+        }}>
           ✅ <RubyText text={el?"{見抜|みぬ}き{方|かた}":"見抜き方"}/>
         </div>
         <div style={{fontSize:18,fontWeight:900,marginBottom:4}}>
-          <RubyText text={el?"{騙|だま}されないための4つのルール":"騙されないための4つのルール"}/>
+          <RubyText text={el
+            ?"{騙|だま}されないための3つのルール"
+            :"騙されないための3つのルール"
+          }/>
         </div>
         <div style={{fontSize:12,color:"rgba(255,255,255,.5)",marginBottom:20}}>
-          <RubyText text={el?"「{分|わ}かった！」を{押|お}して{確認|かくにん}しよう":"「分かった！」を押して確認しよう"}/>
+          <RubyText text={el
+            ?"「{分|わ}かった！」を{押|お}して{確認|かくにん}しよう"
+            :"「分かった！」を押して確認しよう"
+          }/>
         </div>
 
-        <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:16}}>
-          {steps.map((s,i)=>(
+        <div style={{
+          display:"flex",flexDirection:"column",gap:12,marginBottom:16,
+        }}>
+          {rules.map((rule,i)=>(
             <div key={i} style={{
               background:checked.has(i)
                 ?"rgba(255,255,255,.06)"
                 :"rgba(255,255,255,.04)",
-              border:`0.5px solid ${checked.has(i)?s.color+"55":"rgba(255,255,255,.1)"}`,
-              borderRadius:12,padding:"12px 14px",transition:"all .4s",
+              border:`0.5px solid ${checked.has(i)
+                ? rule.color+"55"
+                :"rgba(255,255,255,.1)"}`,
+              borderRadius:14,padding:"12px 14px",
+              transition:"all .4s",
             }}>
-              <div style={{display:"flex",alignItems:"center",gap:10}}>
+              <div style={{
+                display:"flex",alignItems:"center",
+                gap:10,marginBottom:checked.has(i)?10:0,
+              }}>
                 <div style={{
-                  width:28,height:28,borderRadius:"50%",
-                  background:checked.has(i)?"#22c55e":"rgba(255,255,255,.08)",
-                  border:`1.5px solid ${checked.has(i)?"#22c55e":"rgba(255,255,255,.2)"}`,
-                  display:"flex",alignItems:"center",justifyContent:"center",
-                  fontSize:checked.has(i)?14:12,flexShrink:0,transition:"all .4s",
+                  width:30,height:30,borderRadius:"50%",
+                  background:checked.has(i)
+                    ?"#22c55e"
+                    :"rgba(255,255,255,.08)",
+                  border:`1.5px solid ${checked.has(i)
+                    ?"#22c55e"
+                    :"rgba(255,255,255,.2)"}`,
+                  display:"flex",alignItems:"center",
+                  justifyContent:"center",
+                  fontSize:checked.has(i)?14:12,
+                  flexShrink:0,transition:"all .4s",
                 }}>
-                  {checked.has(i)?"✅":(
-                    <span style={{fontSize:10,color:"rgba(255,255,255,.4)",fontWeight:900}}>
-                      {"STEP"+(i+1)}
-                    </span>
+                  {checked.has(i) ? "✅" : (
+                    <span style={{
+                      fontSize:10,color:"rgba(255,255,255,.4)",
+                      fontWeight:900,
+                    }}>{"0"+(i+1)}</span>
                   )}
                 </div>
                 <div style={{flex:1}}>
-                  <div style={{fontSize:13,fontWeight:900,color:checked.has(i)?"#fff":"rgba(255,255,255,.9)"}}>
-                    {s.icon} <RubyText text={s.title}/>
+                  <div style={{
+                    fontSize:13,fontWeight:900,
+                    color:checked.has(i)?"#fff":"rgba(255,255,255,.9)",
+                  }}>
+                    {rule.icon} <RubyText text={rule.title}/>
                   </div>
                 </div>
                 {!checked.has(i) && (
@@ -13062,22 +13240,32 @@ function Ep4Countermeasures({ el, red, onComplete }) {
                       });
                     }}
                     style={{
-                      padding:"6px 12px",borderRadius:8,border:"none",
-                      background:"rgba(230,0,18,.2)",color:"#ff6b6b",
-                      fontSize:11,fontWeight:900,cursor:"pointer",
-                      fontFamily:"inherit",flexShrink:0,
+                      padding:"5px 11px",borderRadius:8,
+                      border:"none",
+                      background:"rgba(230,0,18,.2)",
+                      color:"#ff6b6b",fontSize:11,fontWeight:900,
+                      cursor:"pointer",fontFamily:"inherit",flexShrink:0,
                     }}>
                     <RubyText text={el?"{分|わ}かった！":"分かった！"}/>
                   </button>
                 )}
               </div>
+
               {checked.has(i) && (
-                <div style={{
-                  marginTop:8,paddingLeft:38,
-                  animation:"mamFadeUp .4s ease",
-                }}>
-                  <div style={{fontSize:12,color:"rgba(255,255,255,.75)",lineHeight:1.7}}>
-                    <RubyText text={s.desc}/>
+                <div style={{animation:"mamFadeUp .4s ease"}}>
+                  {rule.visual}
+                  <div style={{
+                    fontSize:12,color:"rgba(255,255,255,.75)",
+                    lineHeight:1.7,
+                  }}>
+                    <RubyText text={rule.desc}/>
+                  </div>
+                  <div style={{
+                    fontSize:10,
+                    color:"rgba(255,255,255,.3)",
+                    marginTop:6,
+                  }}>
+                    出典：{rule.source}
                   </div>
                 </div>
               )}
@@ -13094,11 +13282,19 @@ function Ep4Countermeasures({ el, red, onComplete }) {
               marginBottom:14,textAlign:"center",
             }}>
               <div style={{fontSize:20,marginBottom:6}}>🎉</div>
-              <div style={{fontSize:14,fontWeight:900,color:"#4ade80",marginBottom:4}}>
-                <RubyText text={el?"4つ{全部|ぜんぶ}チェックできた！":"4つ全部チェックできた！"}/>
+              <div style={{
+                fontSize:14,fontWeight:900,
+                color:"#4ade80",marginBottom:4,
+              }}>
+                <RubyText text={el?"3つ{全部|ぜんぶ}チェックできた！":"3つ全部チェックできた！"}/>
               </div>
-              <div style={{fontSize:12,color:"rgba(255,255,255,.6)",lineHeight:1.6}}>
-                <RubyText text={el?"{次|つぎ}から{使|つか}える{見抜|みぬ}き{方|かた}を{覚|おぼ}えたよ！":"次から使える見抜き方を覚えたよ！"}/>
+              <div style={{
+                fontSize:12,color:"rgba(255,255,255,.6)",lineHeight:1.6,
+              }}>
+                <RubyText text={el
+                  ?"{次|つぎ}から{使|つか}える{見抜|みぬ}き{方|かた}を{覚|おぼ}えたよ！"
+                  :"次から使える見抜き方を覚えたよ！"
+                }/>
               </div>
             </div>
             <button
@@ -13113,6 +13309,7 @@ function Ep4Countermeasures({ el, red, onComplete }) {
             </button>
           </div>
         )}
+
       </div>
     </div>
   );
