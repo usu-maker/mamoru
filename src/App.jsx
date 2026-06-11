@@ -15892,7 +15892,7 @@ function Episode4({ onComplete, onExit }) {
           <h1 style={{ fontSize: 20, color: "#7a000c", fontWeight: 900, margin: "0 0 4px" }}>しゅうりょうしょう</h1>
           <p style={{ fontSize: 12, color: "#9a0010", lineHeight: 1.9, margin: "12px 0 16px", padding: "0 8px" }}>
             <RubyText text={el ? `あなたは「マモル」{第|だい}4{話|わ}` : `あなたは「マモル」第4話`} /><br />
-            <strong style={{ color: "#7a000c", fontSize: 14 }}><RubyText text={el ? "それ、{本当|ほんとう}に{友達|ともだち}から？" : "それ、本当に友達から？"} /></strong><br />
+            <strong style={{ color: "#7a000c", fontSize: 14 }}><RubyText text={el ? "そっくり！{偽|にせ}サイトの{罠|わな}" : "そっくり！偽サイトの罠"} /></strong><br />
             <RubyText text="をクリアしました。" />
           </p>
           <div style={{ background: `linear-gradient(135deg,${red}33,#ffd0d4)`, borderRadius: 12, padding: "10px 14px", margin: "10px 0" }}>
