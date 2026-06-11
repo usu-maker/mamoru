@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef, createContext, useContext } from "react";
+import { useState, useEffect, useRef, createContext, useContext } from "react";
 
 // ═══════════════════════════════════════════════════════════════
 // 🌐 I18N — 国際化システム（日・英・韓・中）
@@ -713,7 +713,6 @@ const GlobalStyle = () => (
     @keyframes redPulse  {0%,100%{background:rgba(239,68,68,.08)} 50%{background:rgba(239,68,68,.22)}}
     @keyframes fadeInFast{from{opacity:0;transform:scale(.95)} to{opacity:1;transform:scale(1)}}
     @keyframes darkWebFlicker{0%,100%{opacity:1} 92%{opacity:1} 93%{opacity:.4} 94%{opacity:1} 97%{opacity:.7} 98%{opacity:1}}
-    @keyframes fadeIn    {from{opacity:0} to{opacity:1}}
     @keyframes slideRight{from{opacity:0;transform:translateX(-32px)} to{opacity:1;transform:translateX(0)}}
     @keyframes zoomIn    {from{opacity:0;transform:scale(0.8)} to{opacity:1;transform:scale(1)}}
     @keyframes logoReveal{0%{opacity:0;transform:scale(0.6) rotate(-8deg)} 60%{transform:scale(1.08) rotate(2deg)} 100%{opacity:1;transform:scale(1) rotate(0)}}
@@ -724,6 +723,58 @@ const GlobalStyle = () => (
     @keyframes mamShake {0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-4px)} 40%,80%{transform:translateX(4px)}}
   `}</style>
 );
+
+// ═══════════════════════════════════════════════════════════════
+// ✨ SHARED FX COMPONENTS — パーティクル位置を初回マウント時のみ生成
+// （JSX内でMath.random()を直接呼ぶと再レンダーごとに位置が再抽選され
+//   チラつき＋スタイル再計算が発生するため、useStateのlazy initで固定）
+// ═══════════════════════════════════════════════════════════════
+function StarField({ count = 20, color = "#fff", sizeMin = 1, sizeRange = 2, opacityMin = 0.05, opacityRange = 0.3, blinkMin = 2, blinkRange = 4 }) {
+  const [stars] = useState(() =>
+    [...Array(count)].map(() => ({
+      w: Math.random() * sizeRange + sizeMin,
+      h: Math.random() * sizeRange + sizeMin,
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      op: Math.random() * opacityRange + opacityMin,
+      dur: Math.random() * blinkRange + blinkMin,
+    }))
+  );
+  return (
+    <>
+      {stars.map((st, i) => (
+        <div key={i} style={{ position: "absolute", width: st.w, height: st.h, background: color, borderRadius: "50%", left: `${st.left}%`, top: `${st.top}%`, opacity: st.op, animation: `blink ${st.dur}s infinite` }} />
+      ))}
+    </>
+  );
+}
+
+function Confetti({ colors, count = 36 }) {
+  const [pieces] = useState(() =>
+    [...Array(count)].map((_, i) => ({
+      left: Math.random() * 100,
+      dur: Math.random() * 2 + 2,
+      delay: Math.random(),
+    }))
+  );
+  return (
+    <>
+      {pieces.map((p, i) => (
+        <div key={i} style={{ position: "absolute", left: `${p.left}%`, top: "-20px", width: 8, height: 12, background: colors[i % colors.length], animation: `confettiFall ${p.dur}s ${p.delay}s linear infinite` }} />
+      ))}
+    </>
+  );
+}
+
+// 画像フォールバック（React管理下のDOMをinnerHTMLで直接書き換えると
+// 再レンダー時にremoveChildエラーでクラッシュし得るため、stateで切り替える）
+function ImgWithFallback({ src, alt, fallback = "👧", fallbackBg = "#ffd6e0", fallbackSize = 24 }) {
+  const [err, setErr] = useState(false);
+  if (err) return (
+    <div style={{ width: "100%", height: "100%", background: fallbackBg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: fallbackSize }}>{fallback}</div>
+  );
+  return <img src={src} alt={alt} style={{ width: "100%", height: "100%", objectFit: "cover" }} onError={() => setErr(true)} />;
+}
 
 // ═══════════════════════════════════════════════════════════════
 // 🎮 PHASE A — 没入感・怖さ強化コンポーネント群
@@ -3238,9 +3289,18 @@ function vibrate(pattern) {
 }
 
 // Web Audio APIで音を生成（ファイル不要・iOS/Android両対応）
+// 共有AudioContext（呼び出しごとに生成するとブラウザの同時生成上限に達し、
+// iOS Safari等で音が鳴らなくなるため、シングルトンで使い回す）
+let _audioCtx = null;
+function getAudioCtx() {
+  if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (_audioCtx.state === "suspended") _audioCtx.resume();
+  return _audioCtx;
+}
+
 function playSound(type) {
   try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const ctx = getAudioCtx();
     const gain = ctx.createGain();
     gain.connect(ctx.destination);
 
@@ -3738,7 +3798,8 @@ function FishingTrap({ onClose }) {
 function MatrixHack({ onClose }) {
   const [phase, setPhase] = useState("glitch"); // glitch|matrix|reveal
   const [lines, setLines] = useState([]);
-  const fakeIP = `203.0.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
+  const [fakeIP] = useState(() => `203.0.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`);
+  const [glitchBars] = useState(() => [...Array(8)].map(() => ({ h: Math.random() * 4 + 1, top: Math.random() * 100, spd: Math.floor(Math.random() * 3 + 1) })));
   const fakeUA = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0)";
 
   useEffect(() => {
@@ -3788,8 +3849,8 @@ function MatrixHack({ onClose }) {
       <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div style={{ fontSize: 60, animation: "shakeX .1s infinite" }}>🛡️</div>
       </div>
-      {[...Array(8)].map((_, i) => (
-        <div key={i} style={{ position: "absolute", left: 0, right: 0, height: `${Math.random() * 4 + 1}px`, top: `${Math.random() * 100}%`, background: ["#fff","#f00","#0f0","#00f"][i%4], opacity: .8, animation: `glitch${i%2+1} .${Math.floor(Math.random()*3+1)}s infinite` }} />
+      {glitchBars.map((b, i) => (
+        <div key={i} style={{ position: "absolute", left: 0, right: 0, height: `${b.h}px`, top: `${b.top}%`, background: ["#fff","#f00","#0f0","#00f"][i%4], opacity: .8, animation: `glitch${i%2+1} .${b.spd}s infinite` }} />
       ))}
     </div>
   );
@@ -5657,7 +5718,7 @@ function ParentNewsTab() {
 
 function ParentReport({ onBack }) {
   const ageMode = useAgeMode();
-  const [record, setRecord] = useState(loadRecord());
+  const [record, setRecord] = useState(() => loadRecord());
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [tab, setTab] = useState("summary"); // summary | detail | advice | badges
 
@@ -6763,7 +6824,7 @@ function Episode1({ onComplete, onExit }) {
 
   const playTypingSound = () => {
     try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const ctx = getAudioCtx();
       const notes = [300, 280, 310, 290];
       notes.forEach((freq, i) => {
         const o = ctx.createOscillator();
@@ -6826,7 +6887,7 @@ function Episode1({ onComplete, onExit }) {
   if (phase === "intro") return (
     <EpisodeShell onExit={onExit}>
     <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at center,#2a1810,#0f0a08)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 20px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden" }}>
-      {[...Array(28)].map((_, i) => <div key={i} style={{ position: "absolute", width: Math.random() * 3 + 1, height: Math.random() * 3 + 1, background: "#fff", borderRadius: "50%", left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%`, opacity: Math.random() * .7 + .2, animation: `blink ${Math.random() * 3 + 2}s infinite` }} />)}
+      <StarField count={28} color={"#fff"} sizeMin={1} sizeRange={3} opacityMin={.2} opacityRange={.7} blinkMin={2} blinkRange={3} />
       <OwlMolly size={120} />
       <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: "#ffa940", letterSpacing: ".4em", margin: "16px 0 8px" }}>{t("ep1.chapter")}</div>
       <h1 style={{ fontSize: 30, fontWeight: 900, color: "#fff", margin: "0 0 8px", textAlign: "center" }}><RubyText text={t("ep1.title")} /></h1>
@@ -6847,9 +6908,7 @@ function Episode1({ onComplete, onExit }) {
         {/* ミナのアイコン */}
         <div style={{ textAlign: "center", marginBottom: 20 }}>
           <div style={{ width: 96, height: 96, borderRadius: "50%", overflow: "hidden", display: "inline-block", border: "3px solid #ffa940", boxShadow: "0 8px 24px rgba(255,169,64,.3)" }}>
-            <img src="/images/ep1/mina_icon.png" alt="ミナ"
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              onError={e => { e.target.style.display = "none"; e.target.parentNode.innerHTML = "<div style='width:100%;height:100%;background:#ffd6e0;display:flex;align-items:center;justify-content:center;font-size:48px'>👧</div>"; }} />
+            <ImgWithFallback src="/images/ep1/mina_icon.png" alt="ミナ" fallbackSize={48} />
           </div>
         </div>
         {/* ミナの吹き出し */}
@@ -6897,9 +6956,7 @@ function Episode1({ onComplete, onExit }) {
         <div style={{ background: "#fff", borderBottom: "1px solid #e1e8ed", borderTop: "1px solid #e1e8ed", padding: "14px 16px", display: "flex", alignItems: "center", gap: 12 }}>
           {/* ミナのアイコン */}
           <div style={{ width: 48, height: 48, borderRadius: "50%", overflow: "hidden", flexShrink: 0, border: "2px solid #ffa940" }}>
-            <img src="/images/ep1/mina_icon.png" alt="ミナ"
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              onError={e => { e.target.style.display = "none"; e.target.parentNode.innerHTML = "👧"; }} />
+            <ImgWithFallback src="/images/ep1/mina_icon.png" alt="ミナ" fallbackSize={22} />
           </div>
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 15, fontWeight: 900, color: "#14171a" }}>{t("ep1.characterName")} <span style={{ fontSize: 12, color: "#657786", fontWeight: 400 }}>{t("ep1.characterHandle")}</span></div>
@@ -6915,9 +6972,7 @@ function Episode1({ onComplete, onExit }) {
               <div style={{ display: "flex", gap: 10 }}>
                 {/* ミナのアイコン（小） */}
                 <div style={{ width: 40, height: 40, borderRadius: "50%", overflow: "hidden", flexShrink: 0, border: "1.5px solid #ffa94055" }}>
-                  <img src="/images/ep1/mina_icon.png" alt="ミナ"
-                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                    onError={e => { e.target.style.display = "none"; e.target.parentNode.innerHTML = "👧"; }} />
+                  <ImgWithFallback src="/images/ep1/mina_icon.png" alt="ミナ" fallbackSize={22} />
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
@@ -7144,9 +7199,7 @@ function Episode1({ onComplete, onExit }) {
           <div style={{ display: "flex", alignItems: "center", gap: 10, paddingBottom: 10, borderBottom: "1px solid #fef0d9", marginBottom: 12 }}>
             {/* ミナアイコン */}
             <div style={{ width: 36, height: 36, borderRadius: "50%", overflow: "hidden", flexShrink: 0, border: "2px solid #ffa94055" }}>
-              <img src="/images/ep1/mina_icon.png" alt="ミナ"
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                onError={e => { e.target.style.display = "none"; e.target.parentNode.innerHTML = "👧"; }} />
+              <ImgWithFallback src="/images/ep1/mina_icon.png" alt="ミナ" fallbackSize={22} />
             </div>
             <div>
               <div style={{ fontWeight: 900, fontSize: 13, color: "#14171a" }}>{t("ep1.characterName")}</div>
@@ -7421,7 +7474,7 @@ function Episode1({ onComplete, onExit }) {
   // ── Complete ──
   return (
     <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#fff4d6,#ffeed6,#ffd28a)", padding: "30px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden" }}>
-      {[...Array(36)].map((_, i) => <div key={i} style={{ position: "absolute", left: `${Math.random() * 100}%`, top: "-20px", width: 8, height: 12, background: ["#ff8a8a", "#ffa940", "#ffd28a", "#a8e6cf", "#ffafcc"][i % 5], animation: `confettiFall ${Math.random() * 2 + 2}s ${Math.random()}s linear infinite` }} />)}
+      <Confetti count={36} colors={["#ff8a8a", "#ffa940", "#ffd28a", "#a8e6cf", "#ffafcc"]} />
       <div style={{ maxWidth: 380, margin: "0 auto", position: "relative", zIndex: 2 }}>
         <div style={{ textAlign: "center", marginBottom: 18, animation: "celebrate 1s infinite" }}><OwlMolly size={110} /></div>
         <div style={{ background: "linear-gradient(135deg,#fff,#fff8f0)", borderRadius: 22, padding: "28px 22px", border: "3px double #ffa940", textAlign: "center", boxShadow: "0 20px 60px rgba(94,64,32,.18)", position: "relative" }}>
@@ -7454,7 +7507,7 @@ function CompleteScreen({ epKey, accentColor = "#ffa940", onComplete }) {
   const t = useT();
   return (
     <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#fff4d6,#ffeed6,#ffd28a)", padding: "30px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden" }}>
-      {[...Array(36)].map((_, i) => <div key={i} style={{ position: "absolute", left: `${Math.random() * 100}%`, top: "-20px", width: 8, height: 12, background: ["#ff8a8a", "#ffa940", "#ffd28a", "#a8e6cf", "#ffafcc"][i % 5], animation: `confettiFall ${Math.random() * 2 + 2}s ${Math.random()}s linear infinite` }} />)}
+      <Confetti count={36} colors={["#ff8a8a", "#ffa940", "#ffd28a", "#a8e6cf", "#ffafcc"]} />
       <div style={{ maxWidth: 380, margin: "0 auto", position: "relative", zIndex: 2 }}>
         <div style={{ textAlign: "center", marginBottom: 18, animation: "celebrate 1s infinite" }}><OwlMolly size={110} /></div>
         <div style={{ background: "linear-gradient(135deg,#fff,#fff8f0)", borderRadius: 22, padding: "28px 22px", border: `3px double ${accentColor}`, textAlign: "center", boxShadow: "0 20px 60px rgba(94,64,32,.18)", position: "relative" }}>
@@ -7565,7 +7618,7 @@ function Episode1_2({ onComplete, onExit }) {
   if (phase === "intro") return (
     <EpisodeShell onExit={onExit}>
     <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#1a1000,#0f0800)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 20px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden" }}>
-      {[...Array(20)].map((_, i) => <div key={i} style={{ position: "absolute", width: Math.random()*2+1, height: Math.random()*2+1, background: orange, borderRadius: "50%", left: `${Math.random()*100}%`, top: `${Math.random()*100}%`, opacity: Math.random()*0.3+0.05, animation: `blink ${Math.random()*4+2}s infinite` }} />)}
+      <StarField count={20} color={orange} sizeMin={1} sizeRange={2} opacityMin={0.05} opacityRange={0.3} blinkMin={2} blinkRange={4} />
       <div style={{ fontSize: 70, marginBottom: 12, animation: "float 3s ease-in-out infinite" }}>📍</div>
       <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: orange, letterSpacing: ".4em", margin: "0 0 10px" }}>EPISODE 01-2</div>
       <h1 style={{ fontSize: 20, fontWeight: 900, color: "#fff", margin: "0 0 8px", textAlign: "center", lineHeight: 1.3 }}>
@@ -8112,7 +8165,7 @@ function WorstCasePage({ onComplete }) {
         setShowEnd(true);
         setBubble(null);
       }
-      return;
+      return () => clearTimeout(timerRef.current);
     }
     const e = EVENTS[eventIdx];
     setPolicePos(e.police);
@@ -9889,9 +9942,7 @@ function Episode2({ onComplete, onExit }) {
   if (phase === "intro") return (
     <EpisodeShell onExit={onExit}>
     <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top, #0f0a2e 0%, #07041a 100%)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 20px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden" }}>
-      {[...Array(30)].map((_, i) => (
-        <div key={i} style={{ position: "absolute", width: Math.random() * 2 + 1, height: Math.random() * 2 + 1, background: "#a78bfa", borderRadius: "50%", left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%`, opacity: Math.random() * 0.6 + 0.1, animation: `blink ${Math.random() * 4 + 2}s infinite` }} />
-      ))}
+      <StarField count={30} color={"#a78bfa"} sizeMin={1} sizeRange={2} opacityMin={0.1} opacityRange={0.6} blinkMin={2} blinkRange={4} />
       <div style={{ fontSize: 72, marginBottom: 12, animation: "float 3s ease-in-out infinite" }}>🔎</div>
       <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: "#a78bfa", letterSpacing: ".4em", margin: "0 0 10px" }}>EPISODE 02</div>
       <h1 style={{ fontSize: 28, fontWeight: 900, color: "#fff", margin: "0 0 8px", textAlign: "center", lineHeight: 1.2 }}><RubyText text={ageMode === "elementary" ? "フェイクニュースを{見抜|みぬ}け" : "フェイクニュースを見抜け"} /></h1>
@@ -10403,7 +10454,7 @@ function Episode2({ onComplete, onExit }) {
   // ── Complete ──
   return (
     <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#ede9fe,#ddd6fe,#c4b5fd)", padding: "30px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden" }}>
-      {[...Array(36)].map((_, i) => <div key={i} style={{ position: "absolute", left: `${Math.random() * 100}%`, top: "-20px", width: 8, height: 12, background: ["#a78bfa", "#7c3aed", "#c4b5fd", "#818cf8", "#6ee7b7"][i % 5], animation: `confettiFall ${Math.random() * 2 + 2}s ${Math.random()}s linear infinite` }} />)}
+      <Confetti count={36} colors={["#a78bfa", "#7c3aed", "#c4b5fd", "#818cf8", "#6ee7b7"]} />
       <div style={{ maxWidth: 380, margin: "0 auto", position: "relative", zIndex: 2 }}>
         <div style={{ textAlign: "center", marginBottom: 18, animation: "celebrate 1s infinite" }}><OwlMolly size={110} mood="happy" /></div>
         <div style={{ background: "linear-gradient(135deg,#fff,#f5f3ff)", borderRadius: 22, padding: "28px 22px", border: "3px double #7c3aed", textAlign: "center", boxShadow: "0 20px 60px rgba(124,58,237,.2)", position: "relative" }}>
@@ -12051,7 +12102,7 @@ function Episode3({ onComplete, onExit }) {
   if (phase === "intro") return (
     <EpisodeShell onExit={onExit}>
     <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#0a1a0a,#041004)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 20px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden" }}>
-      {[...Array(24)].map((_, i) => <div key={i} style={{ position: "absolute", width: Math.random() * 2 + 1, height: Math.random() * 2 + 1, background: "#4ade80", borderRadius: "50%", left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%`, opacity: Math.random() * 0.4 + 0.05, animation: `blink ${Math.random() * 4 + 2}s infinite` }} />)}
+      <StarField count={24} color={"#4ade80"} sizeMin={1} sizeRange={2} opacityMin={0.05} opacityRange={0.4} blinkMin={2} blinkRange={4} />
       <div style={{ fontSize: 70, marginBottom: 12, animation: "float 3s ease-in-out infinite" }}>⚠️</div>
       <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: "#4ade80", letterSpacing: ".4em", margin: "0 0 10px" }}>EPISODE 03</div>
       <h1 style={{ fontSize: 26, fontWeight: 900, color: "#fff", margin: "0 0 8px", textAlign: "center", lineHeight: 1.2 }}><RubyText text={ageMode === "elementary" ? "{断|ことわ}れなくなる{前|まえ}に" : "断れなくなる前に"} /></h1>
@@ -12605,7 +12656,7 @@ function Episode3({ onComplete, onExit }) {
   // ── Complete ──
   return (
     <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#f0fdf4,#dcfce7,#bbf7d0)", padding: "30px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden" }}>
-      {[...Array(36)].map((_, i) => <div key={i} style={{ position: "absolute", left: `${Math.random() * 100}%`, top: "-20px", width: 8, height: 12, background: ["#4ade80", "#16a34a", "#86efac", "#22c55e", "#bbf7d0"][i % 5], animation: `confettiFall ${Math.random() * 2 + 2}s ${Math.random()}s linear infinite` }} />)}
+      <Confetti count={36} colors={["#4ade80", "#16a34a", "#86efac", "#22c55e", "#bbf7d0"]} />
       <div style={{ maxWidth: 380, margin: "0 auto", position: "relative", zIndex: 2 }}>
         <div style={{ textAlign: "center", marginBottom: 18, animation: "celebrate 1s infinite" }}><OwlMolly size={110} mood="happy" /></div>
         <div style={{ background: "linear-gradient(135deg,#fff,#f0fdf4)", borderRadius: 22, padding: "28px 22px", border: "3px double #16a34a", textAlign: "center", boxShadow: "0 20px 60px rgba(22,163,74,.2)", position: "relative" }}>
@@ -12825,7 +12876,7 @@ function Episode3_2({ onComplete, onExit }) {
   if (phase === "intro") return (
     <EpisodeShell onExit={onExit}>
     <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#0a1a0a,#041004)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 20px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative" }}>
-      {[...Array(20)].map((_, i) => <div key={i} style={{ position: "absolute", width: Math.random()*2+1, height: Math.random()*2+1, background: green, borderRadius: "50%", left: `${Math.random()*100}%`, top: `${Math.random()*100}%`, opacity: Math.random()*0.25+0.05, animation: `blink ${Math.random()*4+2}s infinite` }} />)}
+      <StarField count={20} color={green} sizeMin={1} sizeRange={2} opacityMin={0.05} opacityRange={0.25} blinkMin={2} blinkRange={4} />
       <div style={{ fontSize: 70, marginBottom: 12, animation: "float 3s ease-in-out infinite" }}>⚠️</div>
       <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: green, letterSpacing: ".4em", margin: "0 0 10px" }}>EPISODE 03-2</div>
       <h1 style={{ fontSize: 20, fontWeight: 900, color: "#fff", margin: "0 0 8px", textAlign: "center", lineHeight: 1.3 }}>
@@ -15831,7 +15882,7 @@ function Episode4({ onComplete, onExit }) {
 
   if (phase === "complete") return (
     <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#2a0a14,#1a0510,#0f020a)", padding: "30px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden" }}>
-      {[...Array(36)].map((_, i) => <div key={i} style={{ position: "absolute", left: `${Math.random() * 100}%`, top: "-20px", width: 8, height: 12, background: [red, "#ff5a6e", "#ff8a8a", "#b00010", "#ffd28a"][i % 5], animation: `confettiFall ${Math.random() * 2 + 2}s ${Math.random()}s linear infinite` }} />)}
+      <Confetti count={36} colors={[red, "#ff5a6e", "#ff8a8a", "#b00010", "#ffd28a"]} />
       <div style={{ maxWidth: 380, margin: "0 auto", position: "relative", zIndex: 2 }}>
         <div style={{ textAlign: "center", marginBottom: 18, animation: "celebrate 1s infinite" }}><OwlMolly size={110} mood="happy" /></div>
         <div style={{ background: "linear-gradient(135deg,#fff,#fff0f1)", borderRadius: 22, padding: "28px 22px", border: `3px double ${red}`, textAlign: "center", boxShadow: `0 20px 60px ${red}33`, position: "relative" }}>
@@ -15962,7 +16013,7 @@ function Episode5({ onComplete, onExit }) {
   if (phase === "intro") return (
     <EpisodeShell onExit={onExit}>
     <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#1a0510,#0f020a)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 20px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden" }}>
-      {[...Array(26)].map((_, i) => <div key={i} style={{ position: "absolute", width: Math.random() * 2 + 1, height: Math.random() * 2 + 1, background: pink, borderRadius: "50%", left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%`, opacity: Math.random() * 0.3 + 0.05, animation: `blink ${Math.random() * 4 + 2}s infinite` }} />)}
+      <StarField count={26} color={pink} sizeMin={1} sizeRange={2} opacityMin={0.05} opacityRange={0.3} blinkMin={2} blinkRange={4} />
       <div style={{ fontSize: 70, marginBottom: 12, animation: "float 3s ease-in-out infinite" }}>👥</div>
       <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: pink, letterSpacing: ".4em", margin: "0 0 10px" }}>EPISODE 05</div>
       <h1 style={{ fontSize: 24, fontWeight: 900, color: "#fff", margin: "0 0 8px", textAlign: "center", lineHeight: 1.3 }}><RubyText text={ageMode === "elementary" ? "{見|み}ているだけも、" : "見ているだけも、"} /><br /><RubyText text={ageMode === "elementary" ? "いじめだった" : "いじめだった"} /></h1>
@@ -16404,7 +16455,7 @@ function Episode5({ onComplete, onExit }) {
   // ── Complete ──
   return (
     <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#fdf2f8,#fce7f3,#fbcfe8)", padding: "30px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden" }}>
-      {[...Array(36)].map((_, i) => <div key={i} style={{ position: "absolute", left: `${Math.random() * 100}%`, top: "-20px", width: 8, height: 12, background: [pink, "#f472b6", "#fbcfe8", "#a855f7", "#fce7f3"][i % 5], animation: `confettiFall ${Math.random() * 2 + 2}s ${Math.random()}s linear infinite` }} />)}
+      <Confetti count={36} colors={[pink, "#f472b6", "#fbcfe8", "#a855f7", "#fce7f3"]} />
       <div style={{ maxWidth: 380, margin: "0 auto", position: "relative", zIndex: 2 }}>
         <div style={{ textAlign: "center", marginBottom: 18, animation: "celebrate 1s infinite" }}><OwlMolly size={110} mood="happy" /></div>
         <div style={{ background: "linear-gradient(135deg,#fff,#fdf2f8)", borderRadius: 22, padding: "28px 22px", border: `3px double ${pink}`, textAlign: "center", boxShadow: `0 20px 60px ${pink}22`, position: "relative" }}>
@@ -16477,7 +16528,7 @@ function Episode6({ onComplete, onExit }) {
   if (phase === "intro") return (
     <EpisodeShell onExit={onExit}>
     <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#1a0308,#0a0105)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 20px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden" }}>
-      {[...Array(24)].map((_, i) => <div key={i} style={{ position: "absolute", width: Math.random()*2+1, height: Math.random()*2+1, background: rose, borderRadius: "50%", left: `${Math.random()*100}%`, top: `${Math.random()*100}%`, opacity: Math.random()*0.25+0.05, animation: `blink ${Math.random()*4+2}s infinite` }} />)}
+      <StarField count={24} color={rose} sizeMin={1} sizeRange={2} opacityMin={0.05} opacityRange={0.25} blinkMin={2} blinkRange={4} />
       <div style={{ fontSize: 70, marginBottom: 12, animation: "float 3s ease-in-out infinite" }}>📸</div>
       <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: rose, letterSpacing: ".4em", margin: "0 0 10px" }}>EPISODE 06</div>
       <h1 style={{ fontSize: 22, fontWeight: 900, color: "#fff", margin: "0 0 8px", textAlign: "center", lineHeight: 1.3 }}>
@@ -16779,7 +16830,7 @@ function Episode6({ onComplete, onExit }) {
 
   return (
     <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#fff1f2,#ffe4e8,#fecdd3)", padding: "30px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden" }}>
-      {[...Array(36)].map((_, i) => <div key={i} style={{ position: "absolute", left: `${Math.random() * 100}%`, top: "-20px", width: 8, height: 12, background: [rose, "#fb7185", "#fecdd3", "#fda4af", "#fff1f2"][i % 5], animation: `confettiFall ${Math.random() * 2 + 2}s ${Math.random()}s linear infinite` }} />)}
+      <Confetti count={36} colors={[rose, "#fb7185", "#fecdd3", "#fda4af", "#fff1f2"]} />
       <div style={{ maxWidth: 380, margin: "0 auto", position: "relative", zIndex: 2 }}>
         <div style={{ textAlign: "center", marginBottom: 18, animation: "celebrate 1s infinite" }}><OwlMolly size={110} mood="happy" /></div>
         <div style={{ background: "linear-gradient(135deg,#fff,#fff1f2)", borderRadius: 22, padding: "28px 22px", border: `3px double ${rose}`, textAlign: "center", boxShadow: `0 20px 60px ${rose}22`, position: "relative" }}>
@@ -16861,7 +16912,7 @@ function Episode7({ onComplete, onExit }) {
   if (phase === "intro") return (
     <EpisodeShell onExit={onExit}>
     <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#1a0a2e,#0a0515)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 20px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden" }}>
-      {[...Array(28)].map((_, i) => <div key={i} style={{ position: "absolute", width: Math.random()*2+1, height: Math.random()*2+1, background: purple, borderRadius: "50%", left: `${Math.random()*100}%`, top: `${Math.random()*100}%`, opacity: Math.random()*0.3+0.05, animation: `blink ${Math.random()*4+2}s infinite` }} />)}
+      <StarField count={28} color={purple} sizeMin={1} sizeRange={2} opacityMin={0.05} opacityRange={0.3} blinkMin={2} blinkRange={4} />
       <div style={{ fontSize: 70, marginBottom: 12, animation: "float 3s ease-in-out infinite" }}>🕸️</div>
       <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: purple, letterSpacing: ".4em", margin: "0 0 10px" }}>EPISODE 07</div>
       <h1 style={{ fontSize: 22, fontWeight: 900, color: "#fff", margin: "0 0 8px", textAlign: "center", lineHeight: 1.3 }}>
@@ -17228,7 +17279,7 @@ function Episode7({ onComplete, onExit }) {
 
   return (
     <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#ede9fe,#ddd6fe,#c4b5fd)", padding: "30px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden" }}>
-      {[...Array(36)].map((_, i) => <div key={i} style={{ position: "absolute", left: `${Math.random() * 100}%`, top: "-20px", width: 8, height: 12, background: [purple, "#a78bfa", "#ddd6fe", "#8b5cf6", "#ede9fe"][i % 5], animation: `confettiFall ${Math.random() * 2 + 2}s ${Math.random()}s linear infinite` }} />)}
+      <Confetti count={36} colors={[purple, "#a78bfa", "#ddd6fe", "#8b5cf6", "#ede9fe"]} />
       <div style={{ maxWidth: 380, margin: "0 auto", position: "relative", zIndex: 2 }}>
         <div style={{ textAlign: "center", marginBottom: 18, animation: "celebrate 1s infinite" }}><OwlMolly size={110} mood="happy" /></div>
         <div style={{ background: "linear-gradient(135deg,#fff,#ede9fe)", borderRadius: 22, padding: "28px 22px", border: `3px double ${purple}`, textAlign: "center", boxShadow: `0 20px 60px ${purple}22`, position: "relative" }}>
@@ -17538,7 +17589,7 @@ function TwoDeviceMode({ onComplete }) {
   if (phase === "intro") return (
     <EpisodeShell onExit={onExit}>
     <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#1a1400,#0a0900)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 20px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden" }}>
-      {[...Array(20)].map((_, i) => <div key={i} style={{ position: "absolute", width: Math.random() * 2 + 1, height: Math.random() * 2 + 1, background: amber, borderRadius: "50%", left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%`, opacity: Math.random() * 0.3 + 0.05, animation: `blink ${Math.random() * 4 + 2}s infinite` }} />)}
+      <StarField count={20} color={amber} sizeMin={1} sizeRange={2} opacityMin={0.05} opacityRange={0.3} blinkMin={2} blinkRange={4} />
 
       <div style={{ fontSize: 70, marginBottom: 12, animation: "float 3s ease-in-out infinite" }}>📲</div>
       <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: amber, letterSpacing: ".4em", margin: "0 0 10px" }}>SPECIAL · 2台モード</div>
@@ -17649,7 +17700,7 @@ function TwoDeviceMode({ onComplete }) {
   // ── Complete ──
   return (
     <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#fefce8,#fef9c3,#fde68a)", padding: "30px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden" }}>
-      {[...Array(36)].map((_, i) => <div key={i} style={{ position: "absolute", left: `${Math.random() * 100}%`, top: "-20px", width: 8, height: 12, background: [amber, "#fbbf24", "#fde68a", "#f59e0b", "#fef3c7"][i % 5], animation: `confettiFall ${Math.random() * 2 + 2}s ${Math.random()}s linear infinite` }} />)}
+      <Confetti count={36} colors={[amber, "#fbbf24", "#fde68a", "#f59e0b", "#fef3c7"]} />
       <div style={{ maxWidth: 380, margin: "0 auto", position: "relative", zIndex: 2 }}>
         <div style={{ textAlign: "center", marginBottom: 18, animation: "celebrate 1s infinite" }}><OwlMolly size={110} mood="happy" /></div>
         <div style={{ background: "linear-gradient(135deg,#fff,#fffbeb)", borderRadius: 22, padding: "28px 22px", border: `3px double ${amber}`, textAlign: "center", boxShadow: `0 20px 60px ${amber}33`, position: "relative" }}>
@@ -17778,7 +17829,7 @@ extractedは3〜4件、dmsは3件。過度な暴力・性的表現は含めな�
   if (phase === "intro") return (
     <EpisodeShell onExit={onExit}>
     <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#1e1b4b,#0f0a1e)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 20px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden" }}>
-      {[...Array(22)].map((_, i) => <div key={i} style={{ position: "absolute", width: Math.random() * 3 + 1, height: Math.random() * 3 + 1, background: "#a78bfa", borderRadius: "50%", left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%`, opacity: Math.random() * .5 + .1, animation: `blink ${Math.random() * 4 + 2}s infinite` }} />)}
+      <StarField count={22} color={"#a78bfa"} sizeMin={1} sizeRange={3} opacityMin={.1} opacityRange={.5} blinkMin={2} blinkRange={4} />
       <div style={{ fontSize: 70, marginBottom: 12, animation: "float 3s ease-in-out infinite" }}>🎭</div>
       <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: "#a78bfa", letterSpacing: ".3em", marginBottom: 12 }}>ATTACKER VIEW MODE</div>
       <h1 style={{ fontSize: 26, fontWeight: 900, color: "#fff", margin: "0 0 8px", textAlign: "center", lineHeight: 1.2 }}>投稿したら、<br />何がバレる？</h1>
