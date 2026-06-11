@@ -10375,7 +10375,7 @@ function Episode2({ onComplete, onExit }) {
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#f0eeff,#e0d9ff)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
         <OwlSay mood="excited" e="フェイクニュースを{見抜|みぬ}くための{重要|じゅうよう}なことばをおぼえよう！🦉">フェイクニュースを見抜くための重要ワードを覚えよう！🦉</OwlSay>
-        <KeywordPhase epKey="ep2" accentColor="#7c3aed" onComplete={() => setPhase("mywords")} />
+        <KeywordPhase epKey="ep2" accentColor="#7c3aed" onComplete={() => setPhase("complete")} />
         <ParentExpertCard epKey="ep2" accentColor="#7c3aed" />
       </div>
     </div>
@@ -16523,7 +16523,7 @@ function Episode5({ onComplete, onExit }) {
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fdf2f8,#fce7f3)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
         <OwlSay mood="excited" e="ネットいじめを{理解|りかい}するための{重要|じゅうよう}なことばをおぼえよう！🦉">ネットいじめを理解するための重要ワードを覚えよう！🦉</OwlSay>
-        <KeywordPhase epKey="ep5" accentColor="#ec4899" onComplete={() => setPhase("mywords")} />
+        <KeywordPhase epKey="ep5" accentColor="#ec4899" onComplete={() => setPhase("complete")} />
         <ParentExpertCard epKey="ep5" accentColor="#ec4899" />
       </div>
     </div>
@@ -16585,8 +16585,8 @@ function Episode5({ onComplete, onExit }) {
     },
     {
       id: "q3",
-      question: "もし自分がハルカだったら、誰に助けを求める？",
-      questionEl: "もし{自分|じぶん}がハルカだったら、{誰|だれ}に{助|たす}けを{求|もと}める？",
+      question: "もし自分が○○さんだったら、誰に助けを求める？",
+      questionEl: "もし{自分|じぶん}が○○さんだったら、{誰|だれ}に{助|たす}けを{求|もと}める？",
       placeholder: "助けを求める相手を書いてみよう",
       placeholderEl: "{助|たす}けを{求|もと}める{相手|あいて}を{書|か}いてみよう",
       hints: [
@@ -16915,7 +16915,7 @@ function Episode6({ onComplete, onExit }) {
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fff1f2,#ffe4e8)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
         <OwlSay mood="excited" e={el ? "{肖像権|しょうぞうけん}とプライバシーのことばをおぼえよう！🦉" : "肖像権とプライバシーのことばを覚えよう！🦉"}>肖像権とプライバシーのことばを覚えよう！🦉</OwlSay>
-        <KeywordPhase epKey="ep6" accentColor={rose} onComplete={() => setPhase("mywords")} />
+        <KeywordPhase epKey="ep6" accentColor={rose} onComplete={() => setPhase("complete")} />
         <ParentExpertCard epKey="ep6" accentColor={rose} />
       </div>
     </div>
@@ -17364,7 +17364,7 @@ function Episode7({ onComplete, onExit }) {
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#ede9fe,#ddd6fe)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
         <OwlSay mood="excited" e={el ? "グルーミングとセクストーションのことばをおぼえよう！🦉" : "グルーミングとセクストーションのことばを覚えよう！🦉"}>グルーミングとセクストーションのことばを覚えよう！🦉</OwlSay>
-        <KeywordPhase epKey="ep7" accentColor={purple} onComplete={() => setPhase("mywords")} />
+        <KeywordPhase epKey="ep7" accentColor={purple} onComplete={() => setPhase("complete")} />
         <ParentExpertCard epKey="ep7" accentColor={purple} />
       </div>
     </div>
