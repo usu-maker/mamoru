@@ -15914,6 +15914,168 @@ function Episode4({ onComplete, onExit }) {
   return null;
 }
 
+// ─────────────────────────────────────────────
+// EP5 shared data & sub-components
+// ─────────────────────────────────────────────
+
+function GroupMsg({ msg, showName }) {
+  const isMe = msg.isMe;
+  const colors = {
+    "サキ": "#f472b6",
+    "ハル": "#a78bfa",
+    "ケン": "#60a5fa",
+    "あなた": "#86efac",
+    "○○さん": "#fbbf24",
+  };
+  const avatarColor = colors[msg.name] || "#94a3b8";
+
+  return (
+    <div style={{
+      display:"flex",
+      flexDirection: isMe ? "row-reverse" : "row",
+      alignItems:"flex-start",
+      gap:8,
+      marginBottom:10,
+    }}>
+      {!isMe && (
+        <div style={{
+          width:32,height:32,borderRadius:"50%",
+          background:avatarColor,flexShrink:0,
+          display:"flex",alignItems:"center",
+          justifyContent:"center",
+          fontSize:13,fontWeight:900,color:"#fff",
+        }}>
+          {msg.name?.[0]}
+        </div>
+      )}
+      <div style={{maxWidth:"72%"}}>
+        {showName && !isMe && (
+          <div style={{
+            fontSize:10,color:avatarColor,
+            fontWeight:700,marginBottom:3,
+          }}>
+            {msg.name}
+          </div>
+        )}
+        <div style={{
+          background: msg.highlight
+            ? "rgba(236,72,153,.15)"
+            : isMe ? "#05c46b" : "rgba(255,255,255,.1)",
+          borderRadius: isMe
+            ? "18px 4px 18px 18px"
+            : "4px 18px 18px 18px",
+          padding:"9px 13px",
+          fontSize:13,color:"#fff",
+          lineHeight:1.6,
+          border: msg.highlight
+            ? "1.5px solid rgba(236,72,153,.6)"
+            : "none",
+        }}>
+          {msg.text}
+        </div>
+        <div style={{
+          fontSize:10,color:"rgba(255,255,255,.3)",
+          marginTop:3,
+          textAlign: isMe ? "right" : "left",
+        }}>
+          {msg.time}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Ep5GroupChat({ messages, highlight }) {
+  return (
+    <div style={{
+      background:"rgba(0,0,0,.3)",
+      borderRadius:16,
+      overflow:"hidden",
+      marginBottom:14,
+      border:"1px solid rgba(255,255,255,.08)",
+    }}>
+      <div style={{
+        background:"rgba(255,255,255,.06)",
+        padding:"10px 14px",
+        display:"flex",alignItems:"center",gap:10,
+        borderBottom:"1px solid rgba(255,255,255,.06)",
+      }}>
+        <div style={{
+          width:36,height:36,borderRadius:"50%",
+          background:"linear-gradient(135deg,#06c755,#04a644)",
+          display:"flex",alignItems:"center",
+          justifyContent:"center",fontSize:18,
+        }}>💬</div>
+        <div>
+          <div style={{fontSize:13,fontWeight:700,color:"#fff"}}>
+            クラスのLINE（1年A組）
+          </div>
+          <div style={{fontSize:10,color:"rgba(255,255,255,.4)"}}>
+            メンバー 32人
+          </div>
+        </div>
+      </div>
+      <div style={{padding:"12px 12px 8px"}}>
+        {messages.map((m,i)=>(
+          <GroupMsg
+            key={i}
+            msg={highlight ? {...m, highlight: m.isHot} : m}
+            showName
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const GROUP_MSGS_1 = [
+  { name:"ハル", text:"今日の数学のテストやばかった😭", time:"16:38" },
+  { name:"ケン", text:"わかる笑 何点だった？", time:"16:39" },
+  { name:"ハル", text:"55点…死んだ", time:"16:39" },
+  { name:"ケン", text:"俺も似たようなもんだよ笑", time:"16:40" },
+  { name:"サキ", text:"てかさあ", time:"16:41" },
+  { name:"サキ", text:"○○さんってさ、最近なんかウザくない？", time:"16:41", isHot:true },
+  { name:"ハル", text:"わかるw なんか空気読めないよね笑", time:"16:42", isHot:true },
+  { name:"サキ", text:"先生にいつもいいこぶってるし、きもくない？", time:"16:42", isHot:true },
+  { name:"ケン", text:"まあ確かに笑", time:"16:43", isHot:true },
+  { name:"サキ", text:"あなたはどう思う？", time:"16:43" },
+];
+
+const CHOICE_A_MSGS = [
+  { name:"あなた", text:"わかるわー笑 ちょっと空気読めないよね", time:"16:44", isMe:true, isHot:true },
+  { name:"サキ", text:"でしょ！！😂 やっぱそう思うよね", time:"16:44", isHot:true },
+  { name:"ハル", text:"みんなそう思ってたんだよね笑", time:"16:45", isHot:true },
+  { name:"サキ", text:"明日から無視しようぜ", time:"16:45", isHot:true },
+  { name:"ケン", text:"www", time:"16:45", isHot:true },
+];
+
+const CHOICE_B_MSGS = [
+  { name:"サキ", text:"あなたは？どう思う？", time:"16:44" },
+  { name:"ハル", text:"無視してる笑 まあそういうことだよね", time:"16:45", isHot:true },
+  { name:"サキ", text:"明日から無視しようぜ、みんな賛成？", time:"16:45", isHot:true },
+  { name:"ケン", text:"まあいいんじゃない笑", time:"16:46", isHot:true },
+  { name:"ハル", text:"決まりね👍", time:"16:46", isHot:true },
+];
+
+const CHOICE_C_MSGS = [
+  { name:"あなた", text:"それはちょっと…○○さん傷つくと思う", time:"16:44", isMe:true },
+  { name:"サキ", text:"え、なにマジになってんの笑", time:"16:44" },
+  { name:"ハル", text:"いや冗談じゃん〜", time:"16:45" },
+  { name:"サキ", text:"まあそんな話でしたー笑", time:"16:46" },
+];
+
+const VICTIM_MSGS = [
+  { type:"narration", text:"翌日の朝。○○さんのスマホに通知が来ていた。" },
+  { type:"notif", text:"クラスのLINE（1年A組）　新着メッセージ (12)" },
+  { type:"narration", text:"既読をつけた瞬間、○○さんは固まった。" },
+  { type:"silence", text:"「ウザい」「きもい」「空気読めない」\n\n自分のことが書いてある。\nみんなが、自分のことを…" },
+  { type:"narration", text:"学校に着いた。" },
+  { type:"silence", text:"サキさんと目が合った。\nでも、すぐに逸らされた。\n\nハルさんも、ケンくんも。\n誰も、話しかけてこない。" },
+  { type:"narration", text:"昼休み。" },
+  { type:"silence", text:"グループの輪に入れなかった。\n\n「自分が悪いのかな」\n「何かしたっけ」\n「なんで教えてくれないんだろう」\n\n胃が痛い。学校に来たくない。" },
+  { name:"○○さん", text:"（心の声）誰かに気づいてほしかった。\nたった一言でよかったのに。", time:"", isHot:true },
+];
+
 function Episode5({ onComplete, onExit }) {
   const ageMode = useAgeMode();
   const [phase, setPhase] = useState("parent_intro");
