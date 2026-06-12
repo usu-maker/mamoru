@@ -721,6 +721,8 @@ const GlobalStyle = () => (
     @keyframes glowPulse {0%,100%{box-shadow:0 0 20px rgba(255,169,64,.2)} 50%{box-shadow:0 0 40px rgba(255,169,64,.5)}}
     @keyframes mamFadeUp {from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)}}
     @keyframes mamShake {0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-4px)} 40%,80%{transform:translateX(4px)}}
+    @keyframes fadeOut    {from{opacity:.6} to{opacity:0}}
+    @keyframes ep5GlowShift {0%{box-shadow:0 0 0 rgba(5,196,107,0)} 40%{box-shadow:0 0 16px rgba(5,196,107,.8)} 100%{box-shadow:0 0 20px rgba(236,72,153,.9);background:#c2185b}}
   `}</style>
 );
 
@@ -15926,6 +15928,7 @@ function GroupMsg({ msg, showName }) {
     "ケン": "#60a5fa",
     "あなた": "#86efac",
     "○○さん": "#fbbf24",
+    "ミオ": "#fbbf24",
   };
   const avatarColor = colors[msg.name] || "#94a3b8";
 
@@ -15970,6 +15973,7 @@ function GroupMsg({ msg, showName }) {
           border: msg.highlight
             ? "1.5px solid rgba(236,72,153,.6)"
             : "none",
+          animation: msg.shake ? "shake .5s ease" : undefined,
         }}>
           {msg.text}
         </div>
@@ -16016,7 +16020,13 @@ function Ep5GroupChat({ messages, highlight }) {
         </div>
       </div>
       <div style={{padding:"12px 12px 8px"}}>
-        {messages.map((m,i)=>(
+        {messages.map((m,i)=> m.type==="divider" ? (
+          <div key={i} style={{display:"flex",alignItems:"center",gap:10,margin:"10px 2px",animation:"slideUp .4s ease"}}>
+            <div style={{flex:1,height:1,background:"rgba(255,255,255,.12)"}} />
+            <span style={{fontSize:10,color:"rgba(255,255,255,.35)",whiteSpace:"nowrap"}}>{m.text}</span>
+            <div style={{flex:1,height:1,background:"rgba(255,255,255,.12)"}} />
+          </div>
+        ) : (
           <GroupMsg
             key={i}
             msg={highlight ? {...m, highlight: m.isHot} : m}
@@ -16076,6 +16086,41 @@ const VICTIM_MSGS = [
   { name:"○○さん", text:"（心の声）誰かに気づいてほしかった。\nたった一言でよかったのに。", time:"", isHot:true },
 ];
 
+// ── EP5 追体験フロー（react_a / react_b）用メッセージ ──
+const GROUP_MSGS_EXP = [
+  { name:"ハル", text:"今日の数学のテストやばかった😭", time:"16:38" },
+  { name:"ケン", text:"わかる笑 何点だった？", time:"16:39" },
+  { name:"ハル", text:"55点…死んだ", time:"16:39" },
+  { type:"divider", text:"ここから空気が変わる" },
+  { name:"サキ", text:"てかさ", time:"16:41" },
+  { name:"サキ", text:"ミオってさ、最近なんかウザくない？", time:"16:41", isHot:true },
+  { name:"ハル", text:"わかるw なんか空気読めないよね笑", time:"16:42", isHot:true },
+  { name:"ケン", text:"まあ確かに笑", time:"16:43", isHot:true },
+  { name:"サキ", text:"あなたはどう思う？", time:"16:43" },
+];
+
+// react_a（もし笑ったら）の連鎖メッセージ
+const A_CHAIN = [
+  { name:"あなた", text:"わかるー笑 ちょっと空気読めないよね", time:"16:44", isMe:true },
+  { name:"サキ", text:"でしょ！！😂 やっぱそう思うよね", time:"16:44", isHot:true },
+  { name:"ハル", text:"みんなそう思ってたんだよね笑", time:"16:45", isHot:true },
+  { name:"サキ", text:"明日から無視しようぜ", time:"16:45", isHot:true, shake:true },
+  { name:"ケン", text:"www", time:"16:45", isHot:true },
+];
+
+// react_b（もし無視したら）導入のサキ2連投
+const B_INTRO = [
+  { name:"サキ", text:"ミオ、明日からみんなで無視ね", time:"16:44", isHot:true },
+  { name:"サキ", text:"みんな賛成だよね？", time:"16:44", isHot:true },
+];
+
+// react_b：沈黙を同意に変換していく会話
+const B_CHAIN = [
+  { name:"ハル", text:"無視してる＝賛成ってことね笑", time:"16:46", isHot:true },
+  { name:"サキ", text:"決まり。明日から、ね", time:"16:46", isHot:true, shake:true },
+  { name:"ケン", text:"了解👍", time:"16:47", isHot:true },
+];
+
 function Episode5({ onComplete, onExit }) {
   const ageMode = useAgeMode();
   const [phase, setPhase] = useState("parent_intro");
@@ -16085,8 +16130,96 @@ function Episode5({ onComplete, onExit }) {
   const [victimStep, setVictimStep] = useState(0);
   const [checkStep, setCheckStep] = useState(0);
 
+  // ── react_a / react_b 追体験フロー用 state ──
+  const [abPhase, setAbPhase] = useState("intro_a"); // react_a/b 内の進行管理
+  const [predict, setPredict] = useState(null);      // group_normal の予想①（calm / worse / someone）
+  // react_a
+  const [aMsgs, setAMsgs] = useState([]);            // 連鎖メッセージ（時間で追加）
+  const [aTyping, setATyping] = useState(false);     // サキ「入力中…」
+  const [aDots, setADots] = useState(1);             // 入力中ドットの循環
+  const [aPulse, setAPulse] = useState(0);           // 画面の赤み強度 0..4
+  const [aOverlay, setAOverlay] = useState(false);   // 暗転＋連鎖ライン
+  const [aLine, setALine] = useState(null);          // SVGパス
+  const [aLineDraw, setALineDraw] = useState(false); // ライン描画トリガ
+  const aContainerRef = useRef(null);
+  const aPlayerRef = useRef(null);
+  const aLastRef = useRef(null);
+  // react_b
+  const [bInput, setBInput] = useState("");          // 入力欄に表示中の文字
+  const [bGaveUp, setBGaveUp] = useState(false);     // 「結局、何も送れなかった。」
+  const [bMsgs, setBMsgs] = useState([]);            // 沈黙→賛成の会話
+  const [bMeter, setBMeter] = useState(null);        // null | "p1"(75%) | "p2"(100%)
+
   const pink = "#ec4899";
   const pinkDark = "#be185d";
+
+  // ── react_a：演出シーケンス（自動進行） ──
+  useEffect(() => {
+    if (phase !== "react_a" || abPhase !== "play_a") return;
+    setAMsgs([A_CHAIN[0]]); setAPulse(0); setAOverlay(false);
+    setATyping(false); setALine(null); setALineDraw(false);
+    const t = [];
+    t.push(setTimeout(() => setATyping(true), 2000));
+    t.push(setTimeout(() => { setATyping(false); setAMsgs(m => [...m, A_CHAIN[1]]); setAPulse(1); feedback("tap"); }, 5000));
+    t.push(setTimeout(() => { setAMsgs(m => [...m, A_CHAIN[2]]); setAPulse(2); feedback("tap"); }, 7000));
+    t.push(setTimeout(() => { setAMsgs(m => [...m, A_CHAIN[3]]); setAPulse(3); feedback("wrong"); }, 9000));
+    t.push(setTimeout(() => { setAMsgs(m => [...m, A_CHAIN[4]]); setAPulse(4); feedback("tap"); }, 11000));
+    t.push(setTimeout(() => setAOverlay(true), 12000));
+    t.push(setTimeout(() => setAbPhase("result_a"), 14000));
+    return () => t.forEach(clearTimeout);
+  }, [phase, abPhase]);
+
+  // 入力中ドットの循環（. .. ...）
+  useEffect(() => {
+    if (!aTyping) return;
+    setADots(1);
+    const id = setInterval(() => setADots(d => (d % 3) + 1), 400);
+    return () => clearInterval(id);
+  }, [aTyping]);
+
+  // react_a：暗転時に起点→最終メッセージへSVG曲線を引く
+  useEffect(() => {
+    if (!aOverlay) return;
+    const c = aContainerRef.current, p = aPlayerRef.current, l = aLastRef.current;
+    if (!c || !p || !l) return;
+    const cb = c.getBoundingClientRect();
+    const pb = p.getBoundingClientRect();
+    const lb = l.getBoundingClientRect();
+    const x1 = pb.left + pb.width / 2 - cb.left, y1 = pb.top + pb.height / 2 - cb.top;
+    const x2 = lb.left + lb.width / 2 - cb.left, y2 = lb.top + lb.height / 2 - cb.top;
+    const midY = (y1 + y2) / 2;
+    const len = Math.hypot(x2 - x1, y2 - y1) + 240;
+    setALine({ d: `M ${x1} ${y1} C ${x1} ${midY}, ${x2} ${midY}, ${x2} ${y2}`, len });
+    const id = setTimeout(() => setALineDraw(true), 60);
+    return () => clearTimeout(id);
+  }, [aOverlay]);
+
+  // react_b：ためらいループ → 沈黙が賛成に変換される演出
+  useEffect(() => {
+    if (phase !== "react_b" || abPhase !== "play_b") return;
+    setBInput(""); setBGaveUp(false); setBMsgs([]); setBMeter(null);
+    const t = [];
+    // ためらいループ（3回）：打つ→静止→消す
+    const rounds = ["やめ", "やめなよ", "それはちょっと"];
+    let cursor = 0; // ms
+    for (const word of rounds) {
+      for (let i = 1; i <= word.length; i++) { cursor += 140; const s = word.slice(0, i); t.push(setTimeout(() => { setBInput(s); feedback("tap"); }, cursor)); }
+      cursor += 900; // 静止
+      for (let i = word.length - 1; i >= 0; i--) { cursor += 90; const s = word.slice(0, i); t.push(setTimeout(() => setBInput(s), cursor)); }
+      cursor += 700; // 各回の間
+    }
+    const giveUp = cursor;
+    t.push(setTimeout(() => { setBGaveUp(true); setBInput("結局、何も送れなかった。"); }, giveUp));
+    // 沈黙を同意に変換していく会話
+    t.push(setTimeout(() => { setBMsgs(m => [...m, B_CHAIN[0]]); }, giveUp + 1800));
+    t.push(setTimeout(() => { setBMsgs(m => [...m, B_CHAIN[1]]); feedback("wrong"); }, giveUp + 3600));
+    t.push(setTimeout(() => { setBMsgs(m => [...m, B_CHAIN[2]]); }, giveUp + 5400));
+    // 沈黙が賛成にカウントされるメーター
+    t.push(setTimeout(() => { setBMeter("p1"); }, giveUp + 7000));
+    t.push(setTimeout(() => { setBMeter("p2"); feedback("wrong"); }, giveUp + 8600));
+    t.push(setTimeout(() => setAbPhase("result_b"), giveUp + 10000));
+    return () => t.forEach(clearTimeout);
+  }, [phase, abPhase]);
 
   const choiceData = ageMode === "elementary" ? {
     a: {
@@ -16193,52 +16326,309 @@ function Episode5({ onComplete, onExit }) {
     </EpisodeShell>
   );
 
-  // ── Normal group chat ──
-  if (phase === "group_normal") return (
-    <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0f172a,#1e0a18)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
-      <div style={{ maxWidth: 440, margin: "0 auto" }}>
-        <div style={{ background: `${pink}18`, borderRadius: 12, padding: "9px 14px", marginBottom: 14, border: `1px solid ${pink}33`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <span style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: pink, letterSpacing: ".1em" }}>SIMULATION</span>
-          <span style={{ fontSize: 11, color: "rgba(255,255,255,.4)" }}>放課後 16:42</span>
-        </div>
-        <OwlSay e="クラスのLINEグループを{見|み}てみよう。{最初|さいしょ}は{普通|ふつう}の{やり取|やりと}りだったけど…🦉">クラスのLINEグループを見てみよう。最初は普通のやり取りだったけど…🦉</OwlSay>
-
-        <Ep5GroupChat messages={GROUP_MSGS_1.slice(0, msgStep + 1)} />
-
-        {msgStep < GROUP_MSGS_1.length - 1 ? (
-          <button onClick={() => setMsgStep(s => s + 1)}
-            style={{ width: "100%", padding: 14, background: `${pink}18`, border: `1px solid ${pink}33`, borderRadius: 14, color: pink, fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
-            続きを見る →
-          </button>
-        ) : (
-          <div style={{ animation: "slideUp .4s ease" }}>
-            <OwlSay mood="worried" e="サキさんが○○さんの{悪口|わるくち}を{言|い}い{始|はじ}めた。あなたならどうする？🦉">サキさんが○○さんの悪口を言い始めた。あなたならどうする？🦉</OwlSay>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {(ageMode === "elementary" ? [
-                { key: "a", label: "{一緒|いっしょ}に{笑|わら}う・{同意|どうい}する", emoji: "😂", sub: "「わかる」と{返信|へんしん}する", color: "rgba(220,38,38,.08)", border: "rgba(220,38,38,.3)" },
-                { key: "b", label: "{無視|むし}する（{既読|きどく}スルー）", emoji: "👁️", sub: "{何|なに}も{返信|へんしん}しない", color: "rgba(255,255,255,.04)", border: "rgba(255,255,255,.12)" },
-                { key: "c", label: "{先生|せんせい}・{大人|おとな}に{伝|つた}える", emoji: "🛑", sub: "「{傷|きず}つくよ」または{先生|せんせい}に{相談|そうだん}", color: "rgba(74,222,128,.06)", border: "rgba(74,222,128,.3)", safe: true },
-              ] : [
-                { key: "a", label: "一緒に笑う・同意する", emoji: "😂", sub: "「わかる」と返信する", color: "rgba(220,38,38,.08)", border: "rgba(220,38,38,.3)" },
-                { key: "b", label: "無視する（既読スルー）", emoji: "👁️", sub: "何も返信しない", color: "rgba(255,255,255,.04)", border: "rgba(255,255,255,.12)" },
-                { key: "c", label: "先生・大人に伝える", emoji: "🛑", sub: "「傷つくよ」または先生に相談", color: "rgba(74,222,128,.06)", border: "rgba(74,222,128,.3)", safe: true },
-              ]).map(opt => (
-                <button key={opt.key} onClick={() => { setChoice(opt.key); setPhase("aftermath"); }}
-                  style={{ width: "100%", padding: "14px 16px", background: opt.color, border: `1.5px solid ${opt.border}`, borderRadius: 14, color: opt.safe ? "#86efac" : "rgba(255,255,255,.8)", fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 12, textAlign: "left" }}>
-                  <span style={{ fontSize: 22, flexShrink: 0 }}>{opt.emoji}</span>
-                  <div>
-                    <div><RubyText text={opt.label} /></div>
-                    <div style={{ fontSize: 11, color: "rgba(255,255,255,.4)", marginTop: 2 }}><RubyText text={opt.sub} /></div>
-                  </div>
-                  {opt.safe && <span style={{ marginLeft: "auto", fontSize: 11, color: "#4ade80" }}>✓ {ageMode === "elementary" ? <RubyText text="{推奨|すいしょう}" /> : "推奨"}</span>}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+  // ── 共通：LINE風チャットの色・ヘッダー ──
+  const ep5Colors = { "サキ": "#f472b6", "ハル": "#a78bfa", "ケン": "#60a5fa", "あなた": "#86efac", "ミオ": "#fbbf24" };
+  const Ep5ChatHeader = (
+    <div style={{ background: "rgba(255,255,255,.06)", padding: "10px 14px", display: "flex", alignItems: "center", gap: 10, borderBottom: "1px solid rgba(255,255,255,.06)" }}>
+      <div style={{ width: 36, height: 36, borderRadius: "50%", background: "linear-gradient(135deg,#06c755,#04a644)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>💬</div>
+      <div>
+        <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>クラスのLINE（1年A組）</div>
+        <div style={{ fontSize: 10, color: "rgba(255,255,255,.4)" }}>メンバー 32人</div>
       </div>
     </div>
   );
+  const ep5SimHeader = (label) => (
+    <div style={{ background: `${pink}18`, borderRadius: 12, padding: "9px 14px", marginBottom: 14, border: `1px solid ${pink}33`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <span style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: pink, letterSpacing: ".1em" }}>SIMULATION</span>
+      <span style={{ fontSize: 11, color: "rgba(255,255,255,.4)" }}>{label}</span>
+    </div>
+  );
+
+  // ── 第1幕：日常→陰口→予想①（一本道の追体験） ──
+  if (phase === "group_normal") {
+    const allShown = msgStep >= GROUP_MSGS_EXP.length - 1;
+    const interText = ageMode === "elementary"
+      ? '{気|き}づいたかな。サキちゃんたちは「なんか」「なんとなく」ばかりで、ミオが“{何|なに}をしたか”は、{誰|だれ}も{言|い}えていないんだ。<br /><br />いじめのきっかけって、たいていこんなふうに、はっきりした{理由|りゆう}がないことが{多|おお}いんだって。<br /><br />しかもLINEみたいな{場所|ばしょ}だと、{軽|かる}い{気持|きも}ちのひとことが、すぐ{広|ひろ}がって、みんなの“{空気|くうき}”になってしまう。{昔|むかし}より、こういうことが{起|お}きやすくなっているんだ。'
+      : '気づいたかな。サキちゃんたちは「なんか」「なんとなく」ばかりで、ミオが“何をしたか”は、誰も言えていないんだ。<br /><br />いじめのきっかけって、たいていこんなふうに、はっきりした理由がないことが多いんだって。<br /><br />しかもLINEみたいな場所だと、軽い気持ちのひとことが、すぐ広がって、みんなの“空気”になってしまう。昔より、こういうことが起きやすくなっているんだ。';
+    const calmReply = ageMode === "elementary"
+      ? 'うん、そうだといいよね。<br />“{落|お}ち{着|つ}いてほしい”“{誰|だれ}かが{止|と}めてほしい”——<br />そう{思|おも}えること{自体|じたい}が、{君|きみ}のやさしさだよ。<br /><br />でも、ね。みんなが{同|おな}じように「{誰|だれ}かが{止|と}めるはず」と{思|おも}って、{結局|けっきょく}、{誰|だれ}も{動|うご}かないことがあるんだ。'
+      : 'うん、そうだといいよね。<br />“落ち着いてほしい”“誰かが止めてほしい”——<br />そう思えること自体が、君のやさしさだよ。<br /><br />でも、ね。みんなが同じように「誰かが止めるはず」と思って、結局、誰も動かないことがあるんだ。';
+    const worseReply = ageMode === "elementary"
+      ? '…よく{気|き}づいたね。{残念|ざんねん}だけど、<br />こういうとき、{悪口|わるくち}は{増|ふ}えていきやすいんだ。<br />どうしてだろう。{一緒|いっしょ}に{見|み}ていこう。'
+      : '…よく気づいたね。残念だけど、<br />こういうとき、悪口は増えていきやすいんだ。<br />どうしてだろう。一緒に見ていこう。';
+    const groundCard = ageMode === "elementary"
+      ? 'いじめは「いじめる{子|こ}・いじめられる{子|こ}」だけで{起|お}きるんじゃない。まわりで“はやし{立|た}てる{人|ひと}”と“{見|み}ているだけの{人|ひと}”——この{4|よっ}つがそろって、はじめて{続|つづ}いていく。'
+      : 'いじめは「いじめる子・いじめられる子」だけで起きるんじゃない。まわりで“はやし立てる人”と“見ているだけの人”——この4つがそろって、はじめて続いていく。';
+    return (
+      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0f172a,#1e0a18)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ maxWidth: 440, margin: "0 auto" }}>
+          {ep5SimHeader("放課後 16:42")}
+          <OwlSay e="クラスのLINEグループを{見|み}てみよう。{最初|さいしょ}は{普通|ふつう}の{やり取|やりと}りだったけど…🦉">クラスのLINEグループを見てみよう。最初は普通のやり取りだったけど…🦉</OwlSay>
+
+          <Ep5GroupChat messages={GROUP_MSGS_EXP.slice(0, msgStep + 1)} highlight />
+
+          {!allShown ? (
+            <button onClick={() => { feedback("tap"); setMsgStep(s => s + 1); }}
+              style={{ width: "100%", padding: 14, background: `${pink}18`, border: `1px solid ${pink}33`, borderRadius: 14, color: pink, fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
+              続きを見る →
+            </button>
+          ) : (
+            <div style={{ animation: "slideUp .4s ease" }}>
+              <OwlSay mood="worried"><RubyText text={interText} /></OwlSay>
+
+              {!predict ? (
+                <div style={{ background: `${pink}0a`, border: `1px solid ${pink}25`, borderRadius: 16, padding: 16, marginTop: 4, animation: "slideUp .4s ease" }}>
+                  <div style={{ fontSize: 13, fontWeight: 800, color: "#fce7f3", marginBottom: 12, lineHeight: 1.7 }}>
+                    <RubyText text={ageMode === "elementary" ? "{問|と}い：このあと、グループの{会話|かいわ}はどうなると{思|おも}う？" : "問い：このあと、グループの会話はどうなると思う？"} />
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                    {[
+                      { key: "calm", label: "落ち着く", el: "{落|お}ち{着|つ}く" },
+                      { key: "worse", label: "もっと悪口が増える", el: "もっと{悪口|わるくち}が{増|ふ}える" },
+                      { key: "someone", label: "誰かが止めてくれる", el: "{誰|だれ}かが{止|と}めてくれる" },
+                    ].map(opt => (
+                      <button key={opt.key} onClick={() => { feedback("tap"); setPredict(opt.key); }}
+                        style={{ width: "100%", padding: "13px 16px", background: "rgba(255,255,255,.04)", border: "1.5px solid rgba(255,255,255,.14)", borderRadius: 14, color: "rgba(255,255,255,.85)", fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", textAlign: "left" }}>
+                        <RubyText text={ageMode === "elementary" ? opt.el : opt.label} />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div style={{ animation: "slideUp .4s ease" }}>
+                  <OwlSay mood={predict === "worse" ? "sad" : "happy"}><RubyText text={predict === "worse" ? worseReply : calmReply} /></OwlSay>
+
+                  <div style={{ background: "rgba(255,255,255,.04)", border: `1px solid ${pink}22`, borderRadius: 14, padding: "14px 16px", marginTop: 6, marginBottom: 14, animation: "slideUp .4s ease" }}>
+                    <div style={{ fontSize: 12, color: "rgba(255,255,255,.7)", lineHeight: 1.85 }}>
+                      💡 <RubyText text={groundCard} />
+                    </div>
+                    <div style={{ fontSize: 10, color: "rgba(255,255,255,.4)", marginTop: 8, textAlign: "right" }}>（いじめの四層構造／森田洋司）</div>
+                  </div>
+
+                  <button onClick={() => { feedback("tap"); setAbPhase("intro_a"); setPhase("react_a"); }}
+                    style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${pink},${pinkDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${pink}33` }}>
+                    次へ →
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ── react_a（②もし笑ったら） ──
+  if (phase === "react_a") {
+    if (abPhase === "intro_a") return (
+      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0f172a,#1e0a18)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ maxWidth: 440, margin: "0 auto" }}>
+          {ep5SimHeader("もし笑ったら…")}
+          <OwlSay mood="worried"><RubyText text={ageMode === "elementary"
+            ? 'ここで、もし{君|きみ}が——みんなに{合|あ}わせて「わかる」って{笑|わら}ったら、どうなると{思|おも}う？　ちょっとだけ、のぞいてみよう。'
+            : 'ここで、もし君が——みんなに合わせて「わかる」って笑ったら、どうなると思う？　ちょっとだけ、のぞいてみよう。'} /></OwlSay>
+          <button onClick={() => { feedback("tap"); setAbPhase("play_a"); }}
+            style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${pink},${pinkDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${pink}33` }}>
+            <RubyText text={ageMode === "elementary" ? "もし{笑|わら}ったら…を{見|み}てみる" : "もし笑ったら…を見てみる"} />
+          </button>
+        </div>
+      </div>
+    );
+    // play_a / result_a
+    return (
+      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0f172a,#1e0a18)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ maxWidth: 440, margin: "0 auto" }}>
+          {ep5SimHeader("もし笑ったら…")}
+          <div style={{ background: "rgba(0,0,0,.3)", borderRadius: 16, overflow: "hidden", marginBottom: 14, border: "1px solid rgba(255,255,255,.08)" }}>
+            {Ep5ChatHeader}
+            <div ref={aContainerRef} style={{ padding: "12px 12px 8px", position: "relative" }}>
+              {GROUP_MSGS_EXP.map((m, i) => m.type === "divider" ? (
+                <div key={"d" + i} style={{ display: "flex", alignItems: "center", gap: 10, margin: "10px 2px" }}>
+                  <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,.12)" }} />
+                  <span style={{ fontSize: 10, color: "rgba(255,255,255,.35)", whiteSpace: "nowrap" }}>{m.text}</span>
+                  <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,.12)" }} />
+                </div>
+              ) : (
+                <GroupMsg key={"b" + i} msg={{ ...m, highlight: m.isHot }} showName />
+              ))}
+
+              {aMsgs.map((m, idx) => {
+                const isMe = m.isMe;
+                const isPlayer = idx === 0;
+                const isLast = idx === aMsgs.length - 1;
+                const col = ep5Colors[m.name] || "#94a3b8";
+                const glow = isPlayer && aOverlay;
+                const anim = glow ? "ep5GlowShift 1.2s ease forwards" : (m.shake ? "popIn .3s ease, shake .5s ease .3s" : "popIn .3s ease");
+                return (
+                  <div key={"a" + idx} style={{ display: "flex", flexDirection: isMe ? "row-reverse" : "row", alignItems: "flex-start", gap: 8, marginBottom: 10 }}>
+                    {!isMe && <div style={{ width: 32, height: 32, borderRadius: "50%", background: col, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 900, color: "#fff" }}>{m.name[0]}</div>}
+                    <div style={{ maxWidth: "72%" }}>
+                      {!isMe && <div style={{ fontSize: 10, color: col, fontWeight: 700, marginBottom: 3 }}>{m.name}</div>}
+                      <div ref={isPlayer ? aPlayerRef : (isLast ? aLastRef : null)}
+                        style={{ background: isMe ? "#05c46b" : "rgba(255,255,255,.1)", borderRadius: isMe ? "18px 4px 18px 18px" : "4px 18px 18px 18px", padding: "9px 13px", fontSize: 13, color: "#fff", lineHeight: 1.6, position: "relative", zIndex: glow ? 5 : 1, animation: anim }}>
+                        {m.text}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+
+              {aTyping && (
+                <div style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 10 }}>
+                  <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#f472b6", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 900, color: "#fff" }}>サ</div>
+                  <div style={{ maxWidth: "72%" }}>
+                    <div style={{ fontSize: 10, color: "#f472b6", fontWeight: 700, marginBottom: 3 }}>サキ</div>
+                    <div style={{ background: "rgba(255,255,255,.1)", borderRadius: "4px 18px 18px 18px", padding: "9px 13px", fontSize: 13, color: "rgba(255,255,255,.55)" }}>入力中{".".repeat(aDots)}</div>
+                  </div>
+                </div>
+              )}
+
+              {/* 赤み（連鎖ごとに強度↑） */}
+              {aPulse > 0 && <div key={aPulse} style={{ position: "absolute", inset: 0, opacity: [0, .6, .75, .9, 1][aPulse], animation: "redFlash .5s ease", pointerEvents: "none", borderRadius: 16 }} />}
+              {/* 暗転 */}
+              {aOverlay && <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,.55)", animation: "fadeIn .8s ease", pointerEvents: "none", zIndex: 3 }} />}
+              {/* 連鎖ライン */}
+              {aLine && (
+                <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 4, overflow: "visible" }}>
+                  <path d={aLine.d} fill="none" stroke="#ec4899" strokeWidth="2.5" strokeLinecap="round"
+                    style={{ strokeDasharray: aLine.len, strokeDashoffset: aLineDraw ? 0 : aLine.len, transition: "stroke-dashoffset 1.2s ease", filter: "drop-shadow(0 0 4px rgba(236,72,153,.85))" }} />
+                </svg>
+              )}
+            </div>
+          </div>
+
+          {abPhase === "result_a" && (
+            <div style={{ animation: "slideUp .5s ease" }}>
+              <div style={{ background: `${pink}10`, border: `2px solid ${pink}55`, borderRadius: 18, padding: "18px 16px", marginBottom: 14 }}>
+                <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: pink, letterSpacing: ".2em", marginBottom: 10 }}>
+                  <RubyText text={ageMode === "elementary" ? "いま{起|お}きたこと" : "いま起きたこと"} />
+                </div>
+                <p style={{ fontSize: 13, color: "rgba(255,255,255,.85)", lineHeight: 1.9, margin: 0 }}>
+                  <RubyText text={ageMode === "elementary"
+                    ? 'もし{君|きみ}が「わかる」と{返|かえ}していたら——<br />たったひとことで、{空気|くうき}は{一気|いっき}に{変|か}わっていた。<br /><br />{悪口|わるくち}を“{言|い}った”わけじゃない。<br />でも「わかる」は、サキの{悪口|わるくち}に“OK”を{出|だ}す{空気|くうき}を{作|つく}ってしまう。'
+                    : 'もし君が「わかる」と返していたら——<br />たったひとことで、空気は一気に変わっていた。<br /><br />悪口を“言った”わけじゃない。<br />でも「わかる」は、サキの悪口に“OK”を出す空気を作ってしまう。'} />
+                </p>
+                <div style={{ height: 1, background: "rgba(255,255,255,.12)", margin: "14px 0" }} />
+                <p style={{ fontSize: 12, color: "rgba(255,255,255,.65)", lineHeight: 1.85, margin: 0 }}>
+                  <RubyText text={ageMode === "elementary"
+                    ? 'こういう{立場|たちば}を、いじめの{研究|けんきゅう}では「{観衆|かんしゅう}」と{呼|よ}ぶ。{観衆|かんしゅう}は{手|て}を{下|くだ}さなくても、いじめに“{火|ひ}に{油|あぶら}を{注|そそ}ぐ”{存在|そんざい}になる。'
+                    : 'こういう立場を、いじめの研究では「観衆」と呼ぶ。観衆は手を下さなくても、いじめに“火に油を注ぐ”存在になる。'} />
+                </p>
+                <div style={{ fontSize: 10, color: "rgba(255,255,255,.4)", marginTop: 8, textAlign: "right" }}>（いじめの四層構造／森田洋司）</div>
+              </div>
+              <button onClick={() => { feedback("tap"); setAbPhase("intro_b"); setPhase("react_b"); }}
+                style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${pink},${pinkDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${pink}33` }}>
+                次へ →
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ── react_b（③もし無視したら） ──
+  if (phase === "react_b") {
+    if (abPhase === "intro_b") return (
+      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0f172a,#1e0a18)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ maxWidth: 440, margin: "0 auto" }}>
+          {ep5SimHeader("もし無視したら…")}
+          <div style={{ background: "rgba(0,0,0,.3)", borderRadius: 16, overflow: "hidden", marginBottom: 14, border: "1px solid rgba(255,255,255,.08)" }}>
+            {Ep5ChatHeader}
+            <div style={{ padding: "12px 12px 8px" }}>
+              {B_INTRO.map((m, i) => <GroupMsg key={i} msg={{ ...m, highlight: m.isHot }} showName />)}
+            </div>
+          </div>
+          <OwlSay mood="worried"><RubyText text={ageMode === "elementary"
+            ? 'じゃあ、{逆|ぎゃく}に——{何|なに}も{言|い}わずに、{既読|きどく}だけつけたらどうなると{思|おも}う？「{関|かか}わらない」のが、いちばん{安全|あんぜん}な{気|き}もするよね。'
+            : 'じゃあ、逆に——何も言わずに、既読だけつけたらどうなると思う？「関わらない」のが、いちばん安全な気もするよね。'} /></OwlSay>
+          <OwlSay mood="sad"><RubyText text={ageMode === "elementary"
+            ? '{何|なに}か{言|い}いたい{気|き}もする。でも…{言|い}ったら、{今度|こんど}は{自分|じぶん}が{標的|ひょうてき}になるかも。{君|きみ}の{番|ばん}だ。{打|う}ってみる…？'
+            : '何か言いたい気もする。でも…言ったら、今度は自分が標的になるかも。君の番だ。打ってみる…？'} /></OwlSay>
+          <button onClick={() => { feedback("tap"); setAbPhase("play_b"); }}
+            style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${pink},${pinkDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${pink}33` }}>
+            <RubyText text={ageMode === "elementary" ? "…{入力|にゅうりょく}してみる" : "…入力してみる"} />
+          </button>
+        </div>
+      </div>
+    );
+    // play_b / result_b
+    return (
+      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0f172a,#1e0a18)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ maxWidth: 440, margin: "0 auto" }}>
+          {ep5SimHeader("もし無視したら…")}
+          <div style={{ background: "rgba(0,0,0,.3)", borderRadius: 16, overflow: "hidden", marginBottom: 14, border: "1px solid rgba(255,255,255,.08)" }}>
+            {Ep5ChatHeader}
+            <div style={{ padding: "12px 12px 8px" }}>
+              {B_INTRO.map((m, i) => <GroupMsg key={"i" + i} msg={{ ...m, highlight: m.isHot }} showName />)}
+              {bMsgs.map((m, i) => <div key={"c" + i} style={{ animation: "slideUp .4s ease" }}><GroupMsg msg={{ ...m, highlight: m.isHot }} showName /></div>)}
+            </div>
+          </div>
+
+          {abPhase === "play_b" && (
+            <div style={{ display: "flex", alignItems: "center", gap: 8, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.12)", borderRadius: 22, padding: "11px 16px", marginBottom: 12, minHeight: 44, animation: bGaveUp ? "fadeOut 1.5s ease forwards" : "none" }}>
+              <span style={{ fontSize: 14, color: bGaveUp ? "rgba(255,255,255,.55)" : "#fff", lineHeight: 1.4 }}>
+                {bInput}
+                {!bGaveUp && <span style={{ color: "#05c46b", fontWeight: 700, animation: "blink 1s step-end infinite" }}>|</span>}
+              </span>
+            </div>
+          )}
+
+          {bMeter && (
+            <div style={{ background: "rgba(239,68,68,.06)", border: "1px solid rgba(239,68,68,.25)", borderRadius: 14, padding: "14px 16px", marginBottom: 14, animation: "slideUp .4s ease" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                <span style={{ fontSize: 12, color: "rgba(255,255,255,.7)", fontWeight: 700 }}>
+                  <RubyText text={ageMode === "elementary" ? "このグループの{空気|くうき}" : "このグループの空気"} />
+                </span>
+                <span style={{ fontSize: 12, color: "#fca5a5", fontWeight: 800 }}>
+                  <RubyText text={ageMode === "elementary"
+                    ? (bMeter === "p2" ? "{賛成|さんせい} 4 / 4{人|にん}" : "{賛成|さんせい} 3 / 4{人|にん}")
+                    : (bMeter === "p2" ? "賛成 4 / 4人" : "賛成 3 / 4人")} />
+                </span>
+              </div>
+              <div style={{ height: 14, borderRadius: 8, background: "rgba(255,255,255,.08)", overflow: "hidden" }}>
+                <div style={{ height: "100%", width: bMeter === "p2" ? "100%" : "75%", background: "linear-gradient(90deg,#ef4444,#f87171)", transition: "width 1s ease", borderRadius: 8 }} />
+              </div>
+              <div style={{ textAlign: "right", fontSize: 11, color: "rgba(255,255,255,.5)", marginTop: 4, fontFamily: "'DotGothic16',monospace" }}>{bMeter === "p2" ? "100%" : "75%"}</div>
+              {bMeter === "p2" && (
+                <div style={{ fontSize: 12, color: "#fca5a5", lineHeight: 1.7, marginTop: 8, animation: "slideUp .5s ease" }}>
+                  <RubyText text={ageMode === "elementary"
+                    ? '…そして、{君|きみ}の{沈黙|ちんもく}も「{賛成|さんせい}」に{数|かぞ}えられた（4 / 4）'
+                    : '…そして、君の沈黙も「賛成」に数えられた（4 / 4）'} />
+                </div>
+              )}
+            </div>
+          )}
+
+          {abPhase === "result_b" && (
+            <div style={{ animation: "slideUp .5s ease" }}>
+              <div style={{ background: `${pink}10`, border: `2px solid ${pink}55`, borderRadius: 18, padding: "18px 16px", marginBottom: 14 }}>
+                <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: pink, letterSpacing: ".2em", marginBottom: 10 }}>
+                  <RubyText text={ageMode === "elementary" ? "いま{起|お}きたこと" : "いま起きたこと"} />
+                </div>
+                <p style={{ fontSize: 13, color: "rgba(255,255,255,.85)", lineHeight: 1.9, margin: 0 }}>
+                  <RubyText text={ageMode === "elementary"
+                    ? '{君|きみ}は、{何|なに}もしていない。<br />{悪口|わるくち}も{言|い}ってないし、{賛成|さんせい}もしていない。<br /><br />でも——{画面|がめん}の{中|なか}では、<br />{君|きみ}の{沈黙|ちんもく}が「{賛成|さんせい}」として{数|かぞ}えられてしまった。<br />“{止|と}める{人|ひと}”が、{誰|だれ}もいなかった。'
+                    : '君は、何もしていない。<br />悪口も言ってないし、賛成もしていない。<br /><br />でも——画面の中では、<br />君の沈黙が「賛成」として数えられてしまった。<br />“止める人”が、誰もいなかった。'} />
+                </p>
+                <div style={{ height: 1, background: "rgba(255,255,255,.12)", margin: "14px 0" }} />
+                <p style={{ fontSize: 12, color: "rgba(255,255,255,.65)", lineHeight: 1.85, margin: 0 }}>
+                  <RubyText text={ageMode === "elementary"
+                    ? '{手|て}を{下|くだ}さず、ただ{見|み}ている{人|ひと}を「{傍観者|ぼうかんしゃ}」と{呼|よ}ぶ。{傍観|ぼうかん}は、いじめに“{暗黙|あんもく}のOK”を{出|だ}し、{止|と}めようとする{人|ひと}をためらわせてしまう。だから{傍観|ぼうかん}も、いじめの{一部|いちぶ}とされている。'
+                    : '手を下さず、ただ見ている人を「傍観者」と呼ぶ。傍観は、いじめに“暗黙のOK”を出し、止めようとする人をためらわせてしまう。だから傍観も、いじめの一部とされている。'} />
+                </p>
+                <div style={{ fontSize: 10, color: "rgba(255,255,255,.4)", marginTop: 8, textAlign: "right" }}>（いじめの四層構造／森田洋司）</div>
+              </div>
+              <button onClick={() => { feedback("tap"); setPhase("victim"); }}
+                style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${pink},${pinkDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${pink}33` }}>
+                次へ →
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   // ── Aftermath (result of choice) ──
   if (phase === "aftermath") {
