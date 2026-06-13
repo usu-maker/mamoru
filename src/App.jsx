@@ -725,6 +725,11 @@ const GlobalStyle = () => (
     @keyframes ep5GlowShift {0%{box-shadow:0 0 0 rgba(5,196,107,0)} 40%{box-shadow:0 0 16px rgba(5,196,107,.8)} 100%{box-shadow:0 0 20px rgba(236,72,153,.9);background:#c2185b}}
     @keyframes cardIn    {from{opacity:0;transform:translateY(24px) scale(.96)} to{opacity:1;transform:translateY(0) scale(1)}}
     @keyframes ringExpand{from{opacity:0;transform:scale(.85)} to{opacity:1;transform:scale(1)}}
+    @keyframes slowRise  {from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)}}
+    @keyframes sink      {0%{opacity:0;transform:translateY(-12px) scale(1.05)} 100%{opacity:1;transform:translateY(0) scale(1)}}
+    @keyframes shudder   {0%,100%{transform:translateX(0)} 20%{transform:translateX(-3px)} 40%{transform:translateX(3px)} 60%{transform:translateX(-2px)} 80%{transform:translateX(2px)}}
+    @keyframes mioAppear {from{opacity:0;transform:scale(.85)} to{opacity:1;transform:scale(1)}}
+    @keyframes victimFlash{0%{opacity:.9} 100%{opacity:0}}
   `}</style>
 );
 
@@ -16160,6 +16165,18 @@ function Episode5({ onComplete, onExit }) {
   const [thinkDone, setThinkDone] = useState(false);    // think の回答完了
   const [learnStep, setLearnStep] = useState(0);        // learn の層の送り
 
+  // ── intro ケアメッセージ用 ──
+  const [introStep, setIntroStep] = useState(0);        // 0:ケア / 1:舞台説明
+
+  // ── victim（ミオの翌日）用 state ──
+  const [victimStep2, setVictimStep2] = useState(0);    // victim の場面送り（0〜7）
+  const [mioWords, setMioWords] = useState("");         // 仕掛け④の自由入力
+  const [vFlash, setVFlash] = useState(false);          // 既読の瞬間の白フラッシュ
+  const [vGray, setVGray] = useState(false);            // グレースケール（場面2〜5維持）
+  const [vBadCount, setVBadCount] = useState(0);        // 悪口メッセージの表示数（0〜3）
+  const [vRealize, setVRealize] = useState(false);      // 「これ…わたしの、こと…？」
+  const [vNextBtn, setVNextBtn] = useState(false);      // 場面2の[…]ボタン表示
+
   const pink = "#ec4899";
   const pinkDark = "#be185d";
 
@@ -16230,6 +16247,27 @@ function Episode5({ onComplete, onExit }) {
     t.push(setTimeout(() => setAbPhase("result_b"), giveUp + 10000));
     return () => t.forEach(clearTimeout);
   }, [phase, abPhase]);
+
+  // victim 場面2：既読の瞬間（白フラッシュ→グレースケール→沈む悪口→震える気づき）
+  useEffect(() => {
+    if (phase !== "victim" || victimStep2 !== 2) return;
+    setVFlash(true); setVGray(false); setVBadCount(0); setVRealize(false); setVNextBtn(false);
+    feedback("wrong");
+    const t = [];
+    // 1) 白フラッシュ（1.2秒でフェードアウト）
+    t.push(setTimeout(() => setVFlash(false), 1200));
+    // 2) 色が抜けていく（1.5秒かけてグレースケール）
+    t.push(setTimeout(() => setVGray(true), 200));
+    // 3) 悪口メッセージを1.6秒間隔で1つずつ
+    t.push(setTimeout(() => { setVBadCount(1); feedback("tap"); }, 1600));
+    t.push(setTimeout(() => { setVBadCount(2); feedback("tap"); }, 3200));
+    t.push(setTimeout(() => { setVBadCount(3); feedback("tap"); }, 4800));
+    // 4) 最後＋0.6秒後に気づきの心の声（震え）
+    t.push(setTimeout(() => { setVRealize(true); feedback("wrong"); }, 5400));
+    // 5) さらに2秒後にボタン
+    t.push(setTimeout(() => setVNextBtn(true), 7400));
+    return () => t.forEach(clearTimeout);
+  }, [phase, victimStep2]);
 
   const choiceData = ageMode === "elementary" ? {
     a: {
@@ -16315,6 +16353,18 @@ function Episode5({ onComplete, onExit }) {
   );
 
   // ── Intro ──
+  // ── Intro：ケアメッセージ（舞台説明の手前に1画面） ──
+  if (phase === "intro" && introStep === 0) return (
+    <EpisodeShell onExit={onExit}>
+    <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#1a0510,#0f020a)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 20px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden" }}>
+      <StarField count={26} color={pink} sizeMin={1} sizeRange={2} opacityMin={0.05} opacityRange={0.3} blinkMin={2} blinkRange={4} />
+      <OwlSay mood="happy" e="これからお{話|はな}しするのは、いじめのこと。<br />もし{読|よ}んでいて、つらい{気持|きも}ちになったら——<br />いつでも、やめていいからね。<br /><br />そして、もし{君|きみ}が{今|いま}、{似|に}たことで{悩|なや}んでいたら、<br />{信頼|しんらい}できる{大人|おとな}に{話|はな}していいんだよ。">これからお話しするのは、いじめのこと。<br />もし読んでいて、つらい気持ちになったら——<br />いつでも、やめていいからね。<br /><br />そして、もし君が今、似たことで悩んでいたら、<br />信頼できる大人に話していいんだよ。</OwlSay>
+      <button onClick={() => { feedback("tap"); setIntroStep(1); }} style={{ background: `linear-gradient(135deg,${pink},${pinkDark})`, border: "none", borderRadius: 50, padding: "15px 44px", fontSize: 16, fontWeight: 900, color: "#fff", cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${pink}44`, marginTop: 18 }}><RubyText text={ageMode === "elementary" ? "だいじょうぶ、{見|み}てみる" : "だいじょうぶ、見てみる"} /></button>
+    </div>
+    </EpisodeShell>
+  );
+
+  // ── Intro：舞台説明 ──
   if (phase === "intro") return (
     <EpisodeShell onExit={onExit}>
     <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#1a0510,#0f020a)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 20px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden" }}>
@@ -16911,55 +16961,166 @@ function Episode5({ onComplete, onExit }) {
     );
   }
 
-  // ── Victim perspective ──
-  if (phase === "victim") return (
-    <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at center,#1a0a14,#000)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff", position: "relative", overflow: "hidden" }}>
-      <div style={{ position: "absolute", inset: 0, background: "repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(236,72,153,.015) 2px,rgba(236,72,153,.015) 4px)", pointerEvents: "none" }} />
-      <div style={{ maxWidth: 440, margin: "0 auto", position: "relative", zIndex: 2 }}>
-        <div style={{ background: `${pink}18`, borderRadius: 12, padding: "9px 14px", marginBottom: 14, border: `1px solid ${pink}33`, display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: pink }}>PERSPECTIVE SWITCH</span>
-          <span style={{ fontSize: 10, color: "rgba(255,255,255,.4)" }}>→ ○○さん視点</span>
-        </div>
-        <OwlSay mood="worried" e="{今度|こんど}は○○さんの{視点|してん}に{切|き}り{替|か}わります。{次|つぎ}の{日|ひ}…🦉">今度は○○さんの視点に切り替わります。次の日…🦉</OwlSay>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 16 }}>
-          {VICTIM_MSGS.slice(0, victimStep + 1).map((m, i) => {
-            if (m.type === "narration") return (
-              <div key={i} style={{ textAlign: "center", fontSize: 12, color: "rgba(255,255,255,.4)", fontStyle: "italic", padding: "6px 0", animation: "slideUp .4s ease" }}>{m.text}</div>
-            );
-            if (m.type === "notif") return (
-              <div key={i} style={{ background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.1)", borderRadius: 12, padding: "10px 14px", fontSize: 12, color: "rgba(255,255,255,.55)", textAlign: "center", animation: "slideUp .4s ease" }}>
-                🔔 {m.text}
-              </div>
-            );
-            if (m.type === "silence") return (
-              <div key={i} style={{ background: "rgba(236,72,153,.06)", border: "1px solid rgba(236,72,153,.2)", borderRadius: 14, padding: "16px 16px", fontSize: 13, color: "#fce7f3", lineHeight: 1.85, textAlign: "center", whiteSpace: "pre-line", animation: "slideUp .4s ease" }}>
-                {m.text}
-              </div>
-            );
-            // Normal msg
-            return (
-              <div key={i} style={{ animation: "slideUp .4s ease" }}>
-                <GroupMsg msg={{ ...m, isMe: m.isMe }} showName />
-              </div>
-            );
-          })}
-        </div>
-
-        {victimStep < VICTIM_MSGS.length - 1 ? (
-          <button onClick={() => setVictimStep(s => s + 1)}
-            style={{ width: "100%", padding: 14, background: `${pink}18`, border: `1px solid ${pink}33`, borderRadius: 14, color: pink, fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
-            続きを見る →
-          </button>
-        ) : (
-          <button onClick={() => setPhase("data")}
-            style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${pink},${pinkDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", animation: "slideUp .5s ease" }}>
-            データで見るネットいじめ →
-          </button>
-        )}
+  // ── Victim perspective（ミオの翌日・一人称の独白） ──
+  if (phase === "victim") {
+    const mioPurple = "#a982cf";
+    // 心の声
+    const iv = (text, opts = {}) => (
+      <div style={{ textAlign: "center", fontStyle: "italic", color: opts.color || "#d8d2e0", fontSize: opts.big ? 17 : 14, lineHeight: 1.95, padding: "10px 6px", margin: "2px 0", fontWeight: opts.big ? 700 : 400, animation: opts.anim || "slowRise .8s ease" }}>
+        <RubyText text={text} />
       </div>
-    </div>
-  );
+    );
+    // 場面送りボタン（…）
+    const dotsBtn = (onClick) => (
+      <button onClick={() => { feedback("tap"); onClick(); }}
+        style={{ width: "100%", marginTop: 16, padding: 14, background: "rgba(255,255,255,.05)", border: `1px solid ${mioPurple}44`, borderRadius: 14, color: "rgba(255,255,255,.7)", fontSize: 18, fontWeight: 700, letterSpacing: ".3em", cursor: "pointer", fontFamily: "inherit" }}>
+        …
+      </button>
+    );
+    const badMsgs = ageMode === "elementary" ? [
+      { img: "saki.jpg", name: "サキ", text: "ミオってさ、{最近|さいきん}なんかウザくない？", fb: "👧" },
+      { img: "haru.jpg", name: "ハル", text: "わかるw {空気|くうき}{読|よ}めないよね", fb: "🧒" },
+      { img: "saki.jpg", name: "サキ", text: "{明日|あした}からみんなで{無視|むし}ね", fb: "👧" },
+    ] : [
+      { img: "saki.jpg", name: "サキ", text: "ミオってさ、最近なんかウザくない？", fb: "👧" },
+      { img: "haru.jpg", name: "ハル", text: "わかるw 空気読めないよね", fb: "🧒" },
+      { img: "saki.jpg", name: "サキ", text: "明日からみんなで無視ね", fb: "👧" },
+    ];
+    const wordsReady = mioWords.trim().length >= 1;
+
+    return (
+      <div style={{ minHeight: "100vh", position: "relative", overflow: "hidden", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{
+          minHeight: "100vh", padding: "20px 16px", color: "#fff",
+          background: vGray ? "radial-gradient(ellipse at center,#0a0a0c,#000)" : "radial-gradient(ellipse at center,#1a0f1e,#0a0410)",
+          filter: vGray ? "grayscale(1) brightness(.6)" : "none",
+          transition: "filter 1.5s ease, background 1.5s ease",
+        }}>
+          <div style={{ maxWidth: 440, margin: "0 auto" }}>
+            <div style={{ background: `${mioPurple}18`, borderRadius: 12, padding: "9px 14px", marginBottom: 14, border: `1px solid ${mioPurple}44`, display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: mioPurple }}>PERSPECTIVE SWITCH</span>
+              <span style={{ fontSize: 10, color: "rgba(255,255,255,.4)" }}>→ ミオ視点</span>
+            </div>
+
+            {/* 場面0：視点の切り替え */}
+            {victimStep2 === 0 && (
+              <div style={{ animation: "slideUp .4s ease" }}>
+                <OwlSay mood="sad" e="ここからは——ミオの{目|め}から、{見|み}てみよう。{次|つぎ}の{日|ひ}の、{朝|あさ}。">ここからは——ミオの目から、見てみよう。次の日の、朝。</OwlSay>
+                <div style={{ textAlign: "center", margin: "20px 0 8px" }}>
+                  <div style={{ width: 120, height: 120, borderRadius: "50%", overflow: "hidden", margin: "0 auto 12px", border: `3px solid ${mioPurple}`, boxShadow: `0 6px 22px ${mioPurple}55`, animation: "mioAppear 1.2s ease" }}>
+                    <ImgWithFallback src="/images/ep5/mio.jpg" alt="ミオ" fallback="🧑" fallbackBg="#241a30" fallbackSize={48} />
+                  </div>
+                  <div style={{ fontSize: 20, fontWeight: 900, color: "#fff" }}>ミオ</div>
+                </div>
+                {dotsBtn(() => setVictimStep2(1))}
+              </div>
+            )}
+
+            {/* 場面1：朝の通知 */}
+            {victimStep2 === 1 && (
+              <div style={{ animation: "slideUp .4s ease" }}>
+                {iv("{朝|あさ}。スマホを{開|ひら}いたら、{通知|つうち}がいっぱい{来|き}ていた。")}
+                <div style={{ background: "rgba(255,255,255,.07)", border: "1px solid rgba(255,255,255,.14)", borderRadius: 14, padding: "13px 16px", margin: "8px 0", textAlign: "center", animation: "slowRise .8s ease .3s both" }}>
+                  <div style={{ fontSize: 12, color: "rgba(255,255,255,.5)", marginBottom: 4 }}>💬 <RubyText text={ageMode === "elementary" ? "クラスのLINE" : "クラスのLINE"} /></div>
+                  <div style={{ fontSize: 15, fontWeight: 800, color: mioPurple }}><RubyText text={ageMode === "elementary" ? "{新着|しんちゃく}メッセージ 12{件|けん}" : "新着メッセージ 12件"} /></div>
+                </div>
+                {iv("あれ…? なんか、いっぱい{来|き}てる。みんな、{何|なに}の{話|はなし}してるんだろう。", { anim: "slowRise .8s ease .6s both" })}
+                <button onClick={() => { feedback("tap"); setVictimStep2(2); }}
+                  style={{ width: "100%", marginTop: 16, padding: 15, background: "linear-gradient(135deg,#06c755,#04a644)", border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 8px 24px rgba(6,199,85,.3)" }}>
+                  <RubyText text={ageMode === "elementary" ? "{既読|きどく}をつける" : "既読をつける"} />
+                </button>
+              </div>
+            )}
+
+            {/* 場面2：既読の瞬間（過剰演出） */}
+            {victimStep2 === 2 && (
+              <div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 6 }}>
+                  {badMsgs.slice(0, vBadCount).map((m, i) => (
+                    <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8, animation: "sink .6s ease" }}>
+                      <div style={{ width: 34, height: 34, borderRadius: "50%", overflow: "hidden", flexShrink: 0, border: "1px solid rgba(255,255,255,.15)" }}>
+                        <ImgWithFallback src={`/images/ep5/${m.img}`} alt={m.name} fallback={m.fb} fallbackBg="#2a1320" fallbackSize={16} />
+                      </div>
+                      <div style={{ maxWidth: "78%" }}>
+                        <div style={{ fontSize: 10, color: "rgba(255,255,255,.5)", fontWeight: 700, marginBottom: 3 }}>{m.name}</div>
+                        <div style={{ background: "rgba(255,255,255,.1)", borderRadius: "4px 16px 16px 16px", padding: "10px 13px", fontSize: 13.5, color: "#fff", lineHeight: 1.6 }}>
+                          <RubyText text={m.text} />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {vRealize && (
+                  <div style={{ textAlign: "center", fontStyle: "italic", color: "#e0b0b0", fontSize: 19, fontWeight: 800, lineHeight: 1.8, padding: "22px 6px 6px", animation: "shudder .5s ease 3" }}>
+                    <RubyText text="これ…わたしの、こと…？" />
+                  </div>
+                )}
+                {vNextBtn && dotsBtn(() => setVictimStep2(3))}
+              </div>
+            )}
+
+            {/* 場面3：登校・教室 */}
+            {victimStep2 === 3 && (
+              <div style={{ animation: "slideUp .4s ease" }}>
+                {iv("いつも{通|どお}り、「おはよう」って{言|い}おうとした。")}
+                {iv("サキと、{目|め}が{合|あ}った。……すっと、{逸|そ}らされた。", { anim: "slowRise .8s ease .5s both" })}
+                {iv("{誰|だれ}も、{目|め}を{合|あ}わせてくれない。", { big: true, anim: "slowRise .8s ease 1s both" })}
+                {dotsBtn(() => setVictimStep2(4))}
+              </div>
+            )}
+
+            {/* 場面4：昼休み・孤立 */}
+            {victimStep2 === 4 && (
+              <div style={{ animation: "slideUp .4s ease" }}>
+                {iv("お{昼|ひる}。いつものグループに{入|はい}ろうとしたら、みんな、すっと{静|しず}かになった。")}
+                {iv("わたし、{何|なに}かしたのかな。…{何|なに}が{悪|わる}かったのか、それも{分|わ}からない。", { anim: "slowRise .8s ease .5s both" })}
+                {dotsBtn(() => setVictimStep2(5))}
+              </div>
+            )}
+
+            {/* 場面5：ミオの本当の気持ち（感情のピーク） */}
+            {victimStep2 === 5 && (
+              <div style={{ animation: "slideUp .4s ease" }}>
+                {iv("{怒|おこ}ってるんじゃない。<br />ただ——{理由|りゆう}が、{知|し}りたい。<br /><br />そして、{誰|だれ}か{一人|ひとり}でいい。<br /><br />「{気|き}にしすぎだよ」って、<br />{声|こえ}をかけてくれる{人|ひと}がいたら。<br />それだけで、よかったのに。", { big: true, color: "#efe9f5" })}
+                {dotsBtn(() => { setVGray(false); setVictimStep2(6); })}
+              </div>
+            )}
+
+            {/* 場面6：仕掛け④ 声をかける（自由入力・色が戻る） */}
+            {victimStep2 === 6 && (
+              <div style={{ animation: "slideUp .4s ease" }}>
+                <OwlSay mood="happy" e="もし{君|きみ}が、このミオに、たった{一言|ひとこと}かけられるとしたら。{何|なん}て、{声|こえ}をかける？">もし君が、このミオに、たった一言かけられるとしたら。何て、声をかける？</OwlSay>
+                <textarea value={mioWords} onChange={(e) => setMioWords(e.target.value)}
+                  placeholder={ageMode === "elementary" ? "ミオにかけたい言葉を書いてみよう" : "ミオにかけたい言葉を書いてみよう"}
+                  style={{ width: "100%", minHeight: 100, boxSizing: "border-box", background: "rgba(255,255,255,.05)", border: `1.5px solid ${mioPurple}55`, borderRadius: 14, padding: "13px 15px", color: "#fff", fontSize: 14, lineHeight: 1.8, fontFamily: "inherit", resize: "vertical", outline: "none", marginTop: 4 }} />
+                <div style={{ fontSize: 11, color: "rgba(255,255,255,.4)", margin: "8px 2px 6px", textAlign: "center" }}>
+                  <RubyText text={ageMode === "elementary" ? "※1{文字|もじ}{以上|いじょう}{入力|にゅうりょく}すると、ボタンを{押|お}せます" : "※1文字以上入力すると、ボタンを押せます"} />
+                </div>
+                <button disabled={!wordsReady} onClick={() => { if (!wordsReady) return; feedback("tap"); setMioWords(mioWords.trim()); setVictimStep2(7); }}
+                  style={{ width: "100%", padding: 15, background: wordsReady ? `linear-gradient(135deg,${mioPurple},#7e57a8)` : "rgba(255,255,255,.08)", border: "none", borderRadius: 14, color: wordsReady ? "#fff" : "rgba(255,255,255,.4)", fontSize: 15, fontWeight: 900, cursor: wordsReady ? "pointer" : "not-allowed", opacity: wordsReady ? 1 : 0.4, fontFamily: "inherit", boxShadow: wordsReady ? `0 8px 24px ${mioPurple}44` : "none" }}>
+                  <RubyText text={ageMode === "elementary" ? "この{言葉|ことば}をかける" : "この言葉をかける"} />
+                </button>
+              </div>
+            )}
+
+            {/* 場面7：受け止め → react_c */}
+            {victimStep2 === 7 && (
+              <div style={{ animation: "slideUp .4s ease" }}>
+                <OwlSay mood="happy" e={`ありがとう。その{言葉|ことば}——<br />「${mioWords}」<br />ちゃんと、{覚|おぼ}えておくね。`}>ありがとう。その言葉——<br />「<span style={{ color: mioPurple, fontWeight: 800 }}>{mioWords}</span>」<br />ちゃんと、覚えておくね。</OwlSay>
+                <OwlSay mood="happy" e="じゃあ{次|つぎ}は、ミオを{助|たす}けるために、{君|きみ}に{何|なに}ができるか。{一緒|いっしょ}に{考|かんが}えてみよう。">じゃあ次は、ミオを助けるために、君に何ができるか。一緒に考えてみよう。</OwlSay>
+                <button onClick={() => { feedback("tap"); setPhase("react_c"); }}
+                  style={{ width: "100%", marginTop: 8, padding: 15, background: `linear-gradient(135deg,${mioPurple},#7e57a8)`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${mioPurple}44` }}>
+                  <RubyText text={ageMode === "elementary" ? "{次|つぎ}へ →" : "次へ →"} />
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+        {/* 白フラッシュ（グレースケールの影響を受けない最前面） */}
+        {vFlash && <div style={{ position: "fixed", inset: 0, background: "#fff", animation: "victimFlash 1.2s ease forwards", pointerEvents: "none", zIndex: 60 }} />}
+      </div>
+    );
+  }
 
   // ── Data phase ──
   if (phase === "data") return (
