@@ -723,6 +723,8 @@ const GlobalStyle = () => (
     @keyframes mamShake {0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-4px)} 40%,80%{transform:translateX(4px)}}
     @keyframes fadeOut    {from{opacity:.6} to{opacity:0}}
     @keyframes ep5GlowShift {0%{box-shadow:0 0 0 rgba(5,196,107,0)} 40%{box-shadow:0 0 16px rgba(5,196,107,.8)} 100%{box-shadow:0 0 20px rgba(236,72,153,.9);background:#c2185b}}
+    @keyframes cardIn    {from{opacity:0;transform:translateY(24px) scale(.96)} to{opacity:1;transform:translateY(0) scale(1)}}
+    @keyframes ringExpand{from{opacity:0;transform:scale(.85)} to{opacity:1;transform:scale(1)}}
   `}</style>
 );
 
@@ -16150,6 +16152,14 @@ function Episode5({ onComplete, onExit }) {
   const [bMsgs, setBMsgs] = useState([]);            // 沈黙→賛成の会話
   const [bMeter, setBMeter] = useState(null);        // null | "p1"(75%) | "p2"(100%)
 
+  // ── 導入フェーズ（cast / think / learn）用 state ──
+  const [castStep, setCastStep] = useState(0);          // cast の登場人物送り
+  const [thinkMode, setThinkMode] = useState(ageMode === "elementary" ? "choose" : "write"); // "write" | "choose"
+  const [thinkText, setThinkText] = useState("");       // 自由入力の保持
+  const [thinkChoices, setThinkChoices] = useState([]); // 選択の保持
+  const [thinkDone, setThinkDone] = useState(false);    // think の回答完了
+  const [learnStep, setLearnStep] = useState(0);        // learn の層の送り
+
   const pink = "#ec4899";
   const pinkDark = "#be185d";
 
@@ -16320,8 +16330,8 @@ function Episode5({ onComplete, onExit }) {
       <div style={{ background: "rgba(220,38,38,.08)", border: "1px solid rgba(220,38,38,.3)", borderRadius: 14, padding: "12px 18px", maxWidth: 320, marginBottom: 24, fontSize: 12, color: "#fca5a5", lineHeight: 1.75, textAlign: "center" }}>
         ⚠️ <RubyText text={ageMode === "elementary" ? "{実際|じっさい}のいじめ{事例|じれい}をもとにした{教育|きょういく}コンテンツです" : "実際のいじめ事例をもとにした教育コンテンツです"} />
       </div>
-      <OwlSay mood="worried" e="「{自分|じぶん}はいじめていない」と{思|おも}っている{子|こ}が、じつは{加害者|かがいしゃ}になっていることがある。いっしょに{見|み}ていこう🦉">「自分はいじめていない」と思っている子が、実は加害者になっていることがある。一緒に見ていこう🦉</OwlSay>
-      <button onClick={() => setPhase("group_normal")} style={{ background: `linear-gradient(135deg,${pink},${pinkDark})`, border: "none", borderRadius: 50, padding: "15px 44px", fontSize: 16, fontWeight: 900, color: "#fff", cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${pink}44`, marginTop: 8 }}>体験スタート</button>
+      <OwlSay mood="happy" e="ここは あおぞら{中学校|ちゅうがっこう}。1{年|ねん}A{組|ぐみ}の{教室|きょうしつ}だよ。<br />{今日|きょう}はある{日|ひ}の{放課後|ほうかご}。みんな、もう{家|いえ}に{帰|かえ}ったころ。<br />でも——スマホの{中|なか}では、まだ「{教室|きょうしつ}」が{続|つづ}いている。<br />クラスのみんながつながった、グループLINEだ。">ここは あおぞら中学校。1年A組の教室だよ。<br />今日はある日の放課後。みんな、もう家に帰ったころ。<br />でも——スマホの中では、まだ「教室」が続いている。<br />クラスのみんながつながった、グループLINEだ。</OwlSay>
+      <button onClick={() => { feedback("tap"); setPhase("cast"); }} style={{ background: `linear-gradient(135deg,${pink},${pinkDark})`, border: "none", borderRadius: 50, padding: "15px 44px", fontSize: 16, fontWeight: 900, color: "#fff", cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${pink}44`, marginTop: 8 }}><RubyText text={ageMode === "elementary" ? "どんなクラスか{見|み}てみる" : "どんなクラスか見てみる"} /></button>
     </div>
     </EpisodeShell>
   );
@@ -16343,6 +16353,233 @@ function Episode5({ onComplete, onExit }) {
       <span style={{ fontSize: 11, color: "rgba(255,255,255,.4)" }}>{label}</span>
     </div>
   );
+
+  // ══════════════════════════════════════════════
+  // 導入フェーズ：cast → think → learn
+  // ══════════════════════════════════════════════
+
+  // ── Cast：登場人物紹介 ──
+  if (phase === "cast") {
+    const cast = ageMode === "elementary" ? [
+      { img: "saki.jpg", name: "サキ", l1: "クラスの{中心|ちゅうしん}にいる、{元気|げんき}な{子|こ}。", l2: "ノリがよくて、{発言力|はつげんりょく}がある。", fb: "👧" },
+      { img: "haru.jpg", name: "ハル", l1: "{明|あか}るくて、おしゃべりが{好|す}きな{子|こ}。", l2: "サキとよく{一緒|いっしょ}にいる。", fb: "🧒" },
+      { img: "ken.jpg", name: "ケン", l1: "おっとりした、マイペースな{子|こ}。", l2: "「まあいいか」が{口|くち}ぐせ。", fb: "👦" },
+      { img: "mio.jpg", name: "ミオ", l1: "おだやかで、まじめな{子|こ}。", l2: "{絵|え}を{描|か}くのが{好|す}き。", fb: "🧑" },
+      { img: "you.jpg", name: "あなた", l1: "そして、これは「あなた」。", l2: "この1{年|ねん}A{組|ぐみ}の{一員|いちいん}。", fb: "🙂" },
+    ] : [
+      { img: "saki.jpg", name: "サキ", l1: "クラスの中心にいる、元気な子。", l2: "ノリがよくて、発言力がある。", fb: "👧" },
+      { img: "haru.jpg", name: "ハル", l1: "明るくて、おしゃべりが好きな子。", l2: "サキとよく一緒にいる。", fb: "🧒" },
+      { img: "ken.jpg", name: "ケン", l1: "おっとりした、マイペースな子。", l2: "「まあいいか」が口ぐせ。", fb: "👦" },
+      { img: "mio.jpg", name: "ミオ", l1: "おだやかで、まじめな子。", l2: "絵を描くのが好き。", fb: "🧑" },
+      { img: "you.jpg", name: "あなた", l1: "そして、これは「あなた」。", l2: "この1年A組の一員。", fb: "🙂" },
+    ];
+    const m = cast[castStep];
+    const last = castStep >= cast.length - 1;
+    return (
+      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0f172a,#1e0a18)", padding: "24px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ maxWidth: 440, margin: "0 auto" }}>
+          {ep5SimHeader(ageMode === "elementary" ? "あおぞら中学校 1年A組" : "あおぞら中学校 1年A組")}
+
+          <div key={castStep} style={{ background: `${pink}0c`, border: `1px solid ${pink}30`, borderRadius: 20, padding: "26px 20px 22px", textAlign: "center", animation: "cardIn .45s ease" }}>
+            <div style={{ width: 104, height: 104, borderRadius: "50%", overflow: "hidden", margin: "0 auto 14px", border: `3px solid ${pink}`, boxShadow: `0 6px 20px ${pink}44`, animation: "popIn .45s ease" }}>
+              <ImgWithFallback src={`/images/ep5/${m.img}`} alt={m.name} fallback={m.fb} fallbackBg="#2a1320" fallbackSize={44} />
+            </div>
+            <div style={{ fontSize: 22, fontWeight: 900, color: "#fff", marginBottom: 10 }}>{m.name}</div>
+            <div style={{ fontSize: 14, color: "#fce7f3", lineHeight: 1.9 }}>
+              <RubyText text={m.l1} /><br />
+              <RubyText text={m.l2} />
+            </div>
+          </div>
+
+          {/* ドットインジケーター */}
+          <div style={{ display: "flex", justifyContent: "center", gap: 8, margin: "16px 0 4px" }}>
+            {cast.map((_, i) => (
+              <div key={i} style={{ width: i === castStep ? 22 : 8, height: 8, borderRadius: 4, background: i === castStep ? pink : "rgba(255,255,255,.2)", transition: "all .3s ease" }} />
+            ))}
+          </div>
+
+          {last && (
+            <div style={{ animation: "slideUp .4s ease" }}>
+              <OwlSay mood="happy" e="サキとも、ハルとも、ケンとも、ミオとも——あなたは{同|おな}じグループにいる。<br />{今日|きょう}、あなたのスマホにも、このグループの{通知|つうち}が{届|とど}く。<br />さあ、{何|なに}が{起|お}きるのか。&quot;あなた&quot;として、{見|み}ていこう。">サキとも、ハルとも、ケンとも、ミオとも——あなたは同じグループにいる。<br />今日、あなたのスマホにも、このグループの通知が届く。<br />さあ、何が起きるのか。&quot;あなた&quot;として、見ていこう。</OwlSay>
+            </div>
+          )}
+
+          <button onClick={() => { feedback("tap"); last ? setPhase("think") : setCastStep(s => s + 1); }}
+            style={{ width: "100%", marginTop: 14, padding: 15, background: `linear-gradient(135deg,${pink},${pinkDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${pink}33` }}>
+            {last ? <RubyText text={ageMode === "elementary" ? "{次|つぎ}へ →" : "次へ →"} /> : <RubyText text={ageMode === "elementary" ? "{次|つぎ}の{人|ひと} →" : "次の人 →"} />}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Think：いじめはどう始まると思う？ ──
+  if (phase === "think") {
+    const choiceOpts = ageMode === "elementary" ? [
+      "{誰|だれ}かが、わる{口|ぐち}を{言|い}うことから",
+      "ささいな、ちょっとしたことから",
+      "まわりが、{見|み}て{見|み}ぬふりをするから",
+      "ひとりが{始|はじ}めて、みんなが{乗|の}っかるから",
+      "はっきりした{理由|りゆう}なんて、ないかもしれない",
+    ] : [
+      "誰かが、わる口を言うことから",
+      "ささいな、ちょっとしたことから",
+      "まわりが、見て見ぬふりをするから",
+      "ひとりが始めて、みんなが乗っかるから",
+      "はっきりした理由なんて、ないかもしれない",
+    ];
+    const answered = thinkMode === "write" ? thinkText.trim().length >= 1 : thinkChoices.length >= 1;
+    const tab = (mode, label) => (
+      <button onClick={() => { feedback("tap"); setThinkMode(mode); }}
+        style={{ flex: 1, padding: "10px 8px", background: thinkMode === mode ? `${pink}22` : "rgba(255,255,255,.04)", border: `1.5px solid ${thinkMode === mode ? pink : "rgba(255,255,255,.14)"}`, borderRadius: 12, color: thinkMode === mode ? pink : "rgba(255,255,255,.6)", fontSize: 13, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>
+        {label}
+      </button>
+    );
+    return (
+      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0f172a,#1e0a18)", padding: "24px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ maxWidth: 440, margin: "0 auto" }}>
+          {ep5SimHeader("考えてみよう")}
+          <OwlSay mood="happy" e="グループを{見|み}にいく{前|まえ}に、ひとつ{考|かんが}えてみてほしいんだ。<br />いじめって——どんなふうに、{始|はじ}まると{思|おも}う？<br />{正解|せいかい}はないよ。{今|いま}、{頭|あたま}にうかんだことでいい。">グループを見にいく前に、ひとつ考えてみてほしいんだ。<br />いじめって——どんなふうに、始まると思う？<br />正解はないよ。今、頭にうかんだことでいい。</OwlSay>
+
+          {!thinkDone ? (
+            <>
+              {/* タブ切り替え */}
+              <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
+                {tab("write", <RubyText text={ageMode === "elementary" ? "✏️ {自分|じぶん}で{書|か}く" : "✏️ 自分で書く"} />)}
+                {tab("choose", <RubyText text={ageMode === "elementary" ? "📝 えらんで{答|こた}える" : "📝 えらんで答える"} />)}
+              </div>
+
+              {thinkMode === "write" ? (
+                <textarea value={thinkText} onChange={(e) => setThinkText(e.target.value)}
+                  placeholder={ageMode === "elementary" ? "たとえば…どんなきっかけ？ 誰が関わると思う？" : "たとえば…どんなきっかけ？ 誰が関わると思う？"}
+                  style={{ width: "100%", minHeight: 120, boxSizing: "border-box", background: "rgba(255,255,255,.05)", border: `1.5px solid ${pink}33`, borderRadius: 14, padding: "13px 15px", color: "#fff", fontSize: 14, lineHeight: 1.8, fontFamily: "inherit", resize: "vertical", outline: "none" }} />
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  {choiceOpts.map((opt, i) => {
+                    const sel = thinkChoices.includes(i);
+                    return (
+                      <button key={i} onClick={() => { feedback("tap"); setThinkChoices(c => c.includes(i) ? c.filter(x => x !== i) : [...c, i]); }}
+                        style={{ width: "100%", padding: "13px 15px", background: sel ? `${pink}22` : "rgba(255,255,255,.04)", border: `1.5px solid ${sel ? pink : "rgba(255,255,255,.14)"}`, borderRadius: 14, color: sel ? "#fff" : "rgba(255,255,255,.8)", fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", textAlign: "left", display: "flex", alignItems: "center", gap: 10 }}>
+                        <span style={{ flexShrink: 0, width: 20, height: 20, borderRadius: 6, border: `2px solid ${sel ? pink : "rgba(255,255,255,.3)"}`, background: sel ? pink : "transparent", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, color: "#fff" }}>{sel ? "✓" : ""}</span>
+                        <RubyText text={opt} />
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              <button disabled={!answered} onClick={() => { feedback("tap"); setThinkDone(true); }}
+                style={{ width: "100%", marginTop: 16, padding: 15, background: answered ? `linear-gradient(135deg,${pink},${pinkDark})` : "rgba(255,255,255,.08)", border: "none", borderRadius: 14, color: answered ? "#fff" : "rgba(255,255,255,.35)", fontSize: 15, fontWeight: 900, cursor: answered ? "pointer" : "default", fontFamily: "inherit", boxShadow: answered ? `0 8px 24px ${pink}33` : "none" }}>
+                <RubyText text={ageMode === "elementary" ? "{答|こた}える" : "答える"} />
+              </button>
+            </>
+          ) : (
+            <div style={{ animation: "slideUp .4s ease" }}>
+              <OwlSay mood="happy" e="ありがとう。しっかり{考|かんが}えてくれたね。<br />いじめが{始|はじ}まるきっかけは、{人|ひと}によっていろんな{考|かんが}えがある。<br />でも{実|じつ}は、{研究|けんきゅう}で{分|わ}かっていることがあるんだ。<br />{次|つぎ}のページで、それを{一緒|いっしょ}に{見|み}てみよう。">ありがとう。しっかり考えてくれたね。<br />いじめが始まるきっかけは、人によっていろんな考えがある。<br />でも実は、研究で分かっていることがあるんだ。<br />次のページで、それを一緒に見てみよう。</OwlSay>
+              <button onClick={() => { feedback("tap"); setPhase("learn"); }}
+                style={{ width: "100%", marginTop: 8, padding: 15, background: `linear-gradient(135deg,${pink},${pinkDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${pink}33` }}>
+                <RubyText text={ageMode === "elementary" ? "いじめのしくみを{知|し}る" : "いじめのしくみを知る"} />
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ── Learn：四層構造を学ぶ ──
+  if (phase === "learn") {
+    const choiceOpts = ageMode === "elementary" ? [
+      "{誰|だれ}かが、わる{口|ぐち}を{言|い}うことから",
+      "ささいな、ちょっとしたことから",
+      "まわりが、{見|み}て{見|み}ぬふりをするから",
+      "ひとりが{始|はじ}めて、みんなが{乗|の}っかるから",
+      "はっきりした{理由|りゆう}なんて、ないかもしれない",
+    ] : [
+      "誰かが、わる口を言うことから",
+      "ささいな、ちょっとしたことから",
+      "まわりが、見て見ぬふりをするから",
+      "ひとりが始めて、みんなが乗っかるから",
+      "はっきりした理由なんて、ないかもしれない",
+    ];
+    const answerText = thinkMode === "write"
+      ? thinkText.trim()
+      : thinkChoices.slice().sort((a, b) => a - b).map(i => choiceOpts[i]).join("、");
+    const layers = ageMode === "elementary" ? [
+      { n: "①", title: "いじめる{人|ひと}（{加害者|かがいしゃ}）", desc: "{直接|ちょくせつ}、わる{口|ぐち}を{言|い}ったり、{無視|むし}をしたりする{人|ひと}。", hot: false },
+      { n: "②", title: "いじめられる{人|ひと}（{被害者|ひがいしゃ}）", desc: "その{的|まと}にされてしまう{人|ひと}。", hot: false },
+      { n: "③", title: "はやし{立|た}てる{人|ひと}（{観衆|かんしゅう}）★", desc: "{自分|じぶん}はやらないけど、{笑|わら}ったり「いいね」したりして、いじめを{盛|も}り{上|あ}げてしまう{人|ひと}。", hot: true },
+      { n: "④", title: "{見|み}ているだけの{人|ひと}（{傍観者|ぼうかんしゃ}）★", desc: "{何|なに}もしないで、ただ{見|み}ている{人|ひと}。でも&quot;{何|なに}もしない&quot;ことが、いじめを{続|つづ}けさせてしまう。", hot: true },
+    ] : [
+      { n: "①", title: "いじめる人（加害者）", desc: "直接、わる口を言ったり、無視をしたりする人。", hot: false },
+      { n: "②", title: "いじめられる人（被害者）", desc: "その的にされてしまう人。", hot: false },
+      { n: "③", title: "はやし立てる人（観衆）★", desc: "自分はやらないけど、笑ったり「いいね」したりして、いじめを盛り上げてしまう人。", hot: true },
+      { n: "④", title: "見ているだけの人（傍観者）★", desc: "何もしないで、ただ見ている人。でも\"何もしない\"ことが、いじめを続けさせてしまう。", hot: true },
+    ];
+    return (
+      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0f172a,#1e0a18)", padding: "24px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ maxWidth: 440, margin: "0 auto" }}>
+          {ep5SimHeader(ageMode === "elementary" ? "いじめのしくみ" : "いじめのしくみ")}
+
+          {/* 4-1. think の回答を再表示 */}
+          <OwlSay mood="happy" e="さっき、{君|きみ}はこう{考|かんが}えてくれたね。">さっき、君はこう考えてくれたね。</OwlSay>
+          <div style={{ background: "rgba(255,255,255,.04)", borderLeft: `4px solid ${pink}`, borderRadius: "4px 12px 12px 4px", padding: "13px 16px", marginBottom: 14, fontSize: 14, color: "#fce7f3", lineHeight: 1.85 }}>
+            {answerText
+              ? <RubyText text={answerText} />
+              : <span style={{ color: "rgba(255,255,255,.5)" }}>（{ageMode === "elementary" ? "あなたの{考|かんが}え" : "あなたの考え"}）</span>}
+          </div>
+          <OwlSay mood="happy" e="いいところに{気|き}づいてる。いじめの{研究|けんきゅう}で、こんなことが{分|わ}かっているんだ。">いいところに気づいてる。いじめの研究で、こんなことが分かっているんだ。</OwlSay>
+
+          {/* 4-2. 四層構造の図 */}
+          <div style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.08)", borderRadius: 16, padding: "18px 12px 12px", marginBottom: 14 }}>
+            <svg width="100%" viewBox="0 0 380 250" style={{ maxWidth: 360, margin: "0 auto", display: "block" }}>
+              <ellipse cx="190" cy="100" rx="178" ry="76" fill="#FBE7A0" stroke="#E6C44D" strokeWidth="1.5" style={{ transformOrigin: "190px 100px", animation: "ringExpand .5s ease both", animationDelay: "0s" }} />
+              <ellipse cx="150" cy="100" rx="126" ry="64" fill="#C8E6A0" stroke="#9CCB5C" strokeWidth="1.5" style={{ transformOrigin: "150px 100px", animation: "ringExpand .5s ease both", animationDelay: ".15s" }} />
+              <ellipse cx="105" cy="100" rx="73" ry="53" fill="#F6C6DC" stroke="#E48FB5" strokeWidth="1.5" style={{ transformOrigin: "105px 100px", animation: "ringExpand .5s ease both", animationDelay: ".3s" }} />
+              <ellipse cx="72" cy="100" rx="40" ry="42" fill="#D6C4E8" stroke="#A982CF" strokeWidth="1.5" style={{ transformOrigin: "72px 100px", animation: "ringExpand .5s ease both", animationDelay: ".45s" }} />
+              <text x="72" y="105" textAnchor="middle" fill="#3a2150" fontSize="13" fontWeight="bold">被害者</text>
+              <text x="120" y="105" textAnchor="middle" fill="#6a1f43" fontSize="13" fontWeight="bold">加害者</text>
+              <text x="212" y="105" textAnchor="middle" fill="#3f5417" fontSize="13" fontWeight="bold">観　衆</text>
+              <text x="314" y="105" textAnchor="middle" fill="#6b5310" fontSize="13" fontWeight="bold">傍観者</text>
+              <text x="190" y="205" textAnchor="middle" fill="#999" fontSize="11">いじめは、この4つの立場でできている</text>
+            </svg>
+            {ageMode === "elementary" && (
+              <div style={{ fontSize: 10, color: "rgba(255,255,255,.5)", textAlign: "center", marginTop: 4, lineHeight: 1.7 }}>
+                被害者（ひがいしゃ）／加害者（かがいしゃ）／観衆（かんしゅう）／傍観者（ぼうかんしゃ）
+              </div>
+            )}
+          </div>
+
+          {/* 4-3. 4つの層の説明 */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 14 }}>
+            {layers.map((L, i) => (
+              <div key={i} style={{ background: L.hot ? "rgba(236,72,153,.15)" : "rgba(255,255,255,.04)", border: `1.5px solid ${L.hot ? pink : "rgba(255,255,255,.1)"}`, borderRadius: 14, padding: "13px 15px", animation: "cardIn .45s ease both", animationDelay: `${i * 0.12}s` }}>
+                <div style={{ fontSize: 14, fontWeight: 800, color: L.hot ? "#fbcfe8" : "#fff", marginBottom: 5 }}>
+                  <span style={{ marginRight: 4 }}>{L.n}</span><RubyText text={L.title} />
+                </div>
+                <div style={{ fontSize: 12.5, color: "rgba(255,255,255,.78)", lineHeight: 1.8 }}>
+                  <RubyText text={L.desc} />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* 4-4. 締めのモリィ */}
+          <OwlSay mood="worried" e="{大事|だいじ}なのは③と④。<br />{手|て}を{出|だ}していなくても、まわりにいる{人|ひと}たちが、いじめを{大|おお}きくしたり、{止|と}めたりできるんだ。<br />じゃあ——もし{君|きみ}が、そのグループにいたら？<br />ここからは、{実際|じっさい}に{体験|たいけん}してみよう。">大事なのは③と④。<br />手を出していなくても、まわりにいる人たちが、いじめを大きくしたり、止めたりできるんだ。<br />じゃあ——もし君が、そのグループにいたら？<br />ここからは、実際に体験してみよう。</OwlSay>
+
+          {/* 4-5. 出典表記 */}
+          <div style={{ fontSize: 10, color: "rgba(255,255,255,.4)", textAlign: "center", margin: "4px 0 14px" }}>
+            森田洋司『いじめとは何か』2010
+          </div>
+
+          <button onClick={() => { feedback("tap"); setPhase("group_normal"); }}
+            style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${pink},${pinkDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${pink}33` }}>
+            <RubyText text={ageMode === "elementary" ? "グループを{見|み}てみる" : "グループを見てみる"} />
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   // ── 第1幕：日常→陰口→予想①（一本道の追体験） ──
   if (phase === "group_normal") {
