@@ -730,6 +730,7 @@ const GlobalStyle = () => (
     @keyframes shudder   {0%,100%{transform:translateX(0)} 20%{transform:translateX(-3px)} 40%{transform:translateX(3px)} 60%{transform:translateX(-2px)} 80%{transform:translateX(2px)}}
     @keyframes mioAppear {from{opacity:0;transform:scale(.85)} to{opacity:1;transform:scale(1)}}
     @keyframes victimFlash{0%{opacity:.9} 100%{opacity:0}}
+    @keyframes greenPulse {0%,100%{background:rgba(110,200,140,0)} 50%{background:rgba(110,200,140,.15)}}
   `}</style>
 );
 
@@ -16177,6 +16178,13 @@ function Episode5({ onComplete, onExit }) {
   const [vRealize, setVRealize] = useState(false);      // 「これ…わたしの、こと…？」
   const [vNextBtn, setVNextBtn] = useState(false);      // 場面2の[…]ボタン表示
 
+  // ── react_c（どうすればよかった・希望）用 state ──
+  const [rcStep, setRcStep] = useState(0);              // react_c の進行（0〜4）
+  const [rcMsgs, setRcMsgs] = useState([]);             // 体験B（逆再生）の連鎖メッセージ
+  const [rcPulse, setRcPulse] = useState(0);            // 緑がフッと差す（greenPulse）の再トリガ
+  const [rcWarm, setRcWarm] = useState(false);          // 背景が暖色へ戻る
+  const [rcBtn, setRcBtn] = useState(false);            // 体験Bの[続ける]ボタン表示
+
   const pink = "#ec4899";
   const pinkDark = "#be185d";
 
@@ -16268,6 +16276,31 @@ function Episode5({ onComplete, onExit }) {
     t.push(setTimeout(() => setVNextBtn(true), 7400));
     return () => t.forEach(clearTimeout);
   }, [phase, victimStep2]);
+
+  // react_c 体験B：react_a の連鎖を「逆向き」に流す希望の演出（自動進行）
+  useEffect(() => {
+    if (phase !== "react_c" || rcStep !== 1) return;
+    setRcMsgs([]); setRcPulse(0); setRcWarm(false); setRcBtn(false);
+    const me = ageMode === "elementary"
+      ? { name: "あなた", isMe: true, text: "それはちょっと、かわいそうだよ" }
+      : { name: "あなた", isMe: true, text: "それはちょっと、かわいそうだよ" };
+    const ken = { name: "ケン", img: "ken.jpg", fb: "👦", text: "……たしかに" };
+    const haru = ageMode === "elementary"
+      ? { name: "ハル", img: "haru.jpg", fb: "🧒", text: "まあ、{言|い}いすぎたかも" }
+      : { name: "ハル", img: "haru.jpg", fb: "🧒", text: "まあ、言いすぎたかも" };
+    const saki = ageMode === "elementary"
+      ? { name: "サキ", img: "saki.jpg", fb: "👧", text: "……ごめん、ノリで{言|い}っただけ" }
+      : { name: "サキ", img: "saki.jpg", fb: "👧", text: "……ごめん、ノリで言っただけ" };
+    const t = [];
+    // 500ms: 自分側に「それはちょっと…」
+    t.push(setTimeout(() => { setRcMsgs([me]); feedback("tap"); }, 500));
+    // （3500msまで沈黙＝react_a の「5秒沈黙」と対の3秒の間）
+    t.push(setTimeout(() => { setRcMsgs(m => [...m, ken]); setRcPulse(p => p + 1); feedback("tap"); }, 3500));
+    t.push(setTimeout(() => { setRcMsgs(m => [...m, haru]); setRcPulse(p => p + 1); feedback("tap"); }, 5500));
+    t.push(setTimeout(() => { setRcMsgs(m => [...m, saki]); setRcPulse(p => p + 1); setRcWarm(true); feedback("correct"); }, 7500));
+    t.push(setTimeout(() => setRcBtn(true), 9200));
+    return () => t.forEach(clearTimeout);
+  }, [phase, rcStep]);
 
   const choiceData = ageMode === "elementary" ? {
     a: {
@@ -17119,6 +17152,119 @@ function Episode5({ onComplete, onExit }) {
         {/* 白フラッシュ（グレースケールの影響を受けない最前面） */}
         {vFlash && <div style={{ position: "fixed", inset: 0, background: "#fff", animation: "victimFlash 1.2s ease forwards", pointerEvents: "none", zIndex: 60 }} />}
       </div>
+    );
+  }
+
+  // ── react_c（どうすればよかった・希望） ──
+  // 出典：相談者/仲裁者の枠組みと「発信元は明かさない」は、こども家庭庁・文部科学省
+  //       「いじめの重大化を防ぐための留意事項集」(令和7年11月) に基づく。
+  //       24時間子供SOSダイヤルは文部科学省（政府広報オンライン）。数値（％等）は使わない。
+  if (phase === "react_c") {
+    const green = "#34c77b";
+    const greenDark = "#1f9e5e";
+    const blue = "#3b82f6";
+    const orange = "#f59e0b";
+    // LINE吹き出し（折り返し改善版：max-width 80%・単語途中で強制改行しない）
+    const rcBubble = (m, key) => {
+      const isMe = m.isMe;
+      const col = ep5Colors[m.name] || "#94a3b8";
+      return (
+        <div key={key} style={{ display: "flex", flexDirection: isMe ? "row-reverse" : "row", alignItems: "flex-start", gap: 8, marginBottom: 10, animation: "popIn .3s ease" }}>
+          {!isMe && (
+            <div style={{ width: 32, height: 32, borderRadius: "50%", overflow: "hidden", flexShrink: 0, border: "1px solid rgba(255,255,255,.15)" }}>
+              <ImgWithFallback src={`/images/ep5/${m.img}`} alt={m.name} fallback={m.fb} fallbackBg={col} fallbackSize={15} />
+            </div>
+          )}
+          <div style={{ maxWidth: "80%" }}>
+            {!isMe && <div style={{ fontSize: 10, color: col, fontWeight: 700, marginBottom: 3 }}>{m.name}</div>}
+            <div style={{ background: isMe ? "#05c46b" : "rgba(255,255,255,.1)", borderRadius: isMe ? "18px 4px 18px 18px" : "4px 18px 18px 18px", padding: "9px 13px", fontSize: 13, color: "#fff", lineHeight: 1.6, wordBreak: "normal", overflowWrap: "break-word" }}>
+              <RubyText text={m.text} />
+            </div>
+          </div>
+        </div>
+      );
+    };
+    const rcGreenBtn = (label, onClick) => (
+      <button onClick={() => { feedback("tap"); onClick(); }}
+        style={{ width: "100%", marginTop: 8, padding: 15, background: `linear-gradient(135deg,${green},${greenDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${green}44` }}>
+        <RubyText text={label} />
+      </button>
+    );
+    const wrap = (children) => (
+      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0f172a,#13241c)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
+        <div style={{ maxWidth: 440, margin: "0 auto" }}>{children}</div>
+      </div>
+    );
+
+    // rcStep=0：導入（mioWords を受ける）
+    if (rcStep === 0) return wrap(
+      <>
+        <div style={{ background: `${green}18`, borderRadius: 12, padding: "9px 14px", marginBottom: 14, border: `1px solid ${green}44`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <span style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: green, letterSpacing: ".1em" }}>WHAT IF…</span>
+          <span style={{ fontSize: 11, color: "rgba(255,255,255,.4)" }}><RubyText text={ageMode === "elementary" ? "もし、ひとこと{言|い}えたら" : "もし、ひとこと言えたら"} /></span>
+        </div>
+        <OwlSay mood="happy" e={`さっき{君|きみ}がミオにかけたかった{言葉|ことば}——<br />「${mioWords}」<br />それを、あのグループLINEで{送|おく}れていたら。どうなったと{思|おも}う？`}>さっき君がミオにかけたかった言葉——<br />「<span style={{ color: green, fontWeight: 800 }}>{mioWords}</span>」<br />それを、あのグループLINEで送れていたら。どうなったと思う？</OwlSay>
+        {rcGreenBtn(ageMode === "elementary" ? "「それはちょっと…」と{送|おく}ってみる" : "「それはちょっと…」と送ってみる", () => setRcStep(1))}
+      </>
+    );
+
+    // rcStep=1：体験B（react_a の逆再生・希望の演出）
+    if (rcStep === 1) {
+      const faintSaki = ageMode === "elementary"
+        ? { name: "サキ", img: "saki.jpg", fb: "👧", text: "ミオってさ、なんかウザくない？" }
+        : { name: "サキ", img: "saki.jpg", fb: "👧", text: "ミオってさ、なんかウザくない？" };
+      return wrap(
+        <>
+          {ep5SimHeader(ageMode === "elementary" ? "もし、ひとこと言えたら" : "もし、ひとこと言えたら")}
+          <div style={{ background: "rgba(0,0,0,.3)", borderRadius: 16, overflow: "hidden", marginBottom: 14, border: "1px solid rgba(255,255,255,.08)" }}>
+            {Ep5ChatHeader}
+            <div style={{ padding: "12px 12px 8px", position: "relative", background: rcWarm ? "rgba(255,176,96,.12)" : "transparent", transition: "background 2s ease" }}>
+              <div style={{ opacity: .5 }}>{rcBubble(faintSaki, "faint")}</div>
+              {rcMsgs.map((m, i) => rcBubble(m, i))}
+              {rcPulse > 0 && <div key={rcPulse} style={{ position: "absolute", inset: 0, animation: "greenPulse 1.1s ease", pointerEvents: "none", borderRadius: 16 }} />}
+            </div>
+          </div>
+          {rcBtn && <div style={{ animation: "slideUp .4s ease" }}>{rcGreenBtn(ageMode === "elementary" ? "{続|つづ}ける" : "続ける", () => setRcStep(2))}</div>}
+        </>
+      );
+    }
+
+    // rcStep=2：補い①「現実は甘くない」
+    if (rcStep === 2) return wrap(
+      <>
+        {ep5SimHeader(ageMode === "elementary" ? "でも、覚えておいてほしいこと" : "でも、覚えておいてほしいこと")}
+        <OwlSay mood="worried" e="{今|いま}、うまくいったね。たった{一言|ひとこと}で、{空気|くうき}が{変|か}わった。<br />でも——いつも、こんなふうに{変|か}わるとは{限|かぎ}らないんだ。">今、うまくいったね。たった一言で、空気が変わった。<br />でも——いつも、こんなふうに変わるとは限らないんだ。</OwlSay>
+        <OwlSay mood="worried" e="{言|い}っても、{空気|くうき}が{変|か}わらないこともある。<br />むしろ、{今度|こんど}は{君|きみ}が{標的|ひょうてき}にされそうで、こわいかもしれない。<br />そう{感|かん}じるのは、すごく{自然|しぜん}なことだよ。">言っても、空気が変わらないこともある。<br />むしろ、今度は君が標的にされそうで、こわいかもしれない。<br />そう感じるのは、すごく自然なことだよ。</OwlSay>
+        {rcGreenBtn(ageMode === "elementary" ? "{次|つぎ}へ →" : "次へ →", () => setRcStep(3))}
+      </>
+    );
+
+    // rcStep=3：補い②「相談者ルート」＝本命の安全な道
+    if (rcStep === 3) return wrap(
+      <>
+        {ep5SimHeader(ageMode === "elementary" ? "いちばん大切な、安全な道" : "いちばん大切な、安全な道")}
+        <OwlSay mood="sad" e="だから、{覚|おぼ}えておいてほしい。<br />{君|きみ}が{無理|むり}して、その{場|ば}で{立|た}ち{向|む}かわなくてもいい。<br />{信頼|しんらい}できる{大人|おとな}に、そっと{伝|つた}えるだけでいい。">だから、覚えておいてほしい。<br />君が無理して、その場で立ち向かわなくてもいい。<br />信頼できる大人に、そっと伝えるだけでいい。</OwlSay>
+        <OwlSay mood="sad" e="これは「チクり」じゃない。「{助|たす}けを{求|もと}めること」。<br />{君|きみ}が{言|い}ったって、ぜったいにバレないようにしてくれる。">これは「チクり」じゃない。「助けを求めること」。<br />君が言ったって、ぜったいにバレないようにしてくれる。</OwlSay>
+        <OwlSay mood="sad" e="こわいときは、ここにも{電話|でんわ}できるよ。">こわいときは、ここにも電話できるよ。</OwlSay>
+        <div style={{ background: `${blue}14`, border: `2px solid ${blue}66`, borderRadius: 18, padding: "18px 16px", margin: "8px 0 14px", textAlign: "center" }}>
+          <div style={{ fontSize: 26, marginBottom: 6 }}>📞</div>
+          <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 26, fontWeight: 900, color: "#fff", letterSpacing: ".04em", marginBottom: 8 }}>0120-0-78310</div>
+          <div style={{ fontSize: 14, fontWeight: 800, color: "#bfdbfe", marginBottom: 4 }}><RubyText text={ageMode === "elementary" ? "24{時間|じかん}{子供|こども}SOSダイヤル（なやみ{言|い}おう）" : "24時間子供SOSダイヤル（なやみ言おう）"} /></div>
+          <div style={{ fontSize: 11, color: "rgba(255,255,255,.6)", lineHeight: 1.7 }}><RubyText text={ageMode === "elementary" ? "24{時間|じかん}・{全国|ぜんこく}どこからでも・{無料|むりょう}" : "24時間・全国どこからでも・無料"} /></div>
+        </div>
+        {rcGreenBtn(ageMode === "elementary" ? "{次|つぎ}へ →" : "次へ →", () => setRcStep(4))}
+      </>
+    );
+
+    // rcStep=4：締め（希望・support.jpg）
+    return wrap(
+      <>
+        <div style={{ width: "100%", aspectRatio: "1672 / 941", borderRadius: 18, overflow: "hidden", marginBottom: 16, border: `1px solid ${green}33`, boxShadow: `0 8px 28px rgba(0,0,0,.4)` }}>
+          <ImgWithFallback src="/images/ep5/support.jpg" alt="支え合う仲間" fallback="🤝" fallbackBg="#13241c" fallbackSize={56} />
+        </div>
+        <OwlSay mood="happy" e="いじめを{止|と}めるのに、ヒーローになる{必要|ひつよう}はない。<br /><br />たった{一言|ひとこと}、{声|こえ}をかける。<br />それができなくても、{大人|おとな}にそっと{伝|つた}える。<br /><br />その{小|ちい}さな{勇気|ゆうき}のひとつひとつが、<br />{誰|だれ}かの&quot;ひとりぼっち&quot;を、{終|お}わらせるんだ。<br /><br />——{君|きみ}が{考|かんが}えた、あの{言葉|ことば}。<br />それはきっと、{誰|だれ}かを{救|すく}う{力|ちから}になる。">いじめを止めるのに、ヒーローになる必要はない。<br /><br />たった一言、声をかける。<br />それができなくても、大人にそっと伝える。<br /><br />その小さな勇気のひとつひとつが、<br />誰かの&quot;ひとりぼっち&quot;を、終わらせるんだ。<br /><br />——君が考えた、あの言葉。<br />それはきっと、誰かを救う力になる。</OwlSay>
+        {rcGreenBtn(ageMode === "elementary" ? "{次|つぎ}へ →" : "次へ →", () => setPhase("data"))}
+      </>
     );
   }
 
