@@ -15939,6 +15939,13 @@ function GroupMsg({ msg, showName }) {
     "ミオ": "#fbbf24",
   };
   const avatarColor = colors[msg.name] || "#94a3b8";
+  const avatarImgs = {
+    "サキ": "/images/ep5/saki.jpg",
+    "ハル": "/images/ep5/haru.jpg",
+    "ケン": "/images/ep5/ken.jpg",
+    "ミオ": "/images/ep5/mio.jpg",
+  };
+  const avatarImg = avatarImgs[msg.name];
 
   return (
     <div style={{
@@ -15950,13 +15957,15 @@ function GroupMsg({ msg, showName }) {
     }}>
       {!isMe && (
         <div style={{
-          width:32,height:32,borderRadius:"50%",
+          width:32,height:32,borderRadius:"50%",overflow:"hidden",
           background:avatarColor,flexShrink:0,
           display:"flex",alignItems:"center",
           justifyContent:"center",
           fontSize:13,fontWeight:900,color:"#fff",
         }}>
-          {msg.name?.[0]}
+          {avatarImg
+            ? <ImgWithFallback src={avatarImg} alt={msg.name} fallback={msg.name?.[0]} fallbackBg={avatarColor} fallbackSize={13} />
+            : msg.name?.[0]}
         </div>
       )}
       <div style={{maxWidth:"72%"}}>
@@ -16421,6 +16430,7 @@ function Episode5({ onComplete, onExit }) {
 
   // ── 共通：LINE風チャットの色・ヘッダー ──
   const ep5Colors = { "サキ": "#f472b6", "ハル": "#a78bfa", "ケン": "#60a5fa", "あなた": "#86efac", "ミオ": "#fbbf24" };
+  const ep5AvatarImgs = { "サキ": "/images/ep5/saki.jpg", "ハル": "/images/ep5/haru.jpg", "ケン": "/images/ep5/ken.jpg", "ミオ": "/images/ep5/mio.jpg" };
   const Ep5ChatHeader = (
     <div style={{ background: "rgba(255,255,255,.06)", padding: "10px 14px", display: "flex", alignItems: "center", gap: 10, borderBottom: "1px solid rgba(255,255,255,.06)" }}>
       <div style={{ width: 36, height: 36, borderRadius: "50%", background: "linear-gradient(135deg,#06c755,#04a644)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>💬</div>
@@ -16589,13 +16599,13 @@ function Episode5({ onComplete, onExit }) {
       ? thinkText.trim()
       : thinkChoices.slice().sort((a, b) => a - b).map(i => choiceOpts[i]).join("、");
     const layers = ageMode === "elementary" ? [
-      { n: "①", title: "いじめる{人|ひと}（{加害者|かがいしゃ}）", desc: "{直接|ちょくせつ}、わる{口|ぐち}を{言|い}ったり、{無視|むし}をしたりする{人|ひと}。", hot: false },
-      { n: "②", title: "いじめられる{人|ひと}（{被害者|ひがいしゃ}）", desc: "その{的|まと}にされてしまう{人|ひと}。", hot: false },
+      { n: "①", title: "いじめられる{人|ひと}（{被害者|ひがいしゃ}）", desc: "その{的|まと}にされてしまう{人|ひと}。", hot: false },
+      { n: "②", title: "いじめる{人|ひと}（{加害者|かがいしゃ}）", desc: "{直接|ちょくせつ}、わる{口|ぐち}を{言|い}ったり、{無視|むし}をしたりする{人|ひと}。", hot: false },
       { n: "③", title: "はやし{立|た}てる{人|ひと}（{観衆|かんしゅう}）★", desc: "{自分|じぶん}はやらないけど、{笑|わら}ったり「いいね」したりして、いじめを{盛|も}り{上|あ}げてしまう{人|ひと}。", hot: true },
       { n: "④", title: "{見|み}ているだけの{人|ひと}（{傍観者|ぼうかんしゃ}）★", desc: "{何|なに}もしないで、ただ{見|み}ている{人|ひと}。でも&quot;{何|なに}もしない&quot;ことが、いじめを{続|つづ}けさせてしまう。", hot: true },
     ] : [
-      { n: "①", title: "いじめる人（加害者）", desc: "直接、わる口を言ったり、無視をしたりする人。", hot: false },
-      { n: "②", title: "いじめられる人（被害者）", desc: "その的にされてしまう人。", hot: false },
+      { n: "①", title: "いじめられる人（被害者）", desc: "その的にされてしまう人。", hot: false },
+      { n: "②", title: "いじめる人（加害者）", desc: "直接、わる口を言ったり、無視をしたりする人。", hot: false },
       { n: "③", title: "はやし立てる人（観衆）★", desc: "自分はやらないけど、笑ったり「いいね」したりして、いじめを盛り上げてしまう人。", hot: true },
       { n: "④", title: "見ているだけの人（傍観者）★", desc: "何もしないで、ただ見ている人。でも\"何もしない\"ことが、いじめを続けさせてしまう。", hot: true },
     ];
@@ -16781,7 +16791,7 @@ function Episode5({ onComplete, onExit }) {
                 const anim = glow ? "ep5GlowShift 1.2s ease forwards" : (m.shake ? "popIn .3s ease, shake .5s ease .3s" : "popIn .3s ease");
                 return (
                   <div key={"a" + idx} style={{ display: "flex", flexDirection: isMe ? "row-reverse" : "row", alignItems: "flex-start", gap: 8, marginBottom: 10 }}>
-                    {!isMe && <div style={{ width: 32, height: 32, borderRadius: "50%", background: col, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 900, color: "#fff" }}>{m.name[0]}</div>}
+                    {!isMe && <div style={{ width: 32, height: 32, borderRadius: "50%", overflow: "hidden", background: col, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 900, color: "#fff" }}>{ep5AvatarImgs[m.name] ? <ImgWithFallback src={ep5AvatarImgs[m.name]} alt={m.name} fallback={m.name[0]} fallbackBg={col} fallbackSize={13} /> : m.name[0]}</div>}
                     <div style={{ maxWidth: "72%" }}>
                       {!isMe && <div style={{ fontSize: 10, color: col, fontWeight: 700, marginBottom: 3 }}>{m.name}</div>}
                       <div ref={isPlayer ? aPlayerRef : (isLast ? aLastRef : null)}
@@ -16795,7 +16805,7 @@ function Episode5({ onComplete, onExit }) {
 
               {aTyping && (
                 <div style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 10 }}>
-                  <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#f472b6", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 900, color: "#fff" }}>サ</div>
+                  <div style={{ width: 32, height: 32, borderRadius: "50%", overflow: "hidden", background: "#f472b6", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 900, color: "#fff" }}><ImgWithFallback src="/images/ep5/saki.jpg" alt="サキ" fallback="サ" fallbackBg="#f472b6" fallbackSize={13} /></div>
                   <div style={{ maxWidth: "72%" }}>
                     <div style={{ fontSize: 10, color: "#f472b6", fontWeight: 700, marginBottom: 3 }}>サキ</div>
                     <div style={{ background: "rgba(255,255,255,.1)", borderRadius: "4px 18px 18px 18px", padding: "9px 13px", fontSize: 13, color: "rgba(255,255,255,.55)" }}>入力中{".".repeat(aDots)}</div>
