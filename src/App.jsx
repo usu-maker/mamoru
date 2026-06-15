@@ -731,6 +731,8 @@ const GlobalStyle = () => (
     @keyframes mioAppear {from{opacity:0;transform:scale(.85)} to{opacity:1;transform:scale(1)}}
     @keyframes victimFlash{0%{opacity:.9} 100%{opacity:0}}
     @keyframes greenPulse {0%,100%{background:rgba(110,200,140,0)} 50%{background:rgba(110,200,140,.15)}}
+    @keyframes ep5Pop {0%{opacity:0;transform:scale(.3)} 70%{transform:scale(1.15)} 100%{opacity:1;transform:scale(1)}}
+    @keyframes ep5YouPulse {0%,100%{box-shadow:0 0 0 0 rgba(236,72,153,.7)} 50%{box-shadow:0 0 0 8px rgba(236,72,153,0)}}
   `}</style>
 );
 
@@ -16194,6 +16196,10 @@ function Episode5({ onComplete, onExit }) {
   const [rcWarm, setRcWarm] = useState(false);          // 背景が暖色へ戻る
   const [rcBtn, setRcBtn] = useState(false);            // 体験Bの[続ける]ボタン表示
 
+  // ── reflection（四層構造アイコン版振り返り）用 state ──
+  const [reflStep, setReflStep] = useState(0);          // 振り返りの場面（0〜3）
+  const [reflYouLeft, setReflYouLeft] = useState(85);   // 場面3「あなた」の横位置（85%→40%へ移動）
+
   const pink = "#ec4899";
   const pinkDark = "#be185d";
 
@@ -16310,6 +16316,14 @@ function Episode5({ onComplete, onExit }) {
     t.push(setTimeout(() => setRcBtn(true), 9200));
     return () => t.forEach(clearTimeout);
   }, [phase, rcStep]);
+
+  // reflection 場面3：「あなた」を傍観者層→観衆層付近へ滑らかに移動
+  useEffect(() => {
+    if (phase !== "reflection" || reflStep !== 3) { setReflYouLeft(85); return; }
+    setReflYouLeft(85);
+    const t = setTimeout(() => setReflYouLeft(40), 650);
+    return () => clearTimeout(t);
+  }, [phase, reflStep]);
 
   const choiceData = ageMode === "elementary" ? {
     a: {
@@ -17471,7 +17485,7 @@ function Episode5({ onComplete, onExit }) {
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fdf2f8,#fce7f3)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
         <OwlSay mood="excited" e="ネットいじめを{理解|りかい}するための{重要|じゅうよう}なことばをおぼえよう！🦉">ネットいじめを理解するための重要ワードを覚えよう！🦉</OwlSay>
-        <KeywordPhase epKey="ep5" accentColor="#ec4899" onComplete={() => setPhase("complete")} />
+        <KeywordPhase epKey="ep5" accentColor="#ec4899" onComplete={() => setPhase("reflection")} />
         <ParentExpertCard epKey="ep5" accentColor="#ec4899" />
       </div>
     </div>
@@ -17561,6 +17575,121 @@ function Episode5({ onComplete, onExit }) {
       </div>
     </div>
   );
+
+  // ── Reflection：四層構造のアイコン版振り返り ──
+  if (phase === "reflection") {
+    const reflActors = {
+      mio:  { img: "mio.jpg",  name: "ミオ",   fb: "ミ" },
+      saki: { img: "saki.jpg", name: "サキ",   fb: "サ" },
+      haru: { img: "haru.jpg", name: "ハル",   fb: "ハ" },
+      ken:  { img: "ken.jpg",  name: "ケン",   fb: "ケ" },
+      you:  { img: "you.jpg",  name: "あなた", fb: "あ" },
+    };
+    // icons: [{ key, left, top, delay }]（you は脈動付き）
+    const renderDiagram = (icons) => (
+      <div style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.08)", borderRadius: 16, padding: "14px 12px 12px", marginBottom: 14 }}>
+        {/* 各層のラベル（図の上部） */}
+        <div style={{ position: "relative", height: 16, marginBottom: 4, fontSize: 10, fontWeight: 700 }}>
+          <span style={{ position: "absolute", left: "10%", transform: "translateX(-50%)", color: "#C9B6E6", whiteSpace: "nowrap" }}>被害者</span>
+          <span style={{ position: "absolute", left: "28%", transform: "translateX(-50%)", color: "#E48FB5", whiteSpace: "nowrap" }}>加害者</span>
+          <span style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", color: "#A9CC6B", whiteSpace: "nowrap" }}>観衆</span>
+          <span style={{ position: "absolute", left: "78%", transform: "translateX(-50%)", color: "#E6C44D", whiteSpace: "nowrap" }}>傍観者</span>
+        </div>
+        <div style={{ position: "relative", width: "100%", height: 230 }}>
+          <svg width="100%" height="230" viewBox="0 0 380 200" preserveAspectRatio="none" style={{ display: "block" }}>
+            <ellipse cx="190" cy="100" rx="178" ry="80" fill="#FBE7A0" stroke="#E6C44D" strokeWidth="1.5" />
+            <ellipse cx="150" cy="100" rx="126" ry="68" fill="#C8E6A0" stroke="#9CCB5C" strokeWidth="1.5" />
+            <ellipse cx="105" cy="100" rx="73"  ry="56" fill="#F6C6DC" stroke="#E48FB5" strokeWidth="1.5" />
+            <ellipse cx="72"  cy="100" rx="40"  ry="44" fill="#D6C4E8" stroke="#A982CF" strokeWidth="1.5" />
+          </svg>
+          {icons.map((ic) => {
+            const a = reflActors[ic.key];
+            const isYou = ic.key === "you";
+            return (
+              <div key={ic.key} style={{
+                position: "absolute", boxSizing: "border-box",
+                width: 42, height: 42, borderRadius: "50%", overflow: "hidden",
+                border: `2.5px solid ${isYou ? pink : "#fff"}`,
+                left: `calc(${ic.left}% - 21px)`,
+                top: `calc(${ic.top}% - 21px)`,
+                transition: "left 1.6s ease, top 1.6s ease",
+                animation: `ep5Pop .5s ease ${ic.delay}ms both${isYou ? ", ep5YouPulse 1.8s ease-in-out infinite" : ""}`,
+                zIndex: isYou ? 5 : 2,
+              }}>
+                <ImgWithFallback src={`/images/ep5/${a.img}`} alt={a.name} fallback={a.fb} fallbackBg={isYou ? pink : "#94a3b8"} fallbackSize={15} />
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+    const reflBtn = (label, onClick) => (
+      <button onClick={() => { feedback("tap"); onClick(); }}
+        style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${pink},${pinkDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${pink}33` }}>
+        <RubyText text={label} />
+      </button>
+    );
+    const wrap = (children) => (
+      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0f172a,#1e0a18)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
+        <div style={{ maxWidth: 440, margin: "0 auto" }}>{children}</div>
+      </div>
+    );
+
+    // reflStep=0：振り返り導入
+    if (reflStep === 0) return wrap(
+      <>
+        <OwlSay mood="happy" e="{最後|さいご}にね——もう{一度|いちど}、いじめの{四層|よんそう}{構造|こうぞう}を{見|み}てみよう。<br />{今度|こんど}は、サキたちと&quot;あなた&quot;を、その{図|ず}に{重|かさ}ねてみるよ。">最後にね——もう一度、いじめの四層構造を見てみよう。<br />今度は、サキたちと&quot;あなた&quot;を、その図に重ねてみるよ。</OwlSay>
+        {reflBtn(ageMode === "elementary" ? "{続|つづ}ける →" : "続ける →", () => setReflStep(1))}
+      </>
+    );
+
+    // reflStep=1：ミオ・サキ・ハル・ケンを配置
+    if (reflStep === 1) return wrap(
+      <>
+        <OwlSay mood="happy" e="あの{物語|ものがたり}で——<br />ミオは「{被害者|ひがいしゃ}」、サキは「{加害者|かがいしゃ}」だったね。<br />ハルとケンは、はやし{立|た}てた「{観衆|かんしゅう}」。">あの物語で——<br />ミオは「被害者」、サキは「加害者」だったね。<br />ハルとケンは、はやし立てた「観衆」。</OwlSay>
+        {renderDiagram([
+          { key: "mio",  left: 19, top: 50, delay: 0 },
+          { key: "saki", left: 32, top: 50, delay: 300 },
+          { key: "haru", left: 48, top: 38, delay: 600 },
+          { key: "ken",  left: 55, top: 62, delay: 800 },
+        ])}
+        {reflBtn(ageMode === "elementary" ? "そして… →" : "そして… →", () => setReflStep(2))}
+      </>
+    );
+
+    // reflStep=2：「あなた」を傍観者層に置く（山場）
+    if (reflStep === 2) return wrap(
+      <>
+        <OwlSay mood="worried" e="そして&quot;あなた&quot;は——<br />ここに、いた。">そして&quot;あなた&quot;は——<br />ここに、いた。</OwlSay>
+        {renderDiagram([
+          { key: "mio",  left: 19, top: 50, delay: 0 },
+          { key: "saki", left: 32, top: 50, delay: 150 },
+          { key: "haru", left: 48, top: 38, delay: 300 },
+          { key: "ken",  left: 55, top: 62, delay: 450 },
+          { key: "you",  left: 85, top: 50, delay: 800 },
+        ])}
+        <div style={{ background: "rgba(236,72,153,.08)", borderLeft: `4px solid ${pink}`, borderRadius: "4px 12px 12px 4px", padding: "13px 16px", marginBottom: 14, fontSize: 13.5, color: "#fce7f3", lineHeight: 1.9 }}>
+          <RubyText text={ageMode === "elementary" ? "グループの{中|なか}にいて、{悪口|わるくち}を{言|い}ったわけじゃない。<br />でも、{見|み}ていた。<br />&quot;{傍観者|ぼうかんしゃ}&quot;の{場所|ばしょ}にいたのは、あなただったんだ。" : "グループの中にいて、悪口を言ったわけじゃない。<br />でも、見ていた。<br />&quot;傍観者&quot;の場所にいたのは、あなただったんだ。"} />
+        </div>
+        {reflBtn("…", () => setReflStep(3))}
+      </>
+    );
+
+    // reflStep=3：希望の動き（「あなた」が内側へ移動）
+    return wrap(
+      <>
+        <OwlSay mood="happy" e="でも、{覚|おぼ}えていてね。<br />&quot;あなた&quot;がいた{場所|ばしょ}は、いちばん{変|か}える{力|ちから}を{持|も}つ{場所|ばしょ}でもあるんだ。<br /><br />{一言|ひとこと}かければ——{内側|うちがわ}に。<br />{大人|おとな}に{伝|つた}えれば——もっと{近|ちか}くに、ミオを{助|たす}けに{行|い}ける。">でも、覚えていてね。<br />&quot;あなた&quot;がいた場所は、いちばん変える力を持つ場所でもあるんだ。<br /><br />一言かければ——内側に。<br />大人に伝えれば——もっと近くに、ミオを助けに行ける。</OwlSay>
+        {renderDiagram([
+          { key: "mio",  left: 19, top: 50, delay: 0 },
+          { key: "saki", left: 32, top: 50, delay: 100 },
+          { key: "haru", left: 48, top: 38, delay: 200 },
+          { key: "ken",  left: 55, top: 62, delay: 300 },
+          { key: "you",  left: reflYouLeft, top: 50, delay: 0 },
+        ])}
+        {reflBtn(ageMode === "elementary" ? "{修了証|しゅうりょうしょう}を{受|う}けとる" : "修了証を受けとる", () => setPhase("complete"))}
+      </>
+    );
+  }
 
   // ── Complete ──
   return (
