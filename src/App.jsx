@@ -16363,16 +16363,19 @@ function Episode5({ onComplete, onExit }) {
     },
   };
 
-  const stats = ageMode === "elementary" ? [
-    { num: "70%", desc: "のいじめには{傍観者|ぼうかんしゃ}がいる（{文科省|もんかしょう}{調査|ちょうさ}）" },
-    { num: "92%", desc: "の{被害者|ひがいしゃ}が「{誰|だれ}かに{気|き}づいてほしかった」と{回答|かいとう}" },
-    { num: "1{言|こと}", desc: "の「やめて」がいじめを{止|と}めた{事例|じれい}が{多数|たすう}{報告|ほうこく}されている" },
-    { num: "3{倍|ばい}", desc: "グループいじめの{被害|ひがい}は{対面|たいめん}いじめの3{倍|ばい}{長期化|ちょうきか}する" },
-  ] : [
-    { num: "70%", desc: "のいじめには傍観者がいる（文科省調査）" },
-    { num: "92%", desc: "の被害者が「誰かに気づいてほしかった」と回答" },
-    { num: "1言", desc: "の「やめて」がいじめを止めた事例が多数報告されている" },
-    { num: "3倍", desc: "グループいじめの被害は対面いじめの3倍長期化する" },
+  // 出典：文部科学省「児童生徒の問題行動・不登校等生徒指導上の諸課題に関する調査」各年度（令和3〜6年度）
+  // ※確定値のみ使用。最新年（2024年度＝令和6年度）が各系列とも過去最多。
+  const ep5BullyingTrend = [
+    { year: "2021年度", value: 615351 },
+    { year: "2022年度", value: 681948 },
+    { year: "2023年度", value: 732568 },
+    { year: "2024年度", value: 769022 },
+  ];
+  const ep5NetTrend = [
+    { year: "2021年度", value: 21900 },
+    { year: "2022年度", value: 23920 },
+    { year: "2023年度", value: 24678 },
+    { year: "2024年度", value: 27365 },
   ];
 
   const safeSteps = ageMode === "elementary" ? [
@@ -17279,52 +17282,101 @@ function Episode5({ onComplete, onExit }) {
   }
 
   // ── Data phase ──
-  if (phase === "data") return (
-    <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0f172a,#1e0a18)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
-      <div style={{ maxWidth: 440, margin: "0 auto" }}>
-        <div style={{ textAlign: "center", marginBottom: 14 }}>
-          <div style={{ fontSize: 40, marginBottom: 8 }}>📊</div>
-          <h2 style={{ fontSize: 20, fontWeight: 900, color: "#fff", margin: 0 }}><RubyText text={ageMode === "elementary" ? "ネットいじめの{現実|げんじつ}" : "ネットいじめの現実"} /></h2>
-          <p style={{ fontSize: 12, color: "rgba(255,255,255,.45)", marginTop: 6 }}><RubyText text={ageMode === "elementary" ? "{文科省|もんかしょう}・こども{家庭庁|かていちょう}の{調査|ちょうさ}データより" : "文科省・こども家庭庁の調査データより"} /></p>
+  if (phase === "data") {
+    // 数値フォーマット：1万以上は「76.9万」、未満はカンマ区切り
+    const fmtNum = (v) => v >= 10000 ? (v / 10000).toFixed(1).replace(/\.0$/, "") + "万" : v.toLocaleString();
+    // 棒グラフ：棒の高さ = 値 ÷ 最大値 × 120px。バッジは固定枠で棒高に影響させない。
+    const BarChart = ({ title, sub, data, cite }) => {
+      const max = Math.max(...data.map(d => d.value));
+      return (
+        <div style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.08)", borderRadius: 16, padding: "16px 14px 12px", marginBottom: 14 }}>
+          <div style={{ fontSize: 13, fontWeight: 900, color: "#fff", marginBottom: 2 }}><RubyText text={title} /></div>
+          <div style={{ fontSize: 10.5, color: "rgba(255,255,255,.45)", marginBottom: 14 }}><RubyText text={sub} /></div>
+          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-around", gap: 6, padding: "0 2px" }}>
+            {data.map((d, i) => {
+              const h = Math.round(d.value / max * 120);
+              const isMax = d.value === max;
+              return (
+                <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  {/* バッジ枠（固定18px・棒の高さに影響しない） */}
+                  <div style={{ height: 18, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    {isMax && <span style={{ fontSize: 8.5, fontWeight: 900, color: "#fff", background: pink, borderRadius: 8, padding: "2px 6px", whiteSpace: "nowrap", boxShadow: `0 0 8px ${pink}88` }}>過去最多</span>}
+                  </div>
+                  <div style={{ fontSize: 11, fontWeight: 900, color: isMax ? pink : "rgba(255,255,255,.7)", fontFamily: "'DotGothic16',monospace", marginBottom: 4 }}>{fmtNum(d.value)}</div>
+                  <div style={{ width: "64%", maxWidth: 40, height: h, borderRadius: "6px 6px 0 0", background: isMax ? "linear-gradient(180deg,#f9a8d4,#ec4899)" : "rgba(236,72,153,.32)", boxShadow: isMax ? `0 0 14px ${pink}66` : "none", transition: "height .6s ease" }} />
+                  <div style={{ fontSize: 9, color: "rgba(255,255,255,.5)", marginTop: 6, whiteSpace: "nowrap" }}>{d.year}</div>
+                </div>
+              );
+            })}
+          </div>
+          <div style={{ fontSize: 8.5, color: "rgba(255,255,255,.32)", marginTop: 12, lineHeight: 1.5 }}>{cite}</div>
         </div>
+      );
+    };
+    const dataCite = "出典：文部科学省『児童生徒の問題行動・不登校等生徒指導上の諸課題に関する調査』各年度";
+    return (
+      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0f172a,#1e0a18)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
+        <div style={{ maxWidth: 440, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 16 }}>
+            <div style={{ fontSize: 40, marginBottom: 8 }}>📊</div>
+            <h2 style={{ fontSize: 20, fontWeight: 900, color: "#fff", margin: 0 }}><RubyText text={ageMode === "elementary" ? "ネットいじめの{現実|げんじつ}" : "ネットいじめの現実"} /></h2>
+            <p style={{ fontSize: 12, color: "rgba(255,255,255,.45)", marginTop: 6 }}><RubyText text={ageMode === "elementary" ? "{文部科学省|もんぶかがくしょう}の{調査|ちょうさ}データより" : "文部科学省の調査データより"} /></p>
+          </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
-          {stats.map((s, i) => (
-            <div key={i} style={{ background: `${pink}0a`, border: `1px solid ${pink}25`, borderRadius: 16, padding: "16px 12px", textAlign: "center", animation: `slideUp .4s ${i * .1}s both ease` }}>
-              <div style={{ fontSize: 28, fontWeight: 900, color: pink, fontFamily: "'DotGothic16',monospace", marginBottom: 6 }}>{s.num}</div>
-              <div style={{ fontSize: 11, color: "rgba(255,255,255,.6)", lineHeight: 1.6 }}><RubyText text={s.desc} /></div>
+          <BarChart
+            title={ageMode === "elementary" ? "いじめの{認知|にんち}{件数|けんすう}（1{年間|ねんかん}）" : "いじめの認知件数（1年間）"}
+            sub={ageMode === "elementary" ? "{小|しょう}・{中|ちゅう}・{高|こう}・{特別|とくべつ}{支援|しえん}{学校|がっこう} すべての{合計|ごうけい}" : "小・中・高・特別支援学校 すべての合計"}
+            data={ep5BullyingTrend}
+            cite={dataCite}
+          />
+          <BarChart
+            title={ageMode === "elementary" ? "ネットいじめの{件数|けんすう}（1{年間|ねんかん}）" : "ネットいじめの件数（1年間）"}
+            sub={ageMode === "elementary" ? "パソコン・スマホを{使|つか}ったいじめ" : "パソコン・スマホを使ったいじめ"}
+            data={ep5NetTrend}
+            cite={dataCite}
+          />
+
+          <OwlSay mood="worried" e="「{笑|わら}わなかった」「スルーした」だけでも、{止|と}めなかった{事実|じじつ}は{残|のこ}るよ。{傍観者|ぼうかんしゃ}も、いじめを{続|つづ}かせている{原因|げんいん}の{一|ひと}つなんだ🦉">「笑わなかった」「スルーした」だけでも、止めなかった事実は残るよ。傍観者も、いじめを続かせている原因の一つなんだ🦉</OwlSay>
+
+          <div style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.08)", borderRadius: 14, padding: "14px 16px", marginBottom: 14 }}>
+            <div style={{ fontSize: 12, fontWeight: 900, color: pink, marginBottom: 10 }}>📱 <RubyText text={ageMode === "elementary" ? "ネットいじめが{見|み}えにくい{理由|りゆう}" : "ネットいじめが見えにくい理由"} /></div>
+            {(ageMode === "elementary" ? [
+              "24{時間|じかん}・365{日|にち}、{逃|に}げ{場|ば}がない",
+              "スクショで{証拠|しょうこ}が{残|のこ}り、{拡散|かくさん}が{止|と}まらない",
+              "「ここだけの{話|はなし}」が{一瞬|いっしゅん}で{広|ひろ}まる",
+              "{外|そと}から{見|み}えにくく、{匿名性|とくめいせい}が{高|たか}いため、{大人|おとな}が{気|き}づきにくい",
+            ] : [
+              "24時間・365日、逃げ場がない",
+              "スクショで証拠が残り、拡散が止まらない",
+              "「ここだけの話」が一瞬で広まる",
+              "外から見えにくく、匿名性が高いため、大人が気づきにくい",
+            ]).map((t, i) => (
+              <div key={i} style={{ fontSize: 12, color: "rgba(255,255,255,.65)", lineHeight: 1.7, paddingLeft: 14, position: "relative", marginBottom: 4 }}>
+                <span style={{ position: "absolute", left: 0, color: pink }}>▸</span><RubyText text={t} />
+              </div>
+            ))}
+          </div>
+
+          {/* 仲裁者研究：清水・瀧野（1998）ほか */}
+          <div style={{ background: "rgba(52,199,123,.08)", border: "1px solid rgba(52,199,123,.35)", borderRadius: 14, padding: "14px 16px", marginBottom: 16 }}>
+            <div style={{ fontSize: 13, fontWeight: 900, color: "#34c77b", marginBottom: 8 }}>💡 <RubyText text={ageMode === "elementary" ? "でも、まわりの{一人|ひとり}が{変|か}えられる" : "でも、まわりの一人が変えられる"} /></div>
+            <div style={{ fontSize: 12.5, color: "rgba(255,255,255,.8)", lineHeight: 1.85 }}>
+              <RubyText text={ageMode === "elementary" ? "いじめは、まわりの{一人|ひとり}が「{仲裁者|ちゅうさいしゃ}」として{動|うご}くと、いじめる{側|がわ}の{行動|こうどう}が{変|か}わり、{止|と}まることが{研究|けんきゅう}で{示|しめ}されています。" : "いじめは、まわりの一人が「仲裁者」として動くと、いじめる側の行動が変わり、止まることが研究で示されています。"} />
             </div>
-          ))}
-        </div>
-
-        <OwlSay mood="worried" e="「{笑|わら}わなかった」「スルーした」だけでも、{止|と}めなかった{事実|じじつ}は{残|のこ}るよ。{傍観者|ぼうかんしゃ}も、いじめを{続|つづ}かせている{原因|げんいん}の{一|ひと}つなんだ🦉">「笑わなかった」「スルーした」だけでも、止めなかった事実は残るよ。傍観者も、いじめを続かせている原因の一つなんだ🦉</OwlSay>
-
-        <div style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.08)", borderRadius: 14, padding: "14px 16px", marginBottom: 14 }}>
-          <div style={{ fontSize: 12, fontWeight: 900, color: pink, marginBottom: 10 }}>📱 <RubyText text={ageMode === "elementary" ? "ネットいじめが「リアル」より{深刻|しんこく}な{理由|りゆう}" : "ネットいじめが「リアル」より深刻な理由"} /></div>
-          {(ageMode === "elementary" ? [
-            "24{時間|じかん}・365{日|にち}、{逃|に}げ{場|ば}がない",
-            "スクショで{証拠|しょうこ}が{残|のこ}り{拡散|かくさん}が{止|と}まらない",
-            "「ここだけの{話|はなし}」が{一瞬|いっしゅん}で{全校|ぜんこう}に{広|ひろ}まる",
-            "{加害者|かがいしゃ}が{被害|ひがい}の{深刻|しんこく}さを{実感|じっかん}しにくい",
-          ] : [
-            "24時間・365日、逃げ場がない",
-            "スクショで証拠が残り拡散が止まらない",
-            "「ここだけの話」が一瞬で全校に広まる",
-            "加害者が被害の深刻さを実感しにくい",
-          ]).map((t, i) => (
-            <div key={i} style={{ fontSize: 12, color: "rgba(255,255,255,.65)", lineHeight: 1.7, paddingLeft: 14, position: "relative", marginBottom: 4 }}>
-              <span style={{ position: "absolute", left: 0, color: pink }}>▸</span><RubyText text={t} />
+            <div style={{ fontSize: 10.5, color: "rgba(255,255,255,.5)", lineHeight: 1.7, marginTop: 8 }}>
+              <RubyText text={ageMode === "elementary" ? "※ただし、{無理|むり}に{立|た}ち{向|む}かう{必要|ひつよう}はありません。こわいときは、{大人|おとな}に{伝|つた}えるだけでいい。" : "※ただし、無理に立ち向かう必要はありません。こわいときは、大人に伝えるだけでいい。"} />
             </div>
-          ))}
-        </div>
+            <div style={{ fontSize: 9, color: "rgba(255,255,255,.32)", marginTop: 6 }}>（清水・瀧野 1998 ほか、いじめ仲裁者研究）</div>
+          </div>
 
-        <button onClick={() => setPhase("checkpoints")}
-          style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${pink},${pinkDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
-          <RubyText text={ageMode === "elementary" ? "じゃあどうすれば{良|い}いの？ →" : "じゃあどうすれば良いの？ →"} />
-        </button>
+          <button onClick={() => setPhase("checkpoints")}
+            style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${pink},${pinkDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
+            <RubyText text={ageMode === "elementary" ? "じゃあ、どうすれば{良|い}いの？ →" : "じゃあ、どうすれば良いの？ →"} />
+          </button>
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 
   // ── Checkpoints ──
   if (phase === "checkpoints") return (
@@ -17349,18 +17401,22 @@ function Episode5({ onComplete, onExit }) {
 
         <div style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.08)", borderRadius: 14, padding: "14px 16px", marginBottom: 14 }}>
           <div style={{ fontSize: 12, fontWeight: 900, color: pink, marginBottom: 8 }}>📞 <RubyText text={ageMode === "elementary" ? "いじめに{気|き}づいたら{相談|そうだん}できる{窓口|まどぐち}" : "いじめに気づいたら相談できる窓口"} /></div>
+          {/* 相談窓口：こどもの人権110番（法務省）、24時間子供SOSダイヤル（文科省）、チャイルドライン（チャイルドライン支援センター） */}
           {(ageMode === "elementary" ? [
-            ["{子|こ}どもの{人権|じんけん}110{番|ばん}", "0120-007-110（{無料|むりょう}）"],
-            ["24{時間|じかん}{子|こ}どもSOSダイヤル", "0120-0-78310"],
-            ["よりそいホットライン", "0120-279-338"],
+            { n: "こどもの{人権|じんけん}110{番|ばん}", v: "0120-007-110", note: "{法務省|ほうむしょう}・{無料|むりょう}" },
+            { n: "24{時間|じかん}{子供|こども}SOSダイヤル", v: "0120-0-78310", note: "{文部科学省|もんぶかがくしょう}" },
+            { n: "チャイルドライン", v: "0120-99-7777", note: "18さいまでの{子|こ}ども{専用|せんよう}・{毎日|まいにち}16〜21{時|じ}・{名前|なまえ}を{言|い}わなくてOK" },
           ] : [
-            ["子どもの人権110番", "0120-007-110（無料）"],
-            ["24時間子どもSOSダイヤル", "0120-0-78310"],
-            ["よりそいホットライン", "0120-279-338"],
-          ]).map(([n, v], i) => (
-            <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "7px 0", borderBottom: i < 2 ? "1px solid rgba(255,255,255,.06)" : "none" }}>
-              <span style={{ fontSize: 12, color: "rgba(255,255,255,.55)" }}><RubyText text={n} /></span>
-              <span style={{ fontSize: 12, fontWeight: 900, color: pink }}><RubyText text={v} /></span>
+            { n: "こどもの人権110番", v: "0120-007-110", note: "法務省・無料" },
+            { n: "24時間子供SOSダイヤル", v: "0120-0-78310", note: "文部科学省" },
+            { n: "チャイルドライン", v: "0120-99-7777", note: "18さいまでの子ども専用・毎日16〜21時・名前を言わなくてOK" },
+          ]).map(({ n, v, note }, i) => (
+            <div key={i} style={{ padding: "8px 0", borderBottom: i < 2 ? "1px solid rgba(255,255,255,.06)" : "none" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: 12, color: "rgba(255,255,255,.6)" }}><RubyText text={n} /></span>
+                <span style={{ fontSize: 12.5, fontWeight: 900, color: pink, fontFamily: "'DotGothic16',monospace" }}>{v}</span>
+              </div>
+              <div style={{ fontSize: 10, color: "rgba(255,255,255,.4)", lineHeight: 1.6, marginTop: 3 }}><RubyText text={note} /></div>
             </div>
           ))}
         </div>
@@ -17371,63 +17427,11 @@ function Episode5({ onComplete, onExit }) {
             <RubyText text={ageMode === "elementary" ? "{次|つぎ}のポイント →" : "次のポイント →"} />
           </button>
         ) : (
-          <button onClick={() => setPhase("quiz")}
+          <button onClick={() => setPhase("homework")}
             style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${pink},${pinkDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
-            <RubyText text={ageMode === "elementary" ? "{理解|りかい}度チェック →" : "理解度チェック →"} />
+            <RubyText text={ageMode === "elementary" ? "おうちの{人|ひと}と{話|はな}す{前|まえ}に →" : "おうちの人と話す前に →"} />
           </button>
         )}
-      </div>
-    </div>
-  );
-
-  // ── Quiz (EP5) ──
-  if (phase === "quiz") return (
-    <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#1a0510,#0f0208)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
-      <div style={{ maxWidth: 440, margin: "0 auto" }}>
-        <div style={{ display: "flex", gap: 4, marginBottom: 18 }}>
-          {["quiz","ng","homework","keywords","dialogue"].map((s,i) => (
-            <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i === 0 ? pink : "rgba(255,255,255,.15)" }} />
-          ))}
-        </div>
-        <OwlSay mood="excited" e="{正解|せいかい}するまで{次|つぎ}に{進|すす}めないよ🦉">正解するまで次に進めないよ🦉</OwlSay>
-        <MandatoryQuiz
-          question={ageMode === "elementary" ? "グループLINEでクラスメートの{悪口|わるくち}が{流|なが}れてきた。もっとも{正|ただ}しい{行動|こうどう}は？" : "グループLINEでクラスメートの悪口が流れてきた。最も正しい行動は？"}
-          choices={ageMode === "elementary" ? [
-            { id: "a", label: "A", text: "{既読|きどく}スルーして{何|なに}もしない" },
-            { id: "b", label: "B", text: "{先生|せんせい}や{信頼|しんらい}できる{大人|おとな}に{伝|つた}える（{直接|ちょくせつ}{止|と}めなくてもOK）" },
-            { id: "c", label: "C", text: "「わかる」と{共感|きょうかん}する{絵文字|えもじ}を{送|おく}る" },
-          ] : [
-            { id: "a", label: "A", text: "既読スルーして何もしない" },
-            { id: "b", label: "B", text: "先生や信頼できる大人に伝える（直接止めなくてもOK）" },
-            { id: "c", label: "C", text: "「わかる」と共感する絵文字を送る" },
-          ]}
-          correctId="b"
-          onPass={() => setPhase("ng")}
-          accentColor={pink}
-        />
-      </div>
-    </div>
-  );
-
-  // ── NG体験 (EP5) ──
-  if (phase === "ng") return (
-    <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#1a0510,#0f0208)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
-      <div style={{ maxWidth: 440, margin: "0 auto" }}>
-        <div style={{ display: "flex", gap: 4, marginBottom: 18 }}>
-          {["quiz","ng","homework","keywords","dialogue"].map((s,i) => (
-            <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= 1 ? pink : "rgba(255,255,255,.15)" }} />
-          ))}
-        </div>
-        <OwlSay mood="worried" e="よくある{反応|はんのう}と{正|ただ}しい{反応|はんのう}の{違|ちが}いを{体験|たいけん}してみよう🦉">よくある反応と正しい反応の違いを体験してみよう🦉</OwlSay>
-        <NgFirstExperience
-          situation={ageMode === "elementary" ? "グループに{悪口|わるくち}が{流|なが}れてきた。みんな{笑|わら}っている。" : "グループに悪口が流れてきた。みんな笑っている。"}
-          ngChoice={ageMode === "elementary" ? { emoji: "👁️", label: "{既読|きどく}スルーして{何|なに}もしない（よくある{反応|はんのう}）" } : { emoji: "👁️", label: "既読スルーして何もしない（よくある反応）" }}
-          ngResult={ageMode === "elementary" ? "{傍観者|ぼうかんしゃ}はいじめを「{黙認|もくにん}」したと{同|おな}じ。{被害者|ひがいしゃ}には「みんなが{笑|わら}っていた」という{記憶|きおく}が{残|のこ}り、より{深|ふか}く{傷|きず}つく。" : "傍観者はいじめを「黙認」したと同じ。被害者には「みんなが笑っていた」という記憶が残り、より深く傷つく。"}
-          correctChoice={ageMode === "elementary" ? { emoji: "🛑", label: "「ちょっとそれは…」と{一言|ひとこと}{書|か}く" } : { emoji: "🛑", label: "「ちょっとそれは…」と一言書く" }}
-          correctResult={ageMode === "elementary" ? "たった{一言|ひとこと}でも、{空気|くうき}が{変|か}わることがある。{被害者|ひがいしゃ}に「{自分|じぶん}の{味方|みかた}がいた」という{記憶|きおく}を{残|のこ}せる。{完璧|かんぺき}でなくていい、{一言|ひとこと}でいい。" : "たった一言でも、空気が変わることがある。被害者に「自分の味方がいた」という記憶を残せる。完璧でなくていい、一言でいい。"}
-          onComplete={() => setPhase("homework")}
-          accentColor={pink}
-        />
       </div>
     </div>
   );
@@ -17437,8 +17441,8 @@ function Episode5({ onComplete, onExit }) {
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#1a0510,#0f0208)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
         <div style={{ display: "flex", gap: 4, marginBottom: 18 }}>
-          {["quiz","ng","homework","keywords","dialogue"].map((s,i) => (
-            <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= 2 ? pink : "rgba(255,255,255,.15)" }} />
+          {["homework","keywords","dialogue"].map((s,i) => (
+            <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i === 0 ? pink : "rgba(255,255,255,.15)" }} />
           ))}
         </div>
         <OwlSay mood="proud" e="{今日|きょう}のしゅくだい！{全部|ぜんぶ}チェックしてから{次|つぎ}へ{進|すす}もう🦉">今日の宿題！全部チェックしてから次へ進もう🦉</OwlSay>
@@ -17529,8 +17533,8 @@ function Episode5({ onComplete, onExit }) {
     },
     {
       id: "q3",
-      question: "もし自分が○○さんだったら、誰に助けを求める？",
-      questionEl: "もし{自分|じぶん}が○○さんだったら、{誰|だれ}に{助|たす}けを{求|もと}める？",
+      question: "もし自分がミオだったら、誰に助けを求める？",
+      questionEl: "もし{自分|じぶん}がミオだったら、{誰|だれ}に{助|たす}けを{求|もと}める？",
       placeholder: "助けを求める相手を書いてみよう",
       placeholderEl: "{助|たす}けを{求|もと}める{相手|あいて}を{書|か}いてみよう",
       hints: [
