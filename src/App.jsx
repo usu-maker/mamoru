@@ -736,6 +736,19 @@ const GlobalStyle = () => (
     @keyframes floatUp {0%{opacity:0;transform:translateY(0) scale(.5) rotate(0deg)} 10%{opacity:1;transform:translateY(-20px) scale(1.2) rotate(-5deg)} 100%{opacity:0;transform:translateY(-300px) scale(.8) rotate(15deg)}}
     @keyframes bump {0%,100%{transform:scale(1)} 50%{transform:scale(1.2)}}
     @keyframes ep6Pop {0%{opacity:0;transform:scale(.3)} 70%{transform:scale(1.1)} 100%{opacity:1;transform:scale(1)}}
+    @keyframes peekIn {0%{opacity:0;transform:translateY(60px) scale(.6)} 100%{opacity:1;transform:translateY(0) scale(1)}}
+    @keyframes thumbIn {from{opacity:0;transform:scale(.85)} to{opacity:1;transform:scale(1)}}
+    @keyframes ep6Glow {0%,100%{box-shadow:inset 0 0 0 3px #fbbf24,0 0 12px rgba(251,191,36,.4)} 50%{box-shadow:inset 0 0 0 3px #fbbf24,0 0 26px rgba(251,191,36,.85)}}
+    @keyframes focusSpin {from{transform:rotate(0deg)} to{transform:rotate(360deg)}}
+    @keyframes focusFade {0%,100%{opacity:.35} 50%{opacity:.85}}
+    @keyframes linesFlash {0%{opacity:0} 30%{opacity:1} 100%{opacity:0}}
+    @keyframes bubblePop {0%{opacity:0;transform:scale(.6)} 70%{transform:scale(1.08)} 100%{opacity:1;transform:scale(1)}}
+    @keyframes postBounce {0%{opacity:0;transform:translateY(30px) scale(.8)} 60%{transform:translateY(-6px) scale(1.05)} 100%{opacity:1;transform:translateY(0) scale(1)}}
+    @keyframes bubbleIn {from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)}}
+    @keyframes ep6RedFlash {0%{color:#fff;transform:scale(.7)} 30%{color:#ef4444;transform:scale(1.2)} 100%{color:#fca5a5;transform:scale(1)}}
+    @keyframes ep6ZoomIn {from{opacity:0;transform:scale(1.05)} to{opacity:1;transform:scale(1)}}
+    .ep6-hl-thumb{position:relative;z-index:2;}
+    .ep6-hl-thumb::before{content:'';position:absolute;inset:-40%;background:repeating-conic-gradient(from 0deg at 50% 50%,transparent 0deg,transparent 6deg,rgba(251,191,36,.55) 7deg,rgba(251,191,36,.55) 8deg);z-index:-1;animation:focusSpin 6s linear infinite,focusFade 1.5s ease-in-out infinite;pointer-events:none;mask-image:radial-gradient(circle,transparent 38%,#000 50%,transparent 75%);-webkit-mask-image:radial-gradient(circle,transparent 38%,#000 50%,transparent 75%);}
   `}</style>
 );
 
@@ -17747,9 +17760,27 @@ function Episode6({ onComplete, onExit }) {
   const [vsMoving, setVsMoving] = useState(false);          // ライトを右へ移すトリガ
   const [vsDarkSwap, setVsDarkSwap] = useState(false);      // 人物の明暗反転
   const [vsNarr, setVsNarr] = useState(0);                  // ナレーション切替 0/1
+  // monologue（投稿する側の独白）用
+  const [monoStep, setMonoStep] = useState(0);              // 0:余韻 1:フォルダ 2:最高 3:加害
+  const [monoTriggered, setMonoTriggered] = useState(false);// step3「…」ボタン押下（集中線フラッシュ）
+  const [monoReveal, setMonoReveal] = useState(false);      // step3「まあいっか」吹き出し表示
+  const [showPostButton, setShowPostButton] = useState(false); // 「投稿しちゃえ!」ボタン
+  // scene2（佐藤さんの感情の流れ）用
+  const [sceneTwoStep, setSceneTwoStep] = useState(0);      // 0〜6
+  const [revealCount, setRevealCount] = useState(0);        // 統合シーン内の段階表示
 
   const rose = "#f43f5e";
   const roseDark = "#be123c";
+
+  // sceneTwoStep 切替時に revealCount をリセット
+  useEffect(() => { setRevealCount(0); }, [sceneTwoStep]);
+
+  // monologue step3：[…]押下 → 0.3秒後に「まあいっか」吹き出し＋投稿ボタン
+  useEffect(() => {
+    if (phase !== "monologue" || monoStep !== 3 || !monoTriggered) return;
+    const t = setTimeout(() => { setMonoReveal(true); setShowPostButton(true); }, 300);
+    return () => clearTimeout(t);
+  }, [phase, monoStep, monoTriggered]);
 
   // ── SCENE1：いいねリアルタイムカウントアップ＋ハート粒子 ──
   useEffect(() => {
@@ -17893,13 +17924,156 @@ function Episode6({ onComplete, onExit }) {
             </div>
           )}
 
-          <button onClick={() => { feedback("tap"); last ? setPhase("scene1") : setCastStep(s => s + 1); }}
+          <button onClick={() => { feedback("tap"); last ? setPhase("monologue") : setCastStep(s => s + 1); }}
             style={{ width: "100%", marginTop: 14, padding: 15, background: `linear-gradient(135deg,${rose},${roseDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${rose}33` }}>
             {last ? <RubyText text={el ? "{体験|たいけん}スタート →" : "体験スタート →"} /> : <RubyText text={el ? "{次|つぎ}の{人|ひと} →" : "次の人 →"} />}
           </button>
         </div>
       </div>
       </EpisodeShell>
+    );
+  }
+
+  // ── MONOLOGUE: 投稿する側の独白（あなた視点） ──
+  if (phase === "monologue") {
+    const rt = (elText, plainText) => <RubyText text={el ? elText : plainText} />;
+    const spikeClip = "polygon(50% 0%,59% 10%,72% 4%,71% 18%,86% 16%,79% 30%,98% 36%,84% 48%,99% 60%,80% 66%,88% 80%,71% 79%,73% 94%,58% 87%,50% 100%,42% 87%,27% 94%,29% 79%,12% 80%,20% 66%,1% 60%,16% 48%,2% 36%,21% 30%,14% 16%,29% 18%,28% 4%,41% 10%)";
+    const spikyBubble = (children, extra = {}) => (
+      <div style={{ position: "absolute", zIndex: 6, background: "#fff", color: "#1a1a1a", fontWeight: 800, fontSize: 14, lineHeight: 1.55, textAlign: "center", padding: "32px 30px", clipPath: spikeClip, filter: "drop-shadow(0 4px 10px rgba(0,0,0,.45))", animation: "bubblePop .4s ease both", ...extra }}>{children}</div>
+    );
+    const youPeek = (pos) => (
+      <div style={{ position: "absolute", zIndex: 5, width: 120, height: 120, borderRadius: "50%", overflow: "hidden", border: "4px solid #fff", boxShadow: "0 8px 24px rgba(0,0,0,.5)", animation: "peekIn .5s cubic-bezier(.34,1.56,.64,1) both", ...pos }}>
+        <ImgWithFallback src="/images/ep6/you_realistic.jpg" alt="あなた" fallback="🙂" fallbackBg="#fde68a" fallbackSize={48} />
+      </div>
+    );
+    const monoBtn = (label, onClick, extra = {}) => (
+      <button onClick={() => { feedback("tap"); onClick(); }}
+        style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${rose},${roseDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${rose}33`, ...extra }}>
+        <RubyText text={label} />
+      </button>
+    );
+    const room = (children) => (
+      <EpisodeShell onExit={onExit}>
+      <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at center,#241019,#0a0406)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff", display: "flex", flexDirection: "column" }}>
+        <div style={{ maxWidth: 440, margin: "0 auto", width: "100%", flex: 1, display: "flex", flexDirection: "column" }}>{children}</div>
+      </div>
+      </EpisodeShell>
+    );
+    // iPhone風フレーム
+    const iPhone = (inner) => (
+      <div style={{ width: "min(340px, calc(100vw - 52px))", height: 540, maxHeight: "70vh", margin: "0 auto", background: "#000", borderRadius: 34, padding: 10, boxShadow: "0 0 0 2px #444,0 12px 30px rgba(0,0,0,.6)" }}>
+        <div style={{ width: "100%", height: "100%", borderRadius: 28, overflow: "hidden", background: "#fff", display: "flex", flexDirection: "column" }}>{inner}</div>
+      </div>
+    );
+    const iosStatus = (
+      <div style={{ background: "#fff", padding: "6px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 10, fontWeight: 700, color: "#000", flexShrink: 0 }}>
+        <span>20:45</span><span>📶 100%</span>
+      </div>
+    );
+
+    // monoStep=0: 体育祭の余韻
+    if (monoStep === 0) return room(
+      <>
+        <div style={{ flex: 1, position: "relative" }}>
+          {spikyBubble(<>{rt("{今日|きょう}は", "今日は")}<span style={{ color: rose }}>{rt("{体育祭|たいいくさい}", "体育祭")}</span>!<br />{rt("すっごい{楽|たの}しかった〜", "すっごい楽しかった〜")}<span style={{ color: "#fbbf24" }}>✨</span></>, { top: 40, left: 20, maxWidth: 220 })}
+          {youPeek({ bottom: 130, right: -20 })}
+        </div>
+        {monoBtn(el ? "{写真|しゃしん}を{見返|みかえ}す →" : "写真を見返す →", () => setMonoStep(1))}
+      </>
+    );
+
+    // monoStep=1: iPhone風フォトフォルダ
+    if (monoStep === 1) {
+      const thumbs = ["dummy1.jpg", "dummy2.jpg", "dummy3.jpg", "dummy4.jpg", "taiikusai.jpg", "dummy5.jpg"];
+      return room(
+        <>
+          <div style={{ flex: 1, position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            {spikyBubble(<>{rt("どれを{投稿|とうこう}しようかな…", "どれを投稿しようかな…")}💭</>, { top: 0, left: 0, maxWidth: 180, fontSize: 13, zIndex: 7 })}
+            {iPhone(
+              <>
+                {iosStatus}
+                <div style={{ background: "#f8f8f8", padding: "8px 12px", borderBottom: "1px solid #e0e0e0", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 12, flexShrink: 0 }}>
+                  <span style={{ color: "#007aff" }}>‹ {el ? <RubyText text="アルバム" /> : "アルバム"}</span>
+                  <span style={{ color: "#000", fontWeight: 700 }}>{rt("すべての{写真|しゃしん}", "すべての写真")}</span>
+                  <span style={{ color: "#007aff" }}>{rt("{選択|せんたく}", "選択")}</span>
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2, padding: 2, background: "#fff", flex: 1, overflow: "visible" }}>
+                  {thumbs.map((img, i) => {
+                    const hl = img === "taiikusai.jpg";
+                    return (
+                      <div key={img} className={hl ? "ep6-hl-thumb" : undefined}
+                        onClick={hl ? () => { feedback("found"); setMonoStep(2); } : undefined}
+                        style={{ position: "relative", aspectRatio: "1", cursor: hl ? "pointer" : "not-allowed", zIndex: hl ? 2 : 1, boxShadow: hl ? "0 0 18px rgba(251,191,36,.6)" : "none", animation: hl ? "thumbIn .3s ease both, ep6Glow 1.5s ease-in-out infinite 1s" : `thumbIn .3s ease ${i * 0.05}s both` }}>
+                        <div style={{ position: "absolute", inset: 0, overflow: "hidden" }}>
+                          <ImgWithFallback src={`/images/ep6/${img}`} alt={img} fallback={hl ? "🏃" : "🖼️"} fallbackBg={hl ? "#fde68a" : "#d1d5db"} fallbackSize={26} />
+                        </div>
+                        {hl && <div style={{ position: "absolute", inset: 0, boxShadow: "inset 0 0 0 3px #fbbf24", pointerEvents: "none" }} />}
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+          </div>
+          <div style={{ textAlign: "center", fontSize: 11, color: "rgba(255,255,255,.45)", marginTop: 8 }}>
+            {rt("{光|ひか}っている{写真|しゃしん}をタップ", "光っている写真をタップ")}
+          </div>
+        </>
+      );
+    }
+
+    // monoStep=2: 最高じゃない!?
+    if (monoStep === 2) return room(
+      <>
+        <div style={{ flex: 1, position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          {iPhone(
+            <>
+              {iosStatus}
+              <div style={{ flex: 1, position: "relative", background: "#000" }}>
+                <ImgWithFallback src="/images/ep6/taiikusai.jpg" alt="体育祭の写真" fallback="🏃‍♀️🏃‍♂️🎉" fallbackBg="linear-gradient(135deg,#fde68a,#fbbf24,#f97316)" fallbackSize={56} />
+              </div>
+              <div style={{ background: "#f8f8f8", padding: "12px 18px", display: "flex", justifyContent: "space-between", fontSize: 20, flexShrink: 0 }}>
+                <span>📤</span><span>♡</span><span>ℹ️</span><span>🗑</span>
+              </div>
+            </>
+          )}
+          {youPeek({ top: 60, right: -20 })}
+          {spikyBubble(<><span style={{ color: "#fbbf24" }}>✨</span>{rt("うわ、これ", "うわ、これ")}<span style={{ color: rose }}>{rt("{最高|さいこう}", "最高")}</span>じゃない!?<span style={{ color: "#fbbf24" }}>✨</span><br />みんな<span style={{ color: rose }}>{rt("{映|ば}えてる", "映えてる")}</span>〜!</>, { top: 200, right: 40, maxWidth: 210 })}
+        </div>
+        {monoBtn(el ? "{続|つづ}ける →" : "続ける →", () => setMonoStep(3))}
+      </>
+    );
+
+    // monoStep=3: 加害の瞬間
+    return room(
+      <>
+        <div style={{ flex: 1, position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          {iPhone(
+            <>
+              {iosStatus}
+              <div style={{ flex: 1, position: "relative", background: "#000" }}>
+                <ImgWithFallback src="/images/ep6/taiikusai.jpg" alt="体育祭の写真" fallback="🏃‍♀️🏃‍♂️🎉" fallbackBg="linear-gradient(135deg,#fde68a,#fbbf24,#f97316)" fallbackSize={56} />
+              </div>
+              <div style={{ background: "#f8f8f8", padding: "12px 18px", display: "flex", justifyContent: "space-between", fontSize: 20, flexShrink: 0 }}>
+                <span>📤</span><span>♡</span><span>ℹ️</span><span>🗑</span>
+              </div>
+            </>
+          )}
+          {/* 集中線フラッシュ */}
+          {monoTriggered && <div style={{ position: "absolute", inset: 0, zIndex: 8, pointerEvents: "none", animation: "linesFlash .6s ease", background: "repeating-conic-gradient(from 0deg at 50% 50%, transparent 0deg, transparent 8deg, rgba(255,255,255,.15) 9deg, transparent 10deg)" }} />}
+          {youPeek({ bottom: 130, right: -20 })}
+          {!monoReveal
+            ? spikyBubble(<>{rt("{友達|ともだち}も{写|うつ}ってるけど…", "友達も写ってるけど…")}🤔</>, { top: 50, left: 20, maxWidth: 200, fontSize: 13 })
+            : spikyBubble(<><span style={{ color: rose }}>{rt("まあいっか!", "まあいっか!")}</span><br />{rt("みんなに{見|み}てほしい〜", "みんなに見てほしい〜")}✌️</>, { top: 40, left: 20, maxWidth: 210 })}
+        </div>
+        {!monoTriggered && monoBtn("…", () => setMonoTriggered(true))}
+        {showPostButton && (
+          <button onClick={() => { feedback("found"); setPhase("scene1"); }}
+            style={{ width: "100%", padding: "16px", background: `linear-gradient(135deg,${rose},${roseDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 17, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 6px 20px rgba(244,63,94,.5)", animation: "postBounce .5s ease both" }}>
+            <RubyText text={el ? "📤 {投稿|とうこう}しちゃえ!" : "📤 投稿しちゃえ!"} />
+          </button>
+        )}
+      </>
     );
   }
 
@@ -18092,45 +18266,158 @@ function Episode6({ onComplete, onExit }) {
   }
 
   // ── SCENE 2: 投稿された側の視点 ──
-  if (phase === "scene2") return (
-    <EpisodeShell onExit={onExit}>
-    <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at center,#1a0308,#000)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
-      <div style={{ maxWidth: 440, margin: "0 auto" }}>
-        <div style={{ width: "100%", maxWidth: 320, margin: "0 auto 16px", borderRadius: 16, overflow: "hidden", border: "1px solid rgba(244,63,94,.3)", aspectRatio: "16 / 10" }}>
-          <ImgWithFallback src="/images/ep6/sato_sad.jpg" alt="うつむく佐藤さん" fallback="😢" fallbackBg="#1a0308" fallbackSize={56} />
+  // ── SCENE 2: 投稿された側（佐藤さん）の感情の流れ ──
+  if (phase === "scene2") {
+    const rt = (elText, plainText) => <RubyText text={el ? elText : plainText} />;
+    const darkBg = sceneTwoStep >= 5 ? "linear-gradient(180deg,#0a0814,#06040a)" : sceneTwoStep >= 3 ? "linear-gradient(180deg,#13101e,#08060f)" : "linear-gradient(180deg,#1e1a2e,#0f0a1a)";
+    const darkFilter = sceneTwoStep >= 5 ? "saturate(.4)" : sceneTwoStep >= 3 ? "saturate(.7)" : "none";
+    const satoHeader = (status) => (
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+        <div style={{ width: 48, height: 48, borderRadius: "50%", overflow: "hidden", border: "2px solid rgba(168,130,207,.6)", flexShrink: 0 }}>
+          <ImgWithFallback src="/images/ep6/sato.jpg" alt="佐藤さん" fallback="🙂" fallbackBg="#2a1320" fallbackSize={22} />
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 16 }}>
-          {(el ? [
-            { icon: "😮", text: "{知|し}らないうちに{自分|じぶん}の{顔|かお}が{公開|こうかい}されていた。891{人|にん}が{見|み}ている。" },
-            { icon: "📱", text: "{知|し}らない{人|ひと}にスクリーンショットされた{通知|つうち}が{来|き}た。" },
-            { icon: "😢", text: "「{顔出|かおだ}しNGだったのに…」{事前|じぜん}に{言|い}っていたのに。" },
-            { icon: "😤", text: "「{部活|ぶかつ}の{規則|きそく}でSNS{投稿|とうこう}{禁止|きんし}だったのに！」" },
-            { icon: "📲", text: "{友達|ともだち}から「なんで{勝手|かって}に{投稿|とうこう}したの！？」とメッセージが{来|き}た。" },
-          ] : [
-            { icon: "😮", text: "知らないうちに自分の顔が公開されていた。891人が見ている。" },
-            { icon: "📱", text: "知らない人にスクリーンショットされた通知が来た。" },
-            { icon: "😢", text: "「顔出しNGだったのに…」事前に言っていたのに。" },
-            { icon: "😤", text: "「部活の規則でSNS投稿禁止だったのに！」" },
-            { icon: "📲", text: "友達から「なんで勝手に投稿したの！？」とメッセージが来た。" },
-          ]).map((item, i) => (
-            <div key={i} style={{ display: "flex", gap: 12, alignItems: "flex-start", background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.08)", borderRadius: 14, padding: "14px 16px", animation: `slideUp .4s ${i * .1}s both ease` }}>
-              <div style={{ fontSize: 22, flexShrink: 0 }}>{item.icon}</div>
-              <div style={{ fontSize: 13, color: "rgba(255,255,255,.8)", lineHeight: 1.7 }}><RubyText text={item.text} /></div>
-            </div>
-          ))}
+        <div>
+          <div style={{ fontSize: 14, fontWeight: 800, color: "#fff" }}>佐藤さん</div>
+          <div style={{ fontSize: 11, color: "rgba(255,255,255,.5)" }}>{status}</div>
+        </div>
+      </div>
+    );
+    const satoBubble = (children, variant, key) => {
+      const bs = { maxWidth: "78%", whiteSpace: "pre-line", borderRadius: "4px 16px 16px 16px", padding: "11px 14px", fontSize: 14, lineHeight: 1.7, color: "#d8d2e0", fontStyle: "italic", background: "rgba(216,210,224,.1)", border: "1px solid rgba(168,130,207,.3)" };
+      let bubbleAnim;
+      if (variant === "shock") { Object.assign(bs, { fontSize: 15, color: "#fca5a5", fontWeight: 700, fontStyle: "normal", borderColor: "rgba(252,165,165,.5)", background: "rgba(252,165,165,.08)" }); bubbleAnim = "shudder .5s ease .4s 3"; }
+      if (variant === "fear") Object.assign(bs, { fontSize: 15, color: "#fda4af", fontWeight: 700, fontStyle: "normal", borderColor: "rgba(253,164,175,.5)", background: "rgba(253,164,175,.05)" });
+      if (variant === "big") Object.assign(bs, { fontSize: 16, color: "#efe9f5", fontWeight: 700 });
+      if (variant === "final") Object.assign(bs, { fontSize: 16, color: "#efe9f5", fontWeight: 500, lineHeight: 2.1 });
+      return (
+        <div key={key} style={{ display: "flex", gap: 10, marginBottom: 12, animation: "bubbleIn .5s ease both" }}>
+          <div style={{ width: 40, height: 40, borderRadius: "50%", overflow: "hidden", border: "2px solid rgba(168,130,207,.6)", flexShrink: 0 }}>
+            <ImgWithFallback src="/images/ep6/sato.jpg" alt="佐藤さん" fallback="🙂" fallbackBg="#2a1320" fallbackSize={18} />
+          </div>
+          <div style={{ ...bs, animation: bubbleAnim }}>{children}</div>
+        </div>
+      );
+    };
+    const notifCard = (title, count) => (
+      <div style={{ display: "flex", alignItems: "center", gap: 12, background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.15)", borderRadius: 12, padding: "14px 16px", marginBottom: 12, animation: "bubbleIn .5s ease both" }}>
+        <div style={{ width: 36, height: 36, borderRadius: "50%", background: "#06c755", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }}>💬</div>
+        <div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{title}</div>
+          <div style={{ fontSize: 11, color: rose }}>{count}</div>
+        </div>
+      </div>
+    );
+    const senpaiMsg = (text, key) => (
+      <div key={key} style={{ display: "flex", gap: 10, marginBottom: 10, animation: "bubbleIn .5s ease both" }}>
+        <div style={{ width: 36, height: 36, borderRadius: "50%", background: "#374151", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 900, color: "#fff", border: "2px solid rgba(239,68,68,.4)", flexShrink: 0 }}>{el ? <RubyText text="{先|せん}" /> : "先"}</div>
+        <div>
+          <div style={{ fontSize: 10, fontWeight: 700, color: "#fca5a5", marginBottom: 3 }}>{el ? <RubyText text="{先輩|せんぱい}" /> : "先輩"}</div>
+          <div style={{ background: "rgba(239,68,68,.1)", border: "1px solid rgba(239,68,68,.4)", borderRadius: "4px 14px 14px 14px", color: "#fff", padding: "10px 13px", fontSize: 13, lineHeight: 1.6 }}>{text}</div>
+        </div>
+      </div>
+    );
+    const bigImg = (src, fb, h) => (
+      <div style={{ margin: "0 -20px 16px", height: h, overflow: "hidden", borderRadius: 12, animation: "ep6ZoomIn .8s ease both" }}>
+        <ImgWithFallback src={src} alt="" fallback={fb} fallbackBg="#1a0308" fallbackSize={56} />
+      </div>
+    );
+    const s2Btn = (label, onClick) => (
+      <button onClick={() => { feedback("tap"); onClick(); }}
+        style={{ width: "100%", marginTop: 8, padding: 15, background: `linear-gradient(135deg,${rose},${roseDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${rose}33` }}>
+        <RubyText text={label} />
+      </button>
+    );
+    const s2wrap = (children) => (
+      <EpisodeShell onExit={onExit}>
+      <div style={{ minHeight: "100vh", padding: "20px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff", background: darkBg, filter: darkFilter, transition: "filter 2s ease, background 2s ease" }}>
+        <div style={{ maxWidth: 440, margin: "0 auto" }}>{children}</div>
+      </div>
+      </EpisodeShell>
+    );
+
+    // step0：気づき
+    if (sceneTwoStep === 0) return s2wrap(
+      <>
+        {satoHeader(rt("{自分|じぶん}の{部屋|へや}・{夜|よる}", "自分の部屋・夜"))}
+        {bigImg("/images/ep6/sato_sad.jpg", "😢", 280)}
+        {satoBubble(rt("スマホがブブッと{震|ふる}えた。", "スマホがブブッと震えた。"))}
+        {notifCard(rt("クラスのグループ", "クラスのグループ"), rt("{新着|しんちゃく}メッセージ 5{件|けん}", "新着メッセージ 5件"))}
+        {satoBubble(rt("あれ…?\nみんな、なんか{騒|さわ}いでる?", "あれ…?\nみんな、なんか騒いでる?"))}
+        {s2Btn(el ? "グループを{見|み}てみる →" : "グループを見てみる →", () => setSceneTwoStep(1))}
+      </>
+    );
+
+    // step1：ショック
+    if (sceneTwoStep === 1) return s2wrap(
+      <>
+        {satoHeader(rt("グループを{開|ひら}いた", "グループを開いた"))}
+        {bigImg("/images/ep6/taiikusai.jpg", "🏃‍♀️🏃‍♂️🎉", 240)}
+        {satoBubble(rt("えっ…\nこれ、{私|わたし}…?", "えっ…\nこれ、私…?"), "shock")}
+        {satoBubble(rt("{体育祭|たいいくさい}の{写真|しゃしん}が、\n{勝手|かって}に、ネットに{公開|こうかい}されてる。", "体育祭の写真が、\n勝手に、ネットに公開されてる。"))}
+        {s2Btn("…", () => setSceneTwoStep(2))}
+      </>
+    );
+
+    // step2：嫌悪（2段階）
+    if (sceneTwoStep === 2) return s2wrap(
+      <>
+        {satoHeader(rt("スマホを{見|み}つめている", "スマホを見つめている"))}
+        {satoBubble(rt("いやだな…", "いやだな…"), "big")}
+        {revealCount >= 1 && satoBubble(rt("{私|わたし}の{顔|かお}。\n{許可|きょか}、{取|と}られてないのに。", "私の顔。\n許可、取られてないのに。"), undefined, "r1")}
+        {s2Btn("…", () => revealCount === 0 ? setRevealCount(1) : setSceneTwoStep(3))}
+      </>
+    );
+
+    // step3：恐怖（3段階・ここから darken）
+    if (sceneTwoStep === 3) return s2wrap(
+      <>
+        {satoHeader(rt("いいね{数|すう}を{見|み}た", "いいね数を見た"))}
+        <div style={{ textAlign: "center", margin: "16px 0", animation: "slideUp .5s ease" }}>
+          <div style={{ fontSize: 54, fontWeight: 900, color: "#fca5a5", fontFamily: "'DotGothic16',monospace", textShadow: "0 0 20px rgba(252,165,165,.4)", animation: "ep6RedFlash 1.2s ease both" }}>891</div>
+          <div style={{ fontSize: 13, color: "rgba(255,255,255,.6)" }}>{rt("{人|にん}がこの{写真|しゃしん}を{見|み}た", "人がこの写真を見た")}</div>
+        </div>
+        {revealCount >= 1 && satoBubble(rt("891{人|にん}が、\n{私|わたし}の{顔|かお}を、{見|み}たってこと…?", "891人が、\n私の顔を、見たってこと…?"), "fear", "r1")}
+        {revealCount >= 2 && satoBubble(rt("なんだか、こわい。", "なんだか、こわい。"), undefined, "r2")}
+        {s2Btn("…", () => revealCount < 2 ? setRevealCount(revealCount + 1) : setSceneTwoStep(4))}
+      </>
+    );
+
+    // step4：後悔（2段階）
+    if (sceneTwoStep === 4) return s2wrap(
+      <>
+        {satoHeader(rt("{思|おも}い{出|だ}している", "思い出している"))}
+        {satoBubble(rt("{私|わたし}、{前|まえ}に{言|い}ったよね…\n「{部活|ぶかつ}の{規則|きそく}で、SNS{投稿|とうこう}は{禁止|きんし}」だって。", "私、前に言ったよね…\n「部活の規則で、SNS投稿は禁止」だって。"))}
+        {revealCount >= 1 && satoBubble(rt("なんで…?", "なんで…?"), "big", "r1")}
+        {s2Btn("…", () => revealCount === 0 ? setRevealCount(1) : setSceneTwoStep(5))}
+      </>
+    );
+
+    // step5：追い打ち（先輩からのLINE・darken2）
+    if (sceneTwoStep === 5) return s2wrap(
+      <>
+        {satoHeader(rt("{通知|つうち}が、{来|き}た", "通知が、来た"))}
+        {notifCard(rt("{部活|ぶかつ}の{先輩|せんぱい}", "部活の先輩"), rt("{新着|しんちゃく}メッセージ 2{件|けん}", "新着メッセージ 2件"))}
+        {senpaiMsg(rt("ちょっと、これ{顧問|こもん}に{怒|おこ}られるんじゃない?", "ちょっと、これ顧問に怒られるんじゃない?"), "m1")}
+        {senpaiMsg(rt("なんで{勝手|かって}に{投稿|とうこう}OKしちゃったの!?", "なんで勝手に投稿OKしちゃったの!?"), "m2")}
+        {s2Btn("…", () => setSceneTwoStep(6))}
+      </>
+    );
+
+    // step6：沈む（締め）
+    return s2wrap(
+      <>
+        {satoHeader("…")}
+        <div style={{ marginTop: 30 }}>
+          {satoBubble(rt("いやだ…\n\nなんで、こんなことに、\nなっちゃったんだろう。\n\n{私|わたし}、OKなんて\n{言|い}ってないのに——", "いやだ…\n\nなんで、こんなことに、\nなっちゃったんだろう。\n\n私、OKなんて\n言ってないのに——"), "final")}
         </div>
         {/* 出典：ピンク・レディー事件判決（最高裁平成24年2月2日判決）、法廷内写真撮影事件判決（最高裁昭和44年12月24日判決） */}
-        <div style={{ fontSize: 10.5, color: "rgba(255,255,255,.4)", lineHeight: 1.7, marginBottom: 14, padding: "0 2px" }}>
+        <div style={{ fontSize: 10.5, color: "rgba(255,255,255,.4)", lineHeight: 1.7, margin: "18px 2px 14px" }}>
           <RubyText text={el ? "{肖像権|しょうぞうけん}について：{最高裁判所|さいこうさいばんしょ}は、{人|ひと}の{容|よう}ぼう{等|とう}を{本人|ほんにん}の{許可|きょか}なく{撮影|さつえい}・{公表|こうひょう}することは{肖像権|しょうぞうけん}を{侵害|しんがい}するものとして{不法|ふほう}{行為|こうい}{法上|ほうじょう}{違法|いほう}となり{得|え}ると{判示|はんじ}している（{出典|しゅってん}：ピンク・レディー{事件|じけん}{判決|はんけつ}、{法廷内|ほうていない}{写真|しゃしん}{撮影|さつえい}{事件|じけん}{判決|はんけつ}）。これは{芸能人|げいのうじん}だけでなく、すべての{人|ひと}に{認|みと}められる{権利|けんり}。" : "肖像権について：最高裁判所は、人の容ぼう等を本人の許可なく撮影・公表することは肖像権を侵害するものとして不法行為法上違法となり得ると判示している（出典：ピンク・レディー事件判決、法廷内写真撮影事件判決）。これは芸能人だけでなく、すべての人に認められる権利。"} />
         </div>
-        <button onClick={() => { feedback("horror"); setPhase("scene3"); }}
-          style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${rose},${roseDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
-          <RubyText text={el ? "{続|つづ}きを{見|み}る →" : "続きを見る →"} />
-        </button>
-      </div>
-    </div>
-    </EpisodeShell>
-  );
+        {s2Btn(el ? "{続|つづ}ける →" : "続ける →", () => setPhase("scene3"))}
+      </>
+    );
+  }
 
   // ── SCENE 3: 削除しようとしたら ──
   if (phase === "scene3") return (
