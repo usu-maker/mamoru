@@ -733,6 +733,9 @@ const GlobalStyle = () => (
     @keyframes greenPulse {0%,100%{background:rgba(110,200,140,0)} 50%{background:rgba(110,200,140,.15)}}
     @keyframes ep5Pop {0%{opacity:0;transform:scale(.3)} 70%{transform:scale(1.15)} 100%{opacity:1;transform:scale(1)}}
     @keyframes ep5YouPulse {0%,100%{box-shadow:0 0 0 0 rgba(236,72,153,.7)} 50%{box-shadow:0 0 0 8px rgba(236,72,153,0)}}
+    @keyframes floatUp {0%{opacity:0;transform:translateY(0) scale(.5) rotate(0deg)} 10%{opacity:1;transform:translateY(-20px) scale(1.2) rotate(-5deg)} 100%{opacity:0;transform:translateY(-300px) scale(.8) rotate(15deg)}}
+    @keyframes bump {0%,100%{transform:scale(1)} 50%{transform:scale(1.2)}}
+    @keyframes ep6Pop {0%{opacity:0;transform:scale(.3)} 70%{transform:scale(1.1)} 100%{opacity:1;transform:scale(1)}}
   `}</style>
 );
 
@@ -17733,11 +17736,84 @@ function Episode6({ onComplete, onExit }) {
   const el = ageMode === "elementary";
   const [phase, setPhase] = useState("parent_intro");
   const [postLikes, setPostLikes] = useState(12);
-  const [likeStep, setLikeStep] = useState(0);
+  const [castStep, setCastStep] = useState(0);
+  const [likeAnimDone, setLikeAnimDone] = useState(false);  // いいねカウント＆ハート演出の完了
+  const [likeBump, setLikeBump] = useState(false);          // 数字の bump アニメ
+  const [timeLabel, setTimeLabel] = useState("");           // 経過時間表示（stage連動）
+  const [hearts, setHearts] = useState([]);                 // 上昇するハート粒子
   const [checklistDone, setChecklistDone] = useState([]);
+  // viewswitch（視点切替）用
+  const [vsStep, setVsStep] = useState(0);                  // 0:告知 1:ライト移動 2:確定
+  const [vsMoving, setVsMoving] = useState(false);          // ライトを右へ移すトリガ
+  const [vsDarkSwap, setVsDarkSwap] = useState(false);      // 人物の明暗反転
+  const [vsNarr, setVsNarr] = useState(0);                  // ナレーション切替 0/1
 
   const rose = "#f43f5e";
   const roseDark = "#be123c";
+
+  // ── SCENE1：いいねリアルタイムカウントアップ＋ハート粒子 ──
+  useEffect(() => {
+    if (phase !== "scene1") return;
+    const stages = [
+      { from: 12,  to: 47,  duration: 1500, time: "1時間前", timeEl: "1{時間|じかん}{前|まえ}", heartInterval: 80 },
+      { from: 47,  to: 132, duration: 1800, time: "1日前",   timeEl: "1{日|にち}{前|まえ}",     heartInterval: 50 },
+      { from: 132, to: 891, duration: 3200, time: "1週間前", timeEl: "1{週間|しゅうかん}{前|まえ}", heartInterval: 25 },
+    ];
+    setPostLikes(12); setLikeAnimDone(false); setLikeBump(false); setHearts([]);
+    setTimeLabel(el ? stages[0].timeEl : stages[0].time);
+    const emojis = ["❤️", "💖", "💕", "💗"];
+    let cancelled = false, rafId = null, heartTimer = null, stageTimeout = null, heartId = 0;
+    const removeTimers = [];
+    const addHeart = () => {
+      const id = heartId++;
+      setHearts(h => [...h, { id, left: 5 + Math.random() * 82, emoji: emojis[Math.floor(Math.random() * emojis.length)], size: 16 + Math.random() * 16 }]);
+      removeTimers.push(setTimeout(() => { if (!cancelled) setHearts(h => h.filter(x => x.id !== id)); }, 2500));
+    };
+    const runStage = (idx) => {
+      if (cancelled) return;
+      if (idx >= stages.length) {
+        setPostLikes(891); setLikeBump(true);
+        removeTimers.push(setTimeout(() => { if (!cancelled) setLikeBump(false); }, 400));
+        setLikeAnimDone(true);
+        return;
+      }
+      const st = stages[idx];
+      setTimeLabel(el ? st.timeEl : st.time);
+      const start = performance.now();
+      heartTimer = setInterval(addHeart, st.heartInterval);
+      const tick = (now) => {
+        if (cancelled) return;
+        const p = Math.min(1, (now - start) / st.duration);
+        const eased = 1 - Math.pow(1 - p, 3); // easeOutCubic
+        setPostLikes(Math.round(st.from + (st.to - st.from) * eased));
+        if (p < 1) { rafId = requestAnimationFrame(tick); }
+        else {
+          setPostLikes(st.to);
+          clearInterval(heartTimer); heartTimer = null;
+          stageTimeout = setTimeout(() => runStage(idx + 1), 300);
+        }
+      };
+      rafId = requestAnimationFrame(tick);
+    };
+    runStage(0);
+    return () => {
+      cancelled = true;
+      if (rafId) cancelAnimationFrame(rafId);
+      if (heartTimer) clearInterval(heartTimer);
+      if (stageTimeout) clearTimeout(stageTimeout);
+      removeTimers.forEach(clearTimeout);
+    };
+  }, [phase, el]);
+
+  // ── VIEWSWITCH：ライト移動後の明暗反転・ナレーション切替・自動遷移 ──
+  useEffect(() => {
+    if (phase !== "viewswitch" || !vsMoving) return;
+    const t = [];
+    t.push(setTimeout(() => setVsDarkSwap(true), 400));  // 人物の明暗が反転
+    t.push(setTimeout(() => setVsNarr(1), 1200));        // ナレーション差し替え
+    t.push(setTimeout(() => setVsStep(2), 2800));        // 確定へ
+    return () => t.forEach(clearTimeout);
+  }, [phase, vsMoving]);
 
   const checklistItems = el ? [
     "{写真|しゃしん}を{撮|と}る{前|まえ}に「{撮|と}っていい？」と{聞|き}く",
@@ -17748,17 +17824,6 @@ function Episode6({ onComplete, onExit }) {
     "投稿する前に「あげていい？」と確認する",
     "どこに・どんな形で公開するかを説明してから聞く",
   ];
-
-  useEffect(() => {
-    if (phase !== "scene1") return;
-    if (likeStep >= 3) return;
-    const targets = [47, 132, 891];
-    const t = setTimeout(() => {
-      setPostLikes(targets[likeStep]);
-      setLikeStep(s => s + 1);
-    }, [2000, 4000, 7000][likeStep]);
-    return () => clearTimeout(t);
-  }, [phase, likeStep]);
 
   if (phase === "parent_intro") return (
     <EpisodeIntroCard epKey="ep6" onStart={() => setPhase("intro")} />
@@ -17779,12 +17844,64 @@ function Episode6({ onComplete, onExit }) {
         <strong style={{ color: rose }}><RubyText text={el ? "{悪意|あくい}がなくても、{知|し}らなかったでは{済|す}まない" : "悪意がなくても、知らなかったでは済まない"} /></strong>
       </div>
       <OwlSay mood="worried" e={el ? "{肖像権|しょうぞうけん}は{全員|ぜんいん}の{権利|けんり}。{今日|きょう}{一緒|いっしょ}に{学|まな}ぼう🦉" : "肖像権は全員の権利。今日一緒に学ぼう🦉"}>肖像権は全員の権利。今日一緒に学ぼう🦉</OwlSay>
-      <button onClick={() => { feedback("tap"); setPhase("scene1"); }} style={{ background: `linear-gradient(135deg,${rose},${roseDark})`, border: "none", borderRadius: 50, padding: "15px 44px", fontSize: 16, fontWeight: 900, color: "#fff", cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${rose}44`, marginTop: 8 }}>
+      <button onClick={() => { feedback("tap"); setPhase("cast"); }} style={{ background: `linear-gradient(135deg,${rose},${roseDark})`, border: "none", borderRadius: 50, padding: "15px 44px", fontSize: 16, fontWeight: 900, color: "#fff", cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${rose}44`, marginTop: 8 }}>
         <RubyText text={el ? "{体験|たいけん}スタート" : "体験スタート"} />
       </button>
     </div>
     </EpisodeShell>
   );
+
+  // ── CAST: 登場人物紹介 ──
+  if (phase === "cast") {
+    const cast = el ? [
+      { img: "you_realistic.jpg", name: "あなた", fb: "🙂", l1: "SNSが{好|す}きで、{楽|たの}しいことはすぐ{投稿|とうこう}しちゃう。", l2: "みんなと{一緒|いっしょ}の{思|おも}い{出|で}を、みんなにシェアしたい。" },
+      { img: "sato.jpg", name: "佐藤さん", fb: "🙂", l1: "{同|おな}じクラスで、よく{一緒|いっしょ}にいる{友達|ともだち}。", l2: "ちょっと{控|ひか}えめで、{自分|じぶん}の{気持|きも}ちはあまり{言|い}わないタイプ。" },
+    ] : [
+      { img: "you_realistic.jpg", name: "あなた", fb: "🙂", l1: "SNSが好きで、楽しいことはすぐ投稿しちゃう。", l2: "みんなと一緒の思い出を、みんなにシェアしたい。" },
+      { img: "sato.jpg", name: "佐藤さん", fb: "🙂", l1: "同じクラスで、よく一緒にいる友達。", l2: "ちょっと控えめで、自分の気持ちはあまり言わないタイプ。" },
+    ];
+    const m = cast[castStep];
+    const last = castStep >= cast.length - 1;
+    return (
+      <EpisodeShell onExit={onExit}>
+      <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#1a0308,#0a0105)", padding: "28px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
+        <div style={{ maxWidth: 440, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 18 }}>
+            <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: rose, letterSpacing: ".2em", marginBottom: 6 }}>CAST</div>
+            <div style={{ fontSize: 13, color: "rgba(255,255,255,.6)" }}><RubyText text={el ? "あおぞら{中学校|ちゅうがっこう}で{起|お}きうる、ある{日|ひ}のできごと" : "あおぞら中学校で起きうる、ある日のできごと"} /></div>
+          </div>
+
+          <div key={castStep} style={{ background: `${rose}0c`, border: `1px solid ${rose}30`, borderRadius: 20, padding: "26px 20px 22px", textAlign: "center", animation: "cardIn .45s ease" }}>
+            <div style={{ width: 140, height: 140, borderRadius: "50%", overflow: "hidden", margin: "0 auto 14px", border: `2px solid ${rose}`, boxShadow: `0 6px 20px ${rose}44`, animation: "ep6Pop .5s ease" }}>
+              <ImgWithFallback src={`/images/ep6/${m.img}`} alt={m.name} fallback={m.fb} fallbackBg="#2a0a12" fallbackSize={56} />
+            </div>
+            <div style={{ fontSize: 22, fontWeight: 900, color: "#fff", marginBottom: 10 }}>{m.name}</div>
+            <div style={{ fontSize: 14, color: "#ffe4e8", lineHeight: 1.9 }}>
+              <RubyText text={m.l1} /><br /><RubyText text={m.l2} />
+            </div>
+          </div>
+
+          <div style={{ display: "flex", justifyContent: "center", gap: 8, margin: "16px 0 4px" }}>
+            {cast.map((_, i) => (
+              <div key={i} style={{ width: i === castStep ? 22 : 8, height: 8, borderRadius: 4, background: i === castStep ? rose : "rgba(255,255,255,.2)", transition: "all .3s ease" }} />
+            ))}
+          </div>
+
+          {last && (
+            <div style={{ animation: "slideUp .4s ease" }}>
+              <OwlSay mood="worried" e="2{人|にん}とも、ふつうの{仲良|なかよ}し。<br />でも{今日|きょう}、SNSのちょっとした{行動|こうどう}が、{関係|かんけい}を{大|おお}きく{揺|ゆ}らすことになる。">2人とも、ふつうの仲良し。<br />でも今日、SNSのちょっとした行動が、関係を大きく揺らすことになる。</OwlSay>
+            </div>
+          )}
+
+          <button onClick={() => { feedback("tap"); last ? setPhase("scene1") : setCastStep(s => s + 1); }}
+            style={{ width: "100%", marginTop: 14, padding: 15, background: `linear-gradient(135deg,${rose},${roseDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${rose}33` }}>
+            {last ? <RubyText text={el ? "{体験|たいけん}スタート →" : "体験スタート →"} /> : <RubyText text={el ? "{次|つぎ}の{人|ひと} →" : "次の人 →"} />}
+          </button>
+        </div>
+      </div>
+      </EpisodeShell>
+    );
+  }
 
   // ── SCENE 1: 投稿する側の体験 ──
   if (phase === "scene1") return (
@@ -17801,17 +17918,27 @@ function Episode6({ onComplete, onExit }) {
           </div>
         </div>
         {/* 投稿 */}
-        <div style={{ background: "#fff", marginBottom: 8 }}>
+        <div style={{ background: "#fff", marginBottom: 8, position: "relative" }}>
           <div style={{ padding: "12px 14px", display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{ width: 36, height: 36, borderRadius: "50%", background: "linear-gradient(135deg,#f43f5e,#f97316)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>🙂</div>
+            <div style={{ width: 36, height: 36, borderRadius: "50%", overflow: "hidden", flexShrink: 0, border: "1px solid #eee" }}>
+              <ImgWithFallback src="/images/ep6/you_realistic.jpg" alt="あなた" fallback="🙂" fallbackBg="#fde68a" fallbackSize={16} />
+            </div>
             <div>
               <div style={{ fontSize: 13, fontWeight: 700, color: "#000" }}>あなた</div>
               <div style={{ fontSize: 11, color: "#6b7280" }}><RubyText text={el ? "{体育祭|たいいくさい}の{翌日|よくじつ}" : "体育祭の翌日"} /></div>
             </div>
             <div style={{ marginLeft: "auto", fontSize: 18, color: "#000" }}>⋯</div>
           </div>
-          <div style={{ width: "100%", height: 280, background: "linear-gradient(135deg,#fde68a,#fbbf24,#f97316)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 80 }}>🏃‍♀️🏃‍♂️🎉</div>
-          <div style={{ padding: "10px 14px" }}>
+          <div style={{ width: "100%", height: 280, background: "#000" }}>
+            <ImgWithFallback src="/images/ep6/taiikusai.jpg" alt="体育祭の写真" fallback="🏃‍♀️🏃‍♂️🎉" fallbackBg="linear-gradient(135deg,#fde68a,#fbbf24,#f97316)" fallbackSize={64} />
+          </div>
+          <div style={{ position: "relative", padding: "10px 14px" }}>
+            {/* ハート粒子（actionsエリアに重ねる） */}
+            <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none", zIndex: 5 }}>
+              {hearts.map(h => (
+                <span key={h.id} style={{ position: "absolute", bottom: 8, left: `${h.left}%`, fontSize: h.size, animation: "floatUp 2.5s ease-out forwards" }}>{h.emoji}</span>
+              ))}
+            </div>
             <div style={{ display: "flex", gap: 16, marginBottom: 8 }}>
               <span style={{ fontSize: 22 }}>❤️</span>
               <span style={{ fontSize: 22 }}>💬</span>
@@ -17819,19 +17946,20 @@ function Episode6({ onComplete, onExit }) {
               <span style={{ marginLeft: "auto", fontSize: 22 }}>🔖</span>
             </div>
             <div style={{ fontSize: 13, fontWeight: 700, color: "#000", marginBottom: 4 }}>
-              {postLikes.toLocaleString()} <RubyText text={el ? "{件|けん}の{いいね|いいね}" : "件のいいね"} />
+              <span style={{ display: "inline-block", color: likeBump ? "#ef4444" : "#000", animation: likeBump ? "bump .4s ease" : undefined }}>{postLikes.toLocaleString()}</span> <RubyText text={el ? "{件|けん}の{いいね|いいね}" : "件のいいね"} />
             </div>
             <div style={{ fontSize: 13, color: "#000" }}>
               <strong>あなた</strong> <RubyText text={el ? "{最高|さいこう}の{思|おも}い{出|で}💕 #{体育祭|たいいくさい} #{青春|せいしゅん}" : "最高の思い出💕 #体育祭 #青春"} />
             </div>
             <div style={{ fontSize: 11, color: "#6b7280", marginTop: 4 }}>
-              {likeStep === 0 && <RubyText text={el ? "1{日前|にちまえ}" : "1日前"} />}
-              {likeStep === 1 && <RubyText text={el ? "2{日前|にちまえ}" : "2日前"} />}
-              {likeStep >= 2 && <RubyText text={el ? "1{週間前|しゅうかんまえ}" : "1週間前"} />}
+              <RubyText text={timeLabel} />
             </div>
           </div>
         </div>
-        {likeStep >= 3 && (
+        <div style={{ textAlign: "right", padding: "0 16px", fontSize: 10, color: "#9ca3af", marginBottom: 4 }}>
+          <RubyText text={el ? "※{架空|かくう}の{人物|じんぶつ}です" : "※架空の人物です"} />
+        </div>
+        {likeAnimDone && (
           <div style={{ background: "#fff7ed", border: "1px solid #fde68a", borderRadius: 12, margin: "8px 16px", padding: "14px 16px", animation: "slideUp .4s ease" }}>
             <div style={{ fontSize: 13, fontWeight: 900, color: "#92400e", marginBottom: 6 }}>
               <RubyText text={el ? "🎉 {投稿|とうこう}は{大成功|だいせいこう}！いいねが891{件|けん}に！" : "🎉 投稿は大成功！いいねが891件に！"} />
@@ -17841,27 +17969,135 @@ function Episode6({ onComplete, onExit }) {
             </div>
           </div>
         )}
-        {likeStep >= 3 && (
-          <div style={{ padding: "16px" }}>
-            <button onClick={() => { feedback("found"); setPhase("scene2"); }}
-              style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${rose},${roseDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
-              <RubyText text={el ? "{投稿|とうこう}された{側|がわ}の{気持|きも}ちを{見|み}る →" : "投稿された側の気持ちを見る →"} />
-            </button>
-          </div>
+        {likeAnimDone && (
+          <>
+            {/* 出典：総務省「情報通信白書」（SNSでは内容の面白さ・共感を基準に拡散される傾向／情報の信憑性を確認するのは2割程度） */}
+            <div style={{ fontSize: 10, color: "#9ca3af", lineHeight: 1.6, margin: "8px 16px 0" }}>
+              <RubyText text={el ? "{出典|しゅってん}：{総務省|そうむしょう}「{情報|じょうほう}{通信|つうしん}{白書|はくしょ}」より、SNSでは「{内容|ないよう}が{面白|おもしろ}い・{共感|きょうかん}できる」を{基準|きじゅん}に{拡散|かくさん}される{傾向|けいこう}（{情報|じょうほう}の{信憑性|しんぴょうせい}を{確認|かくにん}するのは2{割|わり}{程度|ていど}）" : "出典：総務省「情報通信白書」より、SNSでは「内容が面白い・共感できる」を基準に拡散される傾向（情報の信憑性を確認するのは2割程度）"} />
+            </div>
+            <div style={{ padding: "16px" }}>
+              <button onClick={() => { feedback("found"); setPhase("viewswitch"); }}
+                style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${rose},${roseDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
+                <RubyText text={el ? "{投稿|とうこう}された{側|がわ}の{気持|きも}ちを{見|み}る →" : "投稿された側の気持ちを見る →"} />
+              </button>
+            </div>
+          </>
         )}
       </div>
     </div>
     </EpisodeShell>
   );
 
+  // ── VIEWSWITCH: 視点切替（天井ライトが「あなた」→「佐藤さん」へ） ──
+  if (phase === "viewswitch") {
+    const darkFilter = "brightness(.25) saturate(.3) opacity(.55)";
+    const lightLeft = vsMoving ? "82%" : "18%";
+    const youDark = vsDarkSwap;          // 反転後は「あなた」が暗い
+    const satoDark = !vsDarkSwap;        // 最初は佐藤さんが暗い
+    const person = (img, label, fb, leftPct, dark) => (
+      <div style={{ position: "absolute", bottom: 40, left: `${leftPct}%`, transform: "translateX(-50%)", textAlign: "center", transition: "filter 1.6s ease", filter: dark ? darkFilter : "none", zIndex: 3 }}>
+        <div style={{ width: 80, height: 80, borderRadius: "50%", overflow: "hidden", border: "2px solid rgba(255,255,255,.8)", margin: "0 auto 6px" }}>
+          <ImgWithFallback src={`/images/ep6/${img}`} alt={label} fallback={fb} fallbackBg="#2a0a12" fallbackSize={30} />
+        </div>
+        <div style={{ fontSize: 12, fontWeight: 700, color: "#fff" }}>{label}</div>
+      </div>
+    );
+    const wrap = (children) => (
+      <EpisodeShell onExit={onExit}>
+      <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#1a0308,#020105)", padding: "24px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+        <div style={{ maxWidth: 440, margin: "0 auto", width: "100%" }}>{children}</div>
+      </div>
+      </EpisodeShell>
+    );
+
+    // vsStep=0：切替告知
+    if (vsStep === 0) return wrap(
+      <div style={{ textAlign: "center", animation: "slideUp .4s ease" }}>
+        <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 11, color: rose, letterSpacing: ".2em", marginBottom: 22, animation: "blink 1.5s infinite" }}>VIEWPOINT CHANGE</div>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 14, marginBottom: 24 }}>
+          <div style={{ textAlign: "center" }}>
+            <div style={{ width: 80, height: 80, borderRadius: "50%", overflow: "hidden", border: `2px solid ${rose}`, margin: "0 auto 6px" }}>
+              <ImgWithFallback src="/images/ep6/you_realistic.jpg" alt="あなた" fallback="🙂" fallbackBg="#2a0a12" fallbackSize={30} />
+            </div>
+            <div style={{ fontSize: 12, color: "rgba(255,255,255,.8)" }}>あなた</div>
+          </div>
+          <div style={{ fontSize: 30, color: rose, fontWeight: 900, animation: "slideRight 1.4s infinite" }}>→</div>
+          <div style={{ textAlign: "center" }}>
+            <div style={{ width: 80, height: 80, borderRadius: "50%", overflow: "hidden", border: `2px solid ${rose}`, margin: "0 auto 6px" }}>
+              <ImgWithFallback src="/images/ep6/sato.jpg" alt="佐藤さん" fallback="🙂" fallbackBg="#2a0a12" fallbackSize={30} />
+            </div>
+            <div style={{ fontSize: 12, color: "rgba(255,255,255,.8)" }}>佐藤さん</div>
+          </div>
+        </div>
+        <h2 style={{ fontSize: 20, fontWeight: 900, color: "#fff", margin: "0 0 10px" }}><RubyText text={el ? "{視点|してん}を{切|き}り{替|か}えます" : "視点を切り替えます"} /></h2>
+        <p style={{ fontSize: 13, color: "rgba(255,255,255,.6)", lineHeight: 1.8, marginBottom: 26 }}>
+          <RubyText text={el ? "{投稿|とうこう}した「あなた」の{目線|めせん}から、{投稿|とうこう}された「{佐藤|さとう}さん」の{目線|めせん}へ。" : "投稿した「あなた」の目線から、投稿された「佐藤さん」の目線へ。"} />
+        </p>
+        <button onClick={() => { feedback("tap"); setVsStep(1); }}
+          style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${rose},${roseDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${rose}33` }}>
+          <RubyText text={el ? "{続|つづ}ける →" : "続ける →"} />
+        </button>
+      </div>
+    );
+
+    // vsStep=1：天井ライトのスライド（山場）
+    if (vsStep === 1) return wrap(
+      <div>
+        <div style={{ minHeight: 60, marginBottom: 14, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <p key={vsNarr} style={{ fontSize: 14, color: "#ffe4e8", lineHeight: 1.8, textAlign: "center", margin: 0, animation: "fadeIn .6s ease" }}>
+            {vsNarr === 0
+              ? <RubyText text={el ? "2{人|にん}は{同|おな}じ{体育祭|たいいくさい}にいた。{同|おな}じ{写真|しゃしん}に、{写|うつ}っていた。" : "2人は同じ体育祭にいた。同じ写真に、写っていた。"} />
+              : <RubyText text={el ? "でも{今|いま}、ライトが{当|あ}たるのは——「{写|うつ}された{側|がわ}」の{景色|けしき}。" : "でも今、ライトが当たるのは——「写された側」の景色。"} />}
+          </p>
+        </div>
+        {/* ステージ */}
+        <div style={{ position: "relative", height: 380, borderRadius: 16, overflow: "hidden", background: "linear-gradient(180deg,#0c0608,#1a0d10 60%,#241115)", border: "1px solid rgba(255,255,255,.08)" }}>
+          {/* 天井 */}
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 30, background: "linear-gradient(180deg,#000,#1a1014)", zIndex: 4 }} />
+          {/* 床の光（影楕円） */}
+          <div style={{ position: "absolute", bottom: 28, left: lightLeft, width: 150, height: 46, transform: "translateX(-50%)", borderRadius: "50%", background: "radial-gradient(ellipse at center,rgba(255,225,160,.4),rgba(255,225,160,0) 70%)", transition: "left 2s ease", zIndex: 1 }} />
+          {/* 光のビーム（円錐） */}
+          <div style={{ position: "absolute", top: 20, left: lightLeft, transform: "translateX(-50%)", width: 0, height: 0, borderLeft: "40px solid transparent", borderRight: "40px solid transparent", borderTop: "330px solid rgba(255,220,150,.18)", filter: "blur(6px)", transition: "left 2s ease", zIndex: 1, transformOrigin: "top center" }} />
+          {/* 天井ライト本体 */}
+          <div style={{ position: "absolute", top: 8, left: lightLeft, transform: "translateX(-50%)", width: 18, height: 22, background: "linear-gradient(180deg,#3a3a3a,#1a1a1a)", borderRadius: "3px 3px 5px 5px", transition: "left 2s ease", zIndex: 5 }}>
+            <div style={{ position: "absolute", bottom: -3, left: "50%", transform: "translateX(-50%)", width: 8, height: 8, borderRadius: "50%", background: "#ffe9a8", boxShadow: "0 0 12px 4px rgba(255,220,150,.8)" }} />
+          </div>
+          {/* 人物 */}
+          {person("you_realistic.jpg", "あなた", "🙂", 18, youDark)}
+          {person("sato.jpg", "佐藤さん", "🙂", 82, satoDark)}
+        </div>
+        <button disabled={vsMoving} onClick={() => { feedback("tap"); setVsMoving(true); }}
+          style={{ width: "100%", marginTop: 16, padding: 15, background: `linear-gradient(135deg,${rose},${roseDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: vsMoving ? "default" : "pointer", opacity: vsMoving ? 0.4 : 1, fontFamily: "inherit", boxShadow: `0 8px 24px ${rose}33` }}>
+          <RubyText text={el ? "ライトを{移|うつ}す →" : "ライトを移す →"} />
+        </button>
+      </div>
+    );
+
+    // vsStep=2：確定
+    return wrap(
+      <div style={{ textAlign: "center", animation: "slideUp .4s ease" }}>
+        <div style={{ width: 120, height: 120, borderRadius: "50%", overflow: "hidden", border: `3px solid ${rose}`, margin: "0 auto 18px", boxShadow: `0 6px 24px ${rose}55`, animation: "ep6Pop .6s ease" }}>
+          <ImgWithFallback src="/images/ep6/sato.jpg" alt="佐藤さん" fallback="🙂" fallbackBg="#2a0a12" fallbackSize={48} />
+        </div>
+        <h2 style={{ fontSize: 21, fontWeight: 900, color: "#fff", margin: "0 0 10px" }}><RubyText text={el ? "あなたは{今|いま}、「{佐藤|さとう}さん」です" : "あなたは今、「佐藤さん」です"} /></h2>
+        <p style={{ fontSize: 13, color: "rgba(255,255,255,.6)", lineHeight: 1.8, marginBottom: 26 }}>
+          <RubyText text={el ? "{同|おな}じ{写真|しゃしん}。でも、{見|み}える{景色|けしき}は、まったく{違|ちが}う。" : "同じ写真。でも、見える景色は、まったく違う。"} />
+        </p>
+        <button onClick={() => { feedback("tap"); setPhase("scene2"); }}
+          style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${rose},${roseDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${rose}33` }}>
+          <RubyText text={el ? "{佐藤|さとう}さんとして{見|み}る →" : "佐藤さんとして見る →"} />
+        </button>
+      </div>
+    );
+  }
+
   // ── SCENE 2: 投稿された側の視点 ──
   if (phase === "scene2") return (
     <EpisodeShell onExit={onExit}>
     <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at center,#1a0308,#000)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
-        <div style={{ background: "rgba(244,63,94,.12)", border: "1px solid rgba(244,63,94,.4)", borderRadius: 12, padding: "10px 14px", marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{ fontSize: 16 }}>🔄</span>
-          <span style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: rose, letterSpacing: ".1em" }}><RubyText text={el ? "{視点|してん}{切替|きりかえ}：あなたは{今|いま}「{佐藤|さとう}さん」です" : "視点切替：あなたは今「佐藤さん」です"} /></span>
+        <div style={{ width: "100%", maxWidth: 320, margin: "0 auto 16px", borderRadius: 16, overflow: "hidden", border: "1px solid rgba(244,63,94,.3)", aspectRatio: "16 / 10" }}>
+          <ImgWithFallback src="/images/ep6/sato_sad.jpg" alt="うつむく佐藤さん" fallback="😢" fallbackBg="#1a0308" fallbackSize={56} />
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 16 }}>
           {(el ? [
@@ -17882,6 +18118,10 @@ function Episode6({ onComplete, onExit }) {
               <div style={{ fontSize: 13, color: "rgba(255,255,255,.8)", lineHeight: 1.7 }}><RubyText text={item.text} /></div>
             </div>
           ))}
+        </div>
+        {/* 出典：ピンク・レディー事件判決（最高裁平成24年2月2日判決）、法廷内写真撮影事件判決（最高裁昭和44年12月24日判決） */}
+        <div style={{ fontSize: 10.5, color: "rgba(255,255,255,.4)", lineHeight: 1.7, marginBottom: 14, padding: "0 2px" }}>
+          <RubyText text={el ? "{肖像権|しょうぞうけん}について：{最高裁判所|さいこうさいばんしょ}は、{人|ひと}の{容|よう}ぼう{等|とう}を{本人|ほんにん}の{許可|きょか}なく{撮影|さつえい}・{公表|こうひょう}することは{肖像権|しょうぞうけん}を{侵害|しんがい}するものとして{不法|ふほう}{行為|こうい}{法上|ほうじょう}{違法|いほう}となり{得|え}ると{判示|はんじ}している（{出典|しゅってん}：ピンク・レディー{事件|じけん}{判決|はんけつ}、{法廷内|ほうていない}{写真|しゃしん}{撮影|さつえい}{事件|じけん}{判決|はんけつ}）。これは{芸能人|げいのうじん}だけでなく、すべての{人|ひと}に{認|みと}められる{権利|けんり}。" : "肖像権について：最高裁判所は、人の容ぼう等を本人の許可なく撮影・公表することは肖像権を侵害するものとして不法行為法上違法となり得ると判示している（出典：ピンク・レディー事件判決、法廷内写真撮影事件判決）。これは芸能人だけでなく、すべての人に認められる権利。"} />
         </div>
         <button onClick={() => { feedback("horror"); setPhase("scene3"); }}
           style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${rose},${roseDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
@@ -17928,6 +18168,10 @@ function Episode6({ onComplete, onExit }) {
           <div style={{ fontSize: 12, color: "rgba(255,255,255,.7)", lineHeight: 1.8 }}>
             <RubyText text={el ? "{一度|いちど}ネットに{出|で}た{情報|じょうほう}や{画像|がぞう}は、{完全|かんぜん}に{消|け}すことが{非常|ひじょう}に{難|むずか}しい。{入|い}れ{墨|ずみ}のように{残|のこ}り{続|つづ}けることから「デジタルタトゥー」と{呼|よ}ばれる。{投稿|とうこう}した{瞬間|しゅんかん}から、あなたのコントロールを{離|はな}れる。" : "一度ネットに出た情報や画像は、完全に消すことが非常に難しい。入れ墨のように残り続けることから「デジタルタトゥー」と呼ばれる。投稿した瞬間から、あなたのコントロールを離れる。"} />
           </div>
+          {/* 出典：総務省「インターネットトラブル事例集（2024年版）」、文部科学省「情報モラル教育ポータルサイト」 */}
+          <div style={{ fontSize: 10.5, color: "rgba(255,255,255,.45)", lineHeight: 1.6, marginTop: 8 }}>
+            <RubyText text={el ? "（{出典|しゅってん}：{総務省|そうむしょう}「インターネット トラブル{事例集|じれいしゅう}（2024{年版|ねんばん}）」、{文部科学省|もんぶかがくしょう}「{情報|じょうほう}モラル{教育|きょういく}ポータルサイト」）" : "（出典：総務省「インターネット トラブル事例集（2024年版）」、文部科学省「情報モラル教育ポータルサイト」）"} />
+          </div>
         </div>
         <button onClick={() => { feedback("found"); setPhase("scene4"); }}
           style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${rose},${roseDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
@@ -17966,6 +18210,10 @@ function Episode6({ onComplete, onExit }) {
               <div style={{ fontSize: 13, color: "rgba(255,255,255,.75)", lineHeight: 1.65 }}><RubyText text={t} /></div>
             </div>
           ))}
+        </div>
+        {/* 出典：ピンク・レディー事件判決（最高裁平成24年2月2日判決）ほか */}
+        <div style={{ fontSize: 10.5, color: "rgba(255,255,255,.45)", lineHeight: 1.6, marginBottom: 12, padding: "0 2px" }}>
+          <RubyText text={el ? "※「{本人|ほんにん}の{許可|きょか}なく」という{基準|きじゅん}は、{最高裁|さいこうさい}{判例|はんれい}で{確立|かくりつ}されています。（ピンク・レディー{事件|じけん}{判決|はんけつ}ほか）" : "※「本人の許可なく」という基準は、最高裁判例で確立されています。（ピンク・レディー事件判決ほか）"} />
         </div>
         <div style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.08)", borderRadius: 14, padding: "16px", marginBottom: 14 }}>
           <div style={{ fontSize: 12, fontWeight: 900, color: "#86efac", marginBottom: 10 }}>✅ <RubyText text={el ? "{許可|きょか}を{取|と}る{習慣|しゅうかん} チェックリスト" : "許可を取る習慣 チェックリスト"} /></div>
