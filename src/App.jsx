@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, createContext, useContext } from "react";
+import { useState, useEffect, useRef, createContext, useContext, Fragment } from "react";
 
 // ═══════════════════════════════════════════════════════════════
 // 🌐 I18N — 国際化システム（日・英・韓・中）
@@ -747,6 +747,10 @@ const GlobalStyle = () => (
     @keyframes bubbleIn {from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)}}
     @keyframes ep6RedFlash {0%{color:#fff;transform:scale(.7)} 30%{color:#ef4444;transform:scale(1.2)} 100%{color:#fca5a5;transform:scale(1)}}
     @keyframes ep6ZoomIn {from{opacity:0;transform:scale(1.05)} to{opacity:1;transform:scale(1)}}
+    @keyframes notifShake { 0%,100%{transform:translateX(0)} 10%{transform:translateX(-4px)} 20%{transform:translateX(4px)} 30%{transform:translateX(-3px)} 40%{transform:translateX(3px)} 50%{transform:translateX(-2px)} 60%{transform:translateX(2px)} 70%{transform:translateX(-1px)} 80%{transform:translateX(1px)} }
+    @keyframes ep6Pulse { 0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(6,199,85,.6)} 50%{transform:scale(1.05);box-shadow:0 0 0 6px rgba(6,199,85,0)} }
+    @keyframes nodeFlash { 0%{opacity:0;transform:scale(.3)} 60%{transform:scale(1.2)} 100%{opacity:1;transform:scale(1)} }
+    @keyframes lineDraw { from{opacity:0;width:0} to{opacity:.7;width:var(--w)} }
     .ep6-hl-thumb{position:relative;z-index:2;}
     .ep6-hl-thumb::before{content:'';position:absolute;inset:-40%;background:repeating-conic-gradient(from 0deg at 50% 50%,transparent 0deg,transparent 6deg,rgba(251,191,36,.55) 7deg,rgba(251,191,36,.55) 8deg);z-index:-1;animation:focusSpin 6s linear infinite,focusFade 1.5s ease-in-out infinite;pointer-events:none;mask-image:radial-gradient(circle,transparent 38%,#000 50%,transparent 75%);-webkit-mask-image:radial-gradient(circle,transparent 38%,#000 50%,transparent 75%);}
   `}</style>
@@ -17739,6 +17743,404 @@ function Episode5({ onComplete, onExit }) {
 }
 
 // ─────────────────────────────────────────────
+// ██ EPISODE 6 — SCENE 4: 削除しようとしたら…（あなた視点・削除体験）
+// ─────────────────────────────────────────────
+function Ep6Scene4({
+  el, rose, roseDark, onExit,
+  sceneFourStep, setSceneFourStep,
+  showDeleteModal, setShowDeleteModal,
+  waitingMessage, setWaitingMessage,
+  messageArrived,
+  swipeIndex, setSwipeIndex,
+  seenPages, setSeenPages,
+  spreadNodes,
+  setPhase,
+}) {
+  const rt = (elText, plainText) => <RubyText text={el ? elText : plainText} />;
+  const [showMsgButton, setShowMsgButton] = useState(false);
+  const [dragOffset, setDragOffset] = useState(0);
+  const dragRef = useRef({ active: false, startX: 0, startY: 0, dir: null, offset: 0 });
+  const stageRef = useRef(null);
+
+  // 通知が来てから 0.6秒後に「メッセージを見る」ボタンを出す
+  useEffect(() => {
+    if (!messageArrived) { setShowMsgButton(false); return; }
+    const t = setTimeout(() => setShowMsgButton(true), 600);
+    return () => clearTimeout(t);
+  }, [messageArrived]);
+
+  // ── 共通パーツ ──
+  const wrap = (children) => (
+    <EpisodeShell onExit={onExit}>
+      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#13101e,#08060f)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
+        <div style={{ maxWidth: 440, margin: "0 auto" }}>{children}</div>
+      </div>
+    </EpisodeShell>
+  );
+  const s4Btn = (label, onClick, danger = false) => (
+    <button onClick={() => { feedback("tap"); onClick(); }}
+      style={{ width: "100%", marginTop: 16, padding: 15, background: danger ? "linear-gradient(135deg,#ef4444,#b91c1c)" : `linear-gradient(135deg,${rose},${roseDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${danger ? "#ef444455" : rose + "33"}` }}>
+      <RubyText text={label} />
+    </button>
+  );
+  const dotBtn = (onClick) => (
+    <button onClick={() => { feedback("tap"); onClick(); }}
+      style={{ width: "100%", marginTop: 16, padding: 15, background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.18)", borderRadius: 14, color: "#fff", fontSize: 18, fontWeight: 900, letterSpacing: ".3em", cursor: "pointer", fontFamily: "inherit" }}>…</button>
+  );
+  const satoHeader = (status) => (
+    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+      <div style={{ width: 42, height: 42, borderRadius: "50%", overflow: "hidden", border: "2px solid rgba(168,130,207,.6)", flexShrink: 0 }}>
+        <ImgWithFallback src="/images/ep6/sato.jpg" alt="佐藤さん" fallback="🙂" fallbackBg="#2a1320" fallbackSize={20} />
+      </div>
+      <div>
+        <div style={{ fontSize: 14, fontWeight: 800, color: "#fff" }}>佐藤さん</div>
+        <div style={{ fontSize: 11, color: "rgba(255,255,255,.5)" }}>{status}</div>
+      </div>
+    </div>
+  );
+  const satoLine = (children, key, delay = 0) => (
+    <div key={key} style={{ display: "flex", gap: 8, marginBottom: 8, animation: `bubbleIn .5s ease ${delay}s both` }}>
+      <div style={{ width: 32, height: 32, borderRadius: "50%", overflow: "hidden", border: "1.5px solid rgba(168,130,207,.5)", flexShrink: 0 }}>
+        <ImgWithFallback src="/images/ep6/sato.jpg" alt="佐藤さん" fallback="🙂" fallbackBg="#2a1320" fallbackSize={15} />
+      </div>
+      <div style={{ maxWidth: "75%", whiteSpace: "pre-line", background: "rgba(255,255,255,.1)", border: "1px solid rgba(255,255,255,.15)", borderRadius: "4px 14px 14px 14px", padding: "10px 13px", fontSize: 13.5, lineHeight: 1.65, color: "#e8e4ef" }}>{children}</div>
+    </div>
+  );
+  const innerVoice = (children, accent = "#fbbf24", rgba = "251,191,36") => (
+    <div style={{ borderLeft: `3px solid ${accent}`, background: `rgba(${rgba},.08)`, borderRadius: "0 10px 10px 0", padding: "12px 14px", margin: "16px 0", fontSize: 13.5, lineHeight: 1.85, fontStyle: "italic", color: "#e8e4ef", whiteSpace: "pre-line" }}>{children}</div>
+  );
+  const notifCard = (title, count) => (
+    <div style={{ display: "flex", alignItems: "center", gap: 12, background: "rgba(244,63,94,.15)", border: "1px solid #f43f5e", borderRadius: 12, padding: "14px 16px", marginBottom: 14, boxShadow: "0 0 20px rgba(244,63,94,.3)", animation: messageArrived ? "notifShake .5s ease, bubbleIn .3s ease both" : "bubbleIn .3s ease both" }}>
+      <div style={{ width: 36, height: 36, borderRadius: "50%", background: "#06c755", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0, animation: "ep6Pulse 1s ease infinite" }}>💬</div>
+      <div>
+        <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{title}</div>
+        <div style={{ fontSize: 11, color: "#fca5a5" }}>{count}</div>
+      </div>
+    </div>
+  );
+  const urlBar = (url, lock = "#16a34a") => (
+    <div style={{ display: "flex", alignItems: "center", gap: 6, background: "#2a2a35", borderRadius: "8px 8px 0 0", padding: "7px 10px", fontSize: 10.5 }}>
+      <span style={{ color: lock }}>🔒</span>
+      <span style={{ color: "#cbd5e1", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{url}</span>
+    </div>
+  );
+
+  // ── スワイプ処理（ポインタ：touch + マウス両対応） ──
+  const SWIPE_VOICES = el ? [
+    "えっ……\n{掲示板|けいじばん}に、{私|わたし}の{友達|ともだち}の{顔|かお}が……",
+    "{名前|なまえ}まで…\n「あおぞら{中|ちゅう}の1{年|ねん}A{組|くみ}」って{書|か}かれてる…",
+    "{転載|てんさい}されたのが{拡散|かくさん}されて、もう…どこまで{広|ひろ}がってるの…?",
+  ] : [
+    "えっ……\n掲示板に、私の友達の顔が……",
+    "名前まで…\n「あおぞら中の1年A組」って書かれてる…",
+    "転載されたのが拡散されて、もう…どこまで広がってるの…?",
+  ];
+  const goTo = (idx) => {
+    if (idx < 0 || idx > 2) return;
+    setSwipeIndex(idx);
+    setSeenPages(prev => { const n = new Set(prev); n.add(idx); return n; });
+  };
+  const onPointerDown = (e) => {
+    dragRef.current = { active: true, startX: e.clientX, startY: e.clientY, dir: null, offset: 0 };
+  };
+  const onPointerMove = (e) => {
+    const d = dragRef.current;
+    if (!d.active) return;
+    const dx = e.clientX - d.startX, dy = e.clientY - d.startY;
+    if (!d.dir) {
+      if (Math.abs(dx) > 10 || Math.abs(dy) > 10) d.dir = Math.abs(dx) > Math.abs(dy) ? "h" : "v";
+    }
+    if (d.dir === "h") {
+      if (stageRef.current && e.pointerId != null) { try { stageRef.current.setPointerCapture(e.pointerId); } catch (err) {} }
+      let off = dx;
+      if ((swipeIndex === 0 && dx > 0) || (swipeIndex === 2 && dx < 0)) off = dx * 0.3;
+      d.offset = off;
+      setDragOffset(off);
+    }
+  };
+  const onPointerUp = () => {
+    const d = dragRef.current;
+    if (!d.active) return;
+    d.active = false;
+    if (d.dir === "h") {
+      if (d.offset <= -50 && swipeIndex < 2) goTo(swipeIndex + 1);
+      else if (d.offset >= 50 && swipeIndex > 0) goTo(swipeIndex - 1);
+    }
+    d.offset = 0;
+    setDragOffset(0);
+  };
+
+  // ── PAGE 1: 掲示板 ──
+  const boardRes = (num, name, date, id, body, img) => (
+    <div style={{ marginBottom: 10 }}>
+      <div style={{ fontSize: 10, color: "#666", marginBottom: 2 }}>
+        <span style={{ color: "#4b9c5c", fontWeight: 700 }}>{num}: </span>
+        <span style={{ color: "#4b9c5c", fontWeight: 700 }}>{name} </span>
+        <span style={{ color: "#999" }}>{date} ID:{id}</span>
+      </div>
+      <div style={{ fontSize: 11, color: "#222", lineHeight: 1.6, whiteSpace: "pre-line" }}>{body}</div>
+      {img && (
+        <div style={{ marginTop: 6, maxWidth: "100%", borderRadius: 4, overflow: "hidden", border: "1px solid #ddd", height: 110 }}>
+          <ImgWithFallback src="/images/ep6/taiikusai.jpg" alt="" fallback="🏃‍♀️🏃‍♂️🎉" fallbackBg="linear-gradient(135deg,#fde68a,#fbbf24,#f97316)" fallbackSize={30} />
+        </div>
+      )}
+    </div>
+  );
+  const mark = (t) => <span style={{ background: "#ffeb99", padding: "0 3px" }}>{t}</span>;
+  const quote = (t) => <span style={{ color: "#00f", fontWeight: 700 }}>{t}</span>;
+  const page1 = (
+    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+      {urlBar("minna-matome.net/aozora/789")}
+      <div style={{ background: "#fff", padding: "12px 14px", color: "#222", flex: 1, overflowY: "auto", fontSize: 11 }}>
+        <div style={{ color: "#cc0000", fontWeight: 700, borderBottom: "1px dashed #cc0000", paddingBottom: 6, marginBottom: 10 }}>あおぞら中学校スレ Part3</div>
+        {boardRes("786", "名無しさん", "26/06/15(月) 21:14:08", "abc.xy.L1", "体育祭の写真きたーw", true)}
+        {boardRes("787", "名無しさん", "26/06/15(月) 21:22:34", "def.gh.L2", <>{quote(">>786")}{"\n誰? "}{mark("可愛い子発見")}{" wwww\nこれ保存した"}</>)}
+        {boardRes("788", "名無しさん", "26/06/15(月) 21:35:12", "ijk.lm.L3", <>{quote(">>787")}{"\nたしか"}{mark("あおぞら中の1年A組")}{"って書いてあった\n佐藤って名前らしい"}</>)}
+        {boardRes("789", "名無しさん", "26/06/15(月) 22:01:45", "nop.qr.L1", "え、特定はやめろよ\nでも顔は好きだわ")}
+        {boardRes("790", "名無しさん", "26/06/15(月) 22:14:22", "stu.vw.L2", <>{quote(">>788")}{"\n"}{mark("情報サンクス")}{"\nこれでフォローできるわw"}</>)}
+      </div>
+    </div>
+  );
+
+  // ── PAGE 2: ブログ ──
+  const blogComment = (name, text) => (
+    <div style={{ background: "#f5f5f5", padding: "6px 8px", borderRadius: 4, marginBottom: 6 }}>
+      <div style={{ color: "#666", fontSize: 9, fontWeight: 700, marginBottom: 2 }}>{name}</div>
+      <div style={{ fontSize: 11, color: "#333" }}>{text}</div>
+    </div>
+  );
+  const page2 = (
+    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+      {urlBar("kawaiikochan-news.blog.jp/...")}
+      <div style={{ background: "#fff", padding: 14, color: "#222", flex: 1, overflowY: "auto", fontSize: 12 }}>
+        <div style={{ borderBottom: "2px solid #ff6b9d", paddingBottom: 6, marginBottom: 10 }}>
+          <div style={{ color: "#ff6b9d", fontWeight: 700, fontSize: 13 }}>かわいこちゃん速報</div>
+          <div style={{ fontSize: 10, color: "#999" }}>2026年06月15日</div>
+        </div>
+        <div style={{ fontWeight: 700, fontSize: 14, color: "#111", marginBottom: 4 }}>【拡散希望】今日の体育祭で可愛い女子中学生発見!w</div>
+        <div style={{ fontSize: 10, color: "#999", marginBottom: 10 }}>2026/06/15 22:30 | カテゴリ: 学校 | コメント(47)</div>
+        <div style={{ fontSize: 12, lineHeight: 1.8, color: "#333", whiteSpace: "pre-line" }}>{"みなさんこんばんは!管理人です。\n\n今日Instagramで見つけた可愛い女子中学生の画像をシェアします〜\n"}{mark("あおぞら中学校 1年A組")}{"の体育祭らしいです"}</div>
+        <div style={{ margin: "10px 0", borderRadius: 6, overflow: "hidden", height: 130 }}>
+          <ImgWithFallback src="/images/ep6/taiikusai.jpg" alt="" fallback="🏃‍♀️🏃‍♂️🎉" fallbackBg="linear-gradient(135deg,#fde68a,#fbbf24,#f97316)" fallbackSize={36} />
+        </div>
+        <div style={{ fontSize: 12, lineHeight: 1.8, color: "#333", whiteSpace: "pre-line" }}>{"写ってる子全員かわいくないですか?\n特に右から2番目の子www"}</div>
+        <div style={{ marginTop: 8, fontSize: 10, color: "#3b82f6" }}>#あおぞら中 #JC #体育祭 #拡散希望</div>
+        <div style={{ borderTop: "1px dashed #ccc", marginTop: 14, paddingTop: 10 }}>
+          {blogComment("通りすがり", "かわええwww 保存した")}
+          {blogComment("名無し", "これ本人気づいてないやろwww")}
+          {blogComment("匿名", "佐藤って名前なんやな")}
+          {blogComment("名無し", "もっと写真ないんですか?")}
+        </div>
+      </div>
+    </div>
+  );
+
+  // ── PAGE 3: X（旧Twitter）──
+  const xReply = (name, handle, text) => (
+    <div style={{ borderBottom: "1px solid #2f3336", padding: "6px 0", fontSize: 11, color: "#71767b" }}>
+      <span style={{ color: "#fff", fontWeight: 700 }}>{name}</span> {handle}<br />{text}
+    </div>
+  );
+  const page3 = (
+    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+      {urlBar("x.com/matome_kawaii_jc/status/...")}
+      <div style={{ background: "#000", padding: 14, color: "#e7e9ea", flex: 1, overflowY: "auto", border: "1px solid #2f3336" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+          <div style={{ width: 38, height: 38, borderRadius: "50%", background: "linear-gradient(135deg,#a982cf,#6d28d9)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>🤖</div>
+          <div style={{ lineHeight: 1.3 }}>
+            <div style={{ fontWeight: 700, fontSize: 13 }}>かわいいJC速報bot</div>
+            <div style={{ fontSize: 11, color: "#71767b" }}>@matome_kawaii_jc · 2時間</div>
+          </div>
+        </div>
+        <div style={{ fontSize: 13, lineHeight: 1.6, whiteSpace: "pre-line", marginBottom: 10 }}>{"今日見つけた可愛い子\n"}{mark("あおぞら中学校の体育祭")}{"らしい\n#拡散希望 #JC #体育祭"}</div>
+        <div style={{ borderRadius: 10, overflow: "hidden", border: "1px solid #2f3336", height: 140, marginBottom: 8 }}>
+          <ImgWithFallback src="/images/ep6/taiikusai.jpg" alt="" fallback="🏃‍♀️🏃‍♂️🎉" fallbackBg="linear-gradient(135deg,#fde68a,#fbbf24,#f97316)" fallbackSize={36} />
+        </div>
+        <div style={{ display: "flex", gap: 16, fontSize: 10, color: "#71767b", borderTop: "1px solid #2f3336", paddingTop: 8, marginBottom: 8 }}>
+          <span>💬 38</span><span>🔁 287</span><span>❤️ 1,420</span>
+        </div>
+        {xReply("通報案件", "@tsuhou_pls", "これ本人の許可とってるんですか?")}
+        {xReply("JC好き", "@love_jc", "かわいいwww保存した")}
+        {xReply("名無し", "@anon123", "あおぞら中まで広まってて草")}
+      </div>
+    </div>
+  );
+
+  // ════════ STEPS ════════
+
+  // step0: 佐藤さんからの削除依頼
+  if (sceneFourStep === 0) return wrap(
+    <>
+      {satoHeader(rt("{新着|しんちゃく}メッセージ", "新着メッセージ"))}
+      {satoLine(rt("ねぇ、あの{写真|しゃしん}、{消|け}してくれない?", "ねぇ、あの写真、消してくれない?"), "l1", 0)}
+      {satoLine(rt("{私|わたし}、SNSに{出|で}るの{嫌|いや}だから…", "私、SNSに出るの嫌だから…"), "l2", 0.5)}
+      {innerVoice(rt("……うん。すぐ{消|け}す。\n(さっき{軽|かる}い{気持|きも}ちで{投稿|とうこう}しちゃったけど…ちゃんと、{消|け}そう)", "……うん。すぐ消す。\n(さっき軽い気持ちで投稿しちゃったけど…ちゃんと、消そう)"))}
+      {s4Btn(el ? "{投稿|とうこう}を{消|け}しに{行|い}く →" : "投稿を消しに行く →", () => setSceneFourStep(1))}
+    </>
+  );
+
+  // step1: Instagram風で投稿を削除
+  if (sceneFourStep === 1) return wrap(
+    <>
+      <div style={{ fontSize: 11, color: "rgba(255,255,255,.5)", marginBottom: 8, letterSpacing: ".05em" }}>Instagram</div>
+      <div style={{ background: "#fff", borderRadius: 12, overflow: "hidden", color: "#000" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 12px" }}>
+          <div style={{ width: 34, height: 34, borderRadius: "50%", overflow: "hidden", background: "linear-gradient(135deg,#fbbf24,#f97316)", flexShrink: 0 }}>
+            <ImgWithFallback src="/images/ep6/you_realistic.jpg" alt="あなた" fallback="🙂" fallbackBg="#fde68a" fallbackSize={16} />
+          </div>
+          <div style={{ flex: 1, fontSize: 13, fontWeight: 700, color: "#000" }}>あなた</div>
+          <div onClick={() => { feedback("tap"); setShowDeleteModal(true); }} style={{ fontSize: 22, fontWeight: 900, color: "#000", cursor: "pointer", padding: "0 6px", lineHeight: 1 }}>⋯</div>
+        </div>
+        <div style={{ width: "100%", height: 200, overflow: "hidden" }}>
+          <ImgWithFallback src="/images/ep6/taiikusai.jpg" alt="" fallback="🏃‍♀️🏃‍♂️🎉" fallbackBg="linear-gradient(135deg,#fde68a,#fbbf24,#f97316)" fallbackSize={44} />
+        </div>
+        <div style={{ display: "flex", gap: 14, padding: "10px 12px 4px", fontSize: 20 }}>
+          <span>❤️</span><span>💬</span><span>📤</span>
+        </div>
+        <div style={{ padding: "0 12px 12px", fontSize: 12, fontWeight: 800, color: "#000" }}>891{rt("{件|けん}", "件")}のいいね</div>
+      </div>
+      {innerVoice(rt("よし、{消|け}そう。「⋯」をタップして、{削除|さくじょ}メニューを{出|だ}す。", "よし、消そう。「⋯」をタップして、削除メニューを出す。"))}
+      {showDeleteModal && (
+        <div onClick={() => setShowDeleteModal(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, animation: "fadeIn .2s ease" }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ background: "#1a1a1f", padding: 20, borderRadius: 16, maxWidth: 300, width: "85%", textAlign: "center", animation: "popIn .3s ease" }}>
+            <div style={{ fontSize: 16, fontWeight: 900, color: "#fff", marginBottom: 8 }}><RubyText text={el ? "{投稿|とうこう}を{削除|さくじょ}しますか?" : "投稿を削除しますか?"} /></div>
+            <div style={{ fontSize: 12, color: "rgba(255,255,255,.55)", marginBottom: 18 }}><RubyText text={el ? "この{操作|そうさ}は{取|と}り{消|け}せません" : "この操作は取り消せません"} /></div>
+            <div style={{ display: "flex", gap: 10 }}>
+              <button onClick={() => { feedback("tap"); setShowDeleteModal(false); }} style={{ flex: 1, padding: 11, background: "#374151", border: "none", borderRadius: 10, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}><RubyText text={el ? "キャンセル" : "キャンセル"} /></button>
+              <button onClick={() => { feedback("tap"); setShowDeleteModal(false); setSceneFourStep(2); }} style={{ flex: 1, padding: 11, background: "#ef4444", border: "none", borderRadius: 10, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}><RubyText text={el ? "{削除|さくじょ}" : "削除"} /></button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+
+  // step2: 削除完了 + 待機 + 着信音 + 通知
+  if (sceneFourStep === 2) return wrap(
+    <>
+      <div style={{ textAlign: "center", margin: "20px 0 8px" }}>
+        <div style={{ fontSize: 50, color: "#22c55e", animation: "bubbleIn .4s ease both" }}>✓</div>
+        <div style={{ fontSize: 16, fontWeight: 900, color: "#22c55e", marginTop: 6 }}><RubyText text={el ? "{投稿|とうこう}を{削除|さくじょ}しました" : "投稿を削除しました"} /></div>
+      </div>
+      {innerVoice(rt("…よし。これでもう、{誰|だれ}も{見|み}られないはず。", "…よし。これでもう、誰も見られないはず。"))}
+      {!waitingMessage && !messageArrived && dotBtn(() => setWaitingMessage(true))}
+      {waitingMessage && !messageArrived && (
+        <div style={{ textAlign: "center", margin: "24px 0", animation: "fadeIn .5s ease" }}>
+          <div style={{ fontSize: 30 }}>⏳</div>
+          <div style={{ fontSize: 12, color: "rgba(255,255,255,.5)", marginTop: 4 }}><RubyText text={el ? "{数分後|すうふんご}…" : "数分後…"} /></div>
+        </div>
+      )}
+      {messageArrived && notifCard("佐藤さん", rt("{新着|しんちゃく}メッセージ 2{件|けん}", "新着メッセージ 2件"))}
+      {showMsgButton && s4Btn(el ? "佐藤さんからのメッセージを{見|み}る →" : "佐藤さんからのメッセージを見る →", () => setSceneFourStep(3), true)}
+    </>
+  );
+
+  // step3: 佐藤さんからの追撃メッセージ
+  if (sceneFourStep === 3) return wrap(
+    <>
+      {satoHeader(rt("{数分後|すうふんご}…", "数分後…"))}
+      {notifCard("佐藤さん", rt("{新着|しんちゃく}メッセージ 2{件|けん}", "新着メッセージ 2件"))}
+      {satoLine(rt("ねぇ、{消|き}えてないんだけど…", "ねぇ、消えてないんだけど…"), "l1", 0)}
+      {satoLine(<>{rt("これ{見|み}て", "これ見て")}{"\n→ kawaiikochan-news.blog.jp/..."}</>, "l2", 0.4)}
+      {innerVoice(rt("……え?\n{消|け}したはずなのに、どういうこと?", "……え?\n消したはずなのに、どういうこと?"), "#fca5a5", "252,165,165")}
+      {s4Btn(el ? "{送|おく}られてきたURLを{見|み}る →" : "送られてきたURLを見る →", () => setSceneFourStep(4), true)}
+    </>
+  );
+
+  // step4: スワイプで3つの怪しいサイト確認
+  if (sceneFourStep === 4) return wrap(
+    <>
+      <div style={{ textAlign: "center", fontSize: 11, color: "rgba(255,255,255,.5)", marginBottom: 8 }}>← {rt("{左右|さゆう}にスワイプ", "左右にスワイプ")} →</div>
+      <div ref={stageRef} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp}
+        style={{ width: "100%", height: 520, overflow: "hidden", borderRadius: 12, touchAction: "pan-y", cursor: "grab", background: "#000" }}>
+        <div style={{ width: "300%", height: "100%", display: "flex", transform: `translateX(calc(${-swipeIndex * 33.3333}% + ${dragOffset}px))`, transition: dragRef.current.active ? "none" : "transform .35s cubic-bezier(.25,.8,.3,1)" }}>
+          <div style={{ width: "33.3333%", padding: "0 6px", boxSizing: "border-box", display: "flex", flexDirection: "column" }}>{page1}</div>
+          <div style={{ width: "33.3333%", padding: "0 6px", boxSizing: "border-box", display: "flex", flexDirection: "column" }}>{page2}</div>
+          <div style={{ width: "33.3333%", padding: "0 6px", boxSizing: "border-box", display: "flex", flexDirection: "column" }}>{page3}</div>
+        </div>
+      </div>
+      <div style={{ display: "flex", justifyContent: "center", gap: 7, margin: "12px 0" }}>
+        {[0, 1, 2].map(i => (
+          <div key={i} style={{ width: i === swipeIndex ? 20 : 8, height: 8, borderRadius: 4, background: i === swipeIndex ? "#a982cf" : "rgba(255,255,255,.25)", transition: "all .3s ease" }} />
+        ))}
+      </div>
+      {innerVoice(<RubyText text={SWIPE_VOICES[swipeIndex]} />, "#fca5a5", "252,165,165")}
+      {seenPages.size >= 3 && s4Btn(el ? "{続|つづ}ける →" : "続ける →", () => setSceneFourStep(5))}
+    </>
+  );
+
+  // step5: 拡散の地図（左→右の木構造）
+  if (sceneFourStep === 5) {
+    const ORIGIN = { xPct: -8, yPct: 50 }; // spread-zone外（左の原点）
+    const findParent = (node) => {
+      if (node.level === 1) return ORIGIN;
+      const candidates = spreadNodes.filter(n => n.level === node.level - 1);
+      if (!candidates.length) return ORIGIN;
+      return candidates.reduce((best, c) => Math.abs(c.yPct - node.yPct) < Math.abs(best.yPct - node.yPct) ? c : best, candidates[0]);
+    };
+    return wrap(
+      <>
+        <div style={{ fontSize: 14, lineHeight: 1.8, marginBottom: 12, textAlign: "center" }}>
+          <RubyText text={el ? "{私|わたし}が{消|け}せたのは、" : "私が消せたのは、"} />
+          <span style={{ color: "#86efac", fontWeight: 700 }}><RubyText text={el ? "{左|ひだり}の1つだけ" : "左の1つだけ"} /></span>。<br />
+          <RubyText text={el ? "でも、{画像|がぞう}はもう…" : "でも、画像はもう…"} />
+        </div>
+        <div style={{ position: "relative", width: "100%", height: 380, padding: 10, borderRadius: 12, overflow: "hidden", boxSizing: "border-box", background: "linear-gradient(90deg, rgba(34,197,94,.08) 0%, rgba(244,63,94,.08) 30%, rgba(244,63,94,.18) 100%)" }}>
+          <div style={{ position: "absolute", top: 8, left: 8, fontSize: 10, color: "#86efac", background: "rgba(34,197,94,.15)", borderRadius: 6, padding: "2px 7px", zIndex: 4 }}>✓ <RubyText text={el ? "{削除済|さくじょず}み" : "削除済み"} /></div>
+          {/* あなたの投稿ノード（原点） */}
+          <div style={{ position: "absolute", left: 8, top: "50%", transform: "translateY(-50%)", width: 80, textAlign: "center", zIndex: 3 }}>
+            <div style={{ width: 50, height: 50, borderRadius: "50%", margin: "0 auto 4px", background: "linear-gradient(135deg,#22c55e,#15803d)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, boxShadow: "0 0 16px rgba(34,197,94,.6)" }}>📱</div>
+            <div style={{ fontSize: 10, color: "#86efac", fontWeight: 700, lineHeight: 1.3 }}><RubyText text={el ? "あなたの{投稿|とうこう}" : "あなたの投稿"} /></div>
+            <div style={{ fontSize: 9, color: "rgba(255,255,255,.5)" }}>(<RubyText text={el ? "{削除|さくじょ}" : "削除"} />)</div>
+          </div>
+          {/* spread-zone */}
+          <div style={{ position: "absolute", left: 90, right: 8, top: 8, bottom: 30 }}>
+            {spreadNodes.map(node => {
+              const parent = findParent(node);
+              const lineLeft = parent.xPct;
+              const lineTop = parent.yPct;
+              const dx = node.xPct - parent.xPct;
+              const dy = node.yPct - parent.yPct;
+              const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+              const len = Math.sqrt(dx * dx + dy * dy);
+              return (
+                <Fragment key={node.id}>
+                  <div style={{ position: "absolute", left: `${lineLeft}%`, top: `${lineTop}%`, width: `${len}%`, height: 1.5, background: "linear-gradient(90deg, rgba(244,63,94,.6), rgba(244,63,94,.3))", transformOrigin: "left center", transform: `rotate(${angle}deg)`, opacity: .7 }} />
+                  <div style={{ position: "absolute", left: `${node.xPct}%`, top: `${node.yPct}%`, transform: "translate(-50%,-50%)", width: 30, height: 30, borderRadius: "50%", background: "rgba(244,63,94,.2)", border: "1.5px solid rgba(244,63,94,.7)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, boxShadow: "0 0 10px rgba(244,63,94,.3)", animation: "nodeFlash .4s ease both" }}>{node.icon}</div>
+                </Fragment>
+              );
+            })}
+          </div>
+          <div style={{ position: "absolute", right: 4, top: 50, writingMode: "vertical-rl", color: "#fca5a5", background: "rgba(244,63,94,.15)", borderRadius: 6, padding: "6px 3px", fontSize: 11, zIndex: 4, animation: "bubbleIn .5s ease 3s both" }}><RubyText text={el ? "{継続的|けいぞくてき}に{拡散|かくさん}" : "継続的に拡散"} /></div>
+          <div style={{ position: "absolute", bottom: 6, left: 0, right: 0, textAlign: "center", color: "#fca5a5", fontSize: 12, animation: "bubbleIn .5s ease 3.5s both" }}><RubyText text={el ? "…そして、もう{数|かぞ}えきれない" : "…そして、もう数えきれない"} /></div>
+        </div>
+        {innerVoice(rt("もう、どこにあるのか{分|わ}からない…\n{消|け}せる{範囲|はんい}なんて、{本当|ほんとう}に{小|ちい}さい。", "もう、どこにあるのか分からない…\n消せる範囲なんて、本当に小さい。"), "#fca5a5", "252,165,165")}
+        {dotBtn(() => setSceneFourStep(6))}
+      </>
+    );
+  }
+
+  // step6: 後悔の独白
+  if (sceneFourStep === 6) return wrap(
+    <>
+      <div style={{ borderLeft: "3px solid #fca5a5", background: "rgba(252,165,165,.08)", borderRadius: "0 10px 10px 0", padding: "16px 16px", margin: "30px 0 0", fontSize: 14, lineHeight: 2.2, color: "#f1ecf5", whiteSpace: "pre-line" }}>
+        {rt("{軽|かる}い{気持|きも}ちで{投稿|とうこう}しちゃったけど…\n\n{投稿|とうこう}する{前|まえ}に、もっと{考|かんが}えるべきだった。\n\n佐藤さんに、なんて{言|い}えばいいんだろう。", "軽い気持ちで投稿しちゃったけど…\n\n投稿する前に、もっと考えるべきだった。\n\n佐藤さんに、なんて言えばいいんだろう。")}
+      </div>
+      {dotBtn(() => setSceneFourStep(7))}
+    </>
+  );
+
+  // step7: モリィの締め
+  return wrap(
+    <>
+      <div style={{ marginTop: 16 }}>
+        <OwlSay mood="worried" e={el ? "{投稿|とうこう}は、{一瞬|いっしゅん}。<br />でも、その{一瞬|いっしゅん}の{影響|えいきょう}は、ずっと{続|つづ}く。<br /><br />だから——{投稿|とうこう}する「{前|まえ}」に、{立|た}ち{止|ど}まることが{大切|たいせつ}。<br /><br />おうちの{人|ひと}と、{話|はな}してみよう。<br />あなたが{今日|きょう}{学|まな}んだことを。" : "投稿は、一瞬。<br />でも、その一瞬の影響は、ずっと続く。<br /><br />だから——投稿する「前」に、立ち止まることが大切。<br /><br />おうちの人と、話してみよう。<br />あなたが今日学んだことを。"}>投稿は、一瞬。<br />でも、その一瞬の影響は、ずっと続く。<br /><br />だから——投稿する「前」に、立ち止まることが大切。<br /><br />おうちの人と、話してみよう。<br />あなたが今日学んだことを。</OwlSay>
+      </div>
+      {s4Btn(el ? "おうちの{人|ひと}と{話|はな}す →" : "おうちの人と話す →", () => setPhase("pre_dialogue"))}
+    </>
+  );
+}
+
 // ─────────────────────────────────────────────
 // ██ EPISODE 6 — 勝手に投稿、してない？
 // 肖像権・プライバシー侵害体験
@@ -17768,12 +18170,89 @@ function Episode6({ onComplete, onExit }) {
   // scene2（佐藤さんの感情の流れ）用
   const [sceneTwoStep, setSceneTwoStep] = useState(0);      // 0〜6
   const [revealCount, setRevealCount] = useState(0);        // 統合シーン内の段階表示
+  // scene4（削除体験・あなた視点）用
+  const [sceneFourStep, setSceneFourStep] = useState(0);    // 0〜7
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [waitingMessage, setWaitingMessage] = useState(false); // step2の待機状態
+  const [messageArrived, setMessageArrived] = useState(false); // step2で通知が来たか
+  const [swipeIndex, setSwipeIndex] = useState(0);          // step4のスワイプページ
+  const [seenPages, setSeenPages] = useState(new Set([0])); // step4で見たページ
+  const [spreadNodes, setSpreadNodes] = useState([]);       // step5の拡散ノード
 
   const rose = "#f43f5e";
   const roseDark = "#be123c";
 
   // sceneTwoStep 切替時に revealCount をリセット
   useEffect(() => { setRevealCount(0); }, [sceneTwoStep]);
+
+  // 着信音（Web Audio APIで生成・ライブラリ不要）
+  const playNotificationSound = () => {
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      const ctx = new AC();
+      const playTone = (freq, startTime, duration, vol = 0.15) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0, ctx.currentTime + startTime);
+        gain.gain.linearRampToValueAtTime(vol, ctx.currentTime + startTime + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + startTime + duration);
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.start(ctx.currentTime + startTime);
+        osc.stop(ctx.currentTime + startTime + duration);
+      };
+      playTone(1320, 0, 0.15);
+      playTone(880, 0.08, 0.25);
+    } catch (e) {}
+  };
+
+  // sceneFourStep 切替時に関連 state を初期化
+  useEffect(() => {
+    setShowDeleteModal(false);
+    setWaitingMessage(false);
+    setMessageArrived(false);
+    if (sceneFourStep === 4) {
+      setSwipeIndex(0);
+      setSeenPages(new Set([0]));
+    }
+  }, [sceneFourStep]);
+
+  // scene4 step2：待機開始 → 4秒後に着信音＋通知
+  useEffect(() => {
+    if (phase !== "scene4" || sceneFourStep !== 2 || !waitingMessage) return;
+    const t = setTimeout(() => {
+      playNotificationSound();
+      setMessageArrived(true);
+    }, 4000);
+    return () => clearTimeout(t);
+  }, [phase, sceneFourStep, waitingMessage]);
+
+  // scene4 step5：拡散ノードを3レベルで展開
+  useEffect(() => {
+    if (phase !== "scene4" || sceneFourStep !== 5) { setSpreadNodes([]); return; }
+    const icons1 = ["💬", "🐦", "📋"];
+    const icons2 = ["💬", "💬", "🐦", "🐦", "📋", "📋", "📷"];
+    const icons3 = ["💬", "🐦", "📋", "💬", "🐦", "📋", "📷", "💬", "🐦", "📋"];
+    const build = (level, xPct, icons) =>
+      icons.map((icon, i) => ({
+        level, icon, xPct,
+        yPct: ((i + 1) / (icons.length + 1)) * 100,
+      }));
+    const all = [
+      ...build(1, 18, icons1),
+      ...build(2, 50, icons2),
+      ...build(3, 85, icons3),
+    ];
+    setSpreadNodes([]);
+    const timers = [];
+    all.forEach((node, index) => {
+      timers.push(setTimeout(() => {
+        setSpreadNodes(prev => [...prev, { ...node, id: index }]);
+      }, 200 + index * 80));
+    });
+    return () => timers.forEach(clearTimeout);
+  }, [phase, sceneFourStep]);
 
   // monologue step3：[…]押下 → 0.3秒後に「まあいっか」吹き出し＋投稿ボタン
   useEffect(() => {
@@ -18409,6 +18888,7 @@ function Episode6({ onComplete, onExit }) {
         {satoHeader("…")}
         <div style={{ marginTop: 30 }}>
           {satoBubble(rt("いやだ…\n\nなんで、こんなことに、\nなっちゃったんだろう。\n\n{私|わたし}、OKなんて\n{言|い}ってないのに——", "いやだ…\n\nなんで、こんなことに、\nなっちゃったんだろう。\n\n私、OKなんて\n言ってないのに——"), "final")}
+          {satoBubble(rt("これって、{法律的|ほうりつてき}にどうなの…?", "これって、法律的にどうなの…?"), "big", "bridge")}
         </div>
         {/* 出典：ピンク・レディー事件判決（最高裁平成24年2月2日判決）、法廷内写真撮影事件判決（最高裁昭和44年12月24日判決） */}
         <div style={{ fontSize: 10.5, color: "rgba(255,255,255,.4)", lineHeight: 1.7, margin: "18px 2px 14px" }}>
@@ -18419,61 +18899,12 @@ function Episode6({ onComplete, onExit }) {
     );
   }
 
-  // ── SCENE 3: 削除しようとしたら ──
+  // ── SCENE 3: 肖像権を知る（佐藤さんの「法律的にどうなの?」を受ける） ──
   if (phase === "scene3") return (
-    <EpisodeShell onExit={onExit}>
-    <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at center,#1a0308,#000)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
-      <div style={{ maxWidth: 440, margin: "0 auto" }}>
-        <div style={{ textAlign: "center", marginBottom: 20 }}>
-          <div style={{ fontSize: 56, marginBottom: 12, animation: "hackBlink 2s infinite" }}>🗑️</div>
-          <h2 style={{ fontSize: 20, fontWeight: 900, color: "#fff", margin: "0 0 8px" }}>
-            <RubyText text={el ? "{削除|さくじょ}しようとしたら…" : "削除しようとしたら…"} />
-          </h2>
-        </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 16 }}>
-          {(el ? [
-            { icon: "📷", color: "#fca5a5", text: "すでに{別|べつ}の{人|ひと}が{保存|ほぞん}・スクリーンショットしていた" },
-            { icon: "🔄", color: "#fdba74", text: "まとめサイトに{転載|てんさい}されていた" },
-            { icon: "🌐", color: "#fca5a5", text: "SNSで{拡散|かくさん}され、{削除|さくじょ}しても{残|のこ}り{続|つづ}ける" },
-            { icon: "🔍", color: "#fdba74", text: "{画像|がぞう}{検索|けんさく}にも{引|ひ}っかかるようになった" },
-          ] : [
-            { icon: "📷", color: "#fca5a5", text: "すでに別の人が保存・スクリーンショットしていた" },
-            { icon: "🔄", color: "#fdba74", text: "まとめサイトに転載されていた" },
-            { icon: "🌐", color: "#fca5a5", text: "SNSで拡散され、削除しても残り続ける" },
-            { icon: "🔍", color: "#fdba74", text: "画像検索にも引っかかるようになった" },
-          ]).map((item, i) => (
-            <div key={i} style={{ display: "flex", gap: 12, alignItems: "flex-start", background: "rgba(255,255,255,.04)", border: `1px solid ${item.color}33`, borderRadius: 14, padding: "14px 16px", animation: `slideUp .4s ${i * .12}s both ease` }}>
-              <div style={{ fontSize: 22, flexShrink: 0 }}>{item.icon}</div>
-              <div style={{ fontSize: 13, color: "rgba(255,255,255,.8)", lineHeight: 1.7 }}><RubyText text={item.text} /></div>
-            </div>
-          ))}
-        </div>
-        <div style={{ background: "rgba(244,63,94,.08)", border: "1px solid rgba(244,63,94,.3)", borderRadius: 14, padding: "14px 16px", marginBottom: 14 }}>
-          <div style={{ fontSize: 14, fontWeight: 900, color: rose, marginBottom: 6 }}>
-            <RubyText text={el ? "「デジタルタトゥー」とは？" : "「デジタルタトゥー」とは？"} />
-          </div>
-          <div style={{ fontSize: 12, color: "rgba(255,255,255,.7)", lineHeight: 1.8 }}>
-            <RubyText text={el ? "{一度|いちど}ネットに{出|で}た{情報|じょうほう}や{画像|がぞう}は、{完全|かんぜん}に{消|け}すことが{非常|ひじょう}に{難|むずか}しい。{入|い}れ{墨|ずみ}のように{残|のこ}り{続|つづ}けることから「デジタルタトゥー」と{呼|よ}ばれる。{投稿|とうこう}した{瞬間|しゅんかん}から、あなたのコントロールを{離|はな}れる。" : "一度ネットに出た情報や画像は、完全に消すことが非常に難しい。入れ墨のように残り続けることから「デジタルタトゥー」と呼ばれる。投稿した瞬間から、あなたのコントロールを離れる。"} />
-          </div>
-          {/* 出典：総務省「インターネットトラブル事例集（2024年版）」、文部科学省「情報モラル教育ポータルサイト」 */}
-          <div style={{ fontSize: 10.5, color: "rgba(255,255,255,.45)", lineHeight: 1.6, marginTop: 8 }}>
-            <RubyText text={el ? "（{出典|しゅってん}：{総務省|そうむしょう}「インターネット トラブル{事例集|じれいしゅう}（2024{年版|ねんばん}）」、{文部科学省|もんぶかがくしょう}「{情報|じょうほう}モラル{教育|きょういく}ポータルサイト」）" : "（出典：総務省「インターネット トラブル事例集（2024年版）」、文部科学省「情報モラル教育ポータルサイト」）"} />
-          </div>
-        </div>
-        <button onClick={() => { feedback("found"); setPhase("scene4"); }}
-          style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${rose},${roseDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
-          <RubyText text={el ? "{肖像権|しょうぞうけん}を{知|し}る →" : "肖像権を知る →"} />
-        </button>
-      </div>
-    </div>
-    </EpisodeShell>
-  );
-
-  // ── SCENE 4: 肖像権を知る ──
-  if (phase === "scene4") return (
     <EpisodeShell onExit={onExit}>
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#031220,#020c18)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
+        <OwlSay mood="explaining" e={el ? "——「{法律的|ほうりつてき}にどうなの?」っていう、いまの{問|と}い。<br />{実|じつ}はね、そこにはちゃんと、{答|こた}えがあるんだ。<br />「{肖像権|しょうぞうけん}」っていう、{君|きみ}を{守|まも}るための{権利|けんり}のことを、{一緒|いっしょ}に{見|み}てみよう。" : "——「法律的にどうなの?」っていう、いまの問い。<br />実はね、そこにはちゃんと、答えがあるんだ。<br />「肖像権」っていう、君を守るための権利のことを、一緒に見てみよう。"}>——「法律的にどうなの?」っていう、いまの問い。<br />実はね、そこにはちゃんと、答えがあるんだ。<br />「肖像権」っていう、君を守るための権利のことを、一緒に見てみよう。</OwlSay>
         <OwlSay mood="worried" e={el ? "{肖像権|しょうぞうけん}は{全|すべ}ての{人|ひと}の{権利|けんり}。「{本人|ほんにん}の{許可|きょか}なく」が{全|すべ}ての{基準|きじゅん}だよ🦉" : "肖像権は全ての人の権利。「本人の許可なく」が全ての基準だよ🦉"}>肖像権は全ての人の権利。「本人の許可なく」が全ての基準だよ🦉</OwlSay>
         <div style={{ background: `${rose}0a`, border: `1px solid ${rose}22`, borderRadius: 18, padding: "16px", marginBottom: 14 }}>
           <div style={{ fontSize: 14, fontWeight: 900, color: rose, marginBottom: 12 }}>📸 <RubyText text={el ? "{肖像権|しょうぞうけん}とは？" : "肖像権とは？"} /></div>
@@ -18513,15 +18944,28 @@ function Episode6({ onComplete, onExit }) {
           ))}
         </div>
         {checklistDone.length >= checklistItems.length && (
-          <button onClick={() => setPhase("pre_dialogue")}
+          <button onClick={() => { feedback("found"); setPhase("scene4"); }}
             style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${rose},${roseDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", animation: "popIn .4s ease" }}>
-            <RubyText text={el ? "おうちの{人|ひと}と{話|はな}そう 💬 →" : "おうちの人と話そう 💬 →"} />
+            <RubyText text={el ? "つぎへ →" : "つぎへ →"} />
           </button>
         )}
       </div>
     </div>
     </EpisodeShell>
   );
+
+  // ── SCENE 4: 削除しようとしたら…（あなた視点・削除体験8ステップ） ──
+  if (phase === "scene4") return <Ep6Scene4
+    el={el} rose={rose} roseDark={roseDark} onExit={onExit}
+    sceneFourStep={sceneFourStep} setSceneFourStep={setSceneFourStep}
+    showDeleteModal={showDeleteModal} setShowDeleteModal={setShowDeleteModal}
+    waitingMessage={waitingMessage} setWaitingMessage={setWaitingMessage}
+    messageArrived={messageArrived}
+    swipeIndex={swipeIndex} setSwipeIndex={setSwipeIndex}
+    seenPages={seenPages} setSeenPages={setSeenPages}
+    spreadNodes={spreadNodes}
+    setPhase={setPhase}
+  />;
 
   if (phase === "keywords") return (
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fff1f2,#ffe4e8)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
