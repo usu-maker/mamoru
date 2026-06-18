@@ -751,6 +751,10 @@ const GlobalStyle = () => (
     @keyframes ep6Pulse { 0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(6,199,85,.6)} 50%{transform:scale(1.05);box-shadow:0 0 0 6px rgba(6,199,85,0)} }
     @keyframes nodeFlash { 0%{opacity:0;transform:scale(.3)} 60%{transform:scale(1.2)} 100%{opacity:1;transform:scale(1)} }
     @keyframes lineDraw { from{opacity:0;width:0} to{opacity:.7;width:var(--w)} }
+    @keyframes sparkleFloat { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-12px) rotate(15deg)} }
+    @keyframes sparkleFade { 0%,100%{opacity:0} 50%{opacity:.85} }
+    .sparkles { position:absolute; inset:0; pointer-events:none; overflow:hidden; }
+    .sparkle { position:absolute; font-size:14px; animation: sparkleFloat 3s ease-in-out infinite, sparkleFade 3s ease-in-out infinite; opacity:0; }
     .ep6-hl-thumb{position:relative;z-index:2;}
     .ep6-hl-thumb::before{content:'';position:absolute;inset:-40%;background:repeating-conic-gradient(from 0deg at 50% 50%,transparent 0deg,transparent 6deg,rgba(251,191,36,.55) 7deg,rgba(251,191,36,.55) 8deg);z-index:-1;animation:focusSpin 6s linear infinite,focusFade 1.5s ease-in-out infinite;pointer-events:none;mask-image:radial-gradient(circle,transparent 38%,#000 50%,transparent 75%);-webkit-mask-image:radial-gradient(circle,transparent 38%,#000 50%,transparent 75%);}
   `}</style>
@@ -800,12 +804,12 @@ function Confetti({ colors, count = 36 }) {
 
 // 画像フォールバック（React管理下のDOMをinnerHTMLで直接書き換えると
 // 再レンダー時にremoveChildエラーでクラッシュし得るため、stateで切り替える）
-function ImgWithFallback({ src, alt, fallback = "👧", fallbackBg = "#ffd6e0", fallbackSize = 24 }) {
+function ImgWithFallback({ src, alt, fallback = "👧", fallbackBg = "#ffd6e0", fallbackSize = 24, objectFit = "cover" }) {
   const [err, setErr] = useState(false);
   if (err) return (
     <div style={{ width: "100%", height: "100%", background: fallbackBg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: fallbackSize }}>{fallback}</div>
   );
-  return <img src={src} alt={alt} style={{ width: "100%", height: "100%", objectFit: "cover" }} onError={() => setErr(true)} />;
+  return <img src={src} alt={alt} style={{ width: "100%", height: "100%", objectFit }} onError={() => setErr(true)} />;
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -18162,6 +18166,11 @@ function Episode6({ onComplete, onExit }) {
   const [vsMoving, setVsMoving] = useState(false);          // ライトを右へ移すトリガ
   const [vsDarkSwap, setVsDarkSwap] = useState(false);      // 人物の明暗反転
   const [vsNarr, setVsNarr] = useState(0);                  // ナレーション切替 0/1
+  // viewreturn（視点を戻す・佐藤さん→あなた）用
+  const [vr2Step, setVr2Step] = useState(0);                // 0:告知 1:ライト移動 2:確定
+  const [vrMoving, setVrMoving] = useState(false);          // ライトを右へ戻すトリガ
+  const [vrDarkSwap, setVrDarkSwap] = useState(false);      // 人物の明暗反転
+  const [vrNarr, setVrNarr] = useState(0);                  // ナレーション切替 0/1
   // monologue（投稿する側の独白）用
   const [monoStep, setMonoStep] = useState(0);              // 0:余韻 1:フォルダ 2:最高 3:加害
   const [monoTriggered, setMonoTriggered] = useState(false);// step3「…」ボタン押下（集中線フラッシュ）
@@ -18170,6 +18179,9 @@ function Episode6({ onComplete, onExit }) {
   // scene2（佐藤さんの感情の流れ）用
   const [sceneTwoStep, setSceneTwoStep] = useState(0);      // 0〜6
   const [revealCount, setRevealCount] = useState(0);        // 統合シーン内の段階表示
+  const [showPhotoInChat, setShowPhotoInChat] = useState(false); // step1で投稿写真を展開したか
+  const [scene2Step0Notif, setScene2Step0Notif] = useState(false); // step0 通知到着フラグ
+  const [scene2Step5Notif, setScene2Step5Notif] = useState(false); // step5 通知到着フラグ
   // scene4（削除体験・あなた視点）用
   const [sceneFourStep, setSceneFourStep] = useState(0);    // 0〜7
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -18182,8 +18194,42 @@ function Episode6({ onComplete, onExit }) {
   const rose = "#f43f5e";
   const roseDark = "#be123c";
 
-  // sceneTwoStep 切替時に revealCount をリセット
-  useEffect(() => { setRevealCount(0); }, [sceneTwoStep]);
+  // sceneTwoStep 切替時に revealCount 等をリセット
+  useEffect(() => {
+    setRevealCount(0);
+    setShowPhotoInChat(false);
+    setScene2Step0Notif(false);
+    setScene2Step5Notif(false);
+  }, [sceneTwoStep]);
+
+  // scene2 step0：3秒待機 → 着信音＋通知到着
+  useEffect(() => {
+    if (phase !== "scene2" || sceneTwoStep !== 0) return;
+    const t = setTimeout(() => { playNotificationSound(); setScene2Step0Notif(true); }, 3000);
+    return () => clearTimeout(t);
+  }, [phase, sceneTwoStep]);
+
+  // scene2 step5：3秒待機 → 着信音＋通知到着
+  useEffect(() => {
+    if (phase !== "scene2" || sceneTwoStep !== 5) return;
+    const t = setTimeout(() => { playNotificationSound(); setScene2Step5Notif(true); }, 3000);
+    return () => clearTimeout(t);
+  }, [phase, sceneTwoStep]);
+
+  // viewreturn：phase が離れたら vr2Step を 0 にリセット
+  useEffect(() => {
+    if (phase !== "viewreturn") { setVr2Step(0); setVrMoving(false); setVrDarkSwap(false); setVrNarr(0); }
+  }, [phase]);
+
+  // viewreturn：ライト移動後の明暗反転・ナレーション切替・自動遷移
+  useEffect(() => {
+    if (phase !== "viewreturn" || !vrMoving) return;
+    const t = [];
+    t.push(setTimeout(() => setVrDarkSwap(true), 400));  // 人物の明暗が反転
+    t.push(setTimeout(() => setVrNarr(1), 1200));        // ナレーション差し替え
+    t.push(setTimeout(() => setVr2Step(2), 2800));       // 確定へ
+    return () => t.forEach(clearTimeout);
+  }, [phase, vrMoving]);
 
   // 着信音（Web Audio APIで生成・ライブラリ不要）
   const playNotificationSound = () => {
@@ -18454,6 +18500,18 @@ function Episode6({ onComplete, onExit }) {
     if (monoStep === 0) return room(
       <>
         <div style={{ flex: 1, position: "relative" }}>
+          <div className="sparkles">
+            {[...Array(18)].map((_, i) => {
+              const stars = ['✨', '⭐', '💫', '🌟', '✦'];
+              const colors = ['#fbbf24', '#fcd34d', '#fef3c7', '#ffffff', '#fff7cc'];
+              return (
+                <div key={i} className="sparkle"
+                  style={{ left: `${5 + (i * 5.5) % 90}%`, top: `${10 + (i * 11) % 75}%`, animationDelay: `${(i * 0.18) % 3}s`, color: colors[i % colors.length], fontSize: `${10 + (i % 4) * 4}px` }}>
+                  {stars[i % stars.length]}
+                </div>
+              );
+            })}
+          </div>
           {spikyBubble(<>{rt("{今日|きょう}は", "今日は")}<span style={{ color: rose }}>{rt("{体育祭|たいいくさい}", "体育祭")}</span>!<br />{rt("すっごい{楽|たの}しかった〜", "すっごい楽しかった〜")}<span style={{ color: "#fbbf24" }}>✨</span></>, { top: 40, left: 20, maxWidth: 220 })}
           {youPeek({ bottom: 130, right: -20 })}
         </div>
@@ -18509,7 +18567,7 @@ function Episode6({ onComplete, onExit }) {
             <>
               {iosStatus}
               <div style={{ flex: 1, position: "relative", background: "#000" }}>
-                <ImgWithFallback src="/images/ep6/taiikusai.jpg" alt="体育祭の写真" fallback="🏃‍♀️🏃‍♂️🎉" fallbackBg="linear-gradient(135deg,#fde68a,#fbbf24,#f97316)" fallbackSize={56} />
+                <ImgWithFallback src="/images/ep6/taiikusai.jpg" alt="体育祭の写真" fallback="🏃‍♀️🏃‍♂️🎉" fallbackBg="linear-gradient(135deg,#fde68a,#fbbf24,#f97316)" fallbackSize={56} objectFit="contain" />
               </div>
               <div style={{ background: "#f8f8f8", padding: "12px 18px", display: "flex", justifyContent: "space-between", fontSize: 20, flexShrink: 0 }}>
                 <span>📤</span><span>♡</span><span>ℹ️</span><span>🗑</span>
@@ -18531,7 +18589,7 @@ function Episode6({ onComplete, onExit }) {
             <>
               {iosStatus}
               <div style={{ flex: 1, position: "relative", background: "#000" }}>
-                <ImgWithFallback src="/images/ep6/taiikusai.jpg" alt="体育祭の写真" fallback="🏃‍♀️🏃‍♂️🎉" fallbackBg="linear-gradient(135deg,#fde68a,#fbbf24,#f97316)" fallbackSize={56} />
+                <ImgWithFallback src="/images/ep6/taiikusai.jpg" alt="体育祭の写真" fallback="🏃‍♀️🏃‍♂️🎉" fallbackBg="linear-gradient(135deg,#fde68a,#fbbf24,#f97316)" fallbackSize={56} objectFit="contain" />
               </div>
               <div style={{ background: "#f8f8f8", padding: "12px 18px", display: "flex", justifyContent: "space-between", fontSize: 20, flexShrink: 0 }}>
                 <span>📤</span><span>♡</span><span>ℹ️</span><span>🗑</span>
@@ -18777,13 +18835,19 @@ function Episode6({ onComplete, onExit }) {
         </div>
       );
     };
-    const notifCard = (title, count) => (
-      <div style={{ display: "flex", alignItems: "center", gap: 12, background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.15)", borderRadius: 12, padding: "14px 16px", marginBottom: 12, animation: "bubbleIn .5s ease both" }}>
-        <div style={{ width: 36, height: 36, borderRadius: "50%", background: "#06c755", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }}>💬</div>
+    const notifCard = (title, count, shake) => (
+      <div style={{ display: "flex", alignItems: "center", gap: 12, background: shake ? "rgba(244,63,94,.12)" : "rgba(255,255,255,.08)", border: shake ? "1px solid #f43f5e" : "1px solid rgba(255,255,255,.15)", borderRadius: 12, padding: "14px 16px", marginBottom: 12, boxShadow: shake ? "0 0 20px rgba(244,63,94,.3)" : undefined, animation: shake ? "notifShake .5s ease, bubbleIn .4s ease both" : "bubbleIn .5s ease both" }}>
+        <div style={{ width: 36, height: 36, borderRadius: "50%", background: "#06c755", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0, animation: shake ? "ep6Pulse 1s ease infinite" : undefined }}>💬</div>
         <div>
           <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{title}</div>
           <div style={{ fontSize: 11, color: rose }}>{count}</div>
         </div>
+      </div>
+    );
+    const waitingHint = (
+      <div style={{ textAlign: "center", margin: "20px 0", animation: "fadeIn .5s ease" }}>
+        <div style={{ fontSize: 28 }}>⏳</div>
+        <div style={{ fontSize: 12, color: "rgba(255,255,255,.5)", marginTop: 4 }}><RubyText text={el ? "{通知|つうち}を{待|ま}っている…" : "通知を待っている…"} /></div>
       </div>
     );
     const senpaiMsg = (text, key) => (
@@ -18814,28 +18878,69 @@ function Episode6({ onComplete, onExit }) {
       </EpisodeShell>
     );
 
-    // step0：気づき
+    // step0：気づき（3秒待機 → 通知到着）
     if (sceneTwoStep === 0) return s2wrap(
       <>
         {satoHeader(rt("{自分|じぶん}の{部屋|へや}・{夜|よる}", "自分の部屋・夜"))}
         {bigImg("/images/ep6/sato_sad.jpg", "😢", 280)}
         {satoBubble(rt("スマホがブブッと{震|ふる}えた。", "スマホがブブッと震えた。"))}
-        {notifCard(rt("クラスのグループ", "クラスのグループ"), rt("{新着|しんちゃく}メッセージ 5{件|けん}", "新着メッセージ 5件"))}
-        {satoBubble(rt("あれ…?\nみんな、なんか{騒|さわ}いでる?", "あれ…?\nみんな、なんか騒いでる?"))}
-        {s2Btn(el ? "グループを{見|み}てみる →" : "グループを見てみる →", () => setSceneTwoStep(1))}
+        {!scene2Step0Notif && waitingHint}
+        {scene2Step0Notif && (
+          <>
+            {notifCard(rt("クラスのグループ", "クラスのグループ"), rt("{新着|しんちゃく}メッセージ 5{件|けん}", "新着メッセージ 5件"), true)}
+            <div style={{ animation: "bubbleIn .5s ease .6s both" }}>
+              {satoBubble(rt("あれ…?\nみんな、なんか{騒|さわ}いでる?", "あれ…?\nみんな、なんか騒いでる?"))}
+            </div>
+            <div style={{ animation: "fadeIn .4s ease 1s both" }}>
+              {s2Btn(el ? "グループを{見|み}てみる →" : "グループを見てみる →", () => setSceneTwoStep(1))}
+            </div>
+          </>
+        )}
       </>
     );
 
-    // step1：ショック
-    if (sceneTwoStep === 1) return s2wrap(
-      <>
-        {satoHeader(rt("グループを{開|ひら}いた", "グループを開いた"))}
-        {bigImg("/images/ep6/taiikusai.jpg", "🏃‍♀️🏃‍♂️🎉", 240)}
-        {satoBubble(rt("えっ…\nこれ、{私|わたし}…?", "えっ…\nこれ、私…?"), "shock")}
-        {satoBubble(rt("{体育祭|たいいくさい}の{写真|しゃしん}が、\n{勝手|かって}に、ネットに{公開|こうかい}されてる。", "体育祭の写真が、\n勝手に、ネットに公開されてる。"))}
-        {s2Btn("…", () => setSceneTwoStep(2))}
-      </>
-    );
+    // step1：クラスのグループチャットで気づく
+    if (sceneTwoStep === 1) {
+      const classmate = (letter, text, delay, key) => (
+        <div key={key} style={{ display: "flex", gap: 8, marginBottom: 8, animation: `bubbleIn .3s ease ${delay}s both` }}>
+          <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#6b7280", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 900, color: "#fff", flexShrink: 0 }}>{letter}</div>
+          <div style={{ maxWidth: "72%", background: "rgba(255,255,255,.1)", border: "1px solid rgba(255,255,255,.15)", borderRadius: "4px 14px 14px 14px", padding: "9px 12px", fontSize: 13, lineHeight: 1.6, color: "#e8e4ef" }}>{text}</div>
+        </div>
+      );
+      const photoChip = (
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 4, background: "rgba(0,0,0,.3)", border: "1px solid rgba(255,255,255,.25)", borderRadius: 8, padding: "2px 8px", fontSize: 12 }}>📷 <span style={{ fontSize: 10, color: "rgba(255,255,255,.6)" }}>{rt("{写真|しゃしん}", "写真")}</span></span>
+      );
+      return s2wrap(
+        <>
+          {satoHeader(rt("グループを{開|ひら}いた", "グループを開いた"))}
+          <div style={{ fontSize: 11, color: "rgba(255,255,255,.45)", marginBottom: 12, textAlign: "center" }}><RubyText text={el ? "クラスのグループ" : "クラスのグループ"} /></div>
+          {classmate("A", rt("ねえこの{写真|しゃしん}{見|み}た!?", "ねえこの写真見た!?"), 0, "a")}
+          {classmate("B", rt("うわー{超|ちょう}バズってる!", "うわー超バズってる!"), 0.4, "b")}
+          {classmate("C", rt("891いいねついてるよ", "891いいねついてるよ"), 0.8, "c")}
+          {classmate("A", <>{rt("これでしょ→", "これでしょ→")} {photoChip}</>, 1.2, "a2")}
+          {classmate("D", rt("みんな{映|うつ}ってて{最高|さいこう}じゃん", "みんな映ってて最高じゃん"), 1.6, "d")}
+          <div style={{ animation: "bubbleIn .5s ease 2.2s both" }}>
+            {satoBubble(rt("えっ…?", "えっ…?"), "shock")}
+          </div>
+          <div style={{ animation: "bubbleIn .5s ease 2.5s both" }}>
+            {satoBubble(rt("これ、{私|わたし}のことかな…", "これ、私のことかな…"), "big")}
+          </div>
+          {!showPhotoInChat && (
+            <div style={{ animation: "fadeIn .4s ease 2.9s both" }}>
+              {s2Btn(el ? "{写真|しゃしん}を{見|み}る →" : "写真を見る →", () => setShowPhotoInChat(true))}
+            </div>
+          )}
+          {showPhotoInChat && (
+            <div style={{ marginTop: 8 }}>
+              {bigImg("/images/ep6/taiikusai.jpg", "🏃‍♀️🏃‍♂️🎉", 240)}
+              {satoBubble(rt("えっ…\nこれ、{私|わたし}…?", "えっ…\nこれ、私…?"), "shock")}
+              {satoBubble(rt("{体育祭|たいいくさい}の{写真|しゃしん}が、\n{勝手|かって}に、ネットに{公開|こうかい}されてる。", "体育祭の写真が、\n勝手に、ネットに公開されてる。"))}
+              {s2Btn("…", () => setSceneTwoStep(2))}
+            </div>
+          )}
+        </>
+      );
+    }
 
     // step2：嫌悪（2段階）
     if (sceneTwoStep === 2) return s2wrap(
@@ -18855,9 +18960,10 @@ function Episode6({ onComplete, onExit }) {
           <div style={{ fontSize: 54, fontWeight: 900, color: "#fca5a5", fontFamily: "'DotGothic16',monospace", textShadow: "0 0 20px rgba(252,165,165,.4)", animation: "ep6RedFlash 1.2s ease both" }}>891</div>
           <div style={{ fontSize: 13, color: "rgba(255,255,255,.6)" }}>{rt("{人|にん}がこの{写真|しゃしん}を{見|み}た", "人がこの写真を見た")}</div>
         </div>
-        {revealCount >= 1 && satoBubble(rt("891{人|にん}が、\n{私|わたし}の{顔|かお}を、{見|み}たってこと…?", "891人が、\n私の顔を、見たってこと…?"), "fear", "r1")}
-        {revealCount >= 2 && satoBubble(rt("なんだか、こわい。", "なんだか、こわい。"), undefined, "r2")}
-        {s2Btn("…", () => revealCount < 2 ? setRevealCount(revealCount + 1) : setSceneTwoStep(4))}
+        {revealCount >= 1 && satoBubble(rt("891いいね…\nそれって、それだけの{人|ひと}に{見|み}られたってことだよね…", "891いいね…\nそれって、それだけの人に見られたってことだよね…"), "fear", "r0")}
+        {revealCount >= 2 && satoBubble(rt("891{人|にん}が、\n{私|わたし}の{顔|かお}を、{見|み}たってこと…?", "891人が、\n私の顔を、見たってこと…?"), "fear", "r1")}
+        {revealCount >= 3 && satoBubble(rt("なんだか、こわい。", "なんだか、こわい。"), undefined, "r2")}
+        {s2Btn("…", () => revealCount < 3 ? setRevealCount(revealCount + 1) : setSceneTwoStep(4))}
       </>
     );
 
@@ -18871,14 +18977,25 @@ function Episode6({ onComplete, onExit }) {
       </>
     );
 
-    // step5：追い打ち（先輩からのLINE・darken2）
+    // step5：追い打ち（先輩からのLINE・3秒待機→通知到着・darken2）
     if (sceneTwoStep === 5) return s2wrap(
       <>
         {satoHeader(rt("{通知|つうち}が、{来|き}た", "通知が、来た"))}
-        {notifCard(rt("{部活|ぶかつ}の{先輩|せんぱい}", "部活の先輩"), rt("{新着|しんちゃく}メッセージ 2{件|けん}", "新着メッセージ 2件"))}
-        {senpaiMsg(rt("ちょっと、これ{顧問|こもん}に{怒|おこ}られるんじゃない?", "ちょっと、これ顧問に怒られるんじゃない?"), "m1")}
-        {senpaiMsg(rt("なんで{勝手|かって}に{投稿|とうこう}OKしちゃったの!?", "なんで勝手に投稿OKしちゃったの!?"), "m2")}
-        {s2Btn("…", () => setSceneTwoStep(6))}
+        {!scene2Step5Notif && waitingHint}
+        {scene2Step5Notif && (
+          <>
+            {notifCard(rt("{部活|ぶかつ}の{先輩|せんぱい}", "部活の先輩"), rt("{新着|しんちゃく}メッセージ 2{件|けん}", "新着メッセージ 2件"), true)}
+            <div style={{ animation: "bubbleIn .4s ease .4s both" }}>
+              {senpaiMsg(rt("ちょっと、これ{顧問|こもん}に{怒|おこ}られるんじゃない?", "ちょっと、これ顧問に怒られるんじゃない?"), "m1")}
+            </div>
+            <div style={{ animation: "bubbleIn .4s ease .9s both" }}>
+              {senpaiMsg(rt("なんで{勝手|かって}に{投稿|とうこう}OKしちゃったの!?", "なんで勝手に投稿OKしちゃったの!?"), "m2")}
+            </div>
+            <div style={{ animation: "fadeIn .4s ease 1.5s both" }}>
+              {s2Btn("…", () => setSceneTwoStep(6))}
+            </div>
+          </>
+        )}
       </>
     );
 
@@ -18944,7 +19061,7 @@ function Episode6({ onComplete, onExit }) {
           ))}
         </div>
         {checklistDone.length >= checklistItems.length && (
-          <button onClick={() => { feedback("found"); setPhase("scene4"); }}
+          <button onClick={() => { feedback("found"); setPhase("viewreturn"); }}
             style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${rose},${roseDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", animation: "popIn .4s ease" }}>
             <RubyText text={el ? "つぎへ →" : "つぎへ →"} />
           </button>
@@ -18953,6 +19070,105 @@ function Episode6({ onComplete, onExit }) {
     </div>
     </EpisodeShell>
   );
+
+  // ── VIEWRETURN: 視点を戻す（天井ライトが「佐藤さん」→「あなた」へ） ──
+  if (phase === "viewreturn") {
+    const darkFilter = "brightness(.25) saturate(.3) opacity(.55)";
+    const lightLeft = vrMoving ? "82%" : "18%";
+    const youDark = !vrDarkSwap;          // 最初は「あなた」が暗い、反転後に明るく
+    const satoDark = vrDarkSwap;          // 最初は佐藤さんが明るい、反転後に暗く
+    const person = (img, label, fb, leftPct, dark) => (
+      <div style={{ position: "absolute", bottom: 40, left: `${leftPct}%`, transform: "translateX(-50%)", textAlign: "center", transition: "filter 1.6s ease", filter: dark ? darkFilter : "none", zIndex: 3 }}>
+        <div style={{ width: 80, height: 80, borderRadius: "50%", overflow: "hidden", border: "2px solid rgba(255,255,255,.8)", margin: "0 auto 6px" }}>
+          <ImgWithFallback src={`/images/ep6/${img}`} alt={label} fallback={fb} fallbackBg="#2a0a12" fallbackSize={30} />
+        </div>
+        <div style={{ fontSize: 12, fontWeight: 700, color: "#fff" }}>{label}</div>
+      </div>
+    );
+    const wrap = (children) => (
+      <EpisodeShell onExit={onExit}>
+      <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#1a0308,#020105)", padding: "24px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+        <div style={{ maxWidth: 440, margin: "0 auto", width: "100%" }}>{children}</div>
+      </div>
+      </EpisodeShell>
+    );
+
+    // vr2Step=0：切替告知
+    if (vr2Step === 0) return wrap(
+      <div style={{ textAlign: "center", animation: "slideUp .4s ease" }}>
+        <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 11, color: rose, letterSpacing: ".2em", marginBottom: 22, animation: "blink 1.5s infinite" }}>VIEWPOINT CHANGE</div>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 14, marginBottom: 24 }}>
+          <div style={{ textAlign: "center" }}>
+            <div style={{ width: 80, height: 80, borderRadius: "50%", overflow: "hidden", border: `2px solid ${rose}`, margin: "0 auto 6px" }}>
+              <ImgWithFallback src="/images/ep6/sato.jpg" alt="佐藤さん" fallback="🙂" fallbackBg="#2a0a12" fallbackSize={30} />
+            </div>
+            <div style={{ fontSize: 12, color: "rgba(255,255,255,.8)" }}>佐藤さん</div>
+          </div>
+          <div style={{ fontSize: 30, color: rose, fontWeight: 900, animation: "slideRight 1.4s infinite" }}>→</div>
+          <div style={{ textAlign: "center" }}>
+            <div style={{ width: 80, height: 80, borderRadius: "50%", overflow: "hidden", border: `2px solid ${rose}`, margin: "0 auto 6px" }}>
+              <ImgWithFallback src="/images/ep6/you_realistic.jpg" alt="あなた" fallback="🙂" fallbackBg="#2a0a12" fallbackSize={30} />
+            </div>
+            <div style={{ fontSize: 12, color: "rgba(255,255,255,.8)" }}>あなた</div>
+          </div>
+        </div>
+        <h2 style={{ fontSize: 20, fontWeight: 900, color: "#fff", margin: "0 0 10px" }}><RubyText text={el ? "{視点|してん}が、{戻|もど}ります" : "視点が、戻ります"} /></h2>
+        <p style={{ fontSize: 13, color: "rgba(255,255,255,.6)", lineHeight: 1.8, marginBottom: 26 }}>
+          <RubyText text={el ? "「{佐藤|さとう}さん」として{痛|いた}みを{知|し}った{今|いま}、もう{一度|いちど}「あなた」に{戻|もど}ろう。" : "「佐藤さん」として痛みを知った今、もう一度「あなた」に戻ろう。"} />
+        </p>
+        <button onClick={() => { feedback("tap"); setVr2Step(1); }}
+          style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${rose},${roseDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${rose}33` }}>
+          <RubyText text={el ? "{続|つづ}ける →" : "続ける →"} />
+        </button>
+      </div>
+    );
+
+    // vr2Step=1：天井ライトのスライド（逆方向・佐藤さん→あなた）
+    if (vr2Step === 1) return wrap(
+      <div>
+        <div style={{ minHeight: 60, marginBottom: 14, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <p key={vrNarr} style={{ fontSize: 14, color: "#ffe4e8", lineHeight: 1.8, textAlign: "center", margin: 0, animation: "fadeIn .6s ease" }}>
+            {vrNarr === 0
+              ? <RubyText text={el ? "佐藤さんの{目|め}から、{見|み}てきた。{そこ|そこ}には、{傷|きず}ついた「{誰|だれ}か」がいた。" : "佐藤さんの目から、見てきた。そこには、傷ついた「誰か」がいた。"} />
+              : <RubyText text={el ? "でも{今度|こんど}は——「{投稿|とうこう}した{側|がわ}」として、{責任|せきにん}を{引|ひ}き{受|う}ける{番|ばん}。" : "でも今度は——「投稿した側」として、責任を引き受ける番。"} />}
+          </p>
+        </div>
+        {/* ステージ */}
+        <div style={{ position: "relative", height: 380, borderRadius: 16, overflow: "hidden", background: "linear-gradient(180deg,#0c0608,#1a0d10 60%,#241115)", border: "1px solid rgba(255,255,255,.08)" }}>
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 30, background: "linear-gradient(180deg,#000,#1a1014)", zIndex: 4 }} />
+          <div style={{ position: "absolute", bottom: 28, left: lightLeft, width: 150, height: 46, transform: "translateX(-50%)", borderRadius: "50%", background: "radial-gradient(ellipse at center,rgba(255,225,160,.4),rgba(255,225,160,0) 70%)", transition: "left 2s ease", zIndex: 1 }} />
+          <div style={{ position: "absolute", top: 20, left: lightLeft, transform: "translateX(-50%)", width: 0, height: 0, borderLeft: "40px solid transparent", borderRight: "40px solid transparent", borderTop: "330px solid rgba(255,220,150,.18)", filter: "blur(6px)", transition: "left 2s ease", zIndex: 1, transformOrigin: "top center" }} />
+          <div style={{ position: "absolute", top: 8, left: lightLeft, transform: "translateX(-50%)", width: 18, height: 22, background: "linear-gradient(180deg,#3a3a3a,#1a1a1a)", borderRadius: "3px 3px 5px 5px", transition: "left 2s ease", zIndex: 5 }}>
+            <div style={{ position: "absolute", bottom: -3, left: "50%", transform: "translateX(-50%)", width: 8, height: 8, borderRadius: "50%", background: "#ffe9a8", boxShadow: "0 0 12px 4px rgba(255,220,150,.8)" }} />
+          </div>
+          {/* 人物（佐藤さん：左 / あなた：右） */}
+          {person("sato.jpg", "佐藤さん", "🙂", 18, satoDark)}
+          {person("you_realistic.jpg", "あなた", "🙂", 82, youDark)}
+        </div>
+        <button disabled={vrMoving} onClick={() => { feedback("tap"); setVrMoving(true); }}
+          style={{ width: "100%", marginTop: 16, padding: 15, background: `linear-gradient(135deg,${rose},${roseDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: vrMoving ? "default" : "pointer", opacity: vrMoving ? 0.4 : 1, fontFamily: "inherit", boxShadow: `0 8px 24px ${rose}33` }}>
+          <RubyText text={el ? "ライトを{戻|もど}す →" : "ライトを戻す →"} />
+        </button>
+      </div>
+    );
+
+    // vr2Step=2：確定
+    return wrap(
+      <div style={{ textAlign: "center", animation: "slideUp .4s ease" }}>
+        <div style={{ width: 120, height: 120, borderRadius: "50%", overflow: "hidden", border: `3px solid ${rose}`, margin: "0 auto 18px", boxShadow: `0 6px 24px ${rose}55`, animation: "ep6Pop .6s ease" }}>
+          <ImgWithFallback src="/images/ep6/you_realistic.jpg" alt="あなた" fallback="🙂" fallbackBg="#2a0a12" fallbackSize={48} />
+        </div>
+        <h2 style={{ fontSize: 21, fontWeight: 900, color: "#fff", margin: "0 0 10px" }}><RubyText text={el ? "あなたは{今|いま}、「あなた」に{戻|もど}りました" : "あなたは今、「あなた」に戻りました"} /></h2>
+        <p style={{ fontSize: 13, color: "rgba(255,255,255,.6)", lineHeight: 1.8, marginBottom: 26 }}>
+          <RubyText text={el ? "佐藤さんの{痛|いた}みを{知|し}った{今|いま}、{君|きみ}にできることは、{何|なに}だろう?" : "佐藤さんの痛みを知った今、君にできることは、何だろう?"} />
+        </p>
+        <button onClick={() => { feedback("tap"); setPhase("scene4"); }}
+          style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${rose},${roseDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${rose}33` }}>
+          <RubyText text={el ? "{自分|じぶん}の{投稿|とうこう}を{見|み}に{行|い}く →" : "自分の投稿を見に行く →"} />
+        </button>
+      </div>
+    );
+  }
 
   // ── SCENE 4: 削除しようとしたら…（あなた視点・削除体験8ステップ） ──
   if (phase === "scene4") return <Ep6Scene4
