@@ -753,6 +753,8 @@ const GlobalStyle = () => (
     @keyframes lineDraw { from{opacity:0;width:0} to{opacity:.7;width:var(--w)} }
     @keyframes sparkleFloat { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-12px) rotate(15deg)} }
     @keyframes sparkleFade { 0%,100%{opacity:0} 50%{opacity:.85} }
+    @keyframes elemPulseEp7 { 0%,100%{opacity:1} 50%{opacity:.6;filter:drop-shadow(0 0 6px rgba(239,68,68,.9))} }
+    @keyframes labelPulseEp7 { 0%,100%{opacity:1} 50%{opacity:.55} }
     .sparkles { position:absolute; inset:0; pointer-events:none; overflow:hidden; }
     .sparkle { position:absolute; font-size:14px; animation: sparkleFloat 3s ease-in-out infinite, sparkleFade 3s ease-in-out infinite; opacity:0; }
     .ep6-hl-thumb{position:relative;z-index:2;}
@@ -3595,13 +3597,36 @@ const EP_INTRO_META = {
   ep7: {
     theme: "SNSでの出会いトラブル・グルーミング",
     hook: "ゲームやSNSで知り合った「同い年の子」。でも本当に同い年ですか？写真も名前も年齢もビデオ通話も偽装できる時代に、子どもたちが狙われています。",
-    talkPoints: ["SNSで知り合った人をどこまで信頼していいか", "「内緒にして」と言われたらどうするか", "困ったらすぐ相談できる大人は誰か"],
-    parentNote: "SNSがきっかけの児童被害は年間1,000件超。被害者の多くが「まさか自分が」と思っていました。「怒らないから何でも話して」という信頼関係が最大の防御です。",
+    talkPoints: [
+      "SNSやオンラインゲームで知り合った人をどこまで信頼していいか",
+      "「内緒にして」「2人だけの秘密」と言われたらどう感じるか",
+      "つらいことや悩みを、家族・先生・スクールカウンセラーに話せる関係を作っておく",
+    ],
+    parentNote: "警察庁「令和7年警察白書」では、SNSに起因する事犯の被害児童1,486人（令和6年）のうち、特に小学生の被害が急増（平成27年→令和6年で約4倍）。オンラインゲームでの「手なづけ」、悩み相談からの「家出・誘拐」など、子どもの心の隙を狙う手口が確認されています。「怒らないから何でも話して」という信頼関係が最大の防御です。",
     elTheme: "SNSでの{出会|であ}いトラブル・グルーミング",
     elHook: "ゲームやSNSで{知|し}り{合|あ}った「{同|おな}い{年|どし}の{子|こ}」。でも{本当|ほんとう}に{同|おな}い{年|どし}ですか？{写真|しゃしん}も{名前|なまえ}も{年齢|ねんれい}もビデオ{通話|つうわ}も{偽装|ぎそう}できる{時代|じだい}に、{子|こ}どもたちが{狙|ねら}われています。",
-    elTalkPoints: ["SNSで{知|し}り{合|あ}った{人|ひと}をどこまで{信頼|しんらい}していいか", "「{内緒|ないしょ}にして」と{言|い}われたらどうするか", "{困|こま}ったらすぐ{相談|そうだん}できる{大人|おとな}は{誰|だれ}か"],
-    elParentNote: "SNSがきっかけの{児童被害|じどうひがい}は{年間|ねんかん}1000{件超|けんちょう}。{被害者|ひがいしゃ}の{多|おお}くが「まさか{自分|じぶん}が」と{思|おも}っていました。「{怒|おこ}らないから{何|なん}でも{話|はな}して」という{信頼|しんらい}{関係|かんけい}が{最大|さいだい}の{防御|ぼうぎょ}です。",
+    elTalkPoints: [
+      "SNSやオンラインゲームで{知|し}り{合|あ}った{人|ひと}をどこまで{信頼|しんらい}していいか",
+      "「{内緒|ないしょ}にして」「{2人|ふたり}だけの{秘密|ひみつ}」と{言|い}われたらどう{感|かん}じるか",
+      "つらいことや{悩|なや}みを、{家族|かぞく}・{先生|せんせい}・スクールカウンセラーに{話|はな}せる{関係|かんけい}を{作|つく}っておく",
+    ],
+    elParentNote: "{警察庁|けいさつちょう}「{令和|れいわ}7{年|ねん}{警察白書|けいさつはくしょ}」では、SNSに{起因|きいん}する{事犯|じはん}の{被害児童|ひがいじどう}1,486{人|にん}（{令和|れいわ}6{年|ねん}）のうち、{特|とく}に{小学生|しょうがくせい}の{被害|ひがい}が{急増|きゅうぞう}（{平成|へいせい}27{年|ねん}→{令和|れいわ}6{年|ねん}で{約|やく}4{倍|ばい}）。オンラインゲームでの「{手|て}なづけ」、{悩|なや}み{相談|そうだん}からの「{家出|いえで}・{誘拐|ゆうかい}」など、{子|こ}どもの{心|こころ}の{隙|すき}を{狙|ねら}う{手口|てぐち}が{確認|かくにん}されています。「{怒|おこ}らないから{何|なん}でも{話|はな}して」という{信頼関係|しんらいかんけい}が{最大|さいだい}の{防御|ぼうぎょ}です。",
     accentColor: "#8b5cf6",
+
+    // ★新規フィールド：データグラフ用
+    chart: {
+      label: "📊 警察庁データから",
+      title: "SNSに起因する被害児童数の推移",
+      subtitle: "(平成27年〜令和6年・学校段階別)",
+      elTitle: "SNSに{起因|きいん}する{被害児童数|ひがいじどうすう}の{推移|すいい}",
+      elSubtitle: "（{平成|へいせい}27{年|ねん}〜{令和|れいわ}6{年|ねん}・{学校段階別|がっこうだんかいべつ}）",
+      callout: "小学生の被害が、約10年で約4倍に。",
+      elCallout: "{小学生|しょうがくせい}の{被害|ひがい}が、{約|やく}10{年|ねん}で{約|やく}4{倍|ばい}に。",
+      calloutDetail: "全体としては減少傾向にあるにもかかわらず、小学生の被害だけが増え続けています。",
+      elCalloutDetail: "{全体|ぜんたい}としては{減少傾向|げんしょうけいこう}にあるにもかかわらず、{小学生|しょうがくせい}の{被害|ひがい}だけが{増|ふ}え{続|つづ}けています。",
+      source: "警察庁「令和7年警察白書」第1節1(4) 児童の性的搾取等",
+      elSource: "{警察庁|けいさつちょう}「{令和|れいわ}7{年|ねん}{警察白書|けいさつはくしょ}」{第|だい}1{節|せつ}1(4) {児童|じどう}の{性的|せいてき}{搾取等|さくしゅとう}",
+    },
   },
 };
 
@@ -3639,6 +3664,122 @@ function EpisodeIntroCard({ epKey, onStart }) {
             <RubyText text={dispHook} />
           </div>
         </div>
+
+        {/* ★EP7用：警察庁データグラフセクション（meta.chartがあるEPでのみ表示） */}
+        {meta.chart && (
+          <div style={{
+            background: `${accentColor}10`,
+            border: `1px solid ${accentColor}40`,
+            borderRadius: 14, padding: 16, marginBottom: 14,
+          }}>
+            <div style={{ fontSize: 11, fontWeight: 900, color: `${accentColor}cc`, marginBottom: 10, letterSpacing: ".1em" }}>
+              {meta.chart.label}
+            </div>
+            <div style={{ fontSize: 13, fontWeight: 900, color: "#fff", marginBottom: 14, lineHeight: 1.5 }}>
+              <RubyText text={ageMode === "elementary" ? (meta.chart.elTitle || meta.chart.title) : meta.chart.title} />
+              <br/>
+              <span style={{ fontSize: 11, color: "rgba(255,255,255,.5)", fontWeight: 400 }}>
+                <RubyText text={ageMode === "elementary" ? (meta.chart.elSubtitle || meta.chart.subtitle) : meta.chart.subtitle} />
+              </span>
+            </div>
+
+            {/* SVGグラフ */}
+            <div style={{ background: "rgba(0,0,0,.25)", borderRadius: 10, padding: "14px 10px", marginBottom: 12 }}>
+              <svg viewBox="0 0 360 200" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", height: "auto", display: "block" }}>
+                {/* 背景グリッド */}
+                <line x1="40" y1="170" x2="350" y2="170" stroke="rgba(255,255,255,.1)" strokeWidth="1"/>
+                <line x1="40" y1="130" x2="350" y2="130" stroke="rgba(255,255,255,.05)" strokeWidth="1"/>
+                <line x1="40" y1="90"  x2="350" y2="90"  stroke="rgba(255,255,255,.05)" strokeWidth="1"/>
+                <line x1="40" y1="50"  x2="350" y2="50"  stroke="rgba(255,255,255,.05)" strokeWidth="1"/>
+
+                {/* Y軸ラベル */}
+                <text x="35" y="173" fill="rgba(255,255,255,.4)" fontSize="9" textAnchor="end">0</text>
+                <text x="35" y="133" fill="rgba(255,255,255,.4)" fontSize="9" textAnchor="end">600</text>
+                <text x="35" y="93"  fill="rgba(255,255,255,.4)" fontSize="9" textAnchor="end">1,200</text>
+                <text x="35" y="53"  fill="rgba(255,255,255,.4)" fontSize="9" textAnchor="end">2,000</text>
+
+                {/* 全体の被害数線（灰色・静止） */}
+                {/* データ: 1652,1736,1813,1811,2082,1819,1812,1732,1665,1486 */}
+                {/* スケール: 0〜2100で Y=170-(val/2100)*120 */}
+                <polyline
+                  fill="none" stroke="#64748b" strokeWidth="2"
+                  points="60,75.6 90,70.8 120,66.4 150,66.5 180,51.0 210,66.0 240,66.5 270,71.0 300,75.2 330,84.1"
+                />
+                <circle cx="60" cy="75.6" r="2.5" fill="#64748b"/>
+                <circle cx="90" cy="70.8" r="2.5" fill="#64748b"/>
+                <circle cx="120" cy="66.4" r="2.5" fill="#64748b"/>
+                <circle cx="150" cy="66.5" r="2.5" fill="#64748b"/>
+                <circle cx="180" cy="51.0" r="3" fill="#64748b"/>
+                <circle cx="210" cy="66.0" r="2.5" fill="#64748b"/>
+                <circle cx="240" cy="66.5" r="2.5" fill="#64748b"/>
+                <circle cx="270" cy="71.0" r="2.5" fill="#64748b"/>
+                <circle cx="300" cy="75.2" r="2.5" fill="#64748b"/>
+                <circle cx="330" cy="84.1" r="2.5" fill="#64748b"/>
+
+                {/* ★小学生の被害数線（赤・点滅強調） */}
+                {/* データ: 35,43,41,55,72,84,83,114,139,136 */}
+                {/* スケール: 0〜200で Y=170-(val/200)*50 */}
+                <g style={{ animation: "elemPulseEp7 1.6s ease-in-out infinite" }}>
+                  <polyline
+                    fill="none" stroke="#ef4444" strokeWidth="2.5"
+                    points="60,161.3 90,159.3 120,159.8 150,156.3 180,152.0 210,149.0 240,149.3 270,141.5 300,135.3 330,136.0"
+                  />
+                  <circle cx="60" cy="161.3" r="3" fill="#ef4444"/>
+                  <circle cx="90" cy="159.3" r="3" fill="#ef4444"/>
+                  <circle cx="120" cy="159.8" r="3" fill="#ef4444"/>
+                  <circle cx="150" cy="156.3" r="3" fill="#ef4444"/>
+                  <circle cx="180" cy="152.0" r="3" fill="#ef4444"/>
+                  <circle cx="210" cy="149.0" r="3" fill="#ef4444"/>
+                  <circle cx="240" cy="149.3" r="3" fill="#ef4444"/>
+                  <circle cx="270" cy="141.5" r="3" fill="#ef4444"/>
+                  <circle cx="300" cy="135.3" r="3.5" fill="#ef4444"/>
+                  <circle cx="330" cy="136.0" r="3.5" fill="#ef4444"/>
+                  <path d="M 60 168 Q 195 175 320 142" stroke="#ef4444" strokeWidth="1" fill="none" strokeDasharray="3,2" opacity=".5"/>
+                </g>
+                <g style={{ animation: "labelPulseEp7 1.6s ease-in-out infinite" }}>
+                  <text x="60" y="155" fill="#fca5a5" fontSize="9" textAnchor="middle" fontWeight="700">35人</text>
+                  <text x="330" y="130" fill="#fca5a5" fontSize="10" textAnchor="middle" fontWeight="900">136人</text>
+                </g>
+
+                {/* X軸ラベル（元号フル表記） */}
+                <text x="60" y="190" fill="rgba(255,255,255,.5)" fontSize="9" textAnchor="middle">平成27</text>
+                <text x="180" y="190" fill="rgba(255,255,255,.5)" fontSize="9" textAnchor="middle">令和元</text>
+                <text x="270" y="190" fill="rgba(255,255,255,.5)" fontSize="9" textAnchor="middle">令和4</text>
+                <text x="330" y="190" fill="rgba(255,255,255,.5)" fontSize="9" textAnchor="middle">令和6</text>
+              </svg>
+
+              <div style={{ display: "flex", gap: 12, justifyContent: "center", fontSize: 10, color: "rgba(255,255,255,.7)", marginTop: 8 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                  <div style={{ width: 10, height: 3, borderRadius: 1, background: "#64748b" }} />
+                  <RubyText text={ageMode === "elementary" ? "{全体|ぜんたい}（{右軸|みぎじく}）" : "全体（右軸）"} />
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                  <div style={{ width: 10, height: 3, borderRadius: 1, background: "#ef4444" }} />
+                  <RubyText text={ageMode === "elementary" ? "{小学生|しょうがくせい}（{左軸|ひだりじく}・{強調|きょうちょう}）" : "小学生（左軸・強調）"} />
+                </div>
+              </div>
+            </div>
+
+            {/* コールアウト */}
+            <div style={{
+              background: "rgba(239,68,68,.08)",
+              borderLeft: "3px solid #ef4444",
+              borderRadius: "0 8px 8px 0",
+              padding: "10px 12px",
+              fontSize: 12, color: "#fecaca", lineHeight: 1.7,
+            }}>
+              <strong style={{ color: "#fca5a5", fontSize: 13 }}>
+                <RubyText text={ageMode === "elementary" ? (meta.chart.elCallout || meta.chart.callout) : meta.chart.callout} />
+              </strong>
+              <br/>
+              <RubyText text={ageMode === "elementary" ? (meta.chart.elCalloutDetail || meta.chart.calloutDetail) : meta.chart.calloutDetail} />
+            </div>
+
+            <div style={{ fontSize: 9, color: "rgba(255,255,255,.4)", marginTop: 8, textAlign: "right", fontStyle: "italic" }}>
+              <RubyText text={ageMode === "elementary" ? "{出典|しゅってん}: " + (meta.chart.elSource || meta.chart.source) : "出典: " + meta.chart.source} />
+            </div>
+          </div>
+        )}
 
         {/* 話し合いポイント */}
         <div style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.08)", borderRadius: 14, padding: "16px", marginBottom: 14 }}>
