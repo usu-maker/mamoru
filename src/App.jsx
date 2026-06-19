@@ -19690,7 +19690,7 @@ const EP7_ADULT_LABELS = { family: "👪 家族", school: "🎓 学校", communi
 function Ep7MoriiBubble({ html, accent = false }) {
   return (
     <div style={{ background: accent ? "rgba(236,72,153,.18)" : "rgba(34,197,94,.12)", border: `1px solid ${accent ? "rgba(236,72,153,.5)" : "rgba(34,197,94,.4)"}`, borderRadius: "4px 16px 16px 16px", padding: "12px 14px", marginBottom: 14, fontSize: 13, lineHeight: 1.7, display: "flex", gap: 10, alignItems: "flex-start", animation: "fadeIn .5s ease both" }}>
-      <div style={{ width: 34, height: 34, borderRadius: "50%", background: "linear-gradient(135deg,#c4915c,#9b6b3a)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>🦉</div>
+      <div style={{ flexShrink: 0 }}><OwlMolly size={34} /></div>
       <div style={{ flex: 1 }} dangerouslySetInnerHTML={{ __html: html }} />
     </div>
   );
@@ -20154,7 +20154,6 @@ function Episode7({ onComplete, onExit }) {
   // ── INTRO: 経路選択（オンラインゲーム / SNS DM） ──
   if (phase === "intro") {
     const gameDone = completedRoutes.includes("game");
-    const dmDone = completedRoutes.includes("dm");
     return (
       <EpisodeShell onExit={onExit}>
       <div style={{ minHeight: "100vh", background: "linear-gradient(160deg,#0d1a2e,#0a0f1a)", padding: "24px 20px", color: "#fff", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
@@ -20162,7 +20161,7 @@ function Episode7({ onComplete, onExit }) {
 
           {/* モリィ */}
           <div style={{ display: "flex", gap: 10, alignItems: "flex-start", marginBottom: 18 }}>
-            <div style={{ width: 44, height: 44, borderRadius: "50%", background: "linear-gradient(135deg,#c4915c,#9b6b3a)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 23, flexShrink: 0 }}>🦉</div>
+            <div style={{ flexShrink: 0 }}><OwlMolly size={44} /></div>
             <div style={{ background: "rgba(236,72,153,.12)", border: "1px solid rgba(236,72,153,.3)", borderRadius: "4px 16px 16px 16px", padding: "11px 14px", fontSize: 13, lineHeight: 1.7, whiteSpace: "pre-line" }}>
               <RubyText text={el
                 ? "これからは、{君|きみ}が{普段|ふだん}ネットでどう{過|す}ごしてるかに{合|あ}わせて{体験|たいけん}できるよ。\n\nどっちも{体験|たいけん}できるから、{気|き}になる{方|ほう}から{選|えら}んでね!"
@@ -20189,24 +20188,27 @@ function Episode7({ onComplete, onExit }) {
             )}
           </button>
 
-          {/* SNS DM経路 */}
-          <button
-            onClick={() => { feedback("tap"); alert(el ? "SNS DM{経路|けいろ}はもうすぐ{実装|じっそう}されます。{今|いま}はゲーム{経路|けいろ}をプレイしてください。" : "SNS DM経路はもうすぐ実装されます。今はゲーム経路をプレイしてください。"); }}
-            disabled={dmDone}
-            style={{ width: "100%", background: dmDone ? "rgba(34,197,94,.1)" : "rgba(139,92,246,.06)", border: `2px solid ${dmDone ? "#22c55e" : "rgba(139,92,246,.3)"}`, borderRadius: 14, padding: 14, marginBottom: 10, cursor: dmDone ? "default" : "pointer", textAlign: "left", color: "#fff", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 10, opacity: dmDone ? 1 : 0.7 }}>
-            <div style={{ fontSize: 30, flexShrink: 0 }}>📱</div>
+          {/* SNS DM経路（準備中・グレーアウト+オーバーレイ） */}
+          <div style={{ position: "relative", width: "100%", background: "rgba(80,80,80,.15)", border: "2px solid rgba(120,120,120,.3)", borderRadius: 14, padding: 14, marginBottom: 10, display: "flex", alignItems: "center", gap: 10, color: "rgba(255,255,255,.5)", cursor: "not-allowed", overflow: "hidden" }}>
+            <div style={{ fontSize: 30, flexShrink: 0, filter: "grayscale(1)", opacity: .6 }}>📱</div>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 13, fontWeight: 700, lineHeight: 1.5 }}>
                 <RubyText text={el ? "SNSのDMが{来|く}ることがある" : "SNSのDMが来ることがある"} />
               </div>
-              <div style={{ fontSize: 11, color: "rgba(255,255,255,.5)", marginTop: 3 }}>
-                <RubyText text={el ? "Instagram DM{経由|けいゆ}の{体験|たいけん}（{準備中|じゅんびちゅう}）" : "Instagram DM経由の体験（準備中）"} />
+              <div style={{ fontSize: 11, color: "rgba(255,255,255,.4)", marginTop: 3 }}>
+                <RubyText text={el ? "Instagram DM{経由|けいゆ}の{体験|たいけん}" : "Instagram DM経由の体験"} />
               </div>
             </div>
-            {dmDone && (
-              <div style={{ background: "#22c55e", color: "#fff", fontSize: 10, padding: "2px 8px", borderRadius: 10, fontWeight: 700 }}><RubyText text={el ? "✓ {体験済|たいけんず}み" : "✓ 体験済み"} /></div>
-            )}
-          </button>
+            {/* 半透明オーバーレイ:「現在開発中です」 */}
+            <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,.55)", backdropFilter: "blur(2px)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", border: "2px dashed rgba(255,255,255,.25)", borderRadius: 14 }}>
+              <div style={{ background: "rgba(251,191,36,.95)", color: "#0a0a14", padding: "5px 14px", borderRadius: 20, fontSize: 12, fontWeight: 900, letterSpacing: ".02em", boxShadow: "0 4px 12px rgba(0,0,0,.4)", marginBottom: 4 }}>
+                🚧 <RubyText text={el ? "{現在|げんざい}{開発中|かいはつちゅう}です" : "現在開発中です"} />
+              </div>
+              <div style={{ fontSize: 10, color: "rgba(255,255,255,.85)", fontWeight: 600 }}>
+                <RubyText text={el ? "{次|つぎ}のアップデートで{追加|ついか}されます" : "次のアップデートで追加されます"} />
+              </div>
+            </div>
+          </div>
 
           {/* 両方完了したら次へ */}
           {completedRoutes.length >= 2 && (
@@ -20303,7 +20305,7 @@ function Episode7({ onComplete, onExit }) {
           </div>
           {/* モリィ */}
           <div style={{ display: "flex", gap: 10, alignItems: "flex-start", marginBottom: 14 }}>
-            <div style={{ width: 40, height: 40, borderRadius: "50%", background: "linear-gradient(135deg,#c4915c,#9b6b3a)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 21, flexShrink: 0 }}>🦉</div>
+            <div style={{ flexShrink: 0 }}><OwlMolly size={40} /></div>
             <div style={{ background: "rgba(236,72,153,.12)", border: "1px solid rgba(236,72,153,.3)", borderRadius: "4px 16px 16px 16px", padding: "11px 14px", fontSize: 13, lineHeight: 1.7, whiteSpace: "pre-line" }}>
               <RubyText text={el
                 ? "{今日|きょう}の{主人公|しゅじんこう}はマユミ。\nバトロワ{系|けい}のゲームが{好|す}きで、{夜遅|よるおそ}くまで{遊|あそ}んでることが{多|おお}いんだって。\n\n——ある{日|ひ}の{夜|よる}、いつものようにゲームを{起動|きどう}した。"
@@ -20523,7 +20525,7 @@ function Episode7({ onComplete, onExit }) {
       <div style={{ minHeight: "100vh", background: "#0d0a16", padding: "20px 16px", color: "#fff", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
         <div style={{ maxWidth: 440, margin: "0 auto" }}>
           <div style={{ display: "flex", gap: 10, alignItems: "flex-start", marginBottom: 14 }}>
-            <div style={{ width: 40, height: 40, borderRadius: "50%", background: "linear-gradient(135deg,#c4915c,#9b6b3a)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 21, flexShrink: 0 }}>🦉</div>
+            <div style={{ flexShrink: 0 }}><OwlMolly size={40} /></div>
             <div style={{ background: "rgba(236,72,153,.12)", border: "1px solid rgba(236,72,153,.3)", borderRadius: "4px 16px 16px 16px", padding: "11px 14px", fontSize: 13, lineHeight: 1.7, whiteSpace: "pre-line" }}>
               <RubyText text={el
                 ? "こうして、マユミの「ゲームの{相棒|あいぼう}」は、ゲームの{外|そと}でつながる{関係|かんけい}になった。\n\n——その{先|さき}で、{何|なに}が{起|お}きるか。\n{次|つぎ}の{回|かい}でも{一緒|いっしょ}に{見|み}ていこう。"
@@ -20695,7 +20697,7 @@ function Episode7({ onComplete, onExit }) {
   if (phase === "reveal") {
     return (
       <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#1a0a1a,#0a0610)", padding: "24px 20px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", color: "#fff", position: "relative", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
-        <div style={{ width: 120, height: 120, borderRadius: "50%", background: "radial-gradient(circle,#fbbf24,#c4915c 60%,#9b6b3a 100%)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 64, boxShadow: "0 0 40px rgba(251,191,36,.5), 0 0 80px rgba(251,191,36,.2)", marginBottom: 24, animation: "ep7MoriiGlow 2s ease infinite alternate" }}>🦉</div>
+        <div style={{ width: 120, height: 120, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 0 40px rgba(251,191,36,.5), 0 0 80px rgba(251,191,36,.2)", marginBottom: 24, animation: "ep7MoriiGlow 2s ease infinite alternate" }}><OwlMolly size={100} /></div>
         {revealStage >= 0 && (
           <div style={{ background: "rgba(236,72,153,.12)", border: "1px solid rgba(236,72,153,.4)", borderRadius: 16, padding: "14px 18px", fontSize: 14, lineHeight: 1.8, marginBottom: 14, maxWidth: 360, textAlign: "left", animation: "ep7BubbleSlide .5s ease both" }}>
             <RubyText text={el ? "マユミ、いったん{止|と}まろう。" : "マユミ、いったん止まろう。"} />
@@ -21371,7 +21373,7 @@ function Episode7({ onComplete, onExit }) {
     <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#ede9fe,#ddd6fe)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
         <OwlSay mood="excited" e={el ? "グルーミングとセクストーションのことばをおぼえよう！🦉" : "グルーミングとセクストーションのことばを覚えよう！🦉"}>グルーミングとセクストーションのことばを覚えよう！🦉</OwlSay>
-        <KeywordPhase epKey="ep7" accentColor={purple} onComplete={() => setPhase("complete")} />
+        <KeywordPhase epKey="ep7" accentColor={purple} onComplete={() => setPhase("pre_dialogue")} />
         <ParentExpertCard epKey="ep7" accentColor={purple} />
       </div>
     </div>
@@ -21417,8 +21419,8 @@ function Episode7({ onComplete, onExit }) {
     },
     {
       id: "q2",
-      question: "もし毎日DMをくれる知らない人がいたら、おうちの人にすぐ言える？",
-      questionEl: "もし{毎日|まいにち}DMをくれる{知|し}らない{人|ひと}がいたら、おうちの{人|ひと}にすぐ{言|い}える？",
+      question: "もし毎日メッセージをくれる知らない人がいたら、おうちの人にすぐ言える？",
+      questionEl: "もし{毎日|まいにち}メッセージをくれる{知|し}らない{人|ひと}がいたら、おうちの{人|ひと}にすぐ{言|い}える？",
       placeholder: "親子で話した内容を書いてみよう",
       placeholderEl: "{親子|おやこ}で{話|はな}した{内容|ないよう}を{書|か}いてみよう",
       hints: [
