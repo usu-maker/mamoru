@@ -756,6 +756,10 @@ const GlobalStyle = () => (
     @keyframes elemPulseEp7 { 0%,100%{opacity:1} 50%{opacity:.6;filter:drop-shadow(0 0 6px rgba(239,68,68,.9))} }
     @keyframes labelPulseEp7 { 0%,100%{opacity:1} 50%{opacity:.55} }
     @keyframes ep7Pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.4);opacity:.6} }
+    @keyframes ep7TypingDot { 0%,80%,100%{opacity:.3;transform:scale(.8)} 40%{opacity:1;transform:scale(1.1)} }
+    @keyframes ep7ChoiceIn { from{opacity:0;transform:translateX(15px)} to{opacity:1;transform:translateX(0)} }
+    @keyframes ep7StationIn { from{opacity:0} to{opacity:1} }
+    @keyframes ep7NotifIn { from{opacity:0;transform:translateY(-30px) scale(.85)} to{opacity:1;transform:translateY(0) scale(1)} }
     .sparkles { position:absolute; inset:0; pointer-events:none; overflow:hidden; }
     .sparkle { position:absolute; font-size:14px; animation: sparkleFloat 3s ease-in-out infinite, sparkleFade 3s ease-in-out infinite; opacity:0; }
     .ep6-hl-thumb{position:relative;z-index:2;}
@@ -19438,6 +19442,151 @@ function Episode6({ onComplete, onExit }) {
 
 
 // ─────────────────────────────────────────────
+// ██ EPISODE 7 — LINE風UIコンポーネント群（ゲーム経路後のLINE物語用）
+// ─────────────────────────────────────────────
+function Ep7Avatar({ size = 36, hidden = false }) {
+  return (
+    <div style={{ width: size, height: size, borderRadius: "50%", overflow: "hidden", flexShrink: 0, border: "1px solid rgba(255,255,255,.3)", visibility: hidden ? "hidden" : "visible" }}>
+      <ImgWithFallback src="/images/ep7/mocchi23_boy.jpg" alt="もっち23" fallback="🙂" fallbackBg="#2a1320" fallbackSize={Math.round(size * 0.5)} />
+    </div>
+  );
+}
+
+function LineChatScreen({ statusTime, statusBattery, dateLabel, children, showInputBar = true }) {
+  return (
+    <div style={{ width: "100%", maxWidth: 440, margin: "0 auto", background: "#0d0a16", minHeight: "100vh", position: "relative", display: "flex", flexDirection: "column", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+      <div style={{ background: "#7798bd", flex: 1, display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+        {/* ステータスバー */}
+        <div style={{ background: "#7798bd", color: "#fff", padding: "6px 18px 4px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 13, fontWeight: 600 }}>
+          <div>{statusTime}</div>
+          <div style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 12 }}>●●●●● {statusBattery}</div>
+        </div>
+        {/* LINEヘッダー */}
+        <div style={{ background: "#7798bd", color: "#fff", padding: "6px 12px 10px", display: "flex", alignItems: "center", gap: 10, borderBottom: "1px solid rgba(0,0,0,.1)" }}>
+          <div style={{ fontSize: 20, width: 24 }}>‹</div>
+          <Ep7Avatar size={36} />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 14, fontWeight: 600, lineHeight: 1.2 }}>もっち23</div>
+            <div style={{ fontSize: 10, color: "rgba(255,255,255,.7)", marginTop: 1 }}>オンライン</div>
+          </div>
+          <div style={{ display: "flex", gap: 14, fontSize: 18 }}><span>📞</span><span>📹</span><span>≡</span></div>
+        </div>
+        {/* チャットエリア */}
+        <div style={{ flex: 1, background: "#7798bd", padding: "12px 10px 70px", overflowY: "auto", minHeight: 0 }}>
+          {dateLabel && (
+            <div style={{ textAlign: "center", margin: "8px 0 12px" }}>
+              <span style={{ display: "inline-block", background: "rgba(0,0,0,.25)", color: "#fff", fontSize: 10, padding: "3px 12px", borderRadius: 10 }}>{dateLabel}</span>
+            </div>
+          )}
+          {children}
+        </div>
+        {/* 入力欄 */}
+        {showInputBar && (
+          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "#fff", padding: "8px 12px 10px", display: "flex", alignItems: "center", gap: 8, borderTop: "1px solid rgba(0,0,0,.08)", zIndex: 10 }}>
+            <div style={{ fontSize: 24, color: "#7798bd" }}>+</div>
+            <div style={{ flex: 1, background: "#f1f1f1", borderRadius: 18, padding: "7px 14px", fontSize: 12, color: "#888" }}>メッセージを入力</div>
+            <div style={{ fontSize: 22, color: "#666" }}>🎙</div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function MocchiMessage({ text, time, hideAvt = false, isStamp = false, isSpecial = false }) {
+  return (
+    <div style={{ display: "flex", marginBottom: 6, alignItems: "flex-end", gap: 6 }}>
+      <Ep7Avatar size={36} hidden={hideAvt} />
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        {!hideAvt && <div style={{ fontSize: 10, color: "#fff", fontWeight: 600, marginBottom: 2 }}>もっち23</div>}
+        <div style={{ display: "flex", gap: 4, alignItems: "flex-end" }}>
+          {isStamp ? (
+            <div style={{ width: 90, height: 90, background: "#fff", borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 56 }}>{text}</div>
+          ) : (
+            <div style={{ maxWidth: "72%", padding: "8px 11px", borderRadius: "0 14px 14px 14px", fontSize: 13, lineHeight: 1.45, background: isSpecial ? "#ffe5ec" : "#fff", color: "#000", wordWrap: "break-word" }} dangerouslySetInnerHTML={{ __html: text }} />
+          )}
+          <div style={{ fontSize: 9, color: "rgba(255,255,255,.85)", display: "flex", flexDirection: "column", alignItems: "flex-start", alignSelf: "flex-end", padding: "0 0 2px" }}>{time}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MyMessage({ text, time }) {
+  return (
+    <div style={{ display: "flex", marginBottom: 6, alignItems: "flex-end", gap: 6, flexDirection: "row-reverse" }}>
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <div style={{ display: "flex", gap: 4, alignItems: "flex-end", flexDirection: "row-reverse" }}>
+          <div style={{ maxWidth: "72%", padding: "8px 11px", borderRadius: "14px 0 14px 14px", fontSize: 13, lineHeight: 1.45, background: "#85e34c", color: "#000", wordWrap: "break-word" }} dangerouslySetInnerHTML={{ __html: text }} />
+          <div style={{ fontSize: 9, color: "rgba(255,255,255,.85)", display: "flex", flexDirection: "column", alignItems: "flex-end", padding: "0 0 2px" }}>
+            <div>既読</div><div>{time}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MyPhotoMessage({ src, time }) {
+  return (
+    <div style={{ display: "flex", marginBottom: 6, alignItems: "flex-end", gap: 6, flexDirection: "row-reverse" }}>
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <div style={{ display: "flex", gap: 4, alignItems: "flex-end", flexDirection: "row-reverse" }}>
+          <div style={{ width: 180, height: 220, borderRadius: 12, overflow: "hidden", border: "2px solid rgba(255,255,255,.6)" }}>
+            <ImgWithFallback src={src} alt="送信した写真" fallback="🤳" fallbackBg="#2a1320" fallbackSize={40} />
+          </div>
+          <div style={{ fontSize: 9, color: "rgba(255,255,255,.85)", display: "flex", flexDirection: "column", alignItems: "flex-end", padding: "0 0 2px" }}>
+            <div>既読</div><div>{time}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TypingIndicator() {
+  return (
+    <div style={{ display: "flex", marginBottom: 6, alignItems: "flex-end", gap: 6 }}>
+      <Ep7Avatar size={36} />
+      <div style={{ background: "#fff", borderRadius: "0 14px 14px 14px", padding: "10px 14px", display: "flex", gap: 3 }}>
+        <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#999", animation: "ep7TypingDot 1.2s ease infinite" }} />
+        <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#999", animation: "ep7TypingDot 1.2s ease infinite .2s" }} />
+        <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#999", animation: "ep7TypingDot 1.2s ease infinite .4s" }} />
+      </div>
+    </div>
+  );
+}
+
+function InnerVoice({ html }) {
+  const el = useAgeMode() === "elementary";
+  return (
+    <div style={{ background: "rgba(0,0,0,.6)", color: "#fff", borderLeft: "3px solid #fbbf24", borderRadius: "0 8px 8px 0", padding: "8px 12px", margin: "8px 14px", fontSize: 12.5, lineHeight: 1.6, fontStyle: "italic" }}>
+      <div style={{ fontSize: 9, color: "#fbbf24", fontWeight: 900, marginBottom: 3, fontStyle: "normal" }}>
+        <RubyText text={el ? "マユミの{心|こころ}の{声|こえ}" : "マユミの心の声"} />
+      </div>
+      <div dangerouslySetInnerHTML={{ __html: html }} />
+    </div>
+  );
+}
+
+function ChoicesArea({ choices, onSelect }) {
+  const el = useAgeMode() === "elementary";
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 5, marginTop: 8 }}>
+      <div style={{ alignSelf: "center", background: "rgba(0,0,0,.55)", color: "#fff", fontSize: 10, padding: "4px 10px", borderRadius: 10, marginBottom: 4 }}>
+        <RubyText text={el ? "↓ マユミのセリフを{選|えら}んでタップ" : "↓ マユミのセリフを選んでタップ"} />
+      </div>
+      {choices.map((c, i) => (
+        <button key={i} onClick={() => onSelect(c)}
+          style={{ background: "#85e34c", color: "#000", padding: "8px 11px", borderRadius: "14px 0 14px 14px", fontSize: 13, lineHeight: 1.45, maxWidth: "72%", cursor: "pointer", border: "2px solid rgba(0,0,0,.15)", boxShadow: "0 2px 6px rgba(0,0,0,.15)", fontFamily: "inherit", textAlign: "left", animation: `ep7ChoiceIn .3s ease both ${i * 0.08}s` }}>
+          {c}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────
 // ██ EPISODE 7 — その人、本当に同い年？
 // SNSでの出会いトラブル・グルーミング体験
 // ─────────────────────────────────────────────
@@ -19492,6 +19641,311 @@ function Episode7({ onComplete, onExit }) {
       setCompletedRoutes(prev => prev.includes("game") ? prev : [...prev, "game"]);
     }
   }, [phase]);
+
+  // ── LINE物語パート用 state ──
+  const [chatMessages, setChatMessages] = useState([]);    // チャット履歴
+  const [showChoices, setShowChoices] = useState(false);   // 選択肢表示フラグ
+  const [currentChoices, setCurrentChoices] = useState([]); // 現在の選択肢
+  const [isTyping, setIsTyping] = useState(false);         // タイピングインジケータ
+  const [stationStage, setStationStage] = useState(0);     // station_sceneサブステージ
+  const [showMotherNotif, setShowMotherNotif] = useState(false); // 母通知バナー
+  const [stationChoice, setStationChoice] = useState(null); // "go" | "stop"
+  const [lineChoiceContext, setLineChoiceContext] = useState(null);
+  const [lineCtaText, setLineCtaText] = useState(null);
+  const [lineCtaNext, setLineCtaNext] = useState(null);
+
+  // ── 効果音（Web Audio API） ──
+  const audioCtxRef = useRef(null);
+  const getAudioCtxEp7 = () => {
+    if (!audioCtxRef.current) audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
+    return audioCtxRef.current;
+  };
+  function playPopReceive() {
+    try {
+      const c = getAudioCtxEp7();
+      const o = c.createOscillator(); const g = c.createGain();
+      o.connect(g); g.connect(c.destination);
+      o.type = "sine";
+      o.frequency.setValueAtTime(880, c.currentTime);
+      o.frequency.exponentialRampToValueAtTime(440, c.currentTime + 0.08);
+      g.gain.setValueAtTime(0.25, c.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.12);
+      o.start(); o.stop(c.currentTime + 0.13);
+    } catch (e) {}
+  }
+  function playPopSend() {
+    try {
+      const c = getAudioCtxEp7();
+      const o = c.createOscillator(); const g = c.createGain();
+      o.connect(g); g.connect(c.destination);
+      o.type = "sine";
+      o.frequency.setValueAtTime(660, c.currentTime);
+      o.frequency.exponentialRampToValueAtTime(880, c.currentTime + 0.05);
+      g.gain.setValueAtTime(0.15, c.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.1);
+      o.start(); o.stop(c.currentTime + 0.11);
+    } catch (e) {}
+  }
+  function playNotifSound() {
+    try {
+      const c = getAudioCtxEp7();
+      const o = c.createOscillator(); const g = c.createGain();
+      o.connect(g); g.connect(c.destination);
+      o.type = "sine";
+      o.frequency.setValueAtTime(523, c.currentTime);
+      o.frequency.exponentialRampToValueAtTime(784, c.currentTime + 0.1);
+      g.gain.setValueAtTime(0.3, c.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.25);
+      o.start(); o.stop(c.currentTime + 0.26);
+    } catch (e) {}
+  }
+
+  // ── メッセージ順次投下ヘルパー ──
+  const sleepEp7 = (ms) => new Promise((r) => setTimeout(r, ms));
+  async function injectMocchi(text, time, hideAvt = false, isStamp = false, isSpecial = false) {
+    playPopReceive();
+    setChatMessages((msgs) => [...msgs, { type: "mocchi", text, time, hideAvt, isStamp, isSpecial, key: Date.now() + Math.random() }]);
+  }
+  async function injectMy(text, time) {
+    playPopSend();
+    setChatMessages((msgs) => [...msgs, { type: "my", text, time, key: Date.now() + Math.random() }]);
+  }
+  async function injectMyPhoto(src, time) {
+    playPopSend();
+    setChatMessages((msgs) => [...msgs, { type: "myPhoto", src, time, key: Date.now() + Math.random() }]);
+  }
+  async function injectInnerVoice(text) {
+    setChatMessages((msgs) => [...msgs, { type: "innerVoice", text, key: Date.now() + Math.random() }]);
+  }
+  async function showTypingBriefly(ms = 700) {
+    setIsTyping(true);
+    await sleepEp7(ms);
+    setIsTyping(false);
+  }
+
+  // ── line_day1 ──
+  async function startLineDay1() {
+    setChatMessages([]); setShowChoices(false);
+    await sleepEp7(800);
+    await injectMocchi("おーい、マユミ?", "22:10", false);
+    await sleepEp7(1100);
+    await injectMocchi("LINE追加できたよ〜<br/>よろしくね!", "22:10", true);
+    await sleepEp7(1100);
+    await injectMocchi("👋", "22:11", true, true);
+    await sleepEp7(1000);
+    setCurrentChoices(["よろしく〜! 今日は1位たくさん取れたね!", "追加できた! ありがとう✨", "えへへ、こちらこそ〜"]);
+    setShowChoices(true);
+    setLineChoiceContext("day1_select");
+  }
+  async function handleDay1Selected(myReply) {
+    setShowChoices(false);
+    await injectMy(myReply, "22:12");
+    await sleepEp7(900);
+    await showTypingBriefly(700);
+    await injectMocchi("今日めっちゃ楽しかったw", "22:13", false);
+    await sleepEp7(1000);
+    await showTypingBriefly(600);
+    await injectMocchi("マユミと組むと勝てるわ〜<br/>また明日もよろ!", "22:13", true);
+    await sleepEp7(1000);
+    await injectMocchi("😆", "22:14", true, true);
+    await sleepEp7(800);
+    setLineCtaText("【1週間後…】 →"); setLineCtaNext("line_trans_week");
+  }
+
+  // ── line_day7 ──
+  async function startLineDay7() {
+    setChatMessages([]); setShowChoices(false);
+    await sleepEp7(500);
+    await injectMy("学校だるかった〜", "23:42");
+    await sleepEp7(900);
+    await showTypingBriefly(700);
+    await injectMocchi("わかる〜w<br/>俺もだった", "23:43", false);
+    await sleepEp7(1100);
+    await showTypingBriefly(700);
+    await injectMocchi("てかさ、マユミと話してると癒される", "23:46", true);
+    await sleepEp7(1100);
+    await showTypingBriefly(600);
+    await injectMocchi("学校で疲れても、夜マユミとゲームできるのが楽しみで", "23:46", true);
+    await sleepEp7(1200);
+    await showTypingBriefly(900);
+    await injectMocchi("…正直、好きかも", "23:47", true, false, true);
+    await sleepEp7(1200);
+    setCurrentChoices(["えっ…ちょっと、急にどうしたのw", "うそ、ドキドキするんだけど…", "え、私も実は気になってた…"]);
+    setShowChoices(true);
+    setLineChoiceContext("day7_select");
+  }
+  async function handleDay7Selected(myReply) {
+    setShowChoices(false);
+    await injectMy(myReply, "23:48");
+    await sleepEp7(1000);
+    await showTypingBriefly(700);
+    await injectMocchi("えへへ、よかった", "23:48", false);
+    await sleepEp7(1100);
+    await showTypingBriefly(900);
+    await injectMocchi("俺ね、マユミとなら本当の話できる気がする<br/>家族にも言えないこと多いから", "23:49", true);
+    await sleepEp7(1300);
+    await showTypingBriefly(700);
+    await injectMocchi("もっとマユミのこと知りたい", "23:50", true);
+    await sleepEp7(1000);
+    setLineCtaText("【さらに2週間後…】 →"); setLineCtaNext("line_trans_2weeks");
+  }
+
+  // ── line_day14（写真要求・転換点） ──
+  async function startLineDay14() {
+    setChatMessages([]); setShowChoices(false);
+    await sleepEp7(600);
+    await injectMocchi("ねえ", "22:30", false);
+    await sleepEp7(900);
+    await showTypingBriefly(700);
+    await injectMocchi("もっとマユミの顔見たい〜", "22:31", true);
+    await sleepEp7(1100);
+    await showTypingBriefly(700);
+    await injectMocchi("写真送ってよ", "22:31", true);
+    await sleepEp7(1100);
+    await showTypingBriefly(600);
+    await injectMocchi("顔だけでいいから、ね?", "22:32", true);
+    await sleepEp7(1200);
+    await injectInnerVoice("え、顔写真…?<br/>でも、もっち23だから、いいかな…<br/>付き合ってるみたいなものだし…");
+    await sleepEp7(2000);
+    setCurrentChoices(["いいよ、笑 撮ってみる", "えー、ちょっと恥ずかしいけど…", "あんま得意じゃないけど、いいよ"]);
+    setShowChoices(true);
+    setLineChoiceContext("day14_select");
+  }
+  async function handleDay14PhotoRequest(myReply) {
+    setShowChoices(false);
+    await injectMy(myReply, "22:32");
+    await sleepEp7(1200);
+    await injectMyPhoto("/images/ep7/mayumi_selfie.jpg", "22:33");
+    await sleepEp7(1500);
+    await showTypingBriefly(600);
+    await injectMocchi("うわ、可愛い!!", "22:33", false);
+    await sleepEp7(900);
+    await showTypingBriefly(500);
+    await injectMocchi("やっぱマユミのこと好きだわ", "22:33", true);
+    await sleepEp7(1100);
+    await showTypingBriefly(800);
+    await injectMocchi("ねえ、制服姿も見たいな", "22:34", true);
+    await sleepEp7(1100);
+    await showTypingBriefly(700);
+    await injectMocchi("俺だけに見せて? 他の男には絶対見せないでよ", "22:34", true);
+    await sleepEp7(1500);
+    await injectInnerVoice("えっ…制服…?<br/>ちょっと、こわい…<br/>でも、好きって言ってくれたし…<br/>「俺だけに」って言われると、嬉しい気もする…");
+    await sleepEp7(2500);
+    setLineCtaText("【さらに数日後…】 →"); setLineCtaNext("line_day20");
+  }
+
+  // ── line_day20（会おうよ） ──
+  async function startLineDay20() {
+    setChatMessages([]); setShowChoices(false);
+    await sleepEp7(600);
+    await injectMocchi("マユミ", "23:08", false);
+    await sleepEp7(900);
+    await showTypingBriefly(700);
+    await injectMocchi("やっぱさ、会いたい", "23:09", true);
+    await sleepEp7(1200);
+    await showTypingBriefly(800);
+    await injectMocchi("写真もいいけど、本物のマユミと話したい", "23:09", true);
+    await sleepEp7(1300);
+    await showTypingBriefly(700);
+    await injectMocchi("土曜空いてる? 駅で会おうよ", "23:10", true);
+    await sleepEp7(1100);
+    await showTypingBriefly(600);
+    await injectMocchi("★親には内緒な", "23:10", true);
+    await sleepEp7(900);
+    await showTypingBriefly(500);
+    await injectMocchi("2人だけの秘密にしてね 🤫", "23:11", true, false, true);
+    await sleepEp7(1500);
+    await injectInnerVoice("内緒…?<br/>でも、もっち23だし。<br/>初めて会うの、ドキドキする。");
+    await sleepEp7(2500);
+    setCurrentChoices(["うん、会いたい! どこで?", "ちょっと緊張するけど…うん", "親には言わないでね、私も内緒にする"]);
+    setShowChoices(true);
+    setLineChoiceContext("day20_select");
+  }
+  async function handleDay20MeetSelected(myReply) {
+    setShowChoices(false);
+    await injectMy(myReply, "23:11");
+    await sleepEp7(1200);
+    await showTypingBriefly(700);
+    await injectMocchi("やった!", "23:12", false);
+    await sleepEp7(900);
+    await showTypingBriefly(700);
+    await injectMocchi("土曜の17時、<br/>「新都心駅」西口の改札前で待ってる", "23:12", true);
+    await sleepEp7(1300);
+    await showTypingBriefly(600);
+    await injectMocchi("絶対だよ? 待ってるから", "23:13", true);
+    await sleepEp7(1100);
+    await injectMocchi("🥰", "23:13", true, true);
+    await sleepEp7(1800);
+    setLineCtaText("【土曜・当日…】 →"); setLineCtaNext("station_scene");
+  }
+
+  function handleLineChoice(choice) {
+    if (lineChoiceContext === "day1_select") handleDay1Selected(choice);
+    else if (lineChoiceContext === "day7_select") handleDay7Selected(choice);
+    else if (lineChoiceContext === "day14_select") handleDay14PhotoRequest(choice);
+    else if (lineChoiceContext === "day20_select") handleDay20MeetSelected(choice);
+  }
+
+  function goLineCta() {
+    feedback("tap");
+    const next = lineCtaNext;
+    setLineCtaText(null); setLineCtaNext(null);
+    setChatMessages([]); setShowChoices(false); setCurrentChoices([]);
+    setPhase(next);
+    if (next === "line_day20") startLineDay20();
+    else if (next === "station_scene") { setStationStage(0); setShowMotherNotif(false); setStationChoice(null); startStationScene(); }
+  }
+
+  // ── station_scene（駅シーン） ──
+  async function startStationScene() {
+    setStationStage(0);
+    await sleepEp7(2500);
+    setStationStage(1);
+    await sleepEp7(3000);
+    setStationStage(2);
+    await sleepEp7(3000);
+    playNotifSound();
+    setShowMotherNotif(true);
+    await sleepEp7(2500);
+    setStationStage(3);
+    await sleepEp7(3500);
+    setStationStage(4);
+  }
+  async function handleStationChoice(choice) {
+    setStationChoice(choice);
+    setStationStage(5);
+    await sleepEp7(600);
+    setStationStage(6);
+    await sleepEp7(3000);
+    setStationStage(7);
+    await sleepEp7(3000);
+    setStationStage(8);
+  }
+
+  // ── LINE day 共通レンダリング ──
+  const renderLineDay = ({ statusTime, statusBattery, dateLabel, ctaDark = false }) => (
+    <>
+      <LineChatScreen statusTime={statusTime} statusBattery={statusBattery} dateLabel={dateLabel}>
+        {chatMessages.map((m) => {
+          if (m.type === "mocchi") return <MocchiMessage key={m.key} text={m.text} time={m.time} hideAvt={m.hideAvt} isStamp={m.isStamp} isSpecial={m.isSpecial} />;
+          if (m.type === "my") return <MyMessage key={m.key} text={m.text} time={m.time} />;
+          if (m.type === "myPhoto") return <MyPhotoMessage key={m.key} src={m.src} time={m.time} />;
+          if (m.type === "innerVoice") return <InnerVoice key={m.key} html={m.text} />;
+          return null;
+        })}
+        {isTyping && <TypingIndicator />}
+        {showChoices && currentChoices.length > 0 && <ChoicesArea choices={currentChoices} onSelect={handleLineChoice} />}
+      </LineChatScreen>
+      {lineCtaText && (
+        <div style={{ position: "fixed", bottom: 0, left: "50%", transform: "translateX(-50%)", width: "100%", maxWidth: 440, padding: 12, background: ctaDark ? "rgba(0,0,0,.9)" : "#fff", borderTop: ctaDark ? "1px solid rgba(255,255,255,.1)" : "1px solid #e5e7eb", zIndex: 20, boxSizing: "border-box" }}>
+          <button onClick={goLineCta}
+            style={{ width: "100%", padding: 13, background: ctaDark ? "linear-gradient(135deg,#a21caf,#7c2d92)" : "linear-gradient(135deg,#06c755,#04a847)", border: "none", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>
+            {lineCtaText}
+          </button>
+        </div>
+      )}
+    </>
+  );
 
   const purple = "#8b5cf6";
   const purpleDark = "#6d28d9";
@@ -19923,18 +20377,145 @@ function Episode7({ onComplete, onExit }) {
         <div style={{ maxWidth: 440, margin: "0 auto", textAlign: "center", paddingTop: 60 }}>
           <div style={{ fontSize: 56, marginBottom: 14 }}>🎮</div>
           <div style={{ fontSize: 18, fontWeight: 900, marginBottom: 10 }}>
-            <RubyText text={el ? "ゲーム{経路|けいろ}を{体験|たいけん}した!" : "ゲーム経路を体験した!"} />
+            <RubyText text={el ? "ゲームの{相棒|あいぼう}になった!" : "ゲームの相棒になった!"} />
           </div>
-          <div style={{ fontSize: 13, color: "rgba(255,255,255,.7)", lineHeight: 1.7, marginBottom: 28, whiteSpace: "pre-line" }}>
-            <RubyText text={el
-              ? "このあと、マユミともっち23のLINEでのやりとりが{始|はじ}まる…\nそれは{次|つぎ}のアップデートで{追加|ついか}されます。\n\n{今|いま}は、{経路|けいろ}{選択|せんたく}に{戻|もど}って、もう{一方|いっぽう}を{体験|たいけん}してみよう。"
-              : "このあと、マユミともっち23のLINEでのやりとりが始まる…\nそれは次のアップデートで追加されます。\n\n今は、経路選択に戻って、もう一方を体験してみよう。"} />
+          <div style={{ fontSize: 13, color: "rgba(255,255,255,.7)", lineHeight: 1.7, marginBottom: 28 }}>
+            <RubyText text={el ? "このあと、マユミともっち23のLINEでのやりとりが{始|はじ}まる…" : "このあと、マユミともっち23のLINEでのやりとりが始まる…"} />
           </div>
-          <button onClick={() => { feedback("tap"); setPhase("intro"); }}
-            style={{ display: "block", width: "100%", padding: 13, background: "linear-gradient(135deg,#8b5cf6,#7c3aed)", border: "none", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>
-            <RubyText text={el ? "{経路|けいろ}{選択|せんたく}に{戻|もど}る →" : "経路選択に戻る →"} />
+          <button onClick={() => { feedback("tap"); setChatMessages([]); setShowChoices(false); setPhase("line_day1"); startLineDay1(); }}
+            style={{ display: "block", width: "100%", padding: 13, background: "linear-gradient(135deg,#06c755,#04a847)", border: "none", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>
+            <RubyText text={el ? "LINEを{開|ひら}く →" : "LINEを開く →"} />
           </button>
         </div>
+      </div>
+    );
+  }
+
+  // ═══ LINE物語パート（line_day1 〜 station_scene） ═══
+  if (phase === "line_day1") return renderLineDay({ statusTime: "22:14", statusBattery: "100%", dateLabel: "2026年4月10日" });
+  if (phase === "line_day7") return renderLineDay({ statusTime: "23:48", statusBattery: "86%", dateLabel: "2026年4月17日" });
+  if (phase === "line_day14") return renderLineDay({ statusTime: "22:34", statusBattery: "72%", dateLabel: "2026年4月24日" });
+  if (phase === "line_day20") return renderLineDay({ statusTime: "23:12", statusBattery: "58%", dateLabel: "2026年4月29日", ctaDark: true });
+
+  // ── line_trans_week（1週間後） ──
+  if (phase === "line_trans_week") {
+    return (
+      <div style={{ minHeight: "100vh", background: "#000", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 30, textAlign: "center", color: "#fff", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ fontSize: 11, color: "rgba(255,255,255,.5)", letterSpacing: ".2em", marginBottom: 18, fontFamily: "monospace" }}>— 1 WEEK LATER —</div>
+        <div style={{ fontSize: 30, fontWeight: 900, color: "#fbbf24", marginBottom: 14, letterSpacing: ".05em" }}>
+          <RubyText text={el ? "1{週間後|しゅうかんご}" : "1週間後"} />
+        </div>
+        <div style={{ fontSize: 13, color: "rgba(255,255,255,.75)", lineHeight: 1.9, maxWidth: 300 }}>
+          <RubyText text={el
+            ? "もっち23とは{毎日|まいにち}LINEするようになった。<br/>{送|おく}ったメッセージはすぐ{既読|きどく}、すぐ{返事|へんじ}。<br/>なんか…{一緒|いっしょ}にいると、ホッとする。"
+            : "もっち23とは毎日LINEするようになった。<br/>送ったメッセージはすぐ既読、すぐ返事。<br/>なんか…一緒にいると、ホッとする。"} />
+        </div>
+        <button onClick={() => { feedback("tap"); setChatMessages([]); setPhase("line_day7"); startLineDay7(); }}
+          style={{ marginTop: 30, padding: 13, width: "100%", maxWidth: 280, background: "linear-gradient(135deg,#06c755,#04a847)", border: "none", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>
+          <RubyText text={el ? "{続|つづ}ける →" : "続ける →"} />
+        </button>
+      </div>
+    );
+  }
+
+  // ── line_trans_2weeks（2週間後） ──
+  if (phase === "line_trans_2weeks") {
+    return (
+      <div style={{ minHeight: "100vh", background: "#000", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 30, textAlign: "center", color: "#fff", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ fontSize: 11, color: "rgba(255,255,255,.5)", letterSpacing: ".2em", marginBottom: 18, fontFamily: "monospace" }}>— 2 WEEKS LATER —</div>
+        <div style={{ fontSize: 30, fontWeight: 900, color: "#fbbf24", marginBottom: 14, letterSpacing: ".05em" }}>
+          <RubyText text={el ? "さらに2{週間後|しゅうかんご}" : "さらに2週間後"} />
+        </div>
+        <div style={{ fontSize: 13, color: "rgba(255,255,255,.75)", lineHeight: 1.9, maxWidth: 300 }}>
+          <RubyText text={el
+            ? "{毎晩|まいばん}、{寝|ね}る{前|まえ}まで{連絡|れんらく}を{取|と}り{合|あ}う。<br/>もっち23のことが、{頭|あたま}から{離|はな}れない。<br/>「{好|す}き」って{言|い}われたあの{夜|よる}から、<br/>{何|なに}かが{変|か}わった{気|き}がする。"
+            : "毎晩、寝る前まで連絡を取り合う。<br/>もっち23のことが、頭から離れない。<br/>「好き」って言われたあの夜から、<br/>何かが変わった気がする。"} />
+        </div>
+        <button onClick={() => { feedback("tap"); setChatMessages([]); setPhase("line_day14"); startLineDay14(); }}
+          style={{ marginTop: 30, padding: 13, width: "100%", maxWidth: 280, background: "linear-gradient(135deg,#06c755,#04a847)", border: "none", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>
+          <RubyText text={el ? "{続|つづ}ける →" : "続ける →"} />
+        </button>
+      </div>
+    );
+  }
+
+  // ── station_scene（駅シーン・物語の決定的瞬間） ──
+  if (phase === "station_scene") {
+    const narrations = {
+      0: { main: "—— 土曜・夕方 ——", small: "マユミは、待ち合わせの駅に着いた。" },
+      1: { main: "改札の前で、もっち23を探す。", small: "ドキドキする。緊張で、足が震える。" },
+      2: { main: "そういえば、お母さんには黙ってきちゃったな…", small: "大丈夫…かな?" },
+      3: { main: "お母さん…", small: "なんで、内緒にしようとしてたんだろ。<br/>胸が、ぎゅっとなる。" },
+      5: { main: stationChoice === "go" ? "マユミは、改札に手を伸ばし…" : "マユミは、足を止めた。", small: "…そのとき、誰かが声をかけてきた。" },
+      6: { main: stationChoice === "go" ? "マユミは、改札に手を伸ばし…" : "マユミは、足を止めた。", small: "…そのとき、誰かが声をかけてきた。" },
+      7: { main: "「マユミ。」", small: "…聞いたことのある声。<br/>振り返ると、そこにいたのは——" },
+    };
+    const elemNarrations = {
+      0: { main: "—— {土曜|どよう}・{夕方|ゆうがた} ——", small: "マユミは、{待|ま}ち{合|あ}わせの{駅|えき}に{着|つ}いた。" },
+      1: { main: "{改札|かいさつ}の{前|まえ}で、もっち23を{探|さが}す。", small: "ドキドキする。{緊張|きんちょう}で、{足|あし}が{震|ふる}える。" },
+      2: { main: "そういえば、お{母|かあ}さんには{黙|だま}ってきちゃったな…", small: "{大丈夫|だいじょうぶ}…かな?" },
+      3: { main: "お{母|かあ}さん…", small: "なんで、{内緒|ないしょ}にしようとしてたんだろ。<br/>{胸|むね}が、ぎゅっとなる。" },
+      5: { main: stationChoice === "go" ? "マユミは、{改札|かいさつ}に{手|て}を{伸|の}ばし…" : "マユミは、{足|あし}を{止|と}めた。", small: "…そのとき、{誰|だれ}かが{声|こえ}をかけてきた。" },
+      6: { main: stationChoice === "go" ? "マユミは、{改札|かいさつ}に{手|て}を{伸|の}ばし…" : "マユミは、{足|あし}を{止|と}めた。", small: "…そのとき、{誰|だれ}かが{声|こえ}をかけてきた。" },
+      7: { main: "「マユミ。」", small: "…{聞|き}いたことのある{声|こえ}。<br/>{振|ふ}り{返|かえ}ると、そこにいたのは——" },
+    };
+    const currentNarration = el ? elemNarrations[stationStage] : narrations[stationStage];
+    return (
+      <div style={{ position: "fixed", inset: 0, backgroundImage: "url(/images/ep7/station.jpg)", backgroundSize: "cover", backgroundPosition: "center", animation: "ep7StationIn .8s ease both", display: "flex", flexDirection: "column", maxWidth: 440, margin: "0 auto", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        {/* 暗くするオーバーレイ */}
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,.2) 0%, transparent 30%, rgba(0,0,0,.5) 80%, rgba(0,0,0,.85) 100%)", pointerEvents: "none" }} />
+        {/* ナレーション */}
+        {currentNarration && (
+          <div style={{ position: "absolute", top: "14%", left: 14, right: 14, textAlign: "center", color: "#fff", fontSize: 14, fontWeight: 900, textShadow: "0 2px 6px #000", zIndex: 5, padding: "14px 18px", lineHeight: 1.6, background: "rgba(0,0,0,.65)", backdropFilter: "blur(6px)", borderRadius: 14, border: "1px solid rgba(255,255,255,.12)" }}>
+            <RubyText text={currentNarration.main} />
+            <span style={{ display: "block", fontSize: 11, fontWeight: 600, color: "rgba(255,255,255,.88)", marginTop: 8 }}>
+              <RubyText text={currentNarration.small} />
+            </span>
+          </div>
+        )}
+        {/* 母通知バナー */}
+        {showMotherNotif && (
+          <div style={{ position: "absolute", top: "30%", left: 14, right: 14, background: "rgba(40,40,55,.85)", backdropFilter: "blur(16px)", borderRadius: 14, padding: "12px 14px", display: "flex", alignItems: "flex-start", gap: 10, zIndex: 6, color: "#fff", boxShadow: "0 8px 28px rgba(0,0,0,.6)", border: "1px solid rgba(255,255,255,.15)", animation: "ep7NotifIn .6s cubic-bezier(.34,1.56,.64,1) both", opacity: stationStage >= 5 ? 0.4 : 1 }}>
+            <div style={{ width: 32, height: 32, background: "#22c55e", borderRadius: 7, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>💬</div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 10, color: "rgba(255,255,255,.7)", fontWeight: 700, marginBottom: 2, display: "flex", justifyContent: "space-between" }}>
+                <span>LINE・お母さん</span>
+                <span style={{ color: "rgba(255,255,255,.5)", fontWeight: 500 }}>いま</span>
+              </div>
+              <div style={{ fontSize: 13, fontWeight: 900, marginBottom: 1 }}>お母さん</div>
+              <div style={{ fontSize: 12, lineHeight: 1.4, color: "rgba(255,255,255,.95)" }}>
+                <RubyText text={el ? "マユミ、どこにいるの?<br/>{夜|よる}になっちゃうよ。{早|はや}く{帰|かえ}ってきて。" : "マユミ、どこにいるの?<br/>夜になっちゃうよ。早く帰ってきて。"} />
+              </div>
+            </div>
+          </div>
+        )}
+        {/* 選択肢（stationStage === 4） */}
+        {stationStage === 4 && (
+          <div style={{ position: "absolute", bottom: 80, left: 14, right: 14, zIndex: 7 }}>
+            <div style={{ textAlign: "center", color: "#fff", fontSize: 13, fontWeight: 900, background: "rgba(0,0,0,.7)", padding: "10px 14px", borderRadius: 12, border: "1px solid rgba(255,255,255,.15)", marginBottom: 10, lineHeight: 1.6 }}>
+              <RubyText text={el ? "{改札|かいさつ}を、{通|とお}る? {通|とお}らない?" : "改札を、通る? 通らない?"} />
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 5 }}>
+              <button onClick={() => handleStationChoice("go")}
+                style={{ background: "#fef9e7", color: "#1a1a1f", padding: "8px 11px", borderRadius: "14px 0 14px 14px", fontSize: 13, lineHeight: 1.45, maxWidth: "72%", cursor: "pointer", border: "2px solid #fbbf24", boxShadow: "0 2px 6px rgba(0,0,0,.4)", fontFamily: "inherit", textAlign: "left" }}>
+                <RubyText text={el ? "{改札|かいさつ}を{通|とお}る(もっち23に{会|あ}いに{行|い}く)" : "改札を通る(もっち23に会いに行く)"} />
+              </button>
+              <button onClick={() => handleStationChoice("stop")}
+                style={{ background: "#fef9e7", color: "#1a1a1f", padding: "8px 11px", borderRadius: "14px 0 14px 14px", fontSize: 13, lineHeight: 1.45, maxWidth: "72%", cursor: "pointer", border: "2px solid #fbbf24", boxShadow: "0 2px 6px rgba(0,0,0,.4)", fontFamily: "inherit", textAlign: "left" }}>
+                <RubyText text={el ? "{立|た}ち{止|と}まる(お{母|かあ}さんに{連絡|れんらく}する)" : "立ち止まる(お母さんに連絡する)"} />
+              </button>
+            </div>
+          </div>
+        )}
+        {/* CTA（stationStage === 8・フェーズ5へ） */}
+        {stationStage === 8 && (
+          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: 12, background: "rgba(0,0,0,.9)", borderTop: "1px solid rgba(255,255,255,.1)", zIndex: 20 }}>
+            <button onClick={() => { feedback("tap"); alert(el ? "{続|つづ}きはフェーズ5で{実装|じっそう}されます: {種明|たねあ}かし→ニュース→{危険|きけん}サイン→{相談|そうだん}{窓口|まどぐち}→ポジティブ{締|し}め".replace(/\{([^|]+)\|[^}]+\}/g, "$1") : "続きはフェーズ5で実装されます: 種明かし→ニュース→危険サイン→相談窓口→ポジティブ締め"); }}
+              style={{ width: "100%", padding: 13, background: "linear-gradient(135deg,#a21caf,#7c2d92)", border: "none", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>
+              <RubyText text={el ? "【{続|つづ}きを{見|み}る:{種明|たねあ}かし→ニュース→{対処|たいしょ}へ】 →" : "【続きを見る:種明かし→ニュース→対処へ】 →"} />
+            </button>
+          </div>
+        )}
       </div>
     );
   }
