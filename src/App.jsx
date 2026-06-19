@@ -19448,6 +19448,8 @@ function Episode7({ onComplete, onExit }) {
   const [dmStep, setDmStep] = useState(0);
   const [escStep, setEscStep] = useState(0);
   const [signStep, setSignStep] = useState(0);
+  const [selectedRoute, setSelectedRoute] = useState(null);   // "game" | "dm"
+  const [completedRoutes, setCompletedRoutes] = useState([]); // ["game","dm"]
 
   const purple = "#8b5cf6";
   const purpleDark = "#6d28d9";
@@ -19484,27 +19486,76 @@ function Episode7({ onComplete, onExit }) {
     <EpisodeIntroCard epKey="ep7" onStart={() => setPhase("intro")} />
   );
 
-  if (phase === "intro") return (
-    <EpisodeShell onExit={onExit}>
-    <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#1a0a2e,#0a0515)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 20px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden" }}>
-      <StarField count={28} color={purple} sizeMin={1} sizeRange={2} opacityMin={0.05} opacityRange={0.3} blinkMin={2} blinkRange={4} />
-      <div style={{ fontSize: 70, marginBottom: 12, animation: "float 3s ease-in-out infinite" }}>🕸️</div>
-      <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: purple, letterSpacing: ".4em", margin: "0 0 10px" }}>EPISODE 07</div>
-      <h1 style={{ fontSize: 22, fontWeight: 900, color: "#fff", margin: "0 0 8px", textAlign: "center", lineHeight: 1.3 }}>
-        <RubyText text={el ? "その{人|ひと}、{本当|ほんとう}に" : "その人、本当に"} /><br /><RubyText text={el ? "{同|おな}い{年|どし}？" : "同い年？"} />
-      </h1>
-      <p style={{ color: "rgba(255,255,255,.45)", fontSize: 12, margin: "0 0 22px", textAlign: "center", lineHeight: 1.7 }}>— <RubyText text={el ? "SNSでの{出会|であ}いトラブル {体験|たいけん}" : "SNSでの出会いトラブル 体験"} /> —</p>
-      <div style={{ background: `${purple}0a`, border: `1px solid ${purple}33`, borderRadius: 18, padding: "18px 20px", maxWidth: 320, marginBottom: 14, color: "#ede9fe", fontSize: 13, lineHeight: 1.9 }}>
-        <RubyText text={el ? "ゲームやSNSで{知|し}り{合|あ}った「{同|おな}い{年|どし}の{子|こ}」。でも{本当|ほんとう}に{同|おな}い{年|どし}ですか？" : "ゲームやSNSで知り合った「同い年の子」。でも本当に同い年ですか？"} /><br /><br />
-        <strong style={{ color: purple }}><RubyText text={el ? "{写真|しゃしん}も{名前|なまえ}も{年齢|ねんれい}もビデオ{通話|つうわ}も{偽装|ぎそう}できる{時代|じだい}に、{子|こ}どもたちが{狙|ねら}われています。" : "写真も名前も年齢もビデオ通話も偽装できる時代に、子どもたちが狙われています。"} /></strong>
+  // ── INTRO: 経路選択（オンラインゲーム / SNS DM） ──
+  if (phase === "intro") {
+    const gameDone = completedRoutes.includes("game");
+    const dmDone = completedRoutes.includes("dm");
+    return (
+      <EpisodeShell onExit={onExit}>
+      <div style={{ minHeight: "100vh", background: "linear-gradient(160deg,#0d1a2e,#0a0f1a)", padding: "24px 20px", color: "#fff", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ maxWidth: 440, margin: "0 auto" }}>
+
+          {/* モリィ */}
+          <div style={{ display: "flex", gap: 10, alignItems: "flex-start", marginBottom: 18 }}>
+            <div style={{ width: 44, height: 44, borderRadius: "50%", background: "linear-gradient(135deg,#c4915c,#9b6b3a)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 23, flexShrink: 0 }}>🦉</div>
+            <div style={{ background: "rgba(236,72,153,.12)", border: "1px solid rgba(236,72,153,.3)", borderRadius: "4px 16px 16px 16px", padding: "11px 14px", fontSize: 13, lineHeight: 1.7, whiteSpace: "pre-line" }}>
+              <RubyText text={el
+                ? "これからは、{君|きみ}が{普段|ふだん}ネットでどう{過|す}ごしてるかに{合|あ}わせて{体験|たいけん}できるよ。\n\nどっちも{体験|たいけん}できるから、{気|き}になる{方|ほう}から{選|えら}んでね!"
+                : "これからは、君が普段ネットでどう過ごしてるかに合わせて体験できるよ。\n\nどっちも体験できるから、気になる方から選んでね!"} />
+            </div>
+          </div>
+
+          {/* オンラインゲーム経路 */}
+          <button
+            onClick={() => { feedback("tap"); setSelectedRoute("game"); setPhase("game_play"); }}
+            disabled={gameDone}
+            style={{ width: "100%", background: gameDone ? "rgba(34,197,94,.1)" : "rgba(139,92,246,.06)", border: `2px solid ${gameDone ? "#22c55e" : "rgba(139,92,246,.3)"}`, borderRadius: 14, padding: 14, marginBottom: 10, cursor: gameDone ? "default" : "pointer", textAlign: "left", color: "#fff", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ fontSize: 30, flexShrink: 0 }}>🎮</div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, lineHeight: 1.5 }}>
+                <RubyText text={el ? "オンラインゲームで{遊|あそ}ぶことが{多|おお}い" : "オンラインゲームで遊ぶことが多い"} />
+              </div>
+              <div style={{ fontSize: 11, color: "rgba(255,255,255,.5)", marginTop: 3 }}>
+                <RubyText text={el ? "バトロワ{系|けい}・ボイスチャット{経由|けいゆ}の{体験|たいけん}" : "バトロワ系・ボイスチャット経由の体験"} />
+              </div>
+            </div>
+            {gameDone && (
+              <div style={{ background: "#22c55e", color: "#fff", fontSize: 10, padding: "2px 8px", borderRadius: 10, fontWeight: 700 }}><RubyText text={el ? "✓ {体験済|たいけんず}み" : "✓ 体験済み"} /></div>
+            )}
+          </button>
+
+          {/* SNS DM経路 */}
+          <button
+            onClick={() => { feedback("tap"); alert(el ? "SNS DM{経路|けいろ}はもうすぐ{実装|じっそう}されます。{今|いま}はゲーム{経路|けいろ}をプレイしてください。" : "SNS DM経路はもうすぐ実装されます。今はゲーム経路をプレイしてください。"); }}
+            disabled={dmDone}
+            style={{ width: "100%", background: dmDone ? "rgba(34,197,94,.1)" : "rgba(139,92,246,.06)", border: `2px solid ${dmDone ? "#22c55e" : "rgba(139,92,246,.3)"}`, borderRadius: 14, padding: 14, marginBottom: 10, cursor: dmDone ? "default" : "pointer", textAlign: "left", color: "#fff", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 10, opacity: dmDone ? 1 : 0.7 }}>
+            <div style={{ fontSize: 30, flexShrink: 0 }}>📱</div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, lineHeight: 1.5 }}>
+                <RubyText text={el ? "SNSのDMが{来|く}ることがある" : "SNSのDMが来ることがある"} />
+              </div>
+              <div style={{ fontSize: 11, color: "rgba(255,255,255,.5)", marginTop: 3 }}>
+                <RubyText text={el ? "Instagram DM{経由|けいゆ}の{体験|たいけん}（{準備中|じゅんびちゅう}）" : "Instagram DM経由の体験（準備中）"} />
+              </div>
+            </div>
+            {dmDone && (
+              <div style={{ background: "#22c55e", color: "#fff", fontSize: 10, padding: "2px 8px", borderRadius: 10, fontWeight: 700 }}><RubyText text={el ? "✓ {体験済|たいけんず}み" : "✓ 体験済み"} /></div>
+            )}
+          </button>
+
+          {/* 両方完了したら次へ */}
+          {completedRoutes.length >= 2 && (
+            <button onClick={() => { feedback("tap"); setPhase("homework"); }}
+              style={{ width: "100%", padding: 14, marginTop: 14, background: `linear-gradient(135deg,${purple},${purpleDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>
+              <RubyText text={el ? "{両方|りょうほう}の{経路|けいろ}を{体験|たいけん}した! {次|つぎ}へ{進|すす}む →" : "両方の経路を体験した! 次へ進む →"} />
+            </button>
+          )}
+
+        </div>
       </div>
-      <OwlSay mood="worried" e={el ? "SNSの{相手|あいて}は{本当|ほんとう}に{信頼|しんらい}できる？{一緒|いっしょ}に{考|かんが}えてみよう🦉" : "SNSの相手は本当に信頼できる？一緒に考えてみよう🦉"}>SNSの相手は本当に信頼できる？一緒に考えてみよう🦉</OwlSay>
-      <button onClick={() => setPhase("scene1")} style={{ background: `linear-gradient(135deg,${purple},${purpleDark})`, border: "none", borderRadius: 50, padding: "15px 44px", fontSize: 16, fontWeight: 900, color: "#fff", cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${purple}44`, marginTop: 8 }}>
-        <RubyText text={el ? "{体験|たいけん}スタート" : "体験スタート"} />
-      </button>
-    </div>
-    </EpisodeShell>
-  );
+      </EpisodeShell>
+    );
+  }
 
   // ── SCENE 1: きっかけ ──
   if (phase === "scene1") return (
