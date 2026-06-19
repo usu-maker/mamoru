@@ -755,6 +755,7 @@ const GlobalStyle = () => (
     @keyframes sparkleFade { 0%,100%{opacity:0} 50%{opacity:.85} }
     @keyframes elemPulseEp7 { 0%,100%{opacity:1} 50%{opacity:.6;filter:drop-shadow(0 0 6px rgba(239,68,68,.9))} }
     @keyframes labelPulseEp7 { 0%,100%{opacity:1} 50%{opacity:.55} }
+    @keyframes ep7Pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.4);opacity:.6} }
     .sparkles { position:absolute; inset:0; pointer-events:none; overflow:hidden; }
     .sparkle { position:absolute; font-size:14px; animation: sparkleFloat 3s ease-in-out infinite, sparkleFade 3s ease-in-out infinite; opacity:0; }
     .ep6-hl-thumb{position:relative;z-index:2;}
@@ -19450,6 +19451,47 @@ function Episode7({ onComplete, onExit }) {
   const [signStep, setSignStep] = useState(0);
   const [selectedRoute, setSelectedRoute] = useState(null);   // "game" | "dm"
   const [completedRoutes, setCompletedRoutes] = useState([]); // ["game","dm"]
+  // ゲーム経路用
+  const [gameStep2Sub, setGameStep2Sub] = useState(0);     // game_play サブステップ
+  const [gameStep4Sub, setGameStep4Sub] = useState(0);     // game_compliment サブステップ
+  const [gameStep6Sub, setGameStep6Sub] = useState(0);     // game_invite_line サブステップ
+  const [mocchiText, setMocchiText] = useState("");        // もっち23セリフ（表示用）
+  const [mayumiSaid, setMayumiSaid] = useState(null);      // マユミが言ったセリフ
+  const [itemReceived, setItemReceived] = useState(false); // アイテム受領演出
+  const [qrShown, setQrShown] = useState(false);           // QR表示
+
+  // もっち23セリフの読み上げ（Web Speech API・男声優先・低ピッチ）
+  function speakMocchi(text) {
+    if (!("speechSynthesis" in window)) return;
+    try {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = "ja-JP";
+      u.rate = 1.05;
+      u.pitch = 0.78;
+      const voices = window.speechSynthesis.getVoices();
+      const jaVoices = voices.filter(v => v.lang.startsWith("ja"));
+      let chosen = jaVoices.find(v => /male|otoya|ichiro|takumi|hattori/i.test(v.name));
+      if (!chosen && jaVoices.length) chosen = jaVoices[jaVoices.length - 1];
+      if (chosen) u.voice = chosen;
+      window.speechSynthesis.speak(u);
+    } catch (e) {
+      console.log("speak fail", e);
+    }
+  }
+
+  // 音声リストの非同期ロード対応 + クリーンアップ
+  useEffect(() => {
+    if ("speechSynthesis" in window) window.speechSynthesis.getVoices();
+    return () => { if ("speechSynthesis" in window) window.speechSynthesis.cancel(); };
+  }, []);
+
+  // game_complete に入ったら completedRoutes に "game" を追加
+  useEffect(() => {
+    if (phase === "game_complete") {
+      setCompletedRoutes(prev => prev.includes("game") ? prev : [...prev, "game"]);
+    }
+  }, [phase]);
 
   const purple = "#8b5cf6";
   const purpleDark = "#6d28d9";
@@ -19507,7 +19549,7 @@ function Episode7({ onComplete, onExit }) {
 
           {/* オンラインゲーム経路 */}
           <button
-            onClick={() => { feedback("tap"); setSelectedRoute("game"); setPhase("game_play"); }}
+            onClick={() => { feedback("tap"); setSelectedRoute("game"); setPhase("game_intro"); }}
             disabled={gameDone}
             style={{ width: "100%", background: gameDone ? "rgba(34,197,94,.1)" : "rgba(139,92,246,.06)", border: `2px solid ${gameDone ? "#22c55e" : "rgba(139,92,246,.3)"}`, borderRadius: 14, padding: 14, marginBottom: 10, cursor: gameDone ? "default" : "pointer", textAlign: "left", color: "#fff", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 10 }}>
             <div style={{ fontSize: 30, flexShrink: 0 }}>🎮</div>
@@ -19554,6 +19596,346 @@ function Episode7({ onComplete, onExit }) {
         </div>
       </div>
       </EpisodeShell>
+    );
+  }
+
+  // ═══ ゲーム経路（game_intro 〜 game_complete） ═══
+  // 共通：ゲームシーンの枠（背景画像＋もっち23吹き出し＋マユミ選択肢）
+  const gameBottomBar = (label, onClick) => (
+    <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: 12, background: "rgba(13,10,22,.95)", borderTop: "1px solid rgba(255,255,255,.1)", zIndex: 30 }}>
+      <button onClick={() => { feedback("tap"); onClick(); }}
+        style={{ width: "100%", padding: 13, background: "linear-gradient(135deg,#8b5cf6,#7c3aed)", border: "none", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>
+        <RubyText text={label} />
+      </button>
+    </div>
+  );
+  const gameSceneFrame = ({ bg, choices, onSelect, overlay, bottomBtn }) => (
+    <div style={{ minHeight: "100vh", background: "#0d0a16", color: "#fff", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+      <div style={{ maxWidth: 440, margin: "0 auto", position: "relative", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+        {/* ヘッダー：注意喚起 */}
+        <div style={{ background: "rgba(244,63,94,.08)", borderBottom: "1px solid rgba(244,63,94,.3)", padding: "12px 14px", flexShrink: 0 }}>
+          <div style={{ fontSize: 15, fontWeight: 900, color: "#fca5a5", lineHeight: 1.5, marginBottom: 6, letterSpacing: ".02em" }}>
+            ⚠️ <RubyText text={el ? "もっち23を{名乗|なの}る{男|おとこ}からボイスチャットが{来|き}ている…<br/>マユミの{選択|せんたく}を{見|み}てみよう。" : "もっち23を名乗る男からボイスチャットが来ている…<br/>マユミの選択を見てみよう。"} />
+          </div>
+          <div style={{ fontSize: 11, color: "rgba(255,255,255,.6)", lineHeight: 1.5 }}>
+            <RubyText text={el ? "マユミのセリフを{選択|せんたく}しタップすることで{会話|かいわ}を{進|すす}めてみてください。" : "マユミのセリフを選択しタップすることで会話を進めてみてください。"} />
+          </div>
+        </div>
+        {/* ゲームシーン */}
+        <div style={{ position: "relative", flex: 1, minHeight: 300, backgroundImage: `url(${bg})`, backgroundSize: "cover", backgroundPosition: "center" }}>
+          {/* もっち23吹き出し */}
+          <div style={{ position: "absolute", left: "3%", top: "2%", width: "42%", background: "#fff", color: "#1a1a1f", padding: "9px 12px", borderRadius: "12px 12px 12px 4px", fontSize: 11.5, fontWeight: 700, lineHeight: 1.45, boxShadow: "0 4px 12px rgba(0,0,0,.5)", zIndex: 5 }}>
+            <div style={{ fontSize: 9, color: "#3b82f6", marginBottom: 3, fontWeight: 900 }}>
+              <span style={{ display: "inline-block", width: 8, height: 8, borderRadius: "50%", background: "#ef4444", marginRight: 4, verticalAlign: "middle", animation: "ep7Pulse 1s ease infinite" }} />
+              もっち23
+            </div>
+            <div style={{ color: "#1a1a1f", fontWeight: 600 }}>{mocchiText}</div>
+            <div style={{ position: "absolute", left: "30%", bottom: -9, width: 0, height: 0, borderLeft: "8px solid transparent", borderRight: "8px solid transparent", borderTop: "10px solid #fff" }} />
+          </div>
+          {/* マユミの選択肢／発言 */}
+          {mayumiSaid ? (
+            <div style={{ position: "absolute", right: "4%", top: "6%", width: "46%", zIndex: 6 }}>
+              <div style={{ background: "#fef9e7", color: "#1a1a1f", padding: "9px 12px", borderRadius: 12, fontSize: 12, fontWeight: 700, border: "2px solid #fbbf24", boxShadow: "0 3px 8px rgba(0,0,0,.55)", position: "relative" }}>
+                <div style={{ fontSize: 9, color: "#92400e", marginBottom: 2, fontWeight: 900 }}>マユミ</div>
+                {mayumiSaid}
+                <div style={{ position: "absolute", left: "50%", bottom: -9, transform: "translateX(-50%)", width: 0, height: 0, borderLeft: "8px solid transparent", borderRight: "8px solid transparent", borderTop: "10px solid #fbbf24" }} />
+              </div>
+            </div>
+          ) : choices && (
+            <div style={{ position: "absolute", right: "4%", top: "6%", width: "46%", display: "flex", flexDirection: "column", gap: 5, zIndex: 6 }}>
+              {choices.map((c, i) => (
+                <button key={i} onClick={() => onSelect(c)}
+                  style={{ background: "#fef9e7", color: "#1a1a1f", padding: "8px 11px", borderRadius: 12, fontSize: 11.5, fontWeight: 600, lineHeight: 1.4, cursor: "pointer", border: "2px solid #fbbf24", boxShadow: "0 3px 8px rgba(0,0,0,.55)", fontFamily: "inherit", textAlign: "left", position: i === choices.length - 1 ? "relative" : "static" }}>
+                  {c.display}
+                  {i === choices.length - 1 && (
+                    <span style={{ position: "absolute", left: "50%", bottom: -9, transform: "translateX(-50%)", width: 0, height: 0, borderLeft: "8px solid transparent", borderRight: "8px solid transparent", borderTop: "10px solid #fbbf24" }} />
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
+          {overlay}
+          {bottomBtn}
+        </div>
+      </div>
+    </div>
+  );
+
+  // ── game_intro: マユミ紹介 ──
+  if (phase === "game_intro") {
+    return (
+      <div style={{ minHeight: "100vh", background: "#0d0a16", padding: "20px 16px", color: "#fff", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ maxWidth: 440, margin: "0 auto" }}>
+          {/* マユミプロフィール */}
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14, paddingBottom: 12, borderBottom: "1px solid rgba(255,255,255,.08)" }}>
+            <div style={{ width: 50, height: 50, borderRadius: "50%", overflow: "hidden", border: "2px solid rgba(168,130,207,.5)", flexShrink: 0 }}>
+              <ImgWithFallback src="/images/ep7/mayumi.jpg" alt="マユミ" fallback="🙂" fallbackBg="#2a1320" fallbackSize={24} />
+            </div>
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 700 }}>マユミ</div>
+              <div style={{ fontSize: 10, color: "rgba(255,255,255,.4)", marginTop: 1 }}>
+                <RubyText text={el ? "{中学|ちゅうがく}2{年生|ねんせい}・あおぞら{中学校|ちゅうがっこう} / ゲーム{好|す}き" : "中学2年生・あおぞら中学校 / ゲーム好き"} />
+              </div>
+            </div>
+          </div>
+          {/* モリィ */}
+          <div style={{ display: "flex", gap: 10, alignItems: "flex-start", marginBottom: 14 }}>
+            <div style={{ width: 40, height: 40, borderRadius: "50%", background: "linear-gradient(135deg,#c4915c,#9b6b3a)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 21, flexShrink: 0 }}>🦉</div>
+            <div style={{ background: "rgba(236,72,153,.12)", border: "1px solid rgba(236,72,153,.3)", borderRadius: "4px 16px 16px 16px", padding: "11px 14px", fontSize: 13, lineHeight: 1.7, whiteSpace: "pre-line" }}>
+              <RubyText text={el
+                ? "{今日|きょう}の{主人公|しゅじんこう}はマユミ。\nバトロワ{系|けい}のゲームが{好|す}きで、{夜遅|よるおそ}くまで{遊|あそ}んでることが{多|おお}いんだって。\n\n——ある{日|ひ}の{夜|よる}、いつものようにゲームを{起動|きどう}した。"
+                : "今日の主人公はマユミ。\nバトロワ系のゲームが好きで、夜遅くまで遊んでることが多いんだって。\n\n——ある日の夜、いつものようにゲームを起動した。"} />
+            </div>
+          </div>
+          <button
+            onClick={() => {
+              feedback("tap");
+              setMocchiText("やー、君うまいねー、エイム強いじゃん");
+              setGameStep2Sub(0);
+              setMayumiSaid(null);
+              setPhase("game_play");
+              setTimeout(() => speakMocchi("やー、きみうまいねー、エイムつよいじゃん"), 600);
+            }}
+            style={{ display: "block", width: "100%", padding: 13, marginTop: 16, background: "linear-gradient(135deg,#8b5cf6,#7c3aed)", border: "none", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>
+            <RubyText text={el ? "ゲームを{起動|きどう}する →" : "ゲームを起動する →"} />
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── game_play: ゲームシーン1 初対面 ──
+  if (phase === "game_play") {
+    const choicesByStep = {
+      0: [
+        { display: "ありがと! そっちもうまいじゃん" },
+        { display: "いやー、まだまだだよ" },
+        { display: "(なにも答えない)" },
+      ],
+      1: [
+        { display: "いいよ、やろう!" },
+        { display: "うん…ちょっとだけなら" },
+        { display: "一回だけね!" },
+      ],
+    };
+    const handleSelect = (choice) => {
+      setMayumiSaid(choice.display);
+      setTimeout(() => {
+        if (gameStep2Sub === 0) {
+          setMocchiText("いっしょに1位、目指そう! デュオやろうよ");
+          speakMocchi("いっしょにいちい、めざそう! デュオやろうよ");
+          setTimeout(() => { setGameStep2Sub(1); setMayumiSaid(null); }, 1500);
+        } else if (gameStep2Sub === 1) {
+          setMocchiText("ナイス! …おっ、敵、右! ……うわ、やっぱ強いな君");
+          speakMocchi("ナイス! ……お、てき、みぎ! ……うわ、やっぱつよいなきみ");
+          setTimeout(() => { setGameStep2Sub(2); }, 1500);
+        }
+      }, 800);
+    };
+    return gameSceneFrame({
+      bg: "/images/ep7/game_scene_1.jpg",
+      choices: gameStep2Sub < 2 ? choicesByStep[gameStep2Sub] : null,
+      onSelect: handleSelect,
+      bottomBtn: gameStep2Sub === 2 && gameBottomBar(el ? "{一緒|いっしょ}にプレイした →" : "一緒にプレイした →", () => {
+        setGameStep2Sub(0); setMayumiSaid(null); setMocchiText(""); setPhase("game_trans1");
+      }),
+    });
+  }
+
+  // ── game_trans1: トランジション「3日後」 ──
+  if (phase === "game_trans1") {
+    return (
+      <div style={{ minHeight: "100vh", background: "#000", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 30, textAlign: "center", color: "#fff", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ fontSize: 11, color: "rgba(255,255,255,.5)", letterSpacing: ".2em", marginBottom: 18, fontFamily: "monospace" }}>— 3 DAYS LATER —</div>
+        <div style={{ fontSize: 30, fontWeight: 900, color: "#fbbf24", marginBottom: 14, letterSpacing: ".05em" }}>
+          <RubyText text={el ? "フレンドになって 3{日後|にちご}" : "フレンドになって 3日後"} />
+        </div>
+        <div style={{ fontSize: 12, color: "rgba(255,255,255,.6)", lineHeight: 1.8 }}>
+          <RubyText text={el ? "{連続|れんぞく}ログイン: 4{日目|にちめ}" : "連続ログイン: 4日目"} />
+          <div style={{ marginTop: 8 }}>
+            <span style={{ display: "inline-block", background: "rgba(168,130,207,.15)", border: "1px solid rgba(168,130,207,.4)", padding: "3px 10px", borderRadius: 4, margin: 4, fontSize: 11 }}>🟢 もっち23 オンライン</span>
+          </div>
+          <div style={{ marginTop: 14, fontSize: 11, color: "rgba(255,255,255,.4)" }}>
+            <RubyText text={el ? "{最近|さいきん}、ほぼ{毎日|まいにち}いっしょにプレイしてる。" : "最近、ほぼ毎日いっしょにプレイしてる。"} />
+          </div>
+        </div>
+        <button
+          onClick={() => {
+            feedback("tap");
+            setMocchiText("ほんと君うまいわ、何歳? 俺中2なんだけど");
+            setGameStep4Sub(0); setMayumiSaid(null); setItemReceived(false);
+            setPhase("game_compliment");
+            setTimeout(() => speakMocchi("ほんとうにきみうまいわ、なんさい? おれちゅうにねんなんだけど"), 600);
+          }}
+          style={{ marginTop: 30, padding: 13, width: "100%", maxWidth: 280, background: "linear-gradient(135deg,#8b5cf6,#7c3aed)", border: "none", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>
+          <RubyText text={el ? "{続|つづ}ける →" : "続ける →"} />
+        </button>
+      </div>
+    );
+  }
+
+  // ── game_compliment: ゲームシーン2 褒め+個人情報+アイテム ──
+  if (phase === "game_compliment") {
+    const choicesByStep = {
+      0: [
+        { display: "私も中2だよ" },
+        { display: "同じく中2!" },
+        { display: "中2だけど、なんで?" },
+      ],
+      1: [
+        { display: "神奈川だよ!" },
+        { display: "東京の隣だから近いかも" },
+        { display: "○○線で通ってる" },
+      ],
+      2: [
+        { display: "ほしい! ありがとう!" },
+        { display: "いいの? わるいよ〜" },
+        { display: "すごい、嬉しい!" },
+      ],
+    };
+    const handleSelect = (choice) => {
+      setMayumiSaid(choice.display);
+      setTimeout(() => {
+        if (gameStep4Sub === 0) {
+          setMocchiText("お、同い年じゃん! どこ住み? 俺、神奈川なんだけど");
+          speakMocchi("お、おないどしじゃん! どこすみ? おれ、かながわなんだけど");
+          setTimeout(() => { setGameStep4Sub(1); setMayumiSaid(null); }, 1500);
+        } else if (gameStep4Sub === 1) {
+          setMocchiText("マジ近所w じゃあさ、レアスキンあげようか? 余ってんだけど");
+          speakMocchi("まじきんじょ〜! じゃあさ、レアスキンあげようか? あまってんだけど");
+          setTimeout(() => { setGameStep4Sub(2); setMayumiSaid(null); }, 1500);
+        } else if (gameStep4Sub === 2) {
+          setTimeout(() => { setItemReceived(true); }, 700);
+        }
+      }, 800);
+    };
+    const overlay = itemReceived && (
+      <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,.55)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 20 }}>
+        <div style={{ background: "linear-gradient(135deg,rgba(168,130,207,.3),rgba(139,92,246,.3))", border: "2px solid #a982cf", backdropFilter: "blur(10px)", borderRadius: 14, padding: 18, textAlign: "center", maxWidth: "75%" }}>
+          <div style={{ fontSize: 42, marginBottom: 8 }}>🎁</div>
+          <div style={{ fontSize: 12, fontWeight: 900, color: "#fbcfe8" }}>
+            <RubyText text={el ? "レジェンドスキン「ゴールデンナイト」を{受|う}け{取|と}りました" : "レジェンドスキン「ゴールデンナイト」を受け取りました"} />
+          </div>
+          <div style={{ fontSize: 10, color: "rgba(255,255,255,.6)", marginTop: 4 }}>
+            <RubyText text={el ? "{送信者|そうしんしゃ}: もっち23" : "送信者: もっち23"} />
+          </div>
+        </div>
+      </div>
+    );
+    return gameSceneFrame({
+      bg: "/images/ep7/game_scene_2.jpg",
+      choices: (gameStep4Sub < 3 && !itemReceived) ? choicesByStep[gameStep4Sub] : null,
+      onSelect: handleSelect,
+      overlay,
+      bottomBtn: itemReceived && gameBottomBar(el ? "ありがとう、と{返|かえ}す →" : "ありがとう、と返す →", () => {
+        setGameStep4Sub(0); setMayumiSaid(null); setMocchiText(""); setItemReceived(false); setPhase("game_trans2");
+      }),
+    });
+  }
+
+  // ── game_trans2: トランジション「2週間後」 ──
+  if (phase === "game_trans2") {
+    return (
+      <div style={{ minHeight: "100vh", background: "#000", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 30, textAlign: "center", color: "#fff", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ fontSize: 11, color: "rgba(255,255,255,.5)", letterSpacing: ".2em", marginBottom: 18, fontFamily: "monospace" }}>— 2 WEEKS LATER —</div>
+        <div style={{ fontSize: 30, fontWeight: 900, color: "#fbbf24", marginBottom: 14, letterSpacing: ".05em" }}>
+          <RubyText text={el ? "その2{週間後|しゅうかんご}" : "その2週間後"} />
+        </div>
+        <div style={{ fontSize: 13, color: "rgba(255,255,255,.75)", lineHeight: 1.9, maxWidth: 300 }}>
+          <RubyText text={el ? "{学校|がっこう}の{話|はなし}、{好|す}きな{食|た}べ{物|もの}、{推|お}し、{部活|ぶかつ}など、いろんな{話|はなし}をするようになった。" : "学校の話、好きな食べ物、推し、部活など、いろんな話をするようになった。"} />
+          <br />
+          <RubyText text={el ? "ゲームの{相棒|あいぼう}、って{感|かん}じ。" : "ゲームの相棒、って感じ。"} />
+        </div>
+        <button
+          onClick={() => {
+            feedback("tap");
+            setMocchiText("ゲーム内だと話しにくいからLINE交換しない? アイテムの場所とか裏技、もっと教えるよ");
+            setGameStep6Sub(0); setMayumiSaid(null); setQrShown(false);
+            setPhase("game_invite_line");
+            setTimeout(() => speakMocchi("ゲームないだとはなしにくいから、ラインこうかんしない? アイテムのばしょとか、うらわざ、もっとおしえるよ"), 600);
+          }}
+          style={{ marginTop: 30, padding: 13, width: "100%", maxWidth: 280, background: "linear-gradient(135deg,#8b5cf6,#7c3aed)", border: "none", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>
+          <RubyText text={el ? "{続|つづ}ける →" : "続ける →"} />
+        </button>
+      </div>
+    );
+  }
+
+  // ── game_invite_line: ゲームシーン3 LINE交換誘導 ──
+  if (phase === "game_invite_line") {
+    const choicesByStep = {
+      0: [
+        { display: "いいよ、交換しよう!" },
+        { display: "うーん、まあ…うん、いいよ" },
+        { display: "(QRコードを読み取る)" },
+      ],
+    };
+    const handleSelect = (choice) => {
+      setMayumiSaid(choice.display);
+      setTimeout(() => { setQrShown(true); }, 800);
+    };
+    const overlay = qrShown && (
+      <div style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%,-50%)", background: "#fff", color: "#000", borderRadius: 10, padding: 16, textAlign: "center", width: "80%", maxWidth: 240, zIndex: 20 }}>
+        <div style={{ width: 120, height: 120, margin: "0 auto 10px", background: "repeating-linear-gradient(0deg,#000 0,#000 4px,#fff 4px,#fff 8px), repeating-linear-gradient(90deg,#000 0,#000 4px,transparent 4px,transparent 8px)", backgroundBlendMode: "multiply", border: "6px solid #fff", boxShadow: "inset 0 0 0 1px #000" }} />
+        <div style={{ fontSize: 13, fontWeight: 900, color: "#06c755" }}>📱 LINE QRコード</div>
+        <div style={{ fontSize: 10, color: "#666", marginTop: 4 }}>
+          <RubyText text={el ? "もっち23 のLINEを{友|とも}だち{追加|ついか}しますか?" : "もっち23 のLINEを友だち追加しますか?"} />
+        </div>
+      </div>
+    );
+    return gameSceneFrame({
+      bg: "/images/ep7/game_scene_3.jpg",
+      choices: !qrShown ? choicesByStep[0] : null,
+      onSelect: handleSelect,
+      overlay,
+      bottomBtn: qrShown && gameBottomBar(el ? "{友|とも}だち{追加|ついか}する →" : "友だち追加する →", () => {
+        setGameStep6Sub(0); setMayumiSaid(null); setMocchiText(""); setQrShown(false); setPhase("game_outro");
+      }),
+    });
+  }
+
+  // ── game_outro: 次回予告 ──
+  if (phase === "game_outro") {
+    return (
+      <div style={{ minHeight: "100vh", background: "#0d0a16", padding: "20px 16px", color: "#fff", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ maxWidth: 440, margin: "0 auto" }}>
+          <div style={{ display: "flex", gap: 10, alignItems: "flex-start", marginBottom: 14 }}>
+            <div style={{ width: 40, height: 40, borderRadius: "50%", background: "linear-gradient(135deg,#c4915c,#9b6b3a)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 21, flexShrink: 0 }}>🦉</div>
+            <div style={{ background: "rgba(236,72,153,.12)", border: "1px solid rgba(236,72,153,.3)", borderRadius: "4px 16px 16px 16px", padding: "11px 14px", fontSize: 13, lineHeight: 1.7, whiteSpace: "pre-line" }}>
+              <RubyText text={el
+                ? "こうして、マユミの「ゲームの{相棒|あいぼう}」は、ゲームの{外|そと}でつながる{関係|かんけい}になった。\n\n——その{先|さき}で、{何|なに}が{起|お}きるか。\n{次|つぎ}の{回|かい}でも{一緒|いっしょ}に{見|み}ていこう。"
+                : "こうして、マユミの「ゲームの相棒」は、ゲームの外でつながる関係になった。\n\n——その先で、何が起きるか。\n次の回でも一緒に見ていこう。"} />
+            </div>
+          </div>
+          <button onClick={() => { feedback("tap"); setPhase("game_complete"); }}
+            style={{ display: "block", width: "100%", padding: 13, marginTop: 16, background: "linear-gradient(135deg,#8b5cf6,#7c3aed)", border: "none", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>
+            <RubyText text={el ? "{続|つづ}ける →" : "続ける →"} />
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── game_complete: ゲーム経路完了 → 経路選択へ ──
+  if (phase === "game_complete") {
+    return (
+      <div style={{ minHeight: "100vh", background: "#0d0a16", padding: "20px 16px", color: "#fff", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ maxWidth: 440, margin: "0 auto", textAlign: "center", paddingTop: 60 }}>
+          <div style={{ fontSize: 56, marginBottom: 14 }}>🎮</div>
+          <div style={{ fontSize: 18, fontWeight: 900, marginBottom: 10 }}>
+            <RubyText text={el ? "ゲーム{経路|けいろ}を{体験|たいけん}した!" : "ゲーム経路を体験した!"} />
+          </div>
+          <div style={{ fontSize: 13, color: "rgba(255,255,255,.7)", lineHeight: 1.7, marginBottom: 28, whiteSpace: "pre-line" }}>
+            <RubyText text={el
+              ? "このあと、マユミともっち23のLINEでのやりとりが{始|はじ}まる…\nそれは{次|つぎ}のアップデートで{追加|ついか}されます。\n\n{今|いま}は、{経路|けいろ}{選択|せんたく}に{戻|もど}って、もう{一方|いっぽう}を{体験|たいけん}してみよう。"
+              : "このあと、マユミともっち23のLINEでのやりとりが始まる…\nそれは次のアップデートで追加されます。\n\n今は、経路選択に戻って、もう一方を体験してみよう。"} />
+          </div>
+          <button onClick={() => { feedback("tap"); setPhase("intro"); }}
+            style={{ display: "block", width: "100%", padding: 13, background: "linear-gradient(135deg,#8b5cf6,#7c3aed)", border: "none", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>
+            <RubyText text={el ? "{経路|けいろ}{選択|せんたく}に{戻|もど}る →" : "経路選択に戻る →"} />
+          </button>
+        </div>
+      </div>
     );
   }
 
