@@ -760,6 +760,11 @@ const GlobalStyle = () => (
     @keyframes ep7ChoiceIn { from{opacity:0;transform:translateX(15px)} to{opacity:1;transform:translateX(0)} }
     @keyframes ep7StationIn { from{opacity:0} to{opacity:1} }
     @keyframes ep7NotifIn { from{opacity:0;transform:translateY(-30px) scale(.85)} to{opacity:1;transform:translateY(0) scale(1)} }
+    @keyframes ep7MoriiGlow { from{box-shadow:0 0 40px rgba(251,191,36,.5),0 0 80px rgba(251,191,36,.2)} to{box-shadow:0 0 50px rgba(251,191,36,.7),0 0 100px rgba(251,191,36,.3)} }
+    @keyframes ep7BubbleSlide { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes ep7FlashRed { 0%{opacity:0} 30%{opacity:1} 100%{opacity:0} }
+    @keyframes ep7CardSlideIn { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
+    @keyframes ep7SfxPop { 0%{opacity:0;transform:translateX(-50%) scale(.5)} 20%{opacity:1;transform:translateX(-50%) scale(1.15)} 60%{opacity:1;transform:translateX(-50%) scale(1)} 100%{opacity:0;transform:translateX(-50%) scale(.9)} }
     .sparkles { position:absolute; inset:0; pointer-events:none; overflow:hidden; }
     .sparkle { position:absolute; font-size:14px; animation: sparkleFloat 3s ease-in-out infinite, sparkleFade 3s ease-in-out infinite; opacity:0; }
     .ep6-hl-thumb{position:relative;z-index:2;}
@@ -19587,6 +19592,124 @@ function ChoicesArea({ choices, onSelect }) {
 }
 
 // ─────────────────────────────────────────────
+// ██ EPISODE 7 — 種明かし〜ポジティブ締め 用データ＆コンポーネント
+// ─────────────────────────────────────────────
+const EP7_NEWS_DATA = [
+  {
+    label: "📰 事件 1 / 3", date: "2024年3月・愛知",
+    title: "フォートナイトで知り合った男に女子高生(16)が殺害される",
+    steps: [
+      { num: 1, ic: "🎮", title: "フォートナイトでの出会い", desc: "ゲーム内で知り合う" },
+      { num: 2, ic: "🚉", title: "3月28日(木)・東京駅", desc: "母親に「オンラインゲームで知り合った友達に会いに行く」と伝え、別れる" },
+      { num: 3, ic: "🚄", title: "愛知への移動", desc: "新幹線で愛知へ向かう" },
+      { num: 4, ic: "🏠", title: "容疑者宅へ到着", desc: "愛知県内の容疑者宅へ到着" },
+      { num: 5, ic: "📵", title: "3月29日(金)午後", desc: "連絡が取れなくなる" },
+      { num: 6, ic: "🚓", title: "母親の行動", desc: "行方不明届を提出" },
+      { num: 7, ic: "🔍", title: "捜索と発見", desc: "警察が捜索を開始" },
+      { num: 8, ic: "💔", title: "事件発覚と容疑者の供述", desc: "容疑者宅で遺体発見。「ゲームのことで口論になり、刺した」と供述", isLast: true },
+    ],
+    profile: [
+      { ic: "👧", lbl: "被害者", val: "女子高生(16)" },
+      { ic: "👤", lbl: "容疑者", val: "男性(当時21歳)" },
+      { ic: "📍", lbl: "場所", val: "愛知県内" },
+      { ic: "⚡", lbl: "原因", val: "ゲームに関する口論" },
+      { ic: "📄", lbl: "出典", val: "警察発表(2024年4月)" },
+    ],
+    notice: '<strong>※実際に起きた事件です。</strong>実名は伏せていますが、報道された内容に基づいています。あなたが「会いに行く」を選んでいたら、これと同じことが起きていたかもしれません。',
+  },
+  {
+    label: "📰 事件 2 / 3", date: "2019年11月・大阪→栃木",
+    title: "荒野行動で知り合った男に小学6年生(12)が誘拐される",
+    steps: [
+      { num: 1, ic: "🎮", title: "荒野行動での出会い", desc: "小4(10歳)の頃からゲームをしていた女児が、ゲーム内で35歳男と知り合う" },
+      { num: 2, ic: "💬", title: "Twitter DMで連絡", desc: "「家に居場所がない」「助けてほしい」とSNSで悩みを相談。男は「うちにおいで」と優しく誘う" },
+      { num: 3, ic: "🏃", title: "11月17日(日)・大阪を家出", desc: "家族に何も告げずに家を出る" },
+      { num: 4, ic: "🚆", title: "約600kmの移動", desc: "男に呼ばれ、大阪から栃木県小山市まで電車で移動" },
+      { num: 5, ic: "🏚️", title: "容疑者宅で監禁", desc: "男のアパートに連れて行かれる。室内には別の15歳女子中学生も既に監禁されていた" },
+      { num: 6, ic: "🔒", title: "約1週間の監禁生活", desc: "家族・警察への連絡を断たれた状態が続く" },
+      { num: 7, ic: "🌧️", title: "11月23日(土)雨の朝", desc: "男が外出した隙に、靴も履かず雨の中を逃走" },
+      { num: 8, ic: "🚓", title: "交番で保護・容疑者逮捕", desc: "近所の交番に駆け込み「男の家から逃げてきた、もう1人女の子がいる」と証言。容疑者を未成年者誘拐容疑で逮捕", isLast: true },
+    ],
+    profile: [
+      { ic: "👧", lbl: "被害者", val: "小学6年生(12歳)・大阪" },
+      { ic: "👤", lbl: "容疑者", val: "男性(当時35歳)・栃木" },
+      { ic: "📍", lbl: "監禁場所", val: "栃木県小山市" },
+      { ic: "🔗", lbl: "きっかけ", val: "荒野行動→Twitter DM" },
+      { ic: "📄", lbl: "出典", val: "大阪府警発表(2019年11月)" },
+    ],
+    notice: '<strong>※実際に起きた事件です。</strong>実名は伏せていますが、報道された内容に基づいています。容疑者宅には、SNS経由で誘い出された別の少女(15歳)も監禁されていました。「悩みを聞いてあげる」という言葉で近づくのは、グルーミングの典型的な手口です。',
+  },
+  {
+    label: "📰 事件 3 / 3", date: "2025年2月・ミャンマー",
+    title: "オンラインゲームで誘われた高校生がミャンマー詐欺拠点で監禁",
+    steps: [
+      { num: 1, ic: "🎮", title: "SNS・ゲームで知り合う", desc: "オンラインゲームやSNSで、面識のない人物と親しくなる" },
+      { num: 2, ic: "💰", title: "「海外で高額バイト」と誘われる", desc: "「タイで簡単な仕事、給料は日本の数倍」「君だけに教える」と特別感を演出" },
+      { num: 3, ic: "📘", title: "パスポート取得・親に内緒で渡航", desc: "親や学校に「友達と旅行」などと説明し、タイへ出国" },
+      { num: 4, ic: "✈️", title: "タイ到着 → 別の場所へ移動", desc: "タイ到着後すぐ「案内する」と現れた人物に車で連れて行かれる" },
+      { num: 5, ic: "🌏", title: "ミャンマー国境を越境", desc: "タイ・ミャンマー国境地帯(少数民族武装組織の支配地域)へ連れ込まれる" },
+      { num: 6, ic: "📞", title: "特殊詐欺の「かけ子」に", desc: "パスポートを取り上げられ、強制的に日本人向けオレオレ詐欺の電話をかけさせられる" },
+      { num: 7, ic: "😨", title: "ノルマ未達で暴行", desc: "詐欺のノルマが達成できないと暴行を受ける。逃げることもできない" },
+      { num: 8, ic: "🆘", title: "日本政府の救出活動", desc: "タイ当局により計7人を救出(成人5人+高校生16歳・17歳の2人)。2025年2月、外務省が公式に注意喚起", isLast: true },
+    ],
+    profile: [
+      { ic: "🧒", lbl: "被害者", val: "高校生(16歳・17歳)を含む日本人7人" },
+      { ic: "👥", lbl: "加害組織", val: "少数民族武装組織配下の詐欺集団" },
+      { ic: "📍", lbl: "場所", val: "ミャンマー・タイ国境地域" },
+      { ic: "🔗", lbl: "きっかけ", val: "SNS/ゲーム→海外バイト誘い" },
+      { ic: "📄", lbl: "出典", val: "外務省(2025/2/27)・衆院予算委" },
+    ],
+    notice: '<strong>※外務省が公式に注意喚起している、現在進行形の事件です。</strong>被害者は加害者になることも、命の危険にさらされることもあります。「君だけに教える高額バイト」「海外で簡単な仕事」は、ほぼ全てが罠です。<br/><br/><strong style="font-size:11px">▶ 不審な誘いを受けたら #9110(警察相談)へ</strong>',
+  },
+];
+
+const EP7_CHECKPOINTS = [
+  { num: 1, danger: true, tag: "★最大のレッドフラッグ", icon: "🤫", name: "「秘密にして」「2人だけの内緒」", experience: 'もっち23「親には内緒な」<br/>「2人だけの秘密にしてね 🤫」', evidence: "「秘密の積み重ねこそグルーミングの本質。これが出たら強い警戒信号」", src: "法務省 性犯罪に関する刑事法検討会報告書", takeaway: "善意の大人は「秘密にして」と言わない。" },
+  { num: 2, danger: false, tag: null, icon: "💕", name: "過剰な特別扱い・褒め", experience: '「君みたいに上手い子はじめて」<br/>「マユミと話してると癒される」<br/>「正直、好きかも」', evidence: "「『君だけは違う』と特別扱いし、信頼を獲得する」", src: "追手門学院大学 櫻井鼓教授(犯罪心理学)", takeaway: "知り合って数日の異常な褒めは違和感のサイン。" },
+  { num: 3, danger: false, tag: null, icon: "🎁", name: "プレゼント(ゲームアイテム含む)", experience: 'もっち23「レアスキンあげようか?」<br/>→ レジェンドスキン「ゴールデンナイト」を受け取った', evidence: "「贈り物は加害の下地づくり。オンラインゲームのアイテムも同じ手口」", src: "ダークネス・トゥ・ライト(米国 子ども被害予防専門機関)", takeaway: "理由のないプレゼントは要警戒。" },
+  { num: 4, danger: false, tag: null, icon: "🎮", name: "共通の趣味・「同じものに興味」", experience: '「同じゲーム」「同い年」<br/>「神奈川(近所)」「同じ推し」', evidence: "「共通の話題で心を掴む。『大学生』と装い実は50代男性だった例も」", src: "追手門学院大学 櫻井鼓教授", takeaway: "「同じだね」が連続したら、年齢・性別を疑う。" },
+  { num: 5, danger: false, tag: null, icon: "❓", name: "個人情報を聞き出す", experience: '「何歳?」「どこ住み?」<br/>「学校どこ?」', evidence: "「ボイスチャットでゲーム会話に紛れ込ませ聞き出す」", src: "警察庁・itmedia手口解説", takeaway: "ゲームに関係ない個人情報を聞く相手は危険。" },
+  { num: 6, danger: true, tag: "★決定的な転換点", icon: "📷", name: "写真要求", experience: '「写真送って」「顔だけでいいから」<br/>「制服姿も見たい」「俺だけに見せて?」', evidence: "「16歳未満へのわいせつ画像送信要求は1年以下拘禁・50万円罰金」<br/>セクストーション被害の7割が男性", src: "2023年改正刑法・面会要求等罪 / 櫻井鼓教授", takeaway: "1枚目を送る前に止まる。送ってしまったら大人に相談。" },
+  { num: 7, danger: true, tag: "★最終ライン", icon: "🚉", name: "「会おう」(特に「親には内緒」とセット)", experience: '「土曜、駅で」<br/>「親には言うな」', evidence: "「16歳未満へのわいせつ目的面会要求は1年以下拘禁・50万円罰金。実際に面会で2年以下・100万円」", src: "2023年改正刑法・面会要求等罪", takeaway: "「会おう」+「秘密」のセットは最高レベルの危険信号。1人で行ってはいけない。" },
+];
+
+const EP7_URGENCY = [
+  { level: "urgent", color: "#dc2626", bg: "rgba(220,38,38,.08)", icon: "🚨", lvLabel: "今すぐ危ない", situation: "会う約束をした・脅されている", org: "警察相談専用電話(警察庁)", num: "#9110", time: "24時間", href: "tel:#9110" },
+  { level: "warning", color: "#fbbf24", bg: "rgba(251,191,36,.07)", icon: "⚠️", lvLabel: "困っている", situation: "写真を送ってしまった・怖い", org: "子どもの人権110番(法務省)", num: "0120-007-110", time: "平日 8:30-17:15", href: "tel:0120-007-110" },
+  { level: "support", color: "#a982cf", bg: "rgba(168,130,207,.07)", icon: "🌙", lvLabel: "つらい・話したい", situation: "悩みがある・誰かに聞いてほしい", org: "24時間子供SOSダイヤル(文科省)", num: "0120-0-78310", time: "24時間・無料", href: "tel:0120-0-78310" },
+];
+
+const EP7_ADULTS = [
+  { key: "family", icon: "👪", nm: "家族", ex: "お父さん・お母さん<br/>おじいちゃん・おばあちゃん" },
+  { key: "school", icon: "🎓", nm: "学校", ex: "担任の先生・養護教諭<br/>スクールカウンセラー" },
+  { key: "community", icon: "🏘️", nm: "地域", ex: "地域のおまわりさん<br/>児童相談所" },
+  { key: "morii", icon: "🦉", nm: "モリィ", ex: "いつでもここにいるよ" },
+];
+const EP7_ADULT_LABELS = { family: "👪 家族", school: "🎓 学校", community: "🏘️ 地域", morii: "🦉 モリィ" };
+
+function Ep7MoriiBubble({ html, accent = false }) {
+  return (
+    <div style={{ background: accent ? "rgba(236,72,153,.18)" : "rgba(34,197,94,.12)", border: `1px solid ${accent ? "rgba(236,72,153,.5)" : "rgba(34,197,94,.4)"}`, borderRadius: "4px 16px 16px 16px", padding: "12px 14px", marginBottom: 14, fontSize: 13, lineHeight: 1.7, display: "flex", gap: 10, alignItems: "flex-start", animation: "fadeIn .5s ease both" }}>
+      <div style={{ width: 34, height: 34, borderRadius: "50%", background: "linear-gradient(135deg,#c4915c,#9b6b3a)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>🦉</div>
+      <div style={{ flex: 1 }} dangerouslySetInnerHTML={{ __html: html }} />
+    </div>
+  );
+}
+function Ep7MotherBubble({ html }) {
+  return (
+    <div style={{ display: "flex", gap: 10, alignItems: "flex-start", marginBottom: 14, animation: "fadeIn .5s ease both .8s" }}>
+      <div style={{ width: 48, height: 48, borderRadius: "50%", overflow: "hidden", flexShrink: 0, border: "2px solid rgba(255,255,255,.4)" }}>
+        <ImgWithFallback src="/images/ep7/mother.jpg" alt="お母さん" fallback="👩" fallbackBg="#2a1320" fallbackSize={22} />
+      </div>
+      <div style={{ flex: 1, background: "rgba(255,255,255,.95)", color: "#1a1a1f", borderRadius: "4px 16px 16px 16px", padding: "11px 14px", fontSize: 13, lineHeight: 1.6 }}>
+        <div style={{ fontSize: 10, color: "#9b6b3a", fontWeight: 900, marginBottom: 3 }}>お母さん</div>
+        <div dangerouslySetInnerHTML={{ __html: html }} />
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────
 // ██ EPISODE 7 — その人、本当に同い年？
 // SNSでの出会いトラブル・グルーミング体験
 // ─────────────────────────────────────────────
@@ -19653,6 +19776,52 @@ function Episode7({ onComplete, onExit }) {
   const [lineChoiceContext, setLineChoiceContext] = useState(null);
   const [lineCtaText, setLineCtaText] = useState(null);
   const [lineCtaNext, setLineCtaNext] = useState(null);
+
+  // ── 種明かし〜ポジティブ締め用 state ──
+  const [revealStage, setRevealStage] = useState(0);       // reveal セリフ進行
+  const [redFlash, setRedFlash] = useState(false);         // 赤フラッシュ演出
+  const [newsIdx, setNewsIdx] = useState(0);               // news 記事インデックス
+  const [identityFlipped, setIdentityFlipped] = useState(false); // step17 フリップ
+  const [cpIndex, setCpIndex] = useState(0);               // checkpoints ページ
+  const [selectedAdults, setSelectedAdults] = useState(new Set()); // step19 大人選択
+  const [step20Stage, setStep20Stage] = useState(0);       // step20 サブステージ
+  const [step20Talk, setStep20Talk] = useState(null);      // step20 マユミ選択セリフ
+  const [showSfx, setShowSfx] = useState(null);            // 「ガチャッ」効果音バブル
+
+  // reveal セリフを順次表示
+  useEffect(() => {
+    if (phase !== "reveal") return;
+    setRevealStage(0);
+    const t1 = setTimeout(() => setRevealStage(1), 2000);
+    const t2 = setTimeout(() => setRevealStage(2), 4500);
+    const t3 = setTimeout(() => setRevealStage(3), 6700);
+    const t4 = setTimeout(() => setRevealStage(4), 8900);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
+  }, [phase]);
+
+  // positive_ending（step20）の進行
+  useEffect(() => {
+    if (phase !== "positive_ending" || step20Talk !== null) return;
+    setStep20Stage(0);
+    const timers = [];
+    timers.push(setTimeout(() => setStep20Stage(1), 500));
+    timers.push(setTimeout(() => { setShowSfx("ガチャッ"); setStep20Stage(2); }, 3300));
+    timers.push(setTimeout(() => setShowSfx(null), 4700));
+    timers.push(setTimeout(() => setStep20Stage(3), 5500));
+    timers.push(setTimeout(() => setStep20Stage(4), 8000));
+    timers.push(setTimeout(() => setStep20Stage(5), 11000));
+    timers.push(setTimeout(() => setStep20Stage(6), 14000));
+    timers.push(setTimeout(() => setStep20Stage(7), 16500));
+    return () => timers.forEach(clearTimeout);
+  }, [phase, step20Talk]);
+
+  const toggleAdult = (key) => {
+    setSelectedAdults(prev => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key); else next.add(key);
+      return next;
+    });
+  };
 
   // ── 効果音（Web Audio API） ──
   const audioCtxRef = useRef(null);
@@ -20510,12 +20679,423 @@ function Episode7({ onComplete, onExit }) {
         {/* CTA（stationStage === 8・フェーズ5へ） */}
         {stationStage === 8 && (
           <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: 12, background: "rgba(0,0,0,.9)", borderTop: "1px solid rgba(255,255,255,.1)", zIndex: 20 }}>
-            <button onClick={() => { feedback("tap"); alert(el ? "{続|つづ}きはフェーズ5で{実装|じっそう}されます: {種明|たねあ}かし→ニュース→{危険|きけん}サイン→{相談|そうだん}{窓口|まどぐち}→ポジティブ{締|し}め".replace(/\{([^|]+)\|[^}]+\}/g, "$1") : "続きはフェーズ5で実装されます: 種明かし→ニュース→危険サイン→相談窓口→ポジティブ締め"); }}
+            <button onClick={() => { feedback("tap"); setPhase("reveal"); }}
               style={{ width: "100%", padding: 13, background: "linear-gradient(135deg,#a21caf,#7c2d92)", border: "none", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>
               <RubyText text={el ? "【{続|つづ}きを{見|み}る:{種明|たねあ}かし→ニュース→{対処|たいしょ}へ】 →" : "【続きを見る:種明かし→ニュース→対処へ】 →"} />
             </button>
           </div>
         )}
+      </div>
+    );
+  }
+
+  // ═══ 種明かし〜ポジティブ締め（reveal 〜 positive_ending） ═══
+
+  // ── reveal: 種明かし ──
+  if (phase === "reveal") {
+    return (
+      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#1a0a1a,#0a0610)", padding: "24px 20px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", color: "#fff", position: "relative", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ width: 120, height: 120, borderRadius: "50%", background: "radial-gradient(circle,#fbbf24,#c4915c 60%,#9b6b3a 100%)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 64, boxShadow: "0 0 40px rgba(251,191,36,.5), 0 0 80px rgba(251,191,36,.2)", marginBottom: 24, animation: "ep7MoriiGlow 2s ease infinite alternate" }}>🦉</div>
+        {revealStage >= 0 && (
+          <div style={{ background: "rgba(236,72,153,.12)", border: "1px solid rgba(236,72,153,.4)", borderRadius: 16, padding: "14px 18px", fontSize: 14, lineHeight: 1.8, marginBottom: 14, maxWidth: 360, textAlign: "left", animation: "ep7BubbleSlide .5s ease both" }}>
+            <RubyText text={el ? "マユミ、いったん{止|と}まろう。" : "マユミ、いったん止まろう。"} />
+          </div>
+        )}
+        {revealStage >= 1 && (
+          <div style={{ background: "rgba(236,72,153,.12)", border: "1px solid rgba(236,72,153,.4)", borderRadius: 16, padding: "14px 18px", fontSize: 14, lineHeight: 1.8, marginBottom: 14, maxWidth: 360, animation: "ep7BubbleSlide .5s ease both" }}>
+            <RubyText text={el ? "{君|きみ}は{今|いま}、すごく{危|あぶ}ない{場所|ばしょ}にいる。でも、{君|きみ}は{気|き}づくチャンスを{持|も}ってる。" : "君は今、すごく危ない場所にいる。でも、君は気づくチャンスを持ってる。"} />
+          </div>
+        )}
+        {revealStage >= 2 && (
+          <div style={{ background: "rgba(168,130,207,.08)", borderLeft: "3px solid #a982cf", borderRadius: "0 12px 12px 0", padding: "10px 14px", fontSize: 13, lineHeight: 1.7, marginBottom: 14, maxWidth: 360, fontStyle: "italic", color: "#e8d5f3", animation: "ep7BubbleSlide .5s ease both" }}>
+            <div style={{ fontSize: 9, color: "#a982cf", fontWeight: 900, marginBottom: 3, fontStyle: "normal" }}>マユミ</div>
+            <RubyText text="え、モリィ…? どうして…" />
+          </div>
+        )}
+        {revealStage >= 3 && (
+          <div style={{ background: "rgba(236,72,153,.12)", border: "1px solid rgba(236,72,153,.4)", borderRadius: 16, padding: "14px 18px", fontSize: 14, lineHeight: 1.8, marginBottom: 14, maxWidth: 360, animation: "ep7BubbleSlide .5s ease both" }}>
+            <RubyText text={el ? "これから{何|なに}が{起|お}きていたか、{見|み}せてもいい?<br/>{君|きみ}が、このまま{会|あ}いに{行|い}っていたら——" : "これから何が起きていたか、見せてもいい?<br/>君が、このまま会いに行っていたら——"} />
+          </div>
+        )}
+        {revealStage >= 4 && (
+          <button onClick={() => { feedback("tap"); setRedFlash(true); setTimeout(() => { setRedFlash(false); setNewsIdx(0); setPhase("news"); }, 600); }}
+            style={{ marginTop: 14, padding: "14px 28px", background: "linear-gradient(135deg,#dc2626,#991b1b)", border: "none", borderRadius: 14, color: "#fff", fontSize: 14, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 0 30px rgba(220,38,38,.4)" }}>
+            <RubyText text={el ? "…{見|み}る →" : "…見る →"} />
+          </button>
+        )}
+        {redFlash && (
+          <div style={{ position: "fixed", inset: 0, background: "#dc2626", zIndex: 200, animation: "ep7FlashRed .8s ease both", pointerEvents: "none" }} />
+        )}
+      </div>
+    );
+  }
+
+  // ── news: ニュース記事3件 ──
+  if (phase === "news") {
+    const news = EP7_NEWS_DATA[newsIdx];
+    const isLast = newsIdx === EP7_NEWS_DATA.length - 1;
+    return (
+      <div style={{ minHeight: "100vh", background: "#06060c", padding: "14px", display: "flex", justifyContent: "center", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ width: "100%", maxWidth: 460, background: "#fff", color: "#1a1a1f", borderRadius: 18, overflow: "hidden", boxShadow: "0 8px 30px rgba(0,0,0,.6)" }}>
+          <div style={{ display: "flex", gap: 6, justifyContent: "center", padding: "8px 0", background: "#f8fafc", borderBottom: "1px solid #e2e8f0" }}>
+            {EP7_NEWS_DATA.map((_, i) => (
+              <div key={i} style={{ width: i === newsIdx ? 24 : 10, height: i === newsIdx ? 5 : 10, borderRadius: i === newsIdx ? 5 : "50%", background: i === newsIdx ? "#1e3a8a" : "#cbd5e1", transition: "all .3s" }} />
+            ))}
+          </div>
+          <div style={{ background: "linear-gradient(135deg,#1e3a8a,#1e40af)", color: "#fff", padding: "8px 14px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 11, fontWeight: 700 }}>
+            <div>{news.label}</div>
+            <div style={{ background: "rgba(255,255,255,.15)", padding: "3px 10px", borderRadius: 4 }}>{news.date}</div>
+          </div>
+          <div style={{ padding: "16px 16px 14px", fontSize: 17, fontWeight: 900, lineHeight: 1.4, color: "#0a0a14", borderBottom: "3px solid #1e3a8a" }}>
+            <RubyText text={news.title} />
+          </div>
+          <div style={{ padding: "14px 14px 0" }}>
+            {news.steps.map((s, i) => (
+              <div key={i}>
+                <div style={{ background: s.isLast ? "#fef2f2" : "#f8fafc", border: `2px solid ${s.isLast ? "#dc2626" : "#1e3a8a"}`, borderRadius: 10, padding: "10px 12px", display: "flex", gap: 10, alignItems: "center", marginBottom: 6 }}>
+                  <div style={{ width: 30, height: 30, borderRadius: "50%", background: s.isLast ? "#dc2626" : "#1e3a8a", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 900, flexShrink: 0 }}>{s.num}</div>
+                  <div style={{ fontSize: 26, flexShrink: 0, width: 38, textAlign: "center" }}>{s.ic}</div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 12, fontWeight: 900, color: s.isLast ? "#991b1b" : "#1e3a8a", marginBottom: 2, lineHeight: 1.3 }}><RubyText text={s.title} /></div>
+                    <div style={{ fontSize: 11, color: "#374151", lineHeight: 1.45 }}><RubyText text={s.desc} /></div>
+                  </div>
+                </div>
+                {i < news.steps.length - 1 && (
+                  <div style={{ textAlign: "center", fontSize: 18, color: "#1e3a8a", marginBottom: 6, lineHeight: 0.5 }}>▼</div>
+                )}
+              </div>
+            ))}
+          </div>
+          <div style={{ margin: "16px 14px", background: "#f1f5f9", border: "1px solid #cbd5e1", borderRadius: 10, padding: 12 }}>
+            <div style={{ fontSize: 11, fontWeight: 900, color: "#475569", letterSpacing: ".05em", marginBottom: 10, borderBottom: "1px solid #cbd5e1", paddingBottom: 6 }}>📋 事件情報</div>
+            {news.profile.map((p, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "6px 0", fontSize: 12, borderBottom: i < news.profile.length - 1 ? "1px dashed #cbd5e1" : "none" }}>
+                <div style={{ fontSize: 20, width: 28, textAlign: "center", flexShrink: 0 }}>{p.ic}</div>
+                <div style={{ fontWeight: 700, color: "#475569", flexShrink: 0, minWidth: 54 }}>{p.lbl}</div>
+                <div style={{ color: "#0f172a", fontWeight: 600 }}><RubyText text={p.val} /></div>
+              </div>
+            ))}
+          </div>
+          <div style={{ margin: "14px 14px 16px", background: "#fef3c7", borderLeft: "4px solid #f59e0b", borderRadius: "0 8px 8px 0", padding: "10px 12px", fontSize: 11, lineHeight: 1.6, color: "#78350f" }} dangerouslySetInnerHTML={{ __html: news.notice }} />
+          <button onClick={() => { feedback("tap"); if (isLast) { setIdentityFlipped(false); setPhase("identity"); } else setNewsIdx(newsIdx + 1); }}
+            style={{ display: "block", margin: "0 14px 16px", padding: 13, width: "calc(100% - 28px)", background: isLast ? "linear-gradient(135deg,#7c2d92,#a21caf)" : "linear-gradient(135deg,#1e3a8a,#1e40af)", border: "none", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>
+            {isLast ? <RubyText text={el ? "{事件|じけん}を{見終|みお}わった → {危険|きけん}サインを{学|まな}ぶ" : "事件を見終わった → 危険サインを学ぶ"} /> : <RubyText text={el ? `{次|つぎ}の{事件|じけん}を{見|み}る (${newsIdx + 2}/${EP7_NEWS_DATA.length}) →` : `次の事件を見る (${newsIdx + 2}/${EP7_NEWS_DATA.length}) →`} />}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── identity: もっち23の正体 ──
+  if (phase === "identity") {
+    return (
+      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0a0610,#000)", padding: "24px 16px", color: "#fff", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ maxWidth: 440, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", fontSize: 11, color: "#fca5a5", letterSpacing: ".2em", marginBottom: 14, fontWeight: 900 }}>
+            — {identityFlipped ? <RubyText text={el ? "{本当|ほんとう}の{姿|すがた}" : "本当の姿"} /> : <RubyText text={el ? "{種明|たねあ}かし" : "種明かし"} />} —
+          </div>
+          <div style={{ textAlign: "center", fontSize: 18, fontWeight: 900, marginBottom: 20, lineHeight: 1.4 }}>
+            {identityFlipped
+              ? <><RubyText text="これが、" /><br /><RubyText text="もっち23の" /><span style={{ color: "#fca5a5" }}><RubyText text={el ? "{本当|ほんとう}の{姿|すがた}" : "本当の姿"} /></span></>
+              : <><RubyText text={el ? "これが、{君|きみ}が{信|しん}じていた" : "これが、君が信じていた"} /><br /><RubyText text="「もっち23」" /></>}
+          </div>
+          <div style={{ perspective: 1200, width: 280, height: 380, margin: "0 auto 20px", position: "relative" }}>
+            <div style={{ position: "relative", width: "100%", height: "100%", transition: "transform 1.2s cubic-bezier(.4,0,.2,1)", transformStyle: "preserve-3d", transform: identityFlipped ? "rotateY(180deg)" : "rotateY(0)" }}>
+              {/* 表 */}
+              <div style={{ position: "absolute", width: "100%", height: "100%", backfaceVisibility: "hidden", borderRadius: 14, overflow: "hidden", border: "3px solid #fff", boxShadow: "0 8px 30px rgba(0,0,0,.6)", background: "#fff" }}>
+                <ImgWithFallback src="/images/ep7/mocchi23_boy.jpg" alt="もっち23" fallback="🙂" fallbackBg="#2a1320" fallbackSize={56} />
+                <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "10px 14px", background: "linear-gradient(180deg,transparent,rgba(0,0,0,.95))", color: "#fff" }}>
+                  <div style={{ fontSize: 18, fontWeight: 900 }}>もっち23</div>
+                  <div style={{ fontSize: 11, color: "rgba(255,255,255,.7)", marginTop: 2 }}><RubyText text={el ? "{中学|ちゅうがく}2{年生|ねんせい}・{神奈川|かながわ}" : "中学2年生・神奈川"} /></div>
+                </div>
+              </div>
+              {/* 裏 */}
+              <div style={{ position: "absolute", width: "100%", height: "100%", backfaceVisibility: "hidden", borderRadius: 14, overflow: "hidden", border: "3px solid #fff", boxShadow: "0 8px 30px rgba(0,0,0,.6)", background: "#000", transform: "rotateY(180deg)" }}>
+                <ImgWithFallback src="/images/ep7/mocchi23_man.jpg" alt="本当の姿" fallback="🧔" fallbackBg="#1a1a1f" fallbackSize={56} />
+                <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "10px 14px", background: "linear-gradient(180deg,transparent,rgba(0,0,0,.95))", color: "#fff" }}>
+                  <div style={{ fontSize: 18, fontWeight: 900, color: "#fca5a5" }}><RubyText text={el ? "{本当|ほんとう}の{姿|すがた}" : "本当の姿"} /></div>
+                  <div style={{ fontSize: 11, color: "#fef3c7", marginTop: 2, fontWeight: 700 }}>35歳・男性</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {!identityFlipped ? (
+            <>
+              <div style={{ background: "rgba(236,72,153,.12)", border: "1px solid rgba(236,72,153,.4)", borderRadius: 16, padding: "14px 18px", fontSize: 14, lineHeight: 1.8, maxWidth: 360, margin: "0 auto" }}>
+                <RubyText text={el ? "でも、{本当|ほんとう}の{姿|すがた}は——" : "でも、本当の姿は——"} />
+              </div>
+              <button onClick={() => { feedback("tap"); setIdentityFlipped(true); }}
+                style={{ display: "block", margin: "14px auto 0", padding: "13px 32px", background: "linear-gradient(135deg,#7c2d92,#a21caf)", border: "none", borderRadius: 14, color: "#fff", fontSize: 13, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>
+                <RubyText text={el ? "タップして{正体|しょうたい}を{見|み}る" : "タップして正体を見る"} />
+              </button>
+            </>
+          ) : (
+            <>
+              <div style={{ background: "rgba(236,72,153,.12)", border: "1px solid rgba(236,72,153,.4)", borderRadius: 16, padding: "14px 18px", fontSize: 14, lineHeight: 1.8, maxWidth: 360, margin: "0 auto 18px" }}>
+                <RubyText text={el ? "35{歳|さい}の{男性|だんせい}。<br/>{中学|ちゅうがく}2{年生|ねんせい}でも、{神奈川|かながわ}の{同年代|どうねんだい}でもなかった。" : "35歳の男性。<br/>中学2年生でも、神奈川の同年代でもなかった。"} />
+              </div>
+              <div style={{ background: "rgba(220,38,38,.08)", border: "1px solid rgba(220,38,38,.3)", borderRadius: 12, padding: 14, maxWidth: 360, margin: "0 auto" }}>
+                <div style={{ fontSize: 11, fontWeight: 900, color: "#fca5a5", marginBottom: 10, letterSpacing: ".05em" }}>
+                  <RubyText text={el ? "🚨 すべて、{嘘|うそ}だった" : "🚨 すべて、嘘だった"} />
+                </div>
+                {[["「君うまいね」", "計算された褒め"], ["「俺中2なんだけど」", "35歳の中年男性"], ["「俺、神奈川なんだけど」", "住所も嘘"], ["「マジ近所w」", "心の距離を縮める手口"], ["「正直、好きかも」", "写真を要求するための布石"], ["「2人だけの秘密」", "大人に相談させない罠"]].map((row, i, arr) => (
+                  <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", fontSize: 12, borderBottom: i < arr.length - 1 ? "1px dashed rgba(255,255,255,.12)" : "none" }}>
+                    <div style={{ color: "rgba(255,255,255,.7)", lineHeight: 1.5 }}>{row[0]}</div>
+                    <div style={{ color: "#fca5a5", fontWeight: 700 }}>→ <RubyText text={row[1]} /></div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ background: "rgba(168,130,207,.08)", borderLeft: "3px solid #a982cf", borderRadius: "0 12px 12px 0", padding: "10px 14px", maxWidth: 360, margin: "18px auto 0", fontSize: 13, lineHeight: 1.7, fontStyle: "italic", color: "#e8d5f3" }}>
+                <div style={{ fontSize: 9, color: "#a982cf", fontWeight: 900, marginBottom: 3, fontStyle: "normal" }}>マユミ</div>
+                <RubyText text={el ? "えっ…そんな…<br/>じゃあ、{私|わたし}が{話|はな}してた{人|ひと}は…<br/>ぜんぶ、{嘘|うそ}…?" : "えっ…そんな…<br/>じゃあ、私が話してた人は…<br/>ぜんぶ、嘘…?"} />
+              </div>
+              <div style={{ background: "rgba(236,72,153,.12)", border: "1px solid rgba(236,72,153,.4)", borderRadius: 16, padding: "14px 18px", fontSize: 14, lineHeight: 1.8, maxWidth: 360, margin: "14px auto 0" }}>
+                <RubyText text={el ? "マユミ、{君|きみ}は{悪|わる}くない。<br/>こういう{手口|てぐち}は、{大人|おとな}でもだまされる。<br/>——でも、これからは、{見抜|みぬ}けるようになろう。" : "マユミ、君は悪くない。<br/>こういう手口は、大人でもだまされる。<br/>——でも、これからは、見抜けるようになろう。"} />
+              </div>
+              <button onClick={() => { feedback("tap"); setCpIndex(0); setPhase("checkpoints"); }}
+                style={{ display: "block", margin: "18px auto 0", padding: "13px 32px", background: "linear-gradient(135deg,#7c2d92,#a21caf)", border: "none", borderRadius: 14, color: "#fff", fontSize: 13, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>
+                <RubyText text={el ? "{危険|きけん}サインを{学|まな}ぶ →" : "危険サインを学ぶ →"} />
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ── checkpoints: 危険サイン7つ ──
+  if (phase === "checkpoints") {
+    const isLast = cpIndex >= EP7_CHECKPOINTS.length;
+    return (
+      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0d1a2e,#0a0f1a)", padding: "20px 14px 80px", color: "#fff", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ maxWidth: 440, margin: "0 auto" }}>
+          {!isLast ? (
+            <>
+              <div style={{ textAlign: "center", marginBottom: 18 }}>
+                <div style={{ fontSize: 10, letterSpacing: ".2em", color: "#fbbf24", fontWeight: 900, marginBottom: 6 }}><RubyText text={el ? "7つの{危険|きけん}サイン" : "7つの危険サイン"} /></div>
+                <div style={{ fontSize: 20, fontWeight: 900, marginBottom: 6, lineHeight: 1.4 }}><RubyText text={el ? "マユミの{体験|たいけん}を、{振|ふ}り{返|かえ}ろう" : "マユミの体験を、振り返ろう"} /></div>
+                <div style={{ fontSize: 12, color: "rgba(255,255,255,.6)", lineHeight: 1.5 }}>{cpIndex + 1} / {EP7_CHECKPOINTS.length}</div>
+              </div>
+              <div style={{ display: "flex", gap: 4, justifyContent: "center", marginBottom: 18 }}>
+                {EP7_CHECKPOINTS.map((_, i) => (
+                  <div key={i} style={{ width: 24, height: i === cpIndex ? 6 : 4, borderRadius: 2, background: i <= cpIndex ? "#fbbf24" : "rgba(255,255,255,.15)", transition: "all .3s" }} />
+                ))}
+              </div>
+              {(() => {
+                const cp = EP7_CHECKPOINTS[cpIndex];
+                return (
+                  <div style={{ background: cp.danger ? "rgba(220,38,38,.06)" : "rgba(255,255,255,.04)", border: `2px solid ${cp.danger ? "#dc2626" : "#fbbf24"}`, borderRadius: 14, padding: "18px 16px", position: "relative", animation: "ep7CardSlideIn .4s ease both" }}>
+                    <div style={{ position: "absolute", top: -12, left: 14, background: cp.danger ? "#dc2626" : "#fbbf24", color: cp.danger ? "#fff" : "#0a0a14", fontSize: 11, fontWeight: 900, padding: "3px 10px", borderRadius: 10 }}><RubyText text={el ? `サイン ${cp.num}` : `サイン ${cp.num}`} /></div>
+                    {cp.tag && (
+                      <div style={{ display: "inline-block", fontSize: 9, background: "#dc2626", color: "#fff", padding: "2px 8px", borderRadius: 8, marginBottom: 8, fontWeight: 900, letterSpacing: ".05em" }}>{cp.tag}</div>
+                    )}
+                    <div style={{ fontSize: 38, marginBottom: 8, textAlign: "center" }}>{cp.icon}</div>
+                    <div style={{ fontSize: 15, fontWeight: 900, color: "#fbcfe8", marginBottom: 12, textAlign: "center", lineHeight: 1.4 }}><RubyText text={cp.name} /></div>
+                    <div style={{ background: "rgba(168,130,207,.08)", borderRadius: 8, padding: "8px 11px", marginBottom: 12 }}>
+                      <div style={{ fontSize: 10, color: "#a78bfa", fontWeight: 900, letterSpacing: ".05em", marginBottom: 5 }}>📖 <RubyText text={el ? "マユミの{体験|たいけん}" : "マユミの体験"} /></div>
+                      <div style={{ fontSize: 12, lineHeight: 1.6, color: "rgba(255,255,255,.85)" }}><RubyText text={cp.experience} /></div>
+                    </div>
+                    <div style={{ background: "rgba(0,0,0,.3)", borderRadius: 8, padding: "8px 11px", marginBottom: 12 }}>
+                      <div style={{ fontSize: 10, color: "#a78bfa", fontWeight: 900, letterSpacing: ".05em", marginBottom: 5 }}>📚 <RubyText text={el ? "{公的|こうてき}{根拠|こんきょ}" : "公的根拠"} /></div>
+                      <div style={{ fontSize: 11.5, lineHeight: 1.6, color: "#fef3c7" }}><RubyText text={cp.evidence} /></div>
+                      <div style={{ fontSize: 10, color: "rgba(255,255,255,.5)", marginTop: 4, fontStyle: "italic" }}><RubyText text={el ? "{出典|しゅってん}: " : "出典: "} /><RubyText text={cp.src} /></div>
+                    </div>
+                    <div style={{ background: "rgba(34,197,94,.08)", borderLeft: "3px solid #22c55e", borderRadius: "0 8px 8px 0", padding: "8px 12px", fontSize: 12, lineHeight: 1.6, color: "#dcfce7" }}>
+                      <span style={{ color: "#22c55e", fontWeight: 900 }}>➡ </span><RubyText text={cp.takeaway} />
+                    </div>
+                  </div>
+                );
+              })()}
+              <div style={{ display: "flex", gap: 10, marginTop: 18 }}>
+                <button onClick={() => { feedback("tap"); setCpIndex(Math.max(0, cpIndex - 1)); }} disabled={cpIndex === 0}
+                  style={{ flex: 1, padding: 11, background: "rgba(139,92,246,.15)", border: "1px solid rgba(139,92,246,.4)", borderRadius: 10, color: "#fff", fontSize: 13, fontWeight: 700, cursor: cpIndex === 0 ? "not-allowed" : "pointer", opacity: cpIndex === 0 ? 0.3 : 1, fontFamily: "inherit" }}>
+                  <RubyText text={el ? "← {戻|もど}る" : "← 戻る"} />
+                </button>
+                <button onClick={() => { feedback("tap"); setCpIndex(cpIndex + 1); }}
+                  style={{ flex: 1, padding: 11, background: "linear-gradient(135deg,#8b5cf6,#7c3aed)", border: "none", borderRadius: 10, color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
+                  {cpIndex === EP7_CHECKPOINTS.length - 1 ? <RubyText text={el ? "{全体|ぜんたい}を{見|み}る →" : "全体を見る →"} /> : <RubyText text={el ? "{次|つぎ}へ →" : "次へ →"} />}
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div style={{ textAlign: "center", marginBottom: 18 }}>
+                <div style={{ fontSize: 10, letterSpacing: ".2em", color: "#fbbf24", fontWeight: 900, marginBottom: 6 }}>サマリー</div>
+                <div style={{ fontSize: 20, fontWeight: 900, lineHeight: 1.4 }}><RubyText text={el ? "7つの{危険|きけん}サイン・{一覧|いちらん}" : "7つの危険サイン・一覧"} /></div>
+              </div>
+              <div style={{ background: "rgba(220,38,38,.08)", borderLeft: "3px solid #dc2626", borderRadius: "0 8px 8px 0", padding: "12px 14px", marginBottom: 14, fontSize: 13, lineHeight: 1.7 }}>
+                <strong style={{ color: "#fca5a5" }}><RubyText text={el ? "1つでも{当|あ}てはまったら{警戒|けいかい}。" : "1つでも当てはまったら警戒。"} /></strong><br />
+                <strong style={{ color: "#fca5a5" }}><RubyText text={el ? "2つ{以上|いじょう}なら、{絶対|ぜったい}に{距離|きょり}を{取|と}って{大人|おとな}に{相談|そうだん}。" : "2つ以上なら、絶対に距離を取って大人に相談。"} /></strong>
+              </div>
+              <div style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.1)", borderRadius: 12, padding: 14, marginBottom: 18 }}>
+                {EP7_CHECKPOINTS.map((cp, i, arr) => (
+                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 0", fontSize: 12, borderBottom: i < arr.length - 1 ? "1px dashed rgba(255,255,255,.1)" : "none" }}>
+                    <div style={{ fontSize: 22, width: 30, textAlign: "center", flexShrink: 0 }}>{cp.icon}</div>
+                    <div style={{ flex: 1, lineHeight: 1.4 }}><strong><RubyText text={el ? `サイン${cp.num}.` : `サイン${cp.num}.`} /></strong> <RubyText text={cp.name} /></div>
+                    {cp.danger && <div style={{ fontSize: 9, background: "#dc2626", color: "#fff", padding: "2px 6px", borderRadius: 6, fontWeight: 900 }}><RubyText text={el ? "{重要|じゅうよう}" : "重要"} /></div>}
+                  </div>
+                ))}
+              </div>
+              <div style={{ background: "rgba(236,72,153,.12)", border: "1px solid rgba(236,72,153,.4)", borderRadius: 16, padding: "14px 18px", fontSize: 14, lineHeight: 1.8, marginBottom: 14 }}>
+                <RubyText text={el ? "マユミの{体験|たいけん}を、いつでも{思|おも}い{出|だ}して。<br/>{君|きみ}も、{君|きみ}の{友達|ともだち}も、{守|まも}れるようになる。" : "マユミの体験を、いつでも思い出して。<br/>君も、君の友達も、守れるようになる。"} />
+              </div>
+              <div style={{ display: "flex", gap: 10 }}>
+                <button onClick={() => { feedback("tap"); setCpIndex(0); }}
+                  style={{ flex: 1, padding: 11, background: "rgba(139,92,246,.15)", border: "1px solid rgba(139,92,246,.4)", borderRadius: 10, color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
+                  <RubyText text={el ? "← もう{一度|いちど}{学|まな}ぶ" : "← もう一度学ぶ"} />
+                </button>
+                <button onClick={() => { feedback("tap"); setSelectedAdults(new Set()); setPhase("escape"); }}
+                  style={{ flex: 1, padding: 11, background: "linear-gradient(135deg,#8b5cf6,#7c3aed)", border: "none", borderRadius: 10, color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
+                  <RubyText text={el ? "{相談先|そうだんさき}を{見|み}る →" : "相談先を見る →"} />
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ── escape: 相談窓口 ──
+  if (phase === "escape") {
+    return (
+      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0d1a2e,#0a0f1a)", padding: "20px 16px 24px", color: "#fff", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ maxWidth: 440, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 20 }}>
+            <div style={{ fontSize: 42, marginBottom: 8 }}>🆘</div>
+            <div style={{ fontSize: 20, fontWeight: 900, marginBottom: 6, lineHeight: 1.4 }}><RubyText text={el ? "{困|こま}ったら、ここに{相談|そうだん}" : "困ったら、ここに相談"} /></div>
+            <div style={{ fontSize: 12, color: "rgba(255,255,255,.6)", lineHeight: 1.5 }}><RubyText text={el ? "{一人|ひとり}で{抱|かか}えこまないで" : "一人で抱えこまないで"} /></div>
+          </div>
+          <Ep7MoriiBubble accent html={el ? "{君|きみ}や{友達|ともだち}が、こんな{状況|じょうきょう}になったら——<br/>これらの{窓口|まどぐち}に、ぜひ{相談|そうだん}してね。".replace(/\{([^|]+)\|[^}]+\}/g, "<ruby>$1<rt></rt></ruby>") : "君や友達が、こんな状況になったら——<br/>これらの窓口に、ぜひ相談してね。"} />
+          <div style={{ fontSize: 11, fontWeight: 900, color: "#fbbf24", letterSpacing: ".05em", margin: "18px 0 8px", paddingBottom: 6, borderBottom: "1px solid rgba(251,191,36,.3)" }}>📞 <RubyText text={el ? "{緊急度別|きんきゅうどべつ}の{相談|そうだん}{窓口|まどぐち}" : "緊急度別の相談窓口"} /></div>
+          {EP7_URGENCY.map((card, i) => (
+            <a key={i} href={card.href} style={{ display: "block", background: card.bg, border: `2px solid ${card.color}`, borderRadius: 14, padding: 14, marginBottom: 10, textDecoration: "none", color: "#fff" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+                <div style={{ fontSize: 30, width: 38, textAlign: "center", flexShrink: 0 }}>{card.icon}</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 10, fontWeight: 900, letterSpacing: ".05em", marginBottom: 1, color: card.color }}><RubyText text={card.lvLabel} /></div>
+                  <div style={{ fontSize: 12.5, lineHeight: 1.4, fontWeight: 700 }}><RubyText text={card.situation} /></div>
+                </div>
+              </div>
+              <div style={{ background: "rgba(0,0,0,.35)", borderRadius: 8, padding: "9px 12px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 10, color: "rgba(255,255,255,.7)", lineHeight: 1.4, marginBottom: 2 }}><RubyText text={card.org} /></div>
+                  <div style={{ fontSize: 18, fontWeight: 900, fontFamily: "monospace", color: "#fff", letterSpacing: ".02em" }}>{card.num}<small style={{ fontSize: 10, color: "rgba(255,255,255,.5)", fontWeight: 400, fontFamily: "inherit", marginLeft: 6 }}>{card.time}</small></div>
+                </div>
+                <div style={{ background: "#22c55e", color: "#fff", borderRadius: 8, padding: "8px 12px", fontSize: 11, fontWeight: 900, display: "flex", alignItems: "center", gap: 4, flexShrink: 0 }}>📞 <RubyText text={el ? "{電話|でんわ}する" : "電話する"} /></div>
+              </div>
+            </a>
+          ))}
+          <div style={{ fontSize: 11, fontWeight: 900, color: "#fbbf24", letterSpacing: ".05em", margin: "18px 0 8px", paddingBottom: 6, borderBottom: "1px solid rgba(251,191,36,.3)" }}>👥 <RubyText text={el ? "{身近|みぢか}な{大人|おとな}を{見|み}つけよう" : "身近な大人を見つけよう"} /></div>
+          <Ep7MoriiBubble accent html={el ? "{公的|こうてき}な{窓口|まどぐち}だけじゃないよ。<br/>{君|きみ}が{信頼|しんらい}している{大人|おとな}を、{選|えら}んでみて。<br/><span style=\"font-size:11px;color:rgba(255,255,255,.6)\">({複数|ふくすう}{選|えら}んでOK)</span>".replace(/\{([^|]+)\|[^}]+\}/g, "<ruby>$1<rt></rt></ruby>") : "公的な窓口だけじゃないよ。<br/>君が信頼している大人を、選んでみて。<br/><span style=\"font-size:11px;color:rgba(255,255,255,.6)\">(複数選んでOK)</span>"} />
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 14 }}>
+            {EP7_ADULTS.map((opt) => {
+              const selected = selectedAdults.has(opt.key);
+              return (
+                <button key={opt.key} onClick={() => { feedback("tap"); toggleAdult(opt.key); }}
+                  style={{ background: selected ? "rgba(168,130,207,.15)" : "rgba(255,255,255,.05)", border: `2px solid ${selected ? "#a982cf" : "rgba(255,255,255,.12)"}`, borderRadius: 12, padding: 10, color: "#fff", cursor: "pointer", textAlign: "center", fontFamily: "inherit", transition: "all .2s" }}>
+                  <div style={{ fontSize: 30, marginBottom: 4 }}>{opt.icon}</div>
+                  <div style={{ fontSize: 11, fontWeight: 700, lineHeight: 1.3 }}><RubyText text={opt.nm} /></div>
+                  <div style={{ fontSize: 9, color: "rgba(255,255,255,.5)", marginTop: 3, lineHeight: 1.3 }} dangerouslySetInnerHTML={{ __html: opt.ex }} />
+                </button>
+              );
+            })}
+          </div>
+          {selectedAdults.size > 0 && (
+            <div style={{ background: "rgba(168,130,207,.1)", border: "1px solid rgba(168,130,207,.4)", borderRadius: 10, padding: "10px 12px", marginBottom: 14, fontSize: 12, lineHeight: 1.6 }}>
+              <RubyText text={el ? "モリィ「いいね、それが{君|きみ}の{味方|みかた}になる{人|ひと}たちだね。」" : "モリィ「いいね、それが君の味方になる人たちだね。」"} />
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginTop: 6 }}>
+                {[...selectedAdults].map(k => (
+                  <div key={k} style={{ background: "rgba(168,130,207,.3)", borderRadius: 8, padding: "3px 8px", fontSize: 11, fontWeight: 700 }}>{EP7_ADULT_LABELS[k]}</div>
+                ))}
+              </div>
+            </div>
+          )}
+          <div style={{ background: "rgba(34,197,94,.06)", borderLeft: "3px solid #22c55e", borderRadius: "0 10px 10px 0", padding: "12px 14px", marginBottom: 18, fontSize: 13, lineHeight: 1.7 }}>
+            <strong style={{ color: "#86efac" }}><RubyText text={el ? "{話|はな}すこと={弱|よわ}さじゃない。" : "話すこと=弱さじゃない。"} /></strong><br />
+            <RubyText text={el ? "{話|はな}すこと={自分|じぶん}を{守|まも}る、{一番|いちばん}の{強|つよ}さ。" : "話すこと=自分を守る、一番の強さ。"} /><br /><br />
+            <RubyText text={el ? "{叱|しか}られるかもしれない、と{思|おも}うかもしれない。<br/>でも、{君|きみ}を{心配|しんぱい}している{人|ひと}は<strong>{必|かなら}ずいる</strong>。" : "叱られるかもしれない、と思うかもしれない。<br/>でも、君を心配している人は<strong>必ずいる</strong>。"} />
+          </div>
+          <button onClick={() => { feedback("tap"); setStep20Stage(0); setStep20Talk(null); setPhase("positive_ending"); }}
+            style={{ display: "block", width: "100%", padding: 13, background: "linear-gradient(135deg,#8b5cf6,#7c3aed)", border: "none", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>
+            <RubyText text={el ? "マユミの{続|つづ}きを{見|み}る →" : "マユミの続きを見る →"} />
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── positive_ending: ポジティブ締め ──
+  if (phase === "positive_ending") {
+    const bgImage = step20Stage >= 4 ? "/images/ep7/mother.jpg" : "/images/ep7/entrance.jpg";
+    return (
+      <div style={{ position: "relative", minHeight: "100vh", background: "#000", display: "flex", flexDirection: "column", alignItems: "center", paddingBottom: 80, fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        <div style={{ position: "absolute", inset: 0, backgroundImage: `url(${bgImage})`, backgroundSize: "cover", backgroundPosition: "center top", zIndex: 0, transition: "background-image 1s ease" }}>
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg,rgba(0,0,0,.3) 0%,transparent 30%,rgba(0,0,0,.5) 75%,rgba(0,0,0,.95) 100%)" }} />
+        </div>
+        {showSfx && (
+          <div style={{ position: "fixed", top: "20%", left: "50%", transform: "translateX(-50%)", background: "#fff", color: "#000", padding: "10px 22px", borderRadius: 30, fontSize: 18, fontWeight: 900, fontStyle: "italic", boxShadow: "0 8px 20px rgba(0,0,0,.5)", zIndex: 100, animation: "ep7SfxPop 1.4s ease both" }}>{showSfx}</div>
+        )}
+        <div style={{ position: "relative", zIndex: 5, padding: "24px 18px", width: "100%", maxWidth: 440 }}>
+          {step20Stage >= 1 && step20Stage < 3 && (
+            <div style={{ background: "rgba(0,0,0,.65)", backdropFilter: "blur(6px)", border: "1px solid rgba(255,255,255,.12)", borderRadius: 14, padding: "14px 18px", marginBottom: 14, color: "#fff", textAlign: "center", fontSize: 14, fontWeight: 900, lineHeight: 1.6, animation: "fadeIn .6s ease both" }}>
+              <RubyText text={el ? "マユミは、{改札|かいさつ}を{通|とお}らなかった。" : "マユミは、改札を通らなかった。"} />
+              <span style={{ display: "block", fontSize: 11, fontWeight: 600, color: "rgba(255,255,255,.85)", marginTop: 6 }}><RubyText text={el ? "{家|いえ}に、{帰|かえ}ってきた。" : "家に、帰ってきた。"} /></span>
+            </div>
+          )}
+          {step20Stage >= 3 && step20Stage < 4 && (
+            <div style={{ background: "rgba(0,0,0,.65)", backdropFilter: "blur(6px)", border: "1px solid rgba(255,255,255,.12)", borderRadius: 14, padding: "14px 18px", marginBottom: 14, color: "#fff", textAlign: "center", fontSize: 14, fontWeight: 900, lineHeight: 1.6 }}>
+              <RubyText text="ただいま——" />
+              <span style={{ display: "block", fontSize: 11, fontWeight: 600, color: "rgba(255,255,255,.85)", marginTop: 6 }}><RubyText text={el ? "{小|ちい}さく、{声|こえ}を{出|だ}した。" : "小さく、声を出した。"} /></span>
+            </div>
+          )}
+          {step20Stage >= 4 && <Ep7MotherBubble html={el ? "マユミ、おかえり。<br/>どこにいたの? <ruby>心配<rt></rt></ruby>したよ。" : "マユミ、おかえり。<br/>どこにいたの? 心配したよ。"} />}
+          {step20Stage >= 5 && (
+            <div style={{ background: "rgba(168,130,207,.15)", borderLeft: "3px solid #a982cf", borderRadius: "0 10px 10px 0", padding: "10px 14px", marginBottom: 14, fontSize: 13, lineHeight: 1.7, fontStyle: "italic", color: "#efe9f5", animation: "fadeIn .5s ease both" }}>
+              <div style={{ fontSize: 9, color: "#a982cf", fontWeight: 900, marginBottom: 3, fontStyle: "normal" }}>マユミの心の声</div>
+              <RubyText text={el ? "{言|い}うべきかな…<br/>でも、{怒|おこ}られそう。<br/>……でも——" : "言うべきかな…<br/>でも、怒られそう。<br/>……でも——"} />
+            </div>
+          )}
+          {step20Stage >= 6 && (
+            <Ep7MoriiBubble accent html={el ? "マユミ、<ruby>話<rt></rt></ruby>せる<ruby>選択肢<rt></rt></ruby>を、3つ<ruby>用意<rt></rt></ruby>したよ。<br/>どれでも<ruby>大丈夫<rt></rt></ruby>。" : "マユミ、話せる選択肢を、3つ用意したよ。<br/>どれでも大丈夫。"} />
+          )}
+          {step20Stage >= 7 && step20Talk === null && (
+            <>
+              <div style={{ textAlign: "center", marginBottom: 8 }}>
+                <span style={{ display: "inline-block", background: "rgba(0,0,0,.5)", color: "rgba(255,255,255,.7)", fontSize: 10, padding: "4px 10px", borderRadius: 10 }}>↓ マユミのセリフを選んでタップ</span>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 14 }}>
+                {["お母さん、ちょっと聞いてほしいことがあるんだけど…", "ねえ、相談していい?", "ゲームで知り合った人と、なんかこわくなって…"].map((t, i) => (
+                  <button key={i} onClick={() => { feedback("tap"); setStep20Talk(t); }}
+                    style={{ background: "#fef9e7", color: "#1a1a1f", border: "2px solid #fbbf24", borderRadius: 12, padding: "10px 14px", fontSize: 13, lineHeight: 1.5, fontFamily: "inherit", cursor: "pointer", textAlign: "left", fontWeight: 600, boxShadow: "0 3px 8px rgba(0,0,0,.4)" }}>{t}</button>
+                ))}
+              </div>
+            </>
+          )}
+          {step20Talk !== null && (
+            <>
+              <div style={{ background: "rgba(251,191,36,.1)", borderLeft: "3px solid #fbbf24", borderRadius: "0 10px 10px 0", padding: "10px 14px", marginBottom: 14, fontSize: 13, lineHeight: 1.7, fontStyle: "italic", color: "#fef3c7", animation: "fadeIn .5s ease both" }}>
+                <div style={{ fontSize: 9, color: "#fbbf24", fontWeight: 900, marginBottom: 3, fontStyle: "normal" }}>マユミ</div>
+                {step20Talk}
+              </div>
+              <Ep7MotherBubble html={el ? "<ruby>話<rt></rt></ruby>してくれて、ありがとう。<br/><ruby>一緒<rt></rt></ruby>に<ruby>考<rt></rt></ruby>えよう。<br/>マユミは<ruby>何<rt></rt></ruby>も<ruby>悪<rt></rt></ruby>くないから。" : "話してくれて、ありがとう。<br/>一緒に考えよう。<br/>マユミは何も悪くないから。"} />
+              <div style={{ background: "rgba(168,130,207,.15)", borderLeft: "3px solid #a982cf", borderRadius: "0 10px 10px 0", padding: "10px 14px", marginBottom: 14, fontSize: 13, lineHeight: 1.7, fontStyle: "italic", color: "#efe9f5", animation: "fadeIn .5s ease both 3s" }}>
+                <div style={{ fontSize: 9, color: "#a982cf", fontWeight: 900, marginBottom: 3, fontStyle: "normal" }}>マユミの心の声</div>
+                <RubyText text={el ? "あ…<br/>{話|はな}してよかった。<br/>{一人|ひとり}じゃ、{抱|かか}えきれなかった。" : "あ…<br/>話してよかった。<br/>一人じゃ、抱えきれなかった。"} />
+              </div>
+              <div style={{ animation: "fadeIn .5s ease both 5s" }}>
+                <Ep7MoriiBubble accent html={el ? "<ruby>君<rt></rt></ruby>が<ruby>話<rt></rt></ruby>すことで、<ruby>君<rt></rt></ruby>を<ruby>守<rt></rt></ruby>れる。<br/><br/>そして、<ruby>君<rt></rt></ruby>を<ruby>心配<rt></rt></ruby>している<ruby>人<rt></rt></ruby>がいる、ということを、<ruby>忘<rt></rt></ruby>れないで。" : "君が話すことで、君を守れる。<br/><br/>そして、君を心配している人がいる、ということを、忘れないで。"} />
+              </div>
+              <div style={{ animation: "fadeIn .5s ease both 7s" }}>
+                <Ep7MoriiBubble accent html={el ? "SNSもオンラインゲームも、<ruby>楽<rt></rt></ruby>しいツールだよ。<br/>こういう<ruby>手口<rt></rt></ruby>があることを<strong style=\"color:#86efac\"><ruby>知<rt></rt></ruby>っているだけで</strong>、<ruby>君<rt></rt></ruby>は<ruby>強<rt></rt></ruby>くなれる。<br/><br/><ruby>友達<rt></rt></ruby>が<ruby>同<rt></rt></ruby>じ<ruby>状況<rt></rt></ruby>になったら、<ruby>君<rt></rt></ruby>が<ruby>支<rt></rt></ruby>えてあげて。" : "SNSもオンラインゲームも、楽しいツールだよ。<br/>こういう手口があることを<strong style=\"color:#86efac\">知っているだけで</strong>、君は強くなれる。<br/><br/>友達が同じ状況になったら、君が支えてあげて。"} />
+              </div>
+              <button onClick={() => { feedback("tap"); setPhase("keywords"); }}
+                style={{ display: "block", width: "100%", marginTop: 18, padding: 14, background: "linear-gradient(135deg,#fbbf24,#d97706)", border: "none", borderRadius: 14, color: "#0a0a14", fontSize: 14, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 8px 28px rgba(251,191,36,.3)", animation: "fadeIn .5s ease both 9s" }}>
+                🏆 <RubyText text={el ? "{学習|がくしゅう}の{振|ふ}り{返|かえ}りへ →" : "学習の振り返りへ →"} />
+              </button>
+            </>
+          )}
+        </div>
       </div>
     );
   }
