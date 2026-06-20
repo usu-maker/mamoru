@@ -19691,7 +19691,7 @@ function Ep7MoriiBubble({ html, accent = false }) {
   return (
     <div style={{ background: accent ? "rgba(236,72,153,.18)" : "rgba(34,197,94,.12)", border: `1px solid ${accent ? "rgba(236,72,153,.5)" : "rgba(34,197,94,.4)"}`, borderRadius: "4px 16px 16px 16px", padding: "12px 14px", marginBottom: 14, fontSize: 13, lineHeight: 1.7, display: "flex", gap: 10, alignItems: "flex-start", animation: "fadeIn .5s ease both" }}>
       <div style={{ flexShrink: 0 }}><OwlMolly size={34} /></div>
-      <div style={{ flex: 1 }} dangerouslySetInnerHTML={{ __html: html }} />
+      <div style={{ flex: 1, color: "#fff" }} dangerouslySetInnerHTML={{ __html: html }} />
     </div>
   );
 }
@@ -19787,6 +19787,7 @@ function Episode7({ onComplete, onExit }) {
   const [step20Stage, setStep20Stage] = useState(0);       // step20 サブステージ
   const [step20Talk, setStep20Talk] = useState(null);      // step20 マユミ選択セリフ
   const [showSfx, setShowSfx] = useState(null);            // 「ガチャッ」効果音バブル
+  const [newsIntroShown, setNewsIntroShown] = useState(false); // news 冒頭モリィオーバーレイ
 
   // reveal セリフを順次表示
   useEffect(() => {
@@ -19795,8 +19796,15 @@ function Episode7({ onComplete, onExit }) {
     const t1 = setTimeout(() => setRevealStage(1), 2000);
     const t2 = setTimeout(() => setRevealStage(2), 4500);
     const t3 = setTimeout(() => setRevealStage(3), 6700);
-    const t4 = setTimeout(() => setRevealStage(4), 8900);
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
+    const t4 = setTimeout(() => setRevealStage(4), 8900);   // 新しい吹き出し
+    const t5 = setTimeout(() => setRevealStage(5), 11500);  // 「…見る →」ボタン
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(t5); };
+  }, [phase]);
+
+  // news フェーズ開始時に冒頭オーバーレイを初期化
+  useEffect(() => {
+    if (phase !== "news") return;
+    setNewsIntroShown(false);
   }, [phase]);
 
   // positive_ending（step20）の進行
@@ -20716,10 +20724,15 @@ function Episode7({ onComplete, onExit }) {
         )}
         {revealStage >= 3 && (
           <div style={{ background: "rgba(236,72,153,.12)", border: "1px solid rgba(236,72,153,.4)", borderRadius: 16, padding: "14px 18px", fontSize: 14, lineHeight: 1.8, marginBottom: 14, maxWidth: 360, animation: "ep7BubbleSlide .5s ease both" }}>
-            <RubyText text={el ? "これから{何|なに}が{起|お}きていたか、{見|み}せてもいい?<br/>{君|きみ}が、このまま{会|あ}いに{行|い}っていたら——" : "これから何が起きていたか、見せてもいい?<br/>君が、このまま会いに行っていたら——"} />
+            <RubyText text={el ? "これから{起|お}きるかもしれないことを、{見|み}せてもいい?<br/>{君|きみ}が、このまま{会|あ}いに{行|い}っていたら——" : "これから起きるかもしれないことを、見せてもいい?<br/>君が、このまま会いに行っていたら——"} />
           </div>
         )}
         {revealStage >= 4 && (
+          <div style={{ background: "rgba(236,72,153,.12)", border: "1px solid rgba(236,72,153,.4)", borderRadius: 16, padding: "14px 18px", fontSize: 14, lineHeight: 1.8, marginBottom: 14, maxWidth: 360, animation: "ep7BubbleSlide .5s ease both" }}>
+            <RubyText text={el ? "こんな{怖|こわ}い{目|め}にあったのかもしれないよ。{実際|じっさい}に{過去|かこ}{起|お}きた3つの{事例|じれい}を{見|み}てみよう。" : "こんな怖い目にあったのかもしれないよ。実際に過去起きた3つの事例を見てみよう。"} />
+          </div>
+        )}
+        {revealStage >= 5 && (
           <button onClick={() => { feedback("tap"); setRedFlash(true); setTimeout(() => { setRedFlash(false); setNewsIdx(0); setPhase("news"); }, 600); }}
             style={{ marginTop: 14, padding: "14px 28px", background: "linear-gradient(135deg,#dc2626,#991b1b)", border: "none", borderRadius: 14, color: "#fff", fontSize: 14, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 0 30px rgba(220,38,38,.4)" }}>
             <RubyText text={el ? "…{見|み}る →" : "…見る →"} />
@@ -20738,6 +20751,20 @@ function Episode7({ onComplete, onExit }) {
     const isLast = newsIdx === EP7_NEWS_DATA.length - 1;
     return (
       <div style={{ minHeight: "100vh", background: "#06060c", padding: "14px", display: "flex", justifyContent: "center", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+        {!newsIntroShown && (
+          <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.85)", backdropFilter: "blur(4px)", zIndex: 1000, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 20, animation: "fadeIn .4s ease both" }}>
+            <div style={{ width: 100, height: 100, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 0 40px rgba(251,191,36,.5), 0 0 80px rgba(251,191,36,.2)", marginBottom: 20, animation: "ep7MoriiGlow 2s ease infinite alternate" }}>
+              <OwlMolly size={80} />
+            </div>
+            <div style={{ background: "rgba(236,72,153,.18)", border: "1px solid rgba(236,72,153,.5)", borderRadius: 16, padding: "16px 20px", fontSize: 14, lineHeight: 1.8, color: "#fff", maxWidth: 360, textAlign: "center", marginBottom: 20, animation: "ep7BubbleSlide .5s ease .3s both" }}>
+              <RubyText text={el ? "{少|すこ}し{長|なが}いけど、{実際|じっさい}にあった{怖|こわ}い{事件|じけん}なんだ。{読|よ}んでみてね。" : "少し長いけど、実際にあった怖い事件なんだ。読んでみてね。"} />
+            </div>
+            <button onClick={() => { feedback("tap"); setNewsIntroShown(true); }}
+              style={{ padding: "14px 36px", background: "linear-gradient(135deg,#1e3a8a,#1e40af)", border: "none", borderRadius: 14, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 8px 24px rgba(30,58,138,.5)", animation: "ep7BubbleSlide .5s ease .8s both" }}>
+              <RubyText text={el ? "{見|み}てみる" : "見てみる"} />
+            </button>
+          </div>
+        )}
         <div style={{ width: "100%", maxWidth: 460, background: "#fff", color: "#1a1a1f", borderRadius: 18, overflow: "hidden", boxShadow: "0 8px 30px rgba(0,0,0,.6)" }}>
           <div style={{ display: "flex", gap: 6, justifyContent: "center", padding: "8px 0", background: "#f8fafc", borderBottom: "1px solid #e2e8f0" }}>
             {EP7_NEWS_DATA.map((_, i) => (
@@ -20796,6 +20823,11 @@ function Episode7({ onComplete, onExit }) {
           <div style={{ textAlign: "center", fontSize: 11, color: "#fca5a5", letterSpacing: ".2em", marginBottom: 14, fontWeight: 900 }}>
             — {identityFlipped ? <RubyText text={el ? "{本当|ほんとう}の{姿|すがた}" : "本当の姿"} /> : <RubyText text={el ? "{種明|たねあ}かし" : "種明かし"} />} —
           </div>
+          {!identityFlipped && (
+            <div style={{ background: "rgba(220,38,38,.08)", border: "1px solid rgba(220,38,38,.3)", borderRadius: 10, padding: "10px 14px", fontSize: 12.5, lineHeight: 1.7, color: "#fecaca", maxWidth: 380, margin: "0 auto 16px", textAlign: "left" }}>
+              <RubyText text={el ? "{実|じつ}は、{今回|こんかい}の{体験|たいけん}も、{先|さき}の{事件|じけん}{同様|どうよう}に{未成年|みせいねん}を{狙|ねら}った{犯行|はんこう}だったのです。<br/>このまま{進|すす}んでいたら{大変|たいへん}なことになっていたかもしれません。" : "実は、今回の体験も、先の事件同様に未成年を狙った犯行だったのです。<br/>このまま進んでいたら大変なことになっていたかもしれません。"} />
+            </div>
+          )}
           <div style={{ textAlign: "center", fontSize: 18, fontWeight: 900, marginBottom: 20, lineHeight: 1.4 }}>
             {identityFlipped
               ? <><RubyText text="これが、" /><br /><RubyText text="もっち23の" /><span style={{ color: "#fca5a5" }}><RubyText text={el ? "{本当|ほんとう}の{姿|すがた}" : "本当の姿"} /></span></>
@@ -21016,7 +21048,9 @@ function Episode7({ onComplete, onExit }) {
           <div style={{ background: "rgba(34,197,94,.06)", borderLeft: "3px solid #22c55e", borderRadius: "0 10px 10px 0", padding: "12px 14px", marginBottom: 18, fontSize: 13, lineHeight: 1.7 }}>
             <strong style={{ color: "#86efac" }}><RubyText text={el ? "{話|はな}すこと={弱|よわ}さじゃない。" : "話すこと=弱さじゃない。"} /></strong><br />
             <RubyText text={el ? "{話|はな}すこと={自分|じぶん}を{守|まも}る、{一番|いちばん}の{強|つよ}さ。" : "話すこと=自分を守る、一番の強さ。"} /><br /><br />
-            <RubyText text={el ? "{叱|しか}られるかもしれない、と{思|おも}うかもしれない。<br/>でも、{君|きみ}を{心配|しんぱい}している{人|ひと}は<strong>{必|かなら}ずいる</strong>。" : "叱られるかもしれない、と思うかもしれない。<br/>でも、君を心配している人は<strong>必ずいる</strong>。"} />
+            <RubyText text={el ? "{叱|しか}られるかもしれない、と{思|おも}うかもしれない。<br/>でも、{君|きみ}を{心配|しんぱい}している{人|ひと}は" : "叱られるかもしれない、と思うかもしれない。<br/>でも、君を心配している人は"} />
+            <strong style={{ color: "#86efac" }}><RubyText text={el ? "{必|かなら}ずいる" : "必ずいる"} /></strong>
+            <RubyText text="。" />
           </div>
           <button onClick={() => { feedback("tap"); setStep20Stage(0); setStep20Talk(null); setPhase("positive_ending"); }}
             style={{ display: "block", width: "100%", padding: 13, background: "linear-gradient(135deg,#8b5cf6,#7c3aed)", border: "none", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>
@@ -21441,7 +21475,7 @@ function Episode7({ onComplete, onExit }) {
             questions={ep7Questions}
             epKey="ep7"
             accentColor="#8b5cf6"
-            onComplete={() => setPhase("keywords")}
+            onComplete={() => setPhase("complete")}
           />
         </EpisodeShell>
       </div>
