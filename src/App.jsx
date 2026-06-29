@@ -23,7 +23,7 @@ const I18N = {
       ko: "SNS 리터러시 앱", zh: "社交媒体素养应用",
     },
     appName: {
-      ja: "マモル 🛡️", en: "Mamoru 🛡️",
+      ja: "MAMORU 🛡️", en: "Mamoru 🛡️",
       ko: "마모루 🛡️", zh: "守护 🛡️",
     },
     beta: { ja: "β版", el: "β{版|ばん}", en: "Beta", ko: "베타", zh: "测试版" },
@@ -165,7 +165,7 @@ const I18N = {
     chapter: { ja: "EPISODE 01", en: "EPISODE 01", ko: "EPISODE 01", zh: "第 01 话" },
     title: { ja: "消えた写真の秘密", el: "{消|き}えた{写真|しゃしん}の{秘密|ひみつ}", en: "The Vanished Photo's Secret", ko: "사라진 사진의 비밀", zh: "消失照片的秘密" },
     subtitle: {
-      ja: "— マモル: SNSリテラシーアドベンチャー —",
+      ja: "— MAMORU: SNSリテラシーアドベンチャー —",
       en: "— Mamoru: SNS Literacy Adventure —",
       ko: "— 마모루: SNS 리터러시 어드벤처 —",
       zh: "— 守护:社交媒体素养冒险 —",
@@ -346,8 +346,8 @@ const I18N = {
     certLabel: { ja: "CERTIFICATE", en: "CERTIFICATE", ko: "CERTIFICATE", zh: "证书" },
     certTitle: { ja: "しゅうりょうしょう", en: "Certificate of Completion", ko: "수료증", zh: "结业证书" },
     certBody: {
-      ja: "あなたは「マモル」第1話<br />**消えた写真の秘密**<br />をクリアしました。",
-      el: "あなたは「マモル」{第|だい}1{話|わ}<br />**{消|き}えた{写真|しゃしん}の{秘密|ひみつ}**<br />をクリアしました。",
+      ja: "あなたは「MAMORU」エピソード1<br />**その写真、アップロードして大丈夫？**<br />をクリアしました。",
+      el: "あなたは「MAMORU」エピソード1<br />**その{写真|しゃしん}、アップロードして{大丈夫|だいじょうぶ}？**<br />をクリアしました。",
       en: "You completed Mamoru EP 1<br />**The Vanished Photo's Secret**",
       ko: "당신은 마모루 1화<br />**사라진 사진의 비밀**<br />을 완료했습니다.",
       zh: "你完成了「守护」第1话<br />**消失照片的秘密**",
@@ -363,14 +363,14 @@ const I18N = {
     share: { ja: "📤 シェア", en: "📤 Share", ko: "📤 공유", zh: "📤 分享" },
     toHome: { ja: "🏠 ホームへ", en: "🏠 Home", ko: "🏠 홈으로", zh: "🏠 主页" },
     shareTitle: {
-      ja: "マモル EP1 クリア！",
+      ja: "MAMORU EP1 クリア！",
       en: "Mamoru EP1 Complete!",
       ko: "마모루 EP1 클리어!",
       zh: "守护 第1话 完成!",
     },
     shareText: {
-      ja: "SNSリテラシーアプリ「マモル」で個人情報マスターになりました🏆",
-      el: "SNSリテラシーアプリ「マモル」で{個人情報|こじんじょうほう}マスターになりました🏆",
+      ja: "SNSリテラシーアプリ「MAMORU」で個人情報マスターになりました🏆みんなも一緒に学んでみよう！https://mamoru-xi.vercel.app/",
+      el: "SNSリテラシーアプリ「MAMORU」で{個人情報|こじんじょうほう}マスターになりました🏆みんなも一緒に学んでみよう！https://mamoru-xi.vercel.app/",
       en: "I became a Privacy Master on Mamoru, the SNS literacy app 🏆",
       ko: "SNS 리터러시 앱 마모루에서 개인정보 마스터가 됐어요 🏆",
       zh: "在社交媒体素养应用「守护」中成为了个人信息大师 🏆",
@@ -382,8 +382,8 @@ const I18N = {
     certLabel: { ja: "CERTIFICATE", en: "CERTIFICATE", ko: "CERTIFICATE", zh: "证书" },
     certTitle: { ja: "しゅうりょうしょう", en: "Certificate of Completion", ko: "수료증", zh: "结业证书" },
     certBody: {
-      ja: "あなたは「マモル」第1話-2<br />**本当は、位置情報が見えてるよ**<br />をクリアしました。",
-      el: "あなたは「マモル」{第|だい}1{話|わ}-2<br />**{本当|ほんとう}は、{位置情報|いちじょうほう}が{見|み}えてるよ**<br />をクリアしました。",
+      ja: "あなたは「MAMORU」エピソード1-2<br />**本当は、位置情報が見えてるよ**<br />をクリアしました。",
+      el: "あなたは「MAMORU」エピソード1-2<br />**{本当|ほんとう}は、{位置情報|いちじょうほう}が{見|み}えてるよ**<br />をクリアしました。",
       en: "You completed Mamoru EP 1-2<br />**Your Location Is Always Visible**",
       ko: "당신은 마모루 1-2화<br />**사실은 위치 정보가 보여**<br />을 완료했습니다.",
       zh: "你完成了「守护」第1-2话<br />**其实位置信息一直可见**",
@@ -398,10 +398,10 @@ const I18N = {
     },
     share: { ja: "📤 シェア", en: "📤 Share", ko: "📤 공유", zh: "📤 分享" },
     toHome: { ja: "🏠 ホームへ", en: "🏠 Home", ko: "🏠 홈으로", zh: "🏠 主页" },
-    shareTitle: { ja: "マモル EP1-2 クリア！", en: "Mamoru EP1-2 Complete!", ko: "마모루 EP1-2 클리어!", zh: "守护 第1-2话 完成!" },
+    shareTitle: { ja: "MAMORU EP1-2 クリア！", en: "Mamoru EP1-2 Complete!", ko: "마모루 EP1-2 클리어!", zh: "守护 第1-2话 完成!" },
     shareText: {
-      ja: "SNSリテラシーアプリ「マモル」で位置情報マスターになりました🏆",
-      el: "SNSリテラシーアプリ「マモル」で{位置情報|いちじょうほう}マスターになりました🏆",
+      ja: "SNSリテラシーアプリ「MAMORU」で位置情報マスターになりました🏆みんなも一緒に学んでみよう！https://mamoru-xi.vercel.app/",
+      el: "SNSリテラシーアプリ「MAMORU」で{位置情報|いちじょうほう}マスターになりました🏆みんなも一緒に学んでみよう！https://mamoru-xi.vercel.app/",
       en: "I became a Location Privacy Master on Mamoru 🏆",
       ko: "SNS 리터러시 앱 마모루에서 위치 정보 마스터가 됐어요 🏆",
       zh: "在社交媒体素养应用「守护」中成为了位置信息大师 🏆",
@@ -2687,7 +2687,7 @@ async function generateChallengeQuestion(theme) {
         max_tokens: 600,
         messages: [{
           role: "user",
-          content: `SNSリテラシー教育アプリ「マモル」向けの週次チャレンジ問題を1問生成してください。テーマ：${theme}
+          content: `SNSリテラシー教育アプリ「MAMORU」向けの週次チャレンジ問題を1問生成してください。テーマ：${theme}
 
 以下のJSON形式で返してください（JSONのみ、説明不要）：
 {
@@ -4429,7 +4429,7 @@ function Opening({ onComplete }) {
         <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: "#ffa940", letterSpacing: ".5em", marginBottom: 12 }}>
           SNS LITERACY APP
         </div>
-        <div style={{ fontSize: 42, fontWeight: 900, color: "#fff", lineHeight: 1, marginBottom: 12 }}>マモル</div>
+        <div style={{ fontSize: 42, fontWeight: 900, color: "#fff", lineHeight: 1, marginBottom: 12 }}>MAMORU</div>
         <div style={{
           background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.1)",
           borderRadius: 14, padding: "14px 20px",
@@ -4896,8 +4896,8 @@ function Opening({ onComplete }) {
           </div>
         ))}
         <button onClick={() => navigator.share?.({
-          title: "マモル — 親子で学ぶSNSリテラシーアプリ",
-          text: "子どものSNS・スマホトラブルを体験型で学べる無料アプリ「マモル」。子どもと一緒にやってみて！",
+          title: "MAMORU — 親子で学ぶSNSリテラシーアプリ",
+          text: "子どものSNS・スマホトラブルを体験型で学べる無料アプリ「MAMORU」。子どもと一緒にやってみて！",
           url: "https://mamoru-xi.vercel.app",
         }).catch(() => {})}
           style={{
@@ -5658,11 +5658,11 @@ function InfoScreen({ onBack }) {
       emoji: "🔒",
       content: [
         { title: "収集する情報について", elTitle: "{収集|しゅうしゅう}する{情報|じょうほう}について",
-          body: "マモルは、お客様の個人情報を収集・送信しません。学習記録・キーワードノート・進捗データは、すべてお使いの端末のブラウザ内（localStorage）にのみ保存されます。外部サーバーへの送信は行いません。" },
+          body: "MAMORUは、お客様の個人情報を収集・送信しません。学習記録・キーワードノート・進捗データは、すべてお使いの端末のブラウザ内（localStorage）にのみ保存されます。外部サーバーへの送信は行いません。" },
         { title: "外部APIの利用について", elTitle: "{外部|がいぶ}APIの{利用|りよう}について",
-          body: "マモルは学習コンテンツの生成に Anthropic社（Claude API）を利用しています。週次チャレンジ問題・保護者向けニュースの生成時にのみ、入力したプロンプト（質問内容）がサーバーを経由します。お子様の氏名・住所・学校名などの個人情報は一切送信されません。" },
+          body: "MAMORUは学習コンテンツの生成に Anthropic社（Claude API）を利用しています。週次チャレンジ問題・保護者向けニュースの生成時にのみ、入力したプロンプト（質問内容）がサーバーを経由します。お子様の氏名・住所・学校名などの個人情報は一切送信されません。" },
         { title: "Cookieについて", elTitle: "Cookieについて",
-          body: "マモルはCookieを使用しません。学習データの保存にはブラウザのlocalStorageを使用しています。" },
+          body: "MAMORUはCookieを使用しません。学習データの保存にはブラウザのlocalStorageを使用しています。" },
         { title: "第三者への提供", elTitle: "{第三者|だいさんしゃ}への{提供|ていきょう}",
           body: "収集した情報を第三者に販売・提供することはありません。" },
         { title: "データの削除について", elTitle: "データの{削除|さくじょ}について",
@@ -5679,7 +5679,7 @@ function InfoScreen({ onBack }) {
       emoji: "👤",
       content: [
         { title: "サービス名", elTitle: "サービス{名|めい}",
-          body: "マモル（Mamoru）— SNSリテラシー教育アプリ" },
+          body: "MAMORU（Mamoru）— SNSリテラシー教育アプリ" },
         { title: "運営者", elTitle: "{運営者|うんえいしゃ}",
           body: "個人運営（詳細はお問い合わせください）" },
         { title: "所在地", elTitle: "{所在地|しょざいち}",
@@ -5700,13 +5700,13 @@ function InfoScreen({ onBack }) {
       emoji: "📋",
       content: [
         { title: "利用について", elTitle: "{利用|りよう}について",
-          body: "マモルは、子どものSNSリテラシー教育を目的とした無料サービスです。個人・教育機関での非商用利用に限り、自由にご利用いただけます。" },
+          body: "MAMORUは、子どものSNSリテラシー教育を目的とした無料サービスです。個人・教育機関での非商用利用に限り、自由にご利用いただけます。" },
         { title: "禁止事項", elTitle: "{禁止|きんし}{事項|じこう}",
           body: "・本サービスの無断複製・改変・再配布\n・商業目的での利用（事前許可なし）\n・サービスへの不正アクセス・妨害行為\n・法令に違反する利用" },
         { title: "免責事項", elTitle: "{免責|めんせき}{事項|じこう}",
           body: "本アプリのコンテンツは教育目的で作成されており、情報の正確性に努めていますが、完全性・最新性を保証するものではありません。本サービスの利用により生じたいかなる損害についても、運営者は責任を負いません。" },
         { title: "知的財産権", elTitle: "{知的|ちてき}{財産権|ざいさんけん}",
-          body: "マモルのコンテンツ・デザイン・コードの著作権は運営者に帰属します。学校の授業・家庭での教育目的での利用・印刷は許可します。" },
+          body: "MAMORUのコンテンツ・デザイン・コードの著作権は運営者に帰属します。学校の授業・家庭での教育目的での利用・印刷は許可します。" },
         { title: "サービスの変更・終了", elTitle: "サービスの{変更|へんこう}・{終了|しゅうりょう}",
           body: "運営者は予告なくサービスの内容を変更・終了する場合があります。" },
         { title: "準拠法", elTitle: "{準拠|じゅんきょ}{法|ほう}",
@@ -6479,8 +6479,8 @@ const TUTORIAL_KEY = "mamoru_tutorial_v1";
 
 const TUTORIAL_STEPS = [
   { step: 1, highlight: null, position: "center",
-    message: "マモルへようこそ！\n画面の使い方をかんたんに説明するね。\nタップして進んでね！",
-    messageEl: "マモルへようこそ！\n{画面|がめん}の{使|つか}い{方|かた}をかんたんに{説明|せつめい}するね。\nタップして{進|すす}んでね！" },
+    message: "MAMORUへようこそ！\n画面の使い方をかんたんに説明するね。\nタップして進んでね！",
+    messageEl: "MAMORUへようこそ！\n{画面|がめん}の{使|つか}い{方|かた}をかんたんに{説明|せつめい}するね。\nタップして{進|すす}んでね！" },
   { step: 2, highlight: "badges", position: "below",
     message: "エピソードをクリアすると\n実績バッジがもらえるよ。\n全部集めてみよう！🏆",
     messageEl: "エピソードをクリアすると\n{実績|じっせき}バッジがもらえるよ。\n{全部|ぜんぶ}{集|あつ}めてみよう！🏆" },
@@ -6611,7 +6611,7 @@ function HomeScreen({ onNavigate, progress, startTutorial, onTutorialStarted }) 
     "怖い話もあるけど、知っていれば大丈夫！一緒にがんばろう🦉",
     "全エピソードクリアしたら、スマホ名人だね✨",
     "投稿する前に、一度だけ立ち止まって考えてみよう📱",
-    "マモルを使ってくれてありがとう！きみのこと、応援してるよ🎉",
+    "MAMORUを使ってくれてありがとう！きみのこと、応援してるよ🎉",
     "今日学んだことを、だれかに話してみよう。それが一番の復習！",
     "ネットのトラブルは、知識があれば9割防げるって知ってた？💡",
   ];
@@ -6623,7 +6623,7 @@ function HomeScreen({ onNavigate, progress, startTutorial, onTutorialStarted }) 
     "{怖|こわ}い{話|はなし}もあるけど、{知|し}っていれば{大丈夫|だいじょうぶ}！{一緒|いっしょ}にがんばろう🦉",
     "{全|ぜん}エピソードクリアしたら、スマホ{名人|めいじん}だね✨",
     "{投稿|とうこう}する{前|まえ}に、{一度|いちど}だけ{立|た}ち{止|と}まって{考|かんが}えてみよう📱",
-    "マモルを{使|つか}ってくれてありがとう！きみのこと、{応援|おうえん}してるよ🎉",
+    "MAMORUを{使|つか}ってくれてありがとう！きみのこと、{応援|おうえん}してるよ🎉",
     "{今日|きょう}{学|まな}んだことを、だれかに{話|はな}してみよう。それが{一番|いちばん}の{復習|ふくしゅう}！",
     "ネットのトラブルは、{知識|ちしき}があれば9{割|わり}{防|ふせ}げるって{知|し}ってた？💡",
   ];
@@ -10133,7 +10133,7 @@ function Episode2({ onComplete, onExit }) {
       <div style={{ fontSize: 72, marginBottom: 12, animation: "float 3s ease-in-out infinite" }}>🔎</div>
       <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: "#a78bfa", letterSpacing: ".4em", margin: "0 0 10px" }}>EPISODE 02</div>
       <h1 style={{ fontSize: 28, fontWeight: 900, color: "#fff", margin: "0 0 8px", textAlign: "center", lineHeight: 1.2 }}><RubyText text={ageMode === "elementary" ? "フェイクニュースを{見抜|みぬ}け" : "フェイクニュースを見抜け"} /></h1>
-      <p style={{ color: "rgba(255,255,255,.5)", fontSize: 12, margin: "0 0 26px", textAlign: "center", lineHeight: 1.7 }}>— マモル: SNSリテラシーアドベンチャー —</p>
+      <p style={{ color: "rgba(255,255,255,.5)", fontSize: 12, margin: "0 0 26px", textAlign: "center", lineHeight: 1.7 }}>— MAMORU: SNSリテラシーアドベンチャー —</p>
       <div style={{ background: "rgba(167,139,250,.08)", backdropFilter: "blur(10px)", border: "1px solid rgba(167,139,250,.25)", borderRadius: 18, padding: "18px 20px", maxWidth: 320, color: "#e0d9ff", fontSize: 13, lineHeight: 1.9, marginBottom: 28 }}>
         {ageMode === "elementary" ? (
           <><RubyText text="SNSには" /><strong style={{ color: "#a78bfa" }}><RubyText text="{本物|ほんもの}と{偽物|にせもの}の{情報|じょうほう}" /></strong><RubyText text="が{混|ま}ざっています。" /><br /><br />
@@ -10650,7 +10650,7 @@ function Episode2({ onComplete, onExit }) {
           <div style={{ fontSize: 46, marginBottom: 4 }}>🏆</div>
           <h1 style={{ fontSize: 20, color: "#3730a3", fontWeight: 900, margin: "0 0 4px" }}>しゅうりょうしょう</h1>
           <p style={{ fontSize: 12, color: "#5b21b6", lineHeight: 1.9, margin: "12px 0 16px", padding: "0 8px" }}>
-            <RubyText text={ageMode === "elementary" ? "あなたは「マモル」{第|だい}2{話|わ}" : "あなたは「マモル」第2話"} /><br /><strong style={{ color: "#3730a3", fontSize: 14 }}><RubyText text={ageMode === "elementary" ? "フェイクニュースを{見抜|みぬ}け" : "フェイクニュースを見抜け"} /></strong><br /><RubyText text={ageMode === "elementary" ? "をクリアしました。" : "をクリアしました。"} /><br />
+            <RubyText text={ageMode === "elementary" ? "あなたは「MAMORU」エピソード2" : "あなたは「MAMORU」エピソード2"} /><br /><strong style={{ color: "#3730a3", fontSize: 14 }}><RubyText text={ageMode === "elementary" ? "フェイクニュースを{見抜|みぬ}け" : "フェイクニュースを見抜け"} /></strong><br /><RubyText text={ageMode === "elementary" ? "をクリアしました。" : "をクリアしました。"} /><br />
             <span style={{ fontSize: 16, fontWeight: 900 }}>{swipeScore.correct}/{swipeScore.total || FAKE_POSTS.length}</span> <RubyText text={ageMode === "elementary" ? "{問|もん}{正解|せいかい} 🎯" : "問正解 🎯"} />
           </p>
           <div style={{ background: "linear-gradient(135deg,#ede9fe,#ddd6fe)", borderRadius: 12, padding: "10px 14px", margin: "10px 0" }}>
@@ -10660,7 +10660,7 @@ function Episode2({ onComplete, onExit }) {
           <div style={{ fontSize: 10, color: "#a78bfa", marginTop: 14, fontFamily: "'DotGothic16',monospace" }}>{new Date().toLocaleDateString("ja-JP")}</div>
         </div>
         <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
-          <button onClick={() => navigator.share?.({ title: "マモル EP2 クリア！", text: `フェイクニュースを${swipeScore.correct}/${swipeScore.total || FAKE_POSTS.length}問正解！SNSリテラシーアプリ「マモル」🔎` }).catch(() => {})} style={{ flex: 1, padding: 14, background: "#fff", border: "2px solid #7c3aed", borderRadius: 14, color: "#6d28d9", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>📤 シェア</button>
+          <button onClick={() => navigator.share?.({ title: "MAMORU EP2 クリア！", text: "SNSリテラシーアプリ「MAMORU」でフェイクニュース判定マスターになりました🏆みんなも一緒に学んでみよう！https://mamoru-xi.vercel.app/" }).catch(() => {})} style={{ flex: 1, padding: 14, background: "#fff", border: "2px solid #7c3aed", borderRadius: 14, color: "#6d28d9", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>📤 シェア</button>
           <button onClick={() => { feedback("complete"); onComplete(swipeScore.correct); }} style={{ flex: 1, padding: 14, background: "linear-gradient(135deg,#7c3aed,#4f46e5)", border: "none", borderRadius: 14, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>🏠 ホームへ</button>
         </div>
       </div>
@@ -12852,7 +12852,7 @@ function Episode3({ onComplete, onExit }) {
           <div style={{ fontSize: 46, marginBottom: 4 }}>🏆</div>
           <h1 style={{ fontSize: 20, color: "#14532d", fontWeight: 900, margin: "0 0 4px" }}>しゅうりょうしょう</h1>
           <p style={{ fontSize: 12, color: "#166534", lineHeight: 1.9, margin: "12px 0 16px", padding: "0 8px" }}>
-            <RubyText text={ageMode === "elementary" ? `あなたは「マモル」{第|だい}3{話|わ}` : `あなたは「マモル」第3話`} /><br /><strong style={{ color: "#14532d", fontSize: 14 }}><RubyText text={ageMode === "elementary" ? "{断|ことわ}れなくなる{前|まえ}に" : "断れなくなる前に"} /></strong><br /><RubyText text={ageMode === "elementary" ? "をクリアしました。" : "をクリアしました。"} />
+            <RubyText text={ageMode === "elementary" ? `あなたは「MAMORU」エピソード3` : `あなたは「MAMORU」エピソード3`} /><br /><strong style={{ color: "#14532d", fontSize: 14 }}><RubyText text={ageMode === "elementary" ? "{断|ことわ}れなくなる{前|まえ}に" : "断れなくなる前に"} /></strong><br /><RubyText text={ageMode === "elementary" ? "をクリアしました。" : "をクリアしました。"} />
           </p>
           <div style={{ background: "linear-gradient(135deg,#bbf7d0,#86efac)", borderRadius: 12, padding: "10px 14px", margin: "10px 0" }}>
             <div style={{ fontSize: 10, color: "#166534", marginBottom: 3 }}>EPISODE 03 COMPLETE</div>
@@ -12861,7 +12861,7 @@ function Episode3({ onComplete, onExit }) {
           <div style={{ fontSize: 10, color: "#16a34a", marginTop: 14, fontFamily: "'DotGothic16',monospace" }}>{new Date().toLocaleDateString("ja-JP")}</div>
         </div>
         <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
-          <button onClick={() => navigator.share?.({ title: "マモル EP3 クリア！", text: "闇バイト勧誘シミュレーターを体験！SNSリテラシーアプリ「マモル」🛡️" }).catch(() => {})} style={{ flex: 1, padding: 14, background: "#fff", border: "2px solid #16a34a", borderRadius: 14, color: "#166534", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>📤 シェア</button>
+          <button onClick={() => navigator.share?.({ title: "MAMORU EP3 クリア！", text: "SNSリテラシーアプリ「MAMORU」で闇バイト対策マスターになりました🏆みんなも一緒に学んでみよう！https://mamoru-xi.vercel.app/" }).catch(() => {})} style={{ flex: 1, padding: 14, background: "#fff", border: "2px solid #16a34a", borderRadius: 14, color: "#166534", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>📤 シェア</button>
           <button onClick={() => { feedback("complete"); onComplete(3); }} style={{ flex: 1, padding: 14, background: "linear-gradient(135deg,#16a34a,#15803d)", border: "none", borderRadius: 14, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>🏠 ホームへ</button>
         </div>
       </div>
@@ -16078,7 +16078,7 @@ function Episode4({ onComplete, onExit }) {
           <div style={{ fontSize: 46, marginBottom: 4 }}>🏆</div>
           <h1 style={{ fontSize: 20, color: "#7a000c", fontWeight: 900, margin: "0 0 4px" }}>しゅうりょうしょう</h1>
           <p style={{ fontSize: 12, color: "#9a0010", lineHeight: 1.9, margin: "12px 0 16px", padding: "0 8px" }}>
-            <RubyText text={el ? `あなたは「マモル」{第|だい}4{話|わ}` : `あなたは「マモル」第4話`} /><br />
+            <RubyText text={el ? `あなたは「MAMORU」エピソード4` : `あなたは「MAMORU」エピソード4`} /><br />
             <strong style={{ color: "#7a000c", fontSize: 14 }}><RubyText text={el ? "そっくり！{偽|にせ}サイトの{罠|わな}" : "そっくり！偽サイトの罠"} /></strong><br />
             <RubyText text="をクリアしました。" />
           </p>
@@ -16089,7 +16089,7 @@ function Episode4({ onComplete, onExit }) {
           <div style={{ fontSize: 10, color: red, marginTop: 14, fontFamily: "'DotGothic16',monospace" }}>{new Date().toLocaleDateString("ja-JP")}</div>
         </div>
         <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
-          <button onClick={() => navigator.share?.({ title: "マモル EP4 クリア！", text: "フィッシング詐欺と2段階認証を学んだ！SNSリテラシーアプリ「マモル」🎣" }).catch(() => {})}
+          <button onClick={() => navigator.share?.({ title: "MAMORU EP4 クリア！", text: "SNSリテラシーアプリ「MAMORU」でフィッシング対策マスターになりました🏆みんなも一緒に学んでみよう！https://mamoru-xi.vercel.app/" }).catch(() => {})}
             style={{ flex: 1, padding: 14, background: "#fff", border: `2px solid ${red}`, borderRadius: 14, color: "#b00010", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>📤 シェア</button>
           <button onClick={() => { feedback("complete"); onComplete(3); }}
             style={{ flex: 1, padding: 14, background: `linear-gradient(135deg,${red},#b00010)`, border: "none", borderRadius: 14, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>🏠 ホームへ</button>
@@ -17878,7 +17878,7 @@ function Episode5({ onComplete, onExit }) {
           <div style={{ fontSize: 46, marginBottom: 4 }}>🏆</div>
           <h1 style={{ fontSize: 20, color: "#831843", fontWeight: 900, margin: "0 0 4px" }}>しゅうりょうしょう</h1>
           <p style={{ fontSize: 12, color: "#9d174d", lineHeight: 1.9, margin: "12px 0 16px", padding: "0 8px" }}>
-            <RubyText text={ageMode === "elementary" ? `あなたは「マモル」{第|だい}5{話|わ}` : `あなたは「マモル」第5話`} /><br /><strong style={{ color: "#831843", fontSize: 14 }}><RubyText text={ageMode === "elementary" ? "{見|み}ているだけも、いじめだった" : "見ているだけも、いじめだった"} /></strong><br /><RubyText text="をクリアしました。" />
+            <RubyText text={ageMode === "elementary" ? `あなたは「MAMORU」エピソード5` : `あなたは「MAMORU」エピソード5`} /><br /><strong style={{ color: "#831843", fontSize: 14 }}><RubyText text={ageMode === "elementary" ? "{見|み}ているだけも、いじめだった" : "見ているだけも、いじめだった"} /></strong><br /><RubyText text="をクリアしました。" />
           </p>
           <div style={{ background: `linear-gradient(135deg,${pink}33,#fbcfe8)`, borderRadius: 12, padding: "10px 14px", margin: "10px 0" }}>
             <div style={{ fontSize: 10, color: pinkDark, marginBottom: 3 }}>EPISODE 05 COMPLETE</div>
@@ -17887,7 +17887,7 @@ function Episode5({ onComplete, onExit }) {
           <div style={{ fontSize: 10, color: pink, marginTop: 14, fontFamily: "'DotGothic16',monospace" }}>{new Date().toLocaleDateString("ja-JP")}</div>
         </div>
         <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
-          <button onClick={() => navigator.share?.({ title: "マモル EP5 クリア！", text: "ネットいじめ防衛隊になりました。SNSリテラシーアプリ「マモル」👥" }).catch(() => {})}
+          <button onClick={() => navigator.share?.({ title: "MAMORU EP5 クリア！", text: "SNSリテラシーアプリ「MAMORU」でネットいじめ対策マスターになりました🏆みんなも一緒に学んでみよう！https://mamoru-xi.vercel.app/" }).catch(() => {})}
             style={{ flex: 1, padding: 14, background: "#fff", border: `2px solid ${pink}`, borderRadius: 14, color: pinkDark, fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>📤 シェア</button>
           <button onClick={() => { feedback("complete"); onComplete(3); }}
             style={{ flex: 1, padding: 14, background: `linear-gradient(135deg,${pink},${pinkDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>🏠 ホームへ</button>
@@ -19424,7 +19424,7 @@ function Episode6({ onComplete, onExit }) {
           <div style={{ fontSize: 46, marginBottom: 4 }}>🏆</div>
           <h1 style={{ fontSize: 20, color: "#881337", fontWeight: 900, margin: "0 0 4px" }}>しゅうりょうしょう</h1>
           <p style={{ fontSize: 12, color: "#9f1239", lineHeight: 1.9, margin: "12px 0 16px", padding: "0 8px" }}>
-            <RubyText text={el ? `あなたは「マモル」{第|だい}6{話|わ}` : `あなたは「マモル」第6話`} /><br />
+            <RubyText text={el ? `あなたは「MAMORU」エピソード6` : `あなたは「MAMORU」エピソード6`} /><br />
             <strong style={{ color: "#881337", fontSize: 14 }}><RubyText text={el ? "{勝手|かって}に{投稿|とうこう}、してない？" : "勝手に投稿、してない？"} /></strong><br />
             <RubyText text="をクリアしました。" />
           </p>
@@ -19435,7 +19435,7 @@ function Episode6({ onComplete, onExit }) {
           <div style={{ fontSize: 10, color: rose, marginTop: 14, fontFamily: "'DotGothic16',monospace" }}>{new Date().toLocaleDateString("ja-JP")}</div>
         </div>
         <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
-          <button onClick={() => navigator.share?.({ title: "マモル EP6 クリア！", text: "肖像権とプライバシーを学んだ！SNSリテラシーアプリ「マモル」📸" }).catch(() => {})}
+          <button onClick={() => navigator.share?.({ title: "MAMORU EP6 クリア！", text: "SNSリテラシーアプリ「MAMORU」で肖像権・プライバシーマスターになりました🏆みんなも一緒に学んでみよう！https://mamoru-xi.vercel.app/" }).catch(() => {})}
             style={{ flex: 1, padding: 14, background: "#fff", border: `2px solid ${rose}`, borderRadius: 14, color: roseDark, fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>📤 シェア</button>
           <button onClick={() => { feedback("complete"); onComplete(3); }}
             style={{ flex: 1, padding: 14, background: `linear-gradient(135deg,${rose},${roseDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>🏠 ホームへ</button>
@@ -21493,7 +21493,7 @@ function Episode7({ onComplete, onExit }) {
           <div style={{ fontSize: 46, marginBottom: 4 }}>🏆</div>
           <h1 style={{ fontSize: 20, color: "#3b0764", fontWeight: 900, margin: "0 0 4px" }}>しゅうりょうしょう</h1>
           <p style={{ fontSize: 12, color: "#4c1d95", lineHeight: 1.9, margin: "12px 0 16px", padding: "0 8px" }}>
-            <RubyText text={el ? `あなたは「マモル」{第|だい}7{話|わ}` : `あなたは「マモル」第7話`} /><br />
+            <RubyText text={el ? `あなたは「MAMORU」エピソード7` : `あなたは「MAMORU」エピソード7`} /><br />
             <strong style={{ color: "#3b0764", fontSize: 14 }}><RubyText text={el ? "その{人|ひと}、{本当|ほんとう}に{同|おな}い{年|どし}？" : "その人、本当に同い年？"} /></strong><br />
             <RubyText text="をクリアしました。" />
           </p>
@@ -21504,7 +21504,7 @@ function Episode7({ onComplete, onExit }) {
           <div style={{ fontSize: 10, color: purple, marginTop: 14, fontFamily: "'DotGothic16',monospace" }}>{new Date().toLocaleDateString("ja-JP")}</div>
         </div>
         <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
-          <button onClick={() => navigator.share?.({ title: "マモル EP7 クリア！", text: "SNSでの出会いトラブルとグルーミングを学んだ！SNSリテラシーアプリ「マモル」🕸️" }).catch(() => {})}
+          <button onClick={() => navigator.share?.({ title: "MAMORU EP7 クリア！", text: "SNSリテラシーアプリ「MAMORU」で出会いトラブル対策マスターになりました🏆みんなも一緒に学んでみよう！https://mamoru-xi.vercel.app/" }).catch(() => {})}
             style={{ flex: 1, padding: 14, background: "#fff", border: `2px solid ${purple}`, borderRadius: 14, color: purpleDark, fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>📤 シェア</button>
           <button onClick={() => { feedback("complete"); onComplete(3); }}
             style={{ flex: 1, padding: 14, background: `linear-gradient(135deg,${purple},${purpleDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>🏠 ホームへ</button>
@@ -21914,7 +21914,7 @@ function TwoDeviceMode({ onComplete }) {
           <div style={{ fontSize: 46, marginBottom: 4 }}>🏆</div>
           <h1 style={{ fontSize: 20, color: "#78350f", fontWeight: 900, margin: "0 0 4px" }}>しゅうりょうしょう</h1>
           <p style={{ fontSize: 12, color: "#92400e", lineHeight: 1.9, margin: "12px 0 16px", padding: "0 8px" }}>
-            <RubyText text="あなたたちは「マモル」" /><br /><strong style={{ color: "#78350f", fontSize: 14 }}><RubyText text={ageMode === "elementary" ? "{親|おや}が{犯罪者|はんざいしゃ}{役|やく}になる{体験|たいけん}" : "親が犯罪者役になる体験"} /></strong><br /><RubyText text={ageMode === "elementary" ? "を{親子|おやこ}で{完了|かんりょう}しました。" : "を親子で完了しました。"} /><br />
+            <RubyText text="あなたたちは「MAMORU」" /><br /><strong style={{ color: "#78350f", fontSize: 14 }}><RubyText text={ageMode === "elementary" ? "{親|おや}が{犯罪者|はんざいしゃ}{役|やく}になる{体験|たいけん}" : "親が犯罪者役になる体験"} /></strong><br /><RubyText text={ageMode === "elementary" ? "を{親子|おやこ}で{完了|かんりょう}しました。" : "を親子で完了しました。"} /><br />
             <span style={{ fontSize: 16, fontWeight: 900, color: amber }}>{correctCount}/{TD_SCENARIOS.length}</span> <RubyText text={ageMode === "elementary" ? "{問|もん}{正解|せいかい}" : "問正解"} /> 🎯
           </p>
           <div style={{ background: `linear-gradient(135deg,${amber}33,#fde68a)`, borderRadius: 12, padding: "10px 14px", margin: "10px 0" }}>
@@ -21924,7 +21924,7 @@ function TwoDeviceMode({ onComplete }) {
           <div style={{ fontSize: 10, color: amber, marginTop: 14, fontFamily: "'DotGothic16',monospace" }}>{new Date().toLocaleDateString("ja-JP")}</div>
         </div>
         <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
-          <button onClick={() => navigator.share?.({ title: "マモル 2台モード完了！", text: `親子で闇バイト勧誘シミュレーションを体験！${correctCount}/${TD_SCENARIOS.length}問正解。SNSリテラシーアプリ「マモル」📲` }).catch(() => {})}
+          <button onClick={() => navigator.share?.({ title: "MAMORU 2台モード完了！", text: `親子で闇バイト勧誘シミュレーションを体験！${correctCount}/${TD_SCENARIOS.length}問正解。SNSリテラシーアプリ「MAMORU」📲 みんなも一緒に学んでみよう！https://mamoru-xi.vercel.app/` }).catch(() => {})}
             style={{ flex: 1, padding: 14, background: "#fff", border: `2px solid ${amber}`, borderRadius: 14, color: "#92400e", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>📤 シェア</button>
           <button onClick={onComplete}
             style={{ flex: 1, padding: 14, background: `linear-gradient(135deg,${amber},#d97706)`, border: "none", borderRadius: 14, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>🏠 ホームへ</button>
