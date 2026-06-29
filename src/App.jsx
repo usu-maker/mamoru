@@ -7,6 +7,51 @@ import { useState, useEffect, useRef, createContext, useContext, Fragment } from
 const LANG_KEY = "mamoru_lang";
 const ONBOARDING_KEY = "mamoru_onboarding_v1";
 const AGE_MODE_KEY = "mamoru_age_mode";
+
+// ═══════════════════════════════════════════════════════════════
+// 🎨 MAMORU デザインカラートークン（クリアグリーン基調）
+// 用途：今後の新規UI要素・色変更時の参照元。
+// 既存コードはまだこのトークンを使用していない（段階的に移行予定）。
+// ═══════════════════════════════════════════════════════════════
+const C = {
+  // ベース（背景）
+  bg:           "#F2FCF8",
+  surface:      "#FFFFFF",
+
+  // ブランド（メイン）
+  brand:        "#0D9488",   // ボタン・ヘッダー・アクセント文字（白文字OK 4.3:1）
+  brandDeep:    "#115E59",   // 見出し・最重要（白文字OK 5.9:1）
+
+  // アクセント（差し色・装飾）
+  accent:       "#2DD4BF",   // 選択枠・図の差し色（※文字には使わない）
+  accentBright: "#5EEAD4",   // 進捗バー先端・ハイライト
+  accentSoft:   "#CCFBF1",   // 選択中の背景・ヒント枠
+  mint:         "#A7F3D0",
+
+  // モリィ（温かさのアクセント）
+  gold:         "#FBBF24",
+  goldDeep:     "#F59E0B",
+  goldGrad:     "linear-gradient(135deg,#FCD34D,#F59E0B)",
+
+  // テキスト
+  ink:          "#15302E",   // 本文（高コントラスト）
+  inkSoft:      "#5B7570",   // 補足・キャプション
+  line:         "#CDEBE3",   // 罫線・カード枠
+
+  // セマンティック（意味が決まった色・ここぞの時だけ）
+  ok:           "#15803D",
+  okSoft:       "#DCFCE7",
+  warn:         "#B45309",
+  warnSoft:     "#FEF3C7",
+  danger:       "#E11D48",
+  dangerSoft:   "#FFE4E6",
+
+  // ダーク演出（怖がらせすぎない夕暮れトーン）
+  duskGrad:     "linear-gradient(180deg,#3A4A5A,#1E293B)",
+  // イントロ用・明るいミントグラデ
+  introGrad:    "linear-gradient(180deg,#FFFFFF,#ECFDF5 35%,#A7F3D0)",
+};
+
 const LANGUAGES = [
   { code: "ja", flag: "🇯🇵", name: "日本語" },
   { code: "en", flag: "🇺🇸", name: "English" },
