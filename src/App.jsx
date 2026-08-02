@@ -170,8 +170,21 @@ const I18N = {
       duration: { ja: "約8分", el: "{約|やく}8{分|ふん}", en: "About 8 min", ko: "약 8분", zh: "约8分钟" },
       audience: { ja: "中学生〜・親子で", el: "{中学生|ちゅうがくせい}〜・{親子|おやこ}で", en: "Ages 12+ / With parents", ko: "중학생~ · 부모와 함께", zh: "初中~ · 亲子" },
     },
+    ep4_1: {
+      tag: { ja: "EPISODE 04-1 · パスワード流出体験", el: "EPISODE 04-1 · パスワード{流出|りゅうしゅつ}{体験|たいけん}", en: "EPISODE 04-1 · Credential Stuffing", ko: "EPISODE 04-1 · 비밀번호 유출 체험", zh: "第04-1话 · 密码泄露体验" },
+      title: { ja: "使い回しの落とし穴", el: "{使|つか}い{回|まわ}しの{落|お}とし{穴|あな}", en: "The Password Reuse Trap", ko: "비밀번호 재사용의 함정", zh: "重复使用密码的陷阱" },
+      desc: {
+        ja: "いつものパスワードを使い回すと…流出した情報で自動ログインされる「リスト型攻撃」を体験しよう。",
+        el: "いつものパスワードを{使|つか}い{回|まわ}すと…{流出|りゅうしゅつ}した{情報|じょうほう}で{自動|じどう}ログインされる「リスト{型|がた}{攻撃|こうげき}」を{体験|たいけん}しよう。",
+        en: "Reuse the same password and see how leaked credentials let attackers log in automatically.",
+        ko: "같은 비밀번호를 재사용하면… 유출된 정보로 자동 로그인되는 '리스트형 공격'을 체험하자.",
+        zh: "重复使用相同密码，体验泄露信息被用于自动登录的\"撞库攻击\"。",
+      },
+      duration: { ja: "約7分", el: "{約|やく}7{分|ふん}", en: "About 7 min", ko: "약 7분", zh: "约7分钟" },
+      audience: { ja: "小〜中学生・親子で", el: "{小|しょう}〜{中学生|ちゅうがくせい}・{親子|おやこ}で", en: "Ages 9-14 / With parents", ko: "초·중학생 · 부모와 함께", zh: "小学高年级~初中 · 亲子" },
+    },
     ep4: {
-      tag: { ja: "EPISODE 04 · フィッシング詐欺体験", el: "EPISODE 04 · フィッシング{詐欺|さぎ}{体験|たいけん}", en: "EPISODE 04 · Impersonation", ko: "EPISODE 04 · 사칭 체험", zh: "第04话 · 假冒身份" },
+      tag: { ja: "EPISODE 04-2 · フィッシング詐欺体験", el: "EPISODE 04-2 · フィッシング{詐欺|さぎ}{体験|たいけん}", en: "EPISODE 04-2 · Impersonation", ko: "EPISODE 04-2 · 사칭 체험", zh: "第04-2话 · 假冒身份" },
       title: { ja: "そっくり！偽サイトの罠", el: "そっくり！{偽|にせ}サイトの{罠|わな}", en: "The Friend Who Wasn't", ko: "친구를 가장한 함정", zh: "假装是朋友的陷阱" },
       desc: {
         ja: "本物そっくりの偽サイトにIDとパスワードを入力してしまうと…フィッシング詐欺の手口を体験しよう。",
@@ -5657,7 +5670,8 @@ const EP_META = {
   ep1: { title: "その写真、アップロードして大丈夫？", icon: "🔍", color: "#ffa940", theme: "個人情報・位置情報" },
   ep2: { title: "フェイクニュースを見抜け", icon: "🔎", color: "#7c3aed", theme: "情報リテラシー" },
   ep3: { title: "断れなくなる前に", icon: "⚠️", color: "#16a34a", theme: "闇バイト・詐欺" },
-  ep4: { title: "それ、本当に友達から？", icon: "🎣", color: "#0ea5e9", theme: "なりすまし・フィッシング・スミッシング" },
+  ep4_1: { title: "使い回しの落とし穴", icon: "🔑", color: "#0ea5e9", theme: "パスワード・リスト型攻撃" },
+  ep4: { title: "そっくり！偽サイトの罠", icon: "🎣", color: "#0ea5e9", theme: "フィッシング詐欺" },
   ep5: { title: "見ているだけも、いじめだった", icon: "👥", color: "#ec4899", theme: "ネットいじめ" },
   ep6: { title: "勝手に投稿、してない？", icon: "📸", color: "#f43f5e", theme: "肖像権" },
   ep7: { title: "その人、本当に同い年？", icon: "🕸️", color: "#8b5cf6", theme: "SNSでの出会いトラブル" },
@@ -6754,7 +6768,8 @@ function HomeScreen({ onNavigate, progress, startTutorial, onTutorialStarted }) 
     { id: "ep2", tag: t("modes.ep2.tag"), title: t("modes.ep2.title"), icon: "🔎", desc: t("modes.ep2.desc"), duration: t("modes.ep2.duration"), audience: t("modes.ep2.audience"), accent: "#7c3aed", bg1: "#0f0a1e", bg2: "#07041a", done: progress.ep2 },
     { id: "ep3", tag: t("modes.ep3.tag"), title: t("modes.ep3.title"), icon: "⚠️", desc: t("modes.ep3.desc"), duration: t("modes.ep3.duration"), audience: t("modes.ep3.audience"), accent: "#16a34a", bg1: "#0a1a0a", bg2: "#041004", done: progress.ep3 },
     { id: "ep32", tag: t("modes.ep32.tag"), title: t("modes.ep32.title"), icon: "💬", desc: t("modes.ep32.desc"), duration: t("modes.ep32.duration"), audience: t("modes.ep32.audience"), accent: "#06c755", bg1: "#041210", bg2: "#020c08", done: progress.ep32 },
-    { id: "ep4", tag: t("modes.ep4.tag"), title: t("modes.ep4.title"), icon: "🔐", desc: t("modes.ep4.desc"), duration: t("modes.ep4.duration"), audience: t("modes.ep4.audience"), accent: "#0ea5e9", bg1: "#031220", bg2: "#020c18", done: progress.ep4 },
+    { id: "ep4_1", tag: t("modes.ep4_1.tag"), title: t("modes.ep4_1.title"), icon: "🔑", desc: t("modes.ep4_1.desc"), duration: t("modes.ep4_1.duration"), audience: t("modes.ep4_1.audience"), accent: "#0ea5e9", bg1: "#031220", bg2: "#020c18", done: progress.ep4_1 },
+    { id: "ep4", tag: t("modes.ep4.tag"), title: t("modes.ep4.title"), icon: "🎣", desc: t("modes.ep4.desc"), duration: t("modes.ep4.duration"), audience: t("modes.ep4.audience"), accent: "#0ea5e9", bg1: "#031220", bg2: "#020c18", done: progress.ep4, locked: !progress.ep4_1 },
     { id: "ep5",
       tag: ageMode === "elementary" ? "EPISODE 05 · {傍観者|ぼうかんしゃ}{体験|たいけん}" : "EPISODE 05 · 傍観者体験",
       title: ageMode === "elementary" ? "{見|み}ているだけも、いじめだった" : "見ているだけも、いじめだった",
@@ -6933,12 +6948,13 @@ function HomeScreen({ onNavigate, progress, startTutorial, onTutorialStarted }) 
             {modes.filter(m => m.id !== "twodevice" && m.id !== "attacker").map((m, i) => (
               <button key={m.id} onClick={() => {
                 if (m.id === "ep12") { if (!progress.ep1) { alert("EP1をクリアするとアンロックされます！"); return; } onNavigate("ep12"); return; }
+                if (m.id === "ep4") { if (!progress.ep4_1) { alert("EP4-1をクリアするとアンロックされます！"); return; } onNavigate("ep4"); return; }
                 onNavigate(m.id);
               }}
                 style={{ width: "100%", background: `linear-gradient(135deg,${m.bg1},${m.bg2})`, border: `1.5px solid ${m.accent}35`, borderRadius: 22, padding: "20px 18px", cursor: "pointer", textAlign: "left", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden", boxShadow: `0 6px 20px rgba(0,0,0,.3)`, animation: `slideUp .5s ${i * .12}s both ease` }}>
                 <div style={{ position: "absolute", width: 130, height: 130, borderRadius: "50%", background: m.accent, opacity: .06, right: -35, top: -35, filter: "blur(30px)", pointerEvents: "none" }} />
                 {m.locked
-                  ? <div style={{ position: "absolute", top: 12, right: 12, background: "#78350f", color: "#fcd34d", fontSize: 9, fontWeight: 900, padding: "3px 9px", borderRadius: 99, letterSpacing: ".1em" }}>🔒 EP1クリアで解放</div>
+                  ? <div style={{ position: "absolute", top: 12, right: 12, background: "#78350f", color: "#fcd34d", fontSize: 9, fontWeight: 900, padding: "3px 9px", borderRadius: 99, letterSpacing: ".1em" }}>🔒 {m.id === "ep4" ? "EP4-1クリアで解放" : "EP1クリアで解放"}</div>
                   : m.done
                     ? <div style={{ position: "absolute", top: 12, right: 12, background: "#22c55e", color: "#fff", fontSize: 9, fontWeight: 900, padding: "3px 9px", borderRadius: 99, letterSpacing: ".1em" }}>{t("home.clearedBadge")}</div>
                     : <div style={{ position: "absolute", top: 12, right: 12, background: m.accent, color: "#fff", fontSize: 9, fontWeight: 900, padding: "3px 9px", borderRadius: 99, letterSpacing: ".1em", animation: "newBadge 2s ease-in-out infinite" }}>{t("home.newBadge")}</div>
@@ -22322,6 +22338,14 @@ export default function App() {
         {screen === "ep2" && <Episode2 onComplete={(s) => finish("ep2", s)} onExit={() => navigate("home")} />}
         {screen === "ep3" && <Episode3 onComplete={(s) => finish("ep3", s)} onExit={() => navigate("home")} />}
         {screen === "ep32" && <Episode3_2 onComplete={(s) => finish("ep32", s)} onExit={() => navigate("home")} />}
+        {screen === "ep4_1" && (
+          <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "#0a0a14", color: "#fff", padding: 24, textAlign: "center" }}>
+            <div style={{ fontSize: 40, marginBottom: 16 }}>🔑</div>
+            <div style={{ fontSize: 16, fontWeight: 900, marginBottom: 8 }}>EP4-1「使い回しの落とし穴」</div>
+            <div style={{ fontSize: 12, color: "rgba(255,255,255,.5)", marginBottom: 24 }}>このエピソードは準備中です（P1で実装）</div>
+            <button onClick={() => navigate("home")} style={{ background: "rgba(255,255,255,.1)", border: "1px solid rgba(255,255,255,.2)", borderRadius: 12, padding: "12px 24px", color: "#fff", fontFamily: "inherit", fontSize: 14, cursor: "pointer" }}>ホームに戻る</button>
+          </div>
+        )}
         {screen === "ep4" && <Episode4 onComplete={(s) => finish("ep4", s)} onExit={() => navigate("home")} />}
         {screen === "ep5" && <Episode5 onComplete={(s) => finish("ep5", s)} onExit={() => navigate("home")} />}
         {screen === "ep6" && <Episode6 onComplete={(s) => finish("ep6", s)} onExit={() => navigate("home")} />}
