@@ -15491,6 +15491,7 @@ function Episode4_1({ onComplete, onExit }) {
   const [phase, setPhase] = useState("parent_intro");
   const [chose, setChose] = useState(null); // "reuse" | "new"
   const [newsShown, setNewsShown] = useState(false);
+  const [notifStep, setNotifStep] = useState(0);
   const red = "#e60012";
   const blue = "#0ea5e9";
 
@@ -15521,6 +15522,24 @@ function Episode4_1({ onComplete, onExit }) {
       </div>
     );
   };
+
+  const NotifItem = ({ msg }) => (
+    <div style={{ background:"rgba(245,245,247,.85)", borderRadius:16, padding:"11px 13px", margin:"0 2px 8px", display:"flex", gap:10, alignItems:"flex-start" }}>
+      <div style={{ width:34, height:34, borderRadius:8, flexShrink:0, background:"#e60012", display:"flex", alignItems:"center", justifyContent:"center", fontSize:18 }}>🎮</div>
+      <div style={{ flex:1, minWidth:0 }}>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:1 }}><span style={{ fontSize:12, fontWeight:900, color:"#000" }}>Nintando</span><span style={{ fontSize:11, color:"#666" }}>{el?"いま":"今"}</span></div>
+        <div style={{ fontSize:12.5, color:"#111", lineHeight:1.4 }}>{msg}</div>
+      </div>
+    </div>
+  );
+  const IosLock = ({ time, children }) => (
+    <div style={{ background:"linear-gradient(165deg,#3a4a63,#1a2438 55%,#0d1420)", borderRadius:26, padding:"18px 12px 22px", marginBottom:14, minHeight:320 }}>
+      <div style={{ width:110, height:26, background:"#000", borderRadius:"0 0 16px 16px", margin:"-18px auto 14px" }}></div>
+      <div style={{ textAlign:"center", color:"#fff", marginBottom:6 }}><div style={{ fontSize:52, fontWeight:200, lineHeight:1 }}>{time}</div><div style={{ fontSize:13, color:"rgba(255,255,255,.75)", marginTop:4 }}>{R(el?"4{月|がつ}15{日|にち} {火曜日|かようび}":"4月15日 火曜日")}</div></div>
+      <div style={{ textAlign:"center", fontSize:12, color:"rgba(255,255,255,.5)", marginBottom:18 }}>🔒 {R(el?"スワイプでロック{解除|かいじょ}":"スワイプでロック解除")}</div>
+      {children}
+    </div>
+  );
 
   if (phase === "parent_intro") return (
     <EpisodeIntroCard epKey="ep4_1" onStart={() => setPhase("hero_intro")} />
@@ -15615,19 +15634,62 @@ function Episode4_1({ onComplete, onExit }) {
             ? R(el?"「あ、ショッピット{私|わたし}も{使|つか}ってる…\nでもゲームとは{別|べつ}のサイトだし、\nまあ{大丈夫|だいじょうぶ}でしょ。ふーん」":"「あ、ショッピット私も使ってる…\nでもゲームとは別のサイトだし、\nまあ大丈夫でしょ。ふーん」")
             : R(el?"「あ、ショッピット{私|わたし}も{使|つか}ってる…\n{大丈夫|だいじょうぶ}かな、ちょっと{心配|しんぱい}だな…」":"「あ、ショッピット私も使ってる…\n大丈夫かな、ちょっと心配だな…」")}</Dialogue>
           <Dialogue who="morry">{R(el?"「ハナちゃん、このニュース…\n\"{自分|じぶん}には{関係|かんけい}ない\" と{思|おも}うかな？\nこの{数日後|すうじつご}、{何|なに}が{起|お}きたか{見|み}てみよう」":"「ハナちゃん、このニュース…\n\"自分には関係ない\" と思うかな？\nこの数日後、何が起きたか見てみよう」")}</Dialogue>
-          <Btn onClick={() => setPhase("_p2_pending")}>{R(el?"{数日後|すうじつご}… →":"数日後… →")}</Btn>
+          <Btn onClick={() => setPhase(chose==="reuse" ? "victim" : "safe")}>{R(el?"さらに{数日後|すうじつご}… →":"さらに数日後… →")}</Btn>
         </>
       )}
     </Wrap>
   );
 
-  if (phase === "_p2_pending") return (
+  if (phase === "victim") {
+    const msgs = [
+      R(el?"{新|あたら}しい{端末|たんまつ}からログインがありました。":"新しい端末からログインがありました。"),
+      R(el?"💳 {有料|ゆうりょう}アイテムの{購入|こうにゅう}が{完了|かんりょう}しました（¥8,000）":"💳 有料アイテムの購入が完了しました（¥8,000）"),
+      R(el?"🎁 ためていたアイテムが{他|ほか}のユーザーにゆずられました":"🎁 貯めていたアイテムが他ユーザーに譲渡されました"),
+    ];
+    const hanaLines = [
+      R(el?"「ん？なんだろうこの{通知|つうち}…\nログイン？{私|わたし}、{今|いま}やってないけど…」":"「ん？なんだろうこの通知…\nログイン？私、今やってないけど…」"),
+      R(el?"「え！？ 8,000{円|えん}の{課金|かきん}！？\n{私|わたし}じゃない…！ {誰|だれ}かが{私|わたし}のアカウントに{入|はい}ってる…！？」":"「え！？ 8,000円の課金！？\n私じゃない…！ 誰かが私のアカウントに入ってる…！？」"),
+      R(el?"「{島|しま}づくりに300{時間|じかん}かけたのに…\nアイテムが{全部|ぜんぶ}{消|き}えてる…\nどうして{私|わたし}のパスワードがバレたの！？」":"「島づくりに300時間かけたのに…\nアイテムが全部消えてる…\nどうして私のパスワードがバレたの！？」"),
+    ];
+    return (
+      <Wrap>
+        <div style={{ textAlign:"center", fontSize:11, fontWeight:900, color:"rgba(248,113,113,.9)", marginBottom:6 }}>📱 {R(el?"{数日後|すうじつご}の{朝|あさ} 6:42":"数日後の朝 6:42")}</div>
+        <div style={{ textAlign:"center", fontSize:19, fontWeight:900, marginBottom:16 }}>{R(el?"ハナのスマホを{見|み}てみよう":"ハナのスマホを見てみよう")}</div>
+        <IosLock time="6:42">
+          {Array.from({length:notifStep}).map((_,i)=><NotifItem key={i} msg={msgs[i]} />)}
+        </IosLock>
+        {notifStep>0 && <Dialogue who="hana">{hanaLines[notifStep-1]}</Dialogue>}
+        {notifStep < 3
+          ? <Btn bg="linear-gradient(135deg,#0ea5e9,#3b82f6)" onClick={() => setNotifStep(s=>s+1)}>{notifStep===0 ? R(el?"{通知|つうち}を{確認|かくにん}する 👀":"通知を確認する 👀") : R(el?"もう{少|すこ}し{待|ま}つ… ⏳":"もう少し待つ… ⏳")}</Btn>
+          : <Btn bg="linear-gradient(135deg,#f87171,#ef4444)" onClick={() => setPhase("_p3_pending")}>{R(el?"なぜこうなった？モリィと{見|み}る →":"なぜこうなった？モリィと見る →")}</Btn>}
+      </Wrap>
+    );
+  }
+
+  if (phase === "safe") return (
+    <Wrap>
+      <div style={{ textAlign:"center", fontSize:11, fontWeight:900, color:"rgba(74,222,128,.9)", marginBottom:6 }}>☀️ {R(el?"{数日後|すうじつご}の{朝|あさ} 7:10":"数日後の朝 7:10")}</div>
+      <div style={{ textAlign:"center", fontSize:19, fontWeight:900, marginBottom:8 }}>{R(el?"ハナのスマホは、{静|しず}かなまま":"ハナのスマホは、静かなまま")}</div>
+      <div style={{ textAlign:"center", fontSize:12, color:"rgba(255,255,255,.5)", marginBottom:16 }}>{R(el?"あやしい{通知|つうち}は、{何|なに}も{来|き}ていません。":"あやしい通知は、何も来ていません。")}</div>
+      <IosLock time="7:10">
+        <div style={{ textAlign:"center", color:"rgba(255,255,255,.45)", fontSize:13, padding:"36px 0" }}>{R(el?"{今日|きょう}は{通知|つうち}がありません":"今日は通知がありません")}</div>
+      </IosLock>
+      <Dialogue who="hana">{R(el?"「{今日|きょう}もいつも{通|どお}り、ゲームで{遊|あそ}べた。\n…あのニュース、{大丈夫|だいじょうぶ}だったのかな？」":"「今日もいつも通り、ゲームで遊べた。\n…あのニュース、大丈夫だったのかな？」")}</Dialogue>
+      <div style={{ textAlign:"center", fontSize:11, fontWeight:900, color:"rgba(96,165,250,.85)", margin:"16px 0 10px" }}>💬 {R(el?"そのとき、{友達|ともだち}のミオからメッセージ":"そのとき、友達のミオからメッセージ")}</div>
+      <Dialogue who="mio">{R(el?"「ねぇ{聞|き}いて…！\n{私|わたし}のゲームアカウント、{乗|の}っ{取|と}られちゃった😢\nアイテム{全部|ぜんぶ}{消|き}えてた…\n{同|おな}じパスワード、いろんなサイトで{使|つか}い{回|まわ}してたんだ…」":"「ねぇ聞いて…！\n私のゲームアカウント、乗っ取られちゃった😢\nアイテム全部消えてた…\n同じパスワード、いろんなサイトで使い回してたんだ…」")}</Dialogue>
+      <Dialogue who="hana">{R(el?"「そうだったんだ…！\n{私|わたし}は Nintando {専用|せんよう}の{新|あたら}しいパスワードに\nしてたから、{無事|ぶじ}だったのかな…？」":"「そうだったんだ…！\n私は Nintando 専用の新しいパスワードに\nしてたから、無事だったのかな…？」")}</Dialogue>
+      <Dialogue who="morry">{R(el?"「その{通|とお}り。でもね、なぜミオちゃんは{狙|ねら}われて、\nハナちゃんは{無事|ぶじ}だったのか──\nその \"しくみ\" を{見|み}てみよう」":"「その通り。でもね、なぜミオちゃんは狙われて、\nハナちゃんは無事だったのか──\nその \"しくみ\" を見てみよう」")}</Dialogue>
+      <Btn onClick={() => setPhase("_p3_pending")}>{R(el?"{裏側|うらがわ}を{見|み}る →":"裏側を見る →")}</Btn>
+    </Wrap>
+  );
+
+  if (phase === "_p3_pending") return (
     <Wrap>
       <div style={{ textAlign:"center", padding:"60px 0" }}>
         <div style={{ fontSize:40, marginBottom:16 }}>🚧</div>
-        <div style={{ fontSize:14, fontWeight:900, marginBottom:8 }}>{R("この先はP2で実装予定")}</div>
-        <div style={{ fontSize:12, color:"rgba(255,255,255,.5)", marginBottom:8 }}>{R(chose==="reuse"?"選択：使い回し":"選択：新しいPW")}</div>
-        <div style={{ fontSize:11, color:"rgba(255,255,255,.4)", marginBottom:24 }}>{R("被害ルート／無事ルートの分岐、攻撃解説、振り返り")}</div>
+        <div style={{ fontSize:14, fontWeight:900, marginBottom:8 }}>{R("この先はP3で実装予定")}</div>
+        <div style={{ fontSize:12, color:"rgba(255,255,255,.5)", marginBottom:8 }}>{R(chose==="reuse"?"ルート：被害":"ルート：無事")}</div>
+        <div style={{ fontSize:11, color:"rgba(255,255,255,.4)", marginBottom:24 }}>{R("攻撃5段階の解説、パスフレーズ振り返り")}</div>
         <Btn bg="rgba(255,255,255,.1)" onClick={onExit}>{R("ホームに戻る")}</Btn>
       </div>
     </Wrap>
