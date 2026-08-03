@@ -15511,8 +15511,8 @@ function Episode4_1({ onComplete, onExit }) {
       : {bg:"#eff6ff",bd:"#93c5fd",col:"#1e40af",label:"モリィ",emoji:"🦉",img:null};
     return (
       <div style={{ display:"flex", gap:9, marginBottom:12, alignItems:"flex-start" }}>
-        <div style={{ width:38, height:38, borderRadius:10, overflow:"hidden", flexShrink:0, background:cfg.bg, display:"flex", alignItems:"center", justifyContent:"center", fontSize:20 }}>
-          {cfg.img ? <ImgWithFallback src={cfg.img} alt={cfg.label} fallback={cfg.emoji} fallbackSize={20} /> : cfg.emoji}
+        <div style={{ width:38, height:38, borderRadius:10, overflow:"hidden", flexShrink:0, background: who==="morry" ? "transparent" : cfg.bg, display:"flex", alignItems:"center", justifyContent:"center", fontSize:20 }}>
+          {who==="morry" ? <OwlMolly size={38} mood="happy" /> : <ImgWithFallback src={cfg.img} alt={cfg.label} fallback={cfg.emoji} fallbackSize={20} />}
         </div>
         <div style={{ flex:1, background:cfg.bg, border:`1.5px solid ${cfg.bd}`, borderRadius:"4px 14px 14px 14px", padding:"10px 13px", fontSize:12.5, lineHeight:1.6, color:cfg.col, whiteSpace:"pre-line" }}>
           <div style={{ fontSize:10, fontWeight:700, opacity:.7, marginBottom:3 }}>{cfg.label}</div>
