@@ -3629,6 +3629,17 @@ const EP_INTRO_META = {
     elParentNote: "{闇|やみ}バイトの{入口|いりぐち}はSNS・ゲーム・{求人|きゅうじん}サイトなど{日常|にちじょう}てきに{使|つか}うサービスの{中|なか}にあります。「{高収入|こうしゅうにゅう}・かんたん・スマホだけ」のぼしゅうを{見|み}たら{必|かなら}ず{大人|おとな}に{相談|そうだん}するよう{約束|やくそく}しましょう。",
     accentColor: "#16a34a",
   },
+  ep4_1: {
+    theme: "パスワード・リスト型攻撃",
+    hook: "いつものパスワードを使い回していると…どこか1つのサイトから情報が流出しただけで、他のアカウントまで自動で乗っ取られてしまう。",
+    talkPoints: ["同じパスワードを使い回していないか確認しよう", "サイトごとに違うパスワードにする大切さ", "パスワード管理アプリを使ってみよう"],
+    parentNote: "漏れたID・パスワードのリストを他のサイトで試す「リスト型攻撃（パスワードリスト攻撃）」による不正ログインが多発しています。内閣サイバーセキュリティセンター（NISC）は、サイトごとに異なるパスワードを設定することを推奨しています。お子さんが同じパスワードを使い回していないか、今日一緒に確認しましょう。出典：総務省「国民のためのサイバーセキュリティサイト」／NISC「インターネットの安全・安心ハンドブック Ver5.00」",
+    elTheme: "パスワード・リスト{型|がた}{攻撃|こうげき}",
+    elHook: "いつものパスワードを{使|つか}い{回|まわ}していると…どこか1つのサイトから{情報|じょうほう}が{流出|りゅうしゅつ}しただけで、{他|ほか}のアカウントまで{自動|じどう}で{乗|の}っ{取|と}られてしまう。",
+    elTalkPoints: ["{同|おな}じパスワードを{使|つか}い{回|まわ}していないか{確認|かくにん}しよう", "サイトごとに{違|ちが}うパスワードにする{大切|たいせつ}さ", "パスワード{管理|かんり}アプリを{使|つか}ってみよう"],
+    elParentNote: "{漏|も}れたID・パスワードのリストを{他|ほか}のサイトで{試|ため}す「リスト{型|がた}{攻撃|こうげき}」による{不正|ふせい}ログインが{多発|たはつ}しています。{内閣|ないかく}サイバーセキュリティセンター（NISC）は、サイトごとに{異|こと}なるパスワードを{設定|せってい}することを{推奨|すいしょう}しています。お{子|こ}さんが{同|おな}じパスワードを{使|つか}い{回|まわ}していないか、{今日|きょう}{一緒|いっしょ}に{確認|かくにん}しましょう。{出典|しゅってん}：{総務省|そうむしょう}「{国民|こくみん}のためのサイバーセキュリティサイト」／NISC「インターネットの{安全|あんぜん}・{安心|あんしん}ハンドブック Ver5.00」",
+    accentColor: "#0ea5e9",
+  },
   ep4: {
     theme: "フィッシング詐欺体験",
     hook: "本物そっくりの偽サイトにIDとパスワードを入力してしまうと…アカウントが乗っ取られ、登録したクレジットカードで不正購入される。",
@@ -15474,6 +15485,158 @@ function Ep4Reveal({ el, red, onComplete }) {
 }
 
 // ═══════════════════════════════════════════════════════════════
+function Episode4_1({ onComplete, onExit }) {
+  const ageMode = useAgeMode();
+  const el = ageMode === "elementary";
+  const [phase, setPhase] = useState("parent_intro");
+  const [chose, setChose] = useState(null); // "reuse" | "new"
+  const [newsShown, setNewsShown] = useState(false);
+  const red = "#e60012";
+  const blue = "#0ea5e9";
+
+  const R = (t) => <RubyText text={t} />;
+  const pwText = chose === "reuse" ? "hanagogo" : "tomato_kaeru_78";
+
+  const Wrap = ({ children }) => (
+    <div style={{ minHeight:"100vh", background:"linear-gradient(180deg,#1a0d1e,#0a0a14)", padding:"28px 20px 44px", fontFamily:"'Zen Maru Gothic',sans-serif", color:"#fff", display:"flex", flexDirection:"column", alignItems:"center" }}>
+      <div style={{ maxWidth:380, width:"100%" }}>{children}</div>
+    </div>
+  );
+  const Btn = ({ onClick, children, bg }) => (
+    <button onClick={() => { feedback("tap"); onClick(); }} style={{ display:"block", width:"100%", background: bg || `linear-gradient(135deg,${red},#c00010)`, border:"none", borderRadius:12, padding:15, color:"#fff", fontFamily:"inherit", fontSize:15, fontWeight:900, cursor:"pointer", marginTop:10 }}>{children}</button>
+  );
+  const Dialogue = ({ who, children }) => {
+    const cfg = who==="hana" ? {bg:"#fffdf5",bd:"#f5c842",col:"#7a5c00",label:"ハナ",emoji:"🧒",img:"/images/ep4-1/hana_profile.jpg"}
+      : who==="mio" ? {bg:"#f5f3ff",bd:"#c4b5fd",col:"#5b21b6",label:"ミオ",emoji:"👧",img:"/images/ep4-1/mio_icon.jpg"}
+      : {bg:"#eff6ff",bd:"#93c5fd",col:"#1e40af",label:"モリィ",emoji:"🦉",img:null};
+    return (
+      <div style={{ display:"flex", gap:9, marginBottom:12, alignItems:"flex-start" }}>
+        <div style={{ width:38, height:38, borderRadius:10, overflow:"hidden", flexShrink:0, background:cfg.bg, display:"flex", alignItems:"center", justifyContent:"center", fontSize:20 }}>
+          {cfg.img ? <ImgWithFallback src={cfg.img} alt={cfg.label} fallback={cfg.emoji} fallbackSize={20} /> : cfg.emoji}
+        </div>
+        <div style={{ flex:1, background:cfg.bg, border:`1.5px solid ${cfg.bd}`, borderRadius:"4px 14px 14px 14px", padding:"10px 13px", fontSize:12.5, lineHeight:1.6, color:cfg.col, whiteSpace:"pre-line" }}>
+          <div style={{ fontSize:10, fontWeight:700, opacity:.7, marginBottom:3 }}>{cfg.label}</div>
+          {children}
+        </div>
+      </div>
+    );
+  };
+
+  if (phase === "parent_intro") return (
+    <EpisodeIntroCard epKey="ep4_1" onStart={() => setPhase("hero_intro")} />
+  );
+
+  if (phase === "hero_intro") return (
+    <Wrap>
+      <div style={{ textAlign:"center", fontSize:11, fontWeight:900, color:"rgba(230,0,18,.7)", marginBottom:8 }}>{R(el?"このEPの{主人公|しゅじんこう}":"このEPの主人公")}</div>
+      <div style={{ textAlign:"center", fontSize:18, fontWeight:900, lineHeight:1.5, marginBottom:18 }}>{R(el?"{今回|こんかい}はこの{人物|じんぶつ}として\n{体験|たいけん}してみよう":"今回はこの人物として\n体験してみよう")}</div>
+      <div style={{ background:"linear-gradient(180deg,#e60012,#c00010)", borderRadius:18, overflow:"hidden", marginBottom:16, boxShadow:"0 8px 30px rgba(230,0,18,.3)" }}>
+        <div style={{ padding:18, display:"flex", gap:14, alignItems:"center" }}>
+          <div style={{ width:84, height:84, borderRadius:12, overflow:"hidden", flexShrink:0, border:"2px solid rgba(255,255,255,.4)" }}>
+            <ImgWithFallback src="/images/ep4-1/hana_profile.jpg" alt="ハナ" fallback="🧒" fallbackSize={36} />
+          </div>
+          <div>
+            <div style={{ fontSize:11, color:"rgba(255,255,255,.75)" }}>{R(el?"{小学|しょうがく}5{年生|ねんせい}":"小学5年生")}</div>
+            <div style={{ fontSize:26, fontWeight:900, margin:"2px 0" }}>{R(el?"{鈴木|すずき} ハナ":"鈴木 ハナ")}</div>
+            <div style={{ fontSize:12, color:"rgba(255,255,255,.8)" }}>{R(el?"11{歳|さい}":"11歳")}</div>
+          </div>
+        </div>
+        <div style={{ background:"#241420", padding:16 }}>
+          <div style={{ display:"flex", gap:11, marginBottom:13, alignItems:"flex-start" }}><div style={{fontSize:18}}>🎮</div><div style={{fontSize:12.5,lineHeight:1.55,color:"rgba(255,255,255,.9)"}}><div style={{fontSize:10,color:"rgba(255,255,255,.5)"}}>{R(el?"{大好|だいす}きなこと":"大好きなこと")}</div>{R(el?"もらったゲーム{機|き}で「どうぶつの{村|むら}」を{毎日|まいにち}プレイ{中|ちゅう}":"もらったゲーム機で「どうぶつの村」を毎日プレイ中")}</div></div>
+          <div style={{ display:"flex", gap:11, marginBottom:13, alignItems:"flex-start" }}><div style={{fontSize:18}}>⭐</div><div style={{fontSize:12.5,lineHeight:1.55,color:"rgba(255,255,255,.9)"}}><div style={{fontSize:10,color:"rgba(255,255,255,.5)"}}>{R(el?"{自慢|じまん}":"自慢")}</div>{R(el?"{島|しま}づくりに300{時間|じかん}かけた{大作|たいさく}！":"島づくりに300時間かけた大作！")}</div></div>
+          <div style={{ display:"flex", gap:11, alignItems:"flex-start" }}><div style={{fontSize:18}}>🔑</div><div style={{fontSize:12.5,lineHeight:1.55,color:"rgba(255,255,255,.9)"}}><div style={{fontSize:10,color:"rgba(255,255,255,.5)"}}>{R(el?"クセ":"クセ")}</div>{R(el?"いろんなサービスのパスワードを、ぜんぶ \"hanagogo\" で{登録|とうろく}している":"いろんなサービスのパスワードを、ぜんぶ \"hanagogo\" で登録している")}</div></div>
+        </div>
+      </div>
+      <div style={{ background:"rgba(255,255,255,.05)", borderRadius:14, padding:16, textAlign:"center", fontSize:13, lineHeight:1.7, color:"rgba(255,255,255,.85)", marginBottom:16 }}>{R(el?"ハナは{今日|きょう}、{新|あたら}しいゲーム「Nintando」の\nアカウントを{作|つく}ろうとしている。\n\nあなたが{体験|たいけん}してみよう。":"ハナは今日、新しいゲーム「Nintando」の\nアカウントを作ろうとしている。\n\nあなたが体験してみよう。")}</div>
+      <Btn onClick={() => setPhase("pw_choice")}>{R(el?"{体験|たいけん}スタート →":"体験スタート →")}</Btn>
+    </Wrap>
+  );
+
+  if (phase === "pw_choice") return (
+    <Wrap>
+      <div style={{ textAlign:"center", fontSize:11, fontWeight:900, color:"rgba(14,165,233,.8)", marginBottom:6 }}>🎮 {R(el?"アカウント{作成|さくせい}":"アカウント作成")}</div>
+      <div style={{ textAlign:"center", fontSize:19, fontWeight:900, marginBottom:16 }}>{R(el?"パスワードを{決|き}めよう":"パスワードを決めよう")}</div>
+      <div style={{ background:"#f0f0f0", borderRadius:12, overflow:"hidden", marginBottom:14 }}>
+        <div style={{ background:"#f2f2f7", padding:"6px 10px" }}><div style={{ background:"#fff", borderRadius:10, padding:"5px 10px", display:"flex", alignItems:"center", gap:6, fontSize:11 }}><span style={{color:"#34c759"}}>🔒</span><span style={{color:"#333",fontFamily:"monospace"}}>accounts.nintando.co.jp</span></div></div>
+        <div style={{ background:"#e60012", padding:"10px 16px", display:"flex", alignItems:"center", justifyContent:"space-between" }}><span style={{color:"#fff",fontSize:15,fontWeight:900,letterSpacing:1}}>Nintando</span><span style={{color:"rgba(255,255,255,.75)",fontSize:11}}>{R(el?"{新規|しんき}{作成|さくせい}":"新規作成")}</span></div>
+        <div style={{ background:"#fff", padding:"16px 14px 20px" }}>
+          <div style={{ textAlign:"center", fontSize:14, fontWeight:700, color:"#333", marginBottom:14 }}>{R(el?"アカウントを{作成|さくせい}":"アカウントを作成")}</div>
+          <div style={{ marginBottom:12 }}><div style={{ fontSize:12, color:"#444", marginBottom:4 }}>{R("メールアドレス")}</div><input value="hana2015@example.com" readOnly style={{ width:"100%", padding:10, border:"1px solid #ddd", borderRadius:6, fontSize:13, fontFamily:"inherit", background:"#fafafa" }} /></div>
+          <div><div style={{ fontSize:12, color:"#444", marginBottom:4 }}>{R("パスワード")}</div><input placeholder={el ? "パスワードをいれてね…" : "パスワードを入力…"} readOnly style={{ width:"100%", padding:10, border:"2px solid #f5c842", borderRadius:6, fontSize:13, fontFamily:"inherit", background:"#fffdf5", boxShadow:"0 0 0 3px rgba(245,200,66,.25)" }} /></div>
+        </div>
+      </div>
+      <Dialogue who="hana">{R(el?"「パスワードかぁ…\n{私|わたし}のパスワードといえば、いつもの \"hanagogo\"！\nこれでいいかな？」":"「パスワードかぁ…\n私のパスワードといえば、いつもの \"hanagogo\"！\nこれでいいかな？」")}</Dialogue>
+      <div style={{ textAlign:"center", fontSize:12, color:"rgba(255,255,255,.55)", margin:"14px 0 6px" }}>{R(el?"ハナは、どうすればいい？":"ハナは、どうすればいい？")}</div>
+      <button onClick={() => { feedback("tap"); setChose("reuse"); setPhase("created"); }} style={{ display:"block", width:"100%", textAlign:"left", background:"rgba(255,255,255,.06)", border:"1.5px solid rgba(255,255,255,.15)", borderRadius:12, padding:"13px 15px", marginBottom:10, color:"#fff", fontFamily:"inherit", cursor:"pointer" }}>
+        <div style={{ fontWeight:900, fontSize:14, marginBottom:3 }}>😌 {R(el?"いつもの \"hanagogo\" を{使|つか}う":"いつもの \"hanagogo\" を使う")}</div>
+        <div style={{ fontSize:11, color:"rgba(255,255,255,.55)", lineHeight:1.5 }}>{R(el?"{他|ほか}のサイトでも{使|つか}ってる、{覚|おぼ}えやすいパスワード。すぐ{終|お}わる。":"他のサイトでも使ってる、覚えやすいパスワード。すぐ終わる。")}</div>
+      </button>
+      <button onClick={() => { feedback("tap"); setChose("new"); setPhase("created"); }} style={{ display:"block", width:"100%", textAlign:"left", background:"rgba(255,255,255,.06)", border:"1.5px solid rgba(255,255,255,.15)", borderRadius:12, padding:"13px 15px", marginBottom:10, color:"#fff", fontFamily:"inherit", cursor:"pointer" }}>
+        <div style={{ fontWeight:900, fontSize:14, marginBottom:3 }}>🤔 {R(el?"このゲーム{用|よう}に、{新|あたら}しく{考|かんが}える":"このゲーム用に、新しく考える")}</div>
+        <div style={{ fontSize:11, color:"rgba(255,255,255,.55)", lineHeight:1.5 }}>{R(el?"Nintando{専用|せんよう}の、{他|ほか}では{使|つか}わないパスワードにする。{少|すこ}し{面倒|めんどう}。":"Nintando専用の、他では使わないパスワードにする。少し面倒。")}</div>
+      </button>
+    </Wrap>
+  );
+
+  if (phase === "created") return (
+    <Wrap>
+      <div style={{ textAlign:"center", padding:"20px 0" }}>
+        <div style={{ display:"inline-block", background:"rgba(96,165,250,.15)", color:"#93c5fd", fontSize:10, padding:"3px 10px", borderRadius:10, marginBottom:12 }}>{chose==="reuse" ? R(el?"いつもの \"hanagogo\" で{登録|とうろく}":"いつもの \"hanagogo\" で登録") : R(el?"{新|あたら}しいパスワードで{登録|とうろく}":"新しいパスワードで登録")}</div>
+        <div style={{ width:70, height:70, borderRadius:"50%", background:"linear-gradient(135deg,#34d399,#10b981)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:36, margin:"0 auto 14px" }}>✓</div>
+        <div style={{ fontSize:19, fontWeight:900, color:"#10b981", marginBottom:8 }}>{R(el?"アカウント{作成|さくせい}{完了|かんりょう}！":"アカウント作成完了！")}</div>
+        <div style={{ fontSize:12, color:"rgba(255,255,255,.5)", marginBottom:16 }}>{R("Nintando へようこそ、ハナさん")}</div>
+        <div style={{ background:"#fff", borderRadius:12, padding:"14px 16px", color:"#333", textAlign:"left" }}>
+          <div style={{ display:"flex", justifyContent:"space-between", fontSize:12, padding:"7px 0", borderBottom:"1px solid #f0f0f0" }}><span style={{color:"#888"}}>{R(el?"ユーザー{名|めい}":"ユーザー名")}</span><span style={{fontWeight:700}}>hana2015</span></div>
+          <div style={{ display:"flex", justifyContent:"space-between", fontSize:12, padding:"7px 0", borderBottom:"1px solid #f0f0f0" }}><span style={{color:"#888"}}>{R("パスワード")}</span><span style={{fontWeight:700}}>{"●".repeat(pwText.length)}</span></div>
+          <div style={{ display:"flex", justifyContent:"space-between", fontSize:12, padding:"7px 0" }}><span style={{color:"#888"}}>{R(el?"2{段階|だんかい}{認証|にんしょう}":"2段階認証")}</span><span style={{fontWeight:700,color:"#f59e0b"}}>{R(el?"{未|み}{設定|せってい}":"未設定")}</span></div>
+        </div>
+      </div>
+      <Dialogue who="hana">{R(el?"「よし、{登録|とうろく}できた！\nさっそく{遊|あそ}ぶぞ〜🎮」":"「よし、登録できた！\nさっそく遊ぶぞ〜🎮」")}</Dialogue>
+      <Btn onClick={() => setPhase("news")}>{R(el?"{数日後|すうじつご}… →":"数日後… →")}</Btn>
+    </Wrap>
+  );
+
+  if (phase === "news") return (
+    <Wrap>
+      <div style={{ textAlign:"center", fontSize:11, fontWeight:900, color:"rgba(14,165,233,.8)", marginBottom:6 }}>📺 {R(el?"{数日後|すうじつご}の{夜|よる}、リビングで":"数日後の夜、リビングで")}</div>
+      <div style={{ textAlign:"center", fontSize:19, fontWeight:900, marginBottom:16 }}>{R(el?"テレビを{見|み}ていると…":"テレビを見ていると…")}</div>
+      <div style={{ borderRadius:12, overflow:"hidden", marginBottom:14 }}>
+        <ImgWithFallback src="/images/ep4-1/hana_livingroom.jpg" alt="リビングのハナ" fallback="📺" fallbackSize={40} />
+      </div>
+      {!newsShown ? (
+        <Btn bg={`linear-gradient(135deg,${blue},#3b82f6)`} onClick={() => setNewsShown(true)}>{R(el?"テレビに{目|め}をやると…👀":"テレビに目をやると…👀")}</Btn>
+      ) : (
+        <>
+          <div style={{ background:"linear-gradient(135deg,#7f1d1d,#991b1b)", borderRadius:12, padding:"15px 16px", marginBottom:14 }}>
+            <div style={{ fontSize:10, color:"#fca5a5", fontWeight:900, marginBottom:6, letterSpacing:1 }}>🚨 {R(el?"ニュース{速報|そくほう}":"ニュース速報")}</div>
+            <div style={{ fontSize:14, fontWeight:700, lineHeight:1.5 }}>{R(el?"{大手|おおて}{通販|つうはん}サイト「ショッピット」から、\n{約|やく}40{万件|まんけん}の{会員|かいいん}{情報|じょうほう}が{流出|りゅうしゅつ}":"大手通販サイト「ショッピット」から、\n約40万件の会員情報が流出")}</div>
+          </div>
+          <Dialogue who="hana">{chose==="reuse"
+            ? R(el?"「あ、ショッピット{私|わたし}も{使|つか}ってる…\nでもゲームとは{別|べつ}のサイトだし、\nまあ{大丈夫|だいじょうぶ}でしょ。ふーん」":"「あ、ショッピット私も使ってる…\nでもゲームとは別のサイトだし、\nまあ大丈夫でしょ。ふーん」")
+            : R(el?"「あ、ショッピット{私|わたし}も{使|つか}ってる…\n{大丈夫|だいじょうぶ}かな、ちょっと{心配|しんぱい}だな…」":"「あ、ショッピット私も使ってる…\n大丈夫かな、ちょっと心配だな…」")}</Dialogue>
+          <Dialogue who="morry">{R(el?"「ハナちゃん、このニュース…\n\"{自分|じぶん}には{関係|かんけい}ない\" と{思|おも}うかな？\nこの{数日後|すうじつご}、{何|なに}が{起|お}きたか{見|み}てみよう」":"「ハナちゃん、このニュース…\n\"自分には関係ない\" と思うかな？\nこの数日後、何が起きたか見てみよう」")}</Dialogue>
+          <Btn onClick={() => setPhase("_p2_pending")}>{R(el?"{数日後|すうじつご}… →":"数日後… →")}</Btn>
+        </>
+      )}
+    </Wrap>
+  );
+
+  if (phase === "_p2_pending") return (
+    <Wrap>
+      <div style={{ textAlign:"center", padding:"60px 0" }}>
+        <div style={{ fontSize:40, marginBottom:16 }}>🚧</div>
+        <div style={{ fontSize:14, fontWeight:900, marginBottom:8 }}>{R("この先はP2で実装予定")}</div>
+        <div style={{ fontSize:12, color:"rgba(255,255,255,.5)", marginBottom:8 }}>{R(chose==="reuse"?"選択：使い回し":"選択：新しいPW")}</div>
+        <div style={{ fontSize:11, color:"rgba(255,255,255,.4)", marginBottom:24 }}>{R("被害ルート／無事ルートの分岐、攻撃解説、振り返り")}</div>
+        <Btn bg="rgba(255,255,255,.1)" onClick={onExit}>{R("ホームに戻る")}</Btn>
+      </div>
+    </Wrap>
+  );
+
+  return null;
+}
+
+// ═══════════════════════════════════════════════════════════════
 function Episode4({ onComplete, onExit }) {
   const ageMode = useAgeMode();
   const el = ageMode === "elementary";
@@ -22288,7 +22451,7 @@ export default function App() {
     return {
       ep1: !!rec.ep1?.completed, ep2: !!rec.ep2?.completed,
       ep3: !!rec.ep3?.completed, ep32: !!rec.ep32?.completed,
-      ep4: !!rec.ep4?.completed,
+      ep4: !!rec.ep4?.completed, ep4_1: !!rec.ep4_1?.completed,
       ep5: !!rec.ep5?.completed, ep6: !!rec.ep6?.completed,
       ep7: !!rec.ep7?.completed,
       ep12: !!rec.ep12?.completed,
@@ -22338,14 +22501,7 @@ export default function App() {
         {screen === "ep2" && <Episode2 onComplete={(s) => finish("ep2", s)} onExit={() => navigate("home")} />}
         {screen === "ep3" && <Episode3 onComplete={(s) => finish("ep3", s)} onExit={() => navigate("home")} />}
         {screen === "ep32" && <Episode3_2 onComplete={(s) => finish("ep32", s)} onExit={() => navigate("home")} />}
-        {screen === "ep4_1" && (
-          <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "#0a0a14", color: "#fff", padding: 24, textAlign: "center" }}>
-            <div style={{ fontSize: 40, marginBottom: 16 }}>🔑</div>
-            <div style={{ fontSize: 16, fontWeight: 900, marginBottom: 8 }}>EP4-1「使い回しの落とし穴」</div>
-            <div style={{ fontSize: 12, color: "rgba(255,255,255,.5)", marginBottom: 24 }}>このエピソードは準備中です（P1で実装）</div>
-            <button onClick={() => navigate("home")} style={{ background: "rgba(255,255,255,.1)", border: "1px solid rgba(255,255,255,.2)", borderRadius: 12, padding: "12px 24px", color: "#fff", fontFamily: "inherit", fontSize: 14, cursor: "pointer" }}>ホームに戻る</button>
-          </div>
-        )}
+        {screen === "ep4_1" && <Episode4_1 onComplete={(s) => finish("ep4_1", s)} onExit={() => navigate("home")} />}
         {screen === "ep4" && <Episode4 onComplete={(s) => finish("ep4", s)} onExit={() => navigate("home")} />}
         {screen === "ep5" && <Episode5 onComplete={(s) => finish("ep5", s)} onExit={() => navigate("home")} />}
         {screen === "ep6" && <Episode6 onComplete={(s) => finish("ep6", s)} onExit={() => navigate("home")} />}
