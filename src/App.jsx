@@ -15524,7 +15524,7 @@ function Episode4_1({ onComplete, onExit }) {
   };
 
   const NotifItem = ({ msg }) => (
-    <div style={{ background:"rgba(245,245,247,.85)", borderRadius:16, padding:"11px 13px", margin:"0 2px 8px", display:"flex", gap:10, alignItems:"flex-start" }}>
+    <div style={{ background:"rgba(245,245,247,.85)", borderRadius:16, padding:"11px 13px", margin:"0 2px 8px", display:"flex", gap:10, alignItems:"flex-start", animation:"notifDrop .5s ease" }}>
       <div style={{ width:34, height:34, borderRadius:8, flexShrink:0, background:"#e60012", display:"flex", alignItems:"center", justifyContent:"center", fontSize:18 }}>🎮</div>
       <div style={{ flex:1, minWidth:0 }}>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:1 }}><span style={{ fontSize:12, fontWeight:900, color:"#000" }}>Nintando</span><span style={{ fontSize:11, color:"#666" }}>{el?"いま":"今"}</span></div>
