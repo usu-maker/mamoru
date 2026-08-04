@@ -15498,6 +15498,40 @@ function Episode4_1({ onComplete, onExit }) {
 
   const R = (t) => <RubyText text={t} />;
   const pwText = chose === "reuse" ? "hanagogo" : "tomato_kaeru_78";
+  const ep4Questions_placeholder = [
+    {
+      id: "q1",
+      question: "なぜハナやミオは、アカウントを乗っ取られたんだろう？",
+      questionEl: "なぜハナやミオは、アカウントを{乗|の}っ{取|と}られたんだろう？",
+      placeholder: "親子で話した内容を書いてみよう",
+      placeholderEl: "{親子|おやこ}で{話|はな}した{内容|ないよう}を{書|か}いてみよう",
+      hints: [
+        "同じパスワードを使い回していたことが原因だったね",
+        "1つのサイトから漏れると、他のサイトも危なくなる",
+      ],
+      hintsEl: [
+        "{同|おな}じパスワードを{使|つか}い{回|まわ}していたことが{原因|げんいん}だったね",
+        "1つのサイトから{漏|も}れると、{他|ほか}のサイトも{危|あぶ}なくなる",
+      ],
+    },
+    {
+      id: "q2",
+      question: "うちの家族は、パスワードをどう管理する？今日、家族でルールを決めておこう。",
+      questionEl: "うちの{家族|かぞく}は、パスワードをどう{管理|かんり}する？{今日|きょう}、{家族|かぞく}でルールを{決|き}めておこう。",
+      placeholder: "親子で話した内容を書いてみよう",
+      placeholderEl: "{親子|おやこ}で{話|はな}した{内容|ないよう}を{書|か}いてみよう",
+      hints: [
+        "サイトごとに違うパスワードにする",
+        "パスワード管理アプリを使ってみる",
+        "パスフレーズ（バラバラの言葉をつなぐ）にする",
+      ],
+      hintsEl: [
+        "サイトごとに{違|ちが}うパスワードにする",
+        "パスワード{管理|かんり}アプリを{使|つか}ってみる",
+        "パスフレーズ（バラバラの{言葉|ことば}をつなぐ）にする",
+      ],
+    },
+  ];
 
   const Wrap = ({ children }) => (
     <div style={{ minHeight:"100vh", background:"linear-gradient(180deg,#1a0d1e,#0a0a14)", padding:"28px 20px 44px", fontFamily:"'Zen Maru Gothic',sans-serif", color:"#fff", display:"flex", flexDirection:"column", alignItems:"center" }}>
@@ -15758,10 +15792,105 @@ function Episode4_1({ onComplete, onExit }) {
         <div style={{ background:"rgba(255,255,255,.05)", borderRadius:10, padding:"11px 13px", marginBottom:8, display:"flex", gap:10 }}><div style={{ fontSize:17 }}>🧰</div><div style={{ fontSize:12, lineHeight:1.5, color:"rgba(255,255,255,.85)" }}>{R(el?"パスワード{管理|かんり}アプリを{使|つか}えば、{全部|ぜんぶ}{覚|おぼ}えなくていい":"パスワード管理アプリを使えば、全部覚えなくていい")}</div></div>
         <div style={{ background:"rgba(255,255,255,.05)", borderRadius:10, padding:"11px 13px", marginBottom:8, display:"flex", gap:10 }}><div style={{ fontSize:17 }}>🔔</div><div style={{ fontSize:12, lineHeight:1.5, color:"rgba(255,255,255,.85)" }}>{R(el?"{流出|りゅうしゅつ}ニュースを{見|み}たら、パスワードを{変|か}える":"流出ニュースを見たら、パスワードを変える")}</div></div>
         <div style={{ fontSize:9.5, color:"rgba(255,255,255,.35)", textAlign:"center", marginTop:12, lineHeight:1.5 }}>{R(el?"{出典|しゅってん}：{総務省|そうむしょう}「{国民|こくみん}のためのサイバーセキュリティサイト」／{内閣|ないかく}サイバーセキュリティセンター（NISC）":"出典：総務省「国民のためのサイバーセキュリティサイト」／内閣サイバーセキュリティセンター（NISC）")}</div>
-        <Btn onClick={() => { feedback("complete"); onComplete(3); }}>{R(el?"{親子|おやこ}で{話|はな}そう → EP4-1クリア 🎉":"親子で話そう → EP4-1クリア 🎉")}</Btn>
+        <Btn onClick={() => { feedback("tap"); setPhase("keywords"); }}>{R(el?"{親子|おやこ}で{話|はな}そう →":"親子で話そう →")}</Btn>
       </Wrap>
     );
   }
+
+  if (phase === "keywords") return (
+    <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#fff0f0,#ffd6d6)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+      <div style={{ maxWidth: 440, margin: "0 auto" }}>
+        <OwlSay mood="excited" e="パスワードを{守|まも}るための{大切|たいせつ}なことばをいっしょにおぼえよう！🦉">パスワードを守るための大切なワードを一緒に覚えよう！🦉</OwlSay>
+        <KeywordPhase epKey="ep4" accentColor={red} onComplete={() => setPhase("pre_dialogue")} />
+        <ParentExpertCard epKey="ep4" accentColor={red} />
+      </div>
+    </div>
+  );
+
+  if (phase === "pre_dialogue") return (
+    <div style={{ minHeight:"100vh", background:"linear-gradient(180deg,#1a0d2e,#120920)", padding:"24px 20px 40px", fontFamily:"'Zen Maru Gothic',sans-serif", color:"#fff" }}>
+      <div style={{maxWidth:440,margin:"0 auto"}}>
+        <div style={{ display:"flex",alignItems:"flex-start",gap:10,marginBottom:20 }}>
+          <OwlMolly size={44}/>
+          <div style={{ background:"#fff",borderRadius:"0 14px 14px 14px",padding:"10px 14px",flex:1 }}>
+            <div style={{fontSize:12,color:"#1e293b",lineHeight:1.8}}>
+              <RubyText text={el?"パスワードの{使|つか}い{回|まわ}しは、{大人|おとな}でもついやってしまうよ。おうちの{人|ひと}と{一緒|いっしょ}に{対策|たいさく}を{考|かんが}えてみよう！":"パスワードの使い回しは、大人でもついやってしまうよ。おうちの人と一緒に対策を考えてみよう！"}/>
+            </div>
+          </div>
+        </div>
+        <button onClick={()=>{feedback("tap");setPhase("dialogue");}} style={{ width:"100%",padding:16,borderRadius:14,border:"none",background:`linear-gradient(135deg,${red},#b00010)`,color:"#fff",fontSize:15,fontWeight:900,cursor:"pointer",fontFamily:"inherit" }}>
+          <RubyText text={el?"{親子|おやこ}で{話|はな}し{合|あ}おう →":"親子で話し合おう →"}/>
+        </button>
+      </div>
+    </div>
+  );
+
+  if (phase === "dialogue") return (
+    <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#1a0d2e,#120920)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif" }}>
+      <div style={{ maxWidth: 440, margin: "0 auto" }}>
+        <EpisodeShell onExit={onExit}>
+          <ParentDialogue
+            questions={ep4Questions_placeholder}
+            epKey="ep4"
+            accentColor={red}
+            onComplete={() => setPhase("homework")}
+          />
+        </EpisodeShell>
+      </div>
+    </div>
+  );
+
+  if (phase === "homework") return (
+    <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#1a0d2e,#120920)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
+      <div style={{ maxWidth: 440, margin: "0 auto" }}>
+        <OwlSay mood="proud" e="{今日|きょう}のしゅくだい！{全部|ぜんぶ}チェックしてから{次|つぎ}へ{進|すす}もう🦉">今日の宿題！全部チェックしてから次へ進もう🦉</OwlSay>
+        <TodaysHomework
+          accentColor={red}
+          onComplete={() => setPhase("complete")}
+          tasks={el ? [
+            { title: "2{段階|だんかい}{認証|にんしょう}を{設定|せってい}する", desc: "おうちの{人|ひと}と{一緒|いっしょ}に、よく{使|つか}うアプリの2{段階|だんかい}{認証|にんしょう}をオンにしよう" },
+            { title: "{公式|こうしき}サイトをブックマークする", desc: "SMSやメールのリンクではなく、ブックマークから{開|ひら}く{習慣|しゅうかん}をつけよう" },
+            { title: "「{認証|にんしょう}コードは{誰|だれ}にも{教|おし}えない」を{約束|やくそく}する", desc: "おうちの{人|ひと}と{家族|かぞく}のルールにしよう" },
+          ] : [
+            { title: "2段階認証を設定する", desc: "おうちの人と一緒に、よく使うアプリの2段階認証をオンにしよう" },
+            { title: "公式サイトをブックマークする", desc: "SMSやメールのリンクではなく、ブックマークから開く習慣をつけよう" },
+            { title: "「認証コードは誰にも教えない」を約束する", desc: "おうちの人と家族のルールにしよう" },
+          ]}
+        />
+      </div>
+    </div>
+  );
+
+  if (phase === "complete") return (
+    <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#2a0a14,#1a0510,#0f020a)", padding: "30px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden" }}>
+      <Confetti count={36} colors={[red, "#ff5a6e", "#ff8a8a", "#b00010", "#ffd28a"]} />
+      <div style={{ maxWidth: 380, margin: "0 auto", position: "relative", zIndex: 2 }}>
+        <div style={{ textAlign: "center", marginBottom: 18, animation: "celebrate 1s infinite" }}><OwlMolly size={110} mood="happy" /></div>
+        <div style={{ background: "linear-gradient(135deg,#fff,#fff0f1)", borderRadius: 22, padding: "28px 22px", border: `3px double ${red}`, textAlign: "center", boxShadow: `0 20px 60px ${red}33`, position: "relative" }}>
+          {[{ top: 12, left: 12 }, { top: 12, right: 12 }, { bottom: 12, left: 12 }, { bottom: 12, right: 12 }].map((pos, i) => <div key={i} style={{ position: "absolute", ...pos, fontSize: 16, color: red }}>✦</div>)}
+          <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: "#b00010", letterSpacing: ".4em", marginBottom: 10 }}>CERTIFICATE</div>
+          <div style={{ fontSize: 46, marginBottom: 4 }}>🏆</div>
+          <h1 style={{ fontSize: 20, color: "#7a000c", fontWeight: 900, margin: "0 0 4px" }}>しゅうりょうしょう</h1>
+          <p style={{ fontSize: 12, color: "#9a0010", lineHeight: 1.9, margin: "12px 0 16px", padding: "0 8px" }}>
+            <RubyText text={`あなたは「MAMORU」エピソード4-1`} /><br />
+            <strong style={{ color: "#7a000c", fontSize: 14 }}><RubyText text={el ? "{使|つか}い{回|まわ}しの{落|お}とし{穴|あな}" : "使い回しの落とし穴"} /></strong><br />
+            <RubyText text="をクリアしました。" />
+          </p>
+          <div style={{ background: `linear-gradient(135deg,${red}33,#ffd0d4)`, borderRadius: 12, padding: "10px 14px", margin: "10px 0" }}>
+            <div style={{ fontSize: 10, color: "#b00010", marginBottom: 3 }}>EPISODE 04-1 COMPLETE</div>
+            <div style={{ fontSize: 13, color: "#7a000c", fontWeight: 900 }}>🔑 <RubyText text={el ? "パスワード {防衛|ぼうえい}マスター" : "パスワード 防衛マスター"} /> 🔑</div>
+          </div>
+          <div style={{ fontSize: 10, color: red, marginTop: 14, fontFamily: "'DotGothic16',monospace" }}>{new Date().toLocaleDateString("ja-JP")}</div>
+        </div>
+        <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
+          <button onClick={() => navigator.share?.({ title: "MAMORU EP4-1 クリア！", text: "SNSリテラシーアプリ「MAMORU」でパスワード防衛マスターになりました🏆みんなも一緒に学んでみよう！https://mamoru-xi.vercel.app/" }).catch(() => {})}
+            style={{ flex: 1, padding: 14, background: "#fff", border: `2px solid ${red}`, borderRadius: 14, color: "#b00010", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>📤 シェア</button>
+          <button onClick={() => { feedback("complete"); onComplete(3); }}
+            style={{ flex: 1, padding: 14, background: `linear-gradient(135deg,${red},#b00010)`, border: "none", borderRadius: 14, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>🏠 ホームへ</button>
+        </div>
+      </div>
+    </div>
+  );
 
   return null;
 }
