@@ -15706,11 +15706,11 @@ function Episode4_1({ onComplete, onExit }) {
                   <div style={{ height:120, background:"linear-gradient(135deg,#331520,#25101a)" }}>
                     <ImgWithFallback src={s.img} alt={s.cap} fallback={s.emo} fallbackBg="#25101a" fallbackSize={34} objectFit="cover" />
                   </div>
-                  <div style={{ fontSize:9.5, color:"rgba(255,255,255,.4)", textAlign:"center", padding:"6px 8px 8px", lineHeight:1.4 }}>🖼️ {s.cap}</div>
+                  <div style={{ fontSize:9.5, color:"rgba(255,255,255,.4)", textAlign:"center", padding:"6px 8px 8px", lineHeight:1.4 }}>🖼️ {R(s.cap)}</div>
                 </div>
                 <div style={{ padding:"10px 12px" }}>
-                  <div style={{ fontSize:12.5, fontWeight:900, color:"#fca5a5", marginBottom:3 }}>{s.h}</div>
-                  <div style={{ fontSize:11.5, color:"rgba(255,255,255,.82)", lineHeight:1.5 }}>{s.d}</div>
+                  <div style={{ fontSize:12.5, fontWeight:900, color:"#fca5a5", marginBottom:3 }}>{R(s.h)}</div>
+                  <div style={{ fontSize:11.5, color:"rgba(255,255,255,.82)", lineHeight:1.5 }}>{R(s.d)}</div>
                 </div>
               </div>
             </div>
