@@ -15492,6 +15492,7 @@ function Episode4_1({ onComplete, onExit }) {
   const [chose, setChose] = useState(null); // "reuse" | "new"
   const [newsShown, setNewsShown] = useState(false);
   const [notifStep, setNotifStep] = useState(0);
+  const [tlStep, setTlStep] = useState(0);
   const red = "#e60012";
   const blue = "#0ea5e9";
 
@@ -15661,7 +15662,7 @@ function Episode4_1({ onComplete, onExit }) {
         {notifStep>0 && <Dialogue who="hana">{hanaLines[notifStep-1]}</Dialogue>}
         {notifStep < 3
           ? <Btn bg="linear-gradient(135deg,#0ea5e9,#3b82f6)" onClick={() => setNotifStep(s=>s+1)}>{notifStep===0 ? R(el?"{通知|つうち}を{確認|かくにん}する 👀":"通知を確認する 👀") : R(el?"もう{少|すこ}し{待|ま}つ… ⏳":"もう少し待つ… ⏳")}</Btn>
-          : <Btn bg="linear-gradient(135deg,#f87171,#ef4444)" onClick={() => setPhase("_p3_pending")}>{R(el?"なぜこうなった？モリィと{見|み}る →":"なぜこうなった？モリィと見る →")}</Btn>}
+          : <Btn bg="linear-gradient(135deg,#f87171,#ef4444)" onClick={() => setPhase("reveal")}>{R(el?"なぜこうなった？モリィと{見|み}る →":"なぜこうなった？モリィと見る →")}</Btn>}
       </Wrap>
     );
   }
@@ -15679,21 +15680,88 @@ function Episode4_1({ onComplete, onExit }) {
       <Dialogue who="mio">{R(el?"「ねぇ{聞|き}いて…！\n{私|わたし}のゲームアカウント、{乗|の}っ{取|と}られちゃった😢\nアイテム{全部|ぜんぶ}{消|き}えてた…\n{同|おな}じパスワード、いろんなサイトで{使|つか}い{回|まわ}してたんだ…」":"「ねぇ聞いて…！\n私のゲームアカウント、乗っ取られちゃった😢\nアイテム全部消えてた…\n同じパスワード、いろんなサイトで使い回してたんだ…」")}</Dialogue>
       <Dialogue who="hana">{R(el?"「そうだったんだ…！\n{私|わたし}は Nintando {専用|せんよう}の{新|あたら}しいパスワードに\nしてたから、{無事|ぶじ}だったのかな…？」":"「そうだったんだ…！\n私は Nintando 専用の新しいパスワードに\nしてたから、無事だったのかな…？」")}</Dialogue>
       <Dialogue who="morry">{R(el?"「その{通|とお}り。でもね、なぜミオちゃんは{狙|ねら}われて、\nハナちゃんは{無事|ぶじ}だったのか──\nその \"しくみ\" を{見|み}てみよう」":"「その通り。でもね、なぜミオちゃんは狙われて、\nハナちゃんは無事だったのか──\nその \"しくみ\" を見てみよう」")}</Dialogue>
-      <Btn onClick={() => setPhase("_p3_pending")}>{R(el?"{裏側|うらがわ}を{見|み}る →":"裏側を見る →")}</Btn>
+      <Btn onClick={() => setPhase("reveal")}>{R(el?"{裏側|うらがわ}を{見|み}る →":"裏側を見る →")}</Btn>
     </Wrap>
   );
 
-  if (phase === "_p3_pending") return (
-    <Wrap>
-      <div style={{ textAlign:"center", padding:"60px 0" }}>
-        <div style={{ fontSize:40, marginBottom:16 }}>🚧</div>
-        <div style={{ fontSize:14, fontWeight:900, marginBottom:8 }}>{R("この先はP3で実装予定")}</div>
-        <div style={{ fontSize:12, color:"rgba(255,255,255,.5)", marginBottom:8 }}>{R(chose==="reuse"?"ルート：被害":"ルート：無事")}</div>
-        <div style={{ fontSize:11, color:"rgba(255,255,255,.4)", marginBottom:24 }}>{R("攻撃5段階の解説、パスフレーズ振り返り")}</div>
-        <Btn bg="rgba(255,255,255,.1)" onClick={onExit}>{R("ホームに戻る")}</Btn>
-      </div>
-    </Wrap>
-  );
+  if (phase === "reveal") {
+    const steps = [
+      { img:"/images/ep4-1/attack_01_list.jpg", emo:"📋", cap:el?"ID・パスワードの{一覧|いちらん}":"ID・パスワードの一覧", h:el?"① {情報|じょうほう}が{流出|りゅうしゅつ}する":"① 情報が流出する", d:el?"「ショッピット」から {約|やく}40{万件|まんけん}のID・パスワードが{漏|も}れた":"「ショッピット」から 約40万件のID・パスワードが漏れた" },
+      { img:"/images/ep4-1/attack_02_darkweb.jpg", emo:"🕸️", cap:el?"{裏|うら}の{世界|せかい}で{売買|ばいばい}される":"裏の世界で売買される", h:el?"② ダークウェブで{売|う}られる":"② ダークウェブで売られる", d:el?"{漏|も}れた{情報|じょうほう}は、ふつうの{検索|けんさく}では{出|で}てこない{裏|うら}の{世界|せかい}（ダークウェブ）でお{金|かね}でやり{取|と}りされる":"漏れた情報は、ふつうの検索では出てこない裏の世界（ダークウェブ）でお金でやり取りされる" },
+      { img:"/images/ep4-1/attack_03_buy.jpg", emo:"🧑‍💻", cap:el?"{攻撃者|こうげきしゃ}が{購入|こうにゅう}（ハナの{情報|じょうほう}も…）":"攻撃者が購入（ハナの情報も…）", h:el?"③ {攻撃者|こうげきしゃ}が{買|か}い{取|と}る":"③ 攻撃者が買い取る", d:el?"{攻撃者|こうげきしゃ}はそのリストをお{金|かね}で{買|か}った。その{中|なか}に、ハナの \"hanagogo\" も{混|ま}ざっていた":"攻撃者はそのリストをお金で買った。その中に、ハナの \"hanagogo\" も混ざっていた" },
+      { img:"/images/ep4-1/attack_04_bruteforce.jpg", emo:"💻", cap:el?"Nintando / COPCOM / LINE …{次々|つぎつぎ}と":"Nintando / COPCOM / LINE …次々と", h:el?"④ {色々|いろいろ}なサイトで{自動|じどう}で{試|ため}す":"④ 色々なサイトで自動で試す", d:el?"{攻撃者|こうげきしゃ}は{自動|じどう}でいろんなサイトにログインを{試|ため}す{道具|どうぐ}で、{次々|つぎつぎ}にIDとパスワードを{打|う}ち{込|こ}む":"攻撃者は自動でいろんなサイトにログインを試す道具で、次々にIDとパスワードを打ち込む" },
+      { img:"/images/ep4-1/attack_05_match.jpg", emo:"🔑", cap:el?"ショッピットとNintando、IDもPWも{同|おな}じ":"ショッピットとNintando、IDもPWも同じ", h:el?"⑤ {使|つか}い{回|まわ}しが{突破|とっぱ}される":"⑤ 使い回しが突破される", d:chose==="reuse" ? (el?"ハナは ID も パスワードも、ショッピットとNintandoで{同|おな}じ。だから{流出|りゅうしゅつ}{情報|じょうほう} だけ でログインされてしまった":"ハナは ID も パスワードも、ショッピットとNintandoで同じ。だから流出情報 だけ でログインされてしまった") : (el?"ミオは{同|おな}じパスワードを{使|つか}い{回|まわ}していた。だから{片方|かたほう}が{漏|も}れただけで{乗|の}っ{取|と}られた。ハナは{別々|べつべつ}にしていたので{突破|とっぱ}されなかった":"ミオは同じパスワードを使い回していた。だから片方が漏れただけで乗っ取られた。ハナは別々にしていたので突破されなかった") },
+    ];
+    return (
+      <Wrap>
+        <div style={{ textAlign:"center", fontSize:11, fontWeight:900, color:"rgba(248,113,113,.9)", marginBottom:6 }}>🔍 {R(el?"パスワードリスト{攻撃|こうげき}":"パスワードリスト攻撃")}</div>
+        <div style={{ textAlign:"center", fontSize:19, fontWeight:900, marginBottom:14 }}>{R(el?"{攻撃者|こうげきしゃ}は{何|なに}をした？":"攻撃者は何をした？")}</div>
+        <Dialogue who="morry">{R(el?"「いったん、どんな{手口|てぐち}で{被害|ひがい}が{起|お}きたのか、\n{順番|じゅんばん}に{見|み}ていこう。\n{下|した}のボタンを{押|お}してみて」":"「いったん、どんな手口で被害が起きたのか、\n順番に見ていこう。\n下のボタンを押してみて」")}</Dialogue>
+        <div style={{ marginTop:14 }}>
+          {steps.slice(0, tlStep).map((s, i) => (
+            <div key={i} style={{ display:"flex", gap:11, marginBottom:12, animation:"slideUp .4s ease" }}>
+              <div style={{ flexShrink:0, width:24, height:24, borderRadius:"50%", background:"#1a1a2e", border:"2px solid #ef4444", color:"#ef4444", display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, fontWeight:900 }}>{i+1}</div>
+              <div style={{ flex:1, background:"rgba(239,68,68,.07)", border:"1px solid rgba(239,68,68,.2)", borderRadius:10, overflow:"hidden" }}>
+                <div style={{ borderBottom:"1px dashed rgba(239,68,68,.3)" }}>
+                  <div style={{ height:120, background:"linear-gradient(135deg,#331520,#25101a)" }}>
+                    <ImgWithFallback src={s.img} alt={s.cap} fallback={s.emo} fallbackBg="#25101a" fallbackSize={34} objectFit="cover" />
+                  </div>
+                  <div style={{ fontSize:9.5, color:"rgba(255,255,255,.4)", textAlign:"center", padding:"6px 8px 8px", lineHeight:1.4 }}>🖼️ {s.cap}</div>
+                </div>
+                <div style={{ padding:"10px 12px" }}>
+                  <div style={{ fontSize:12.5, fontWeight:900, color:"#fca5a5", marginBottom:3 }}>{s.h}</div>
+                  <div style={{ fontSize:11.5, color:"rgba(255,255,255,.82)", lineHeight:1.5 }}>{s.d}</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        {tlStep < steps.length
+          ? <Btn bg="linear-gradient(135deg,#0ea5e9,#3b82f6)" onClick={() => setTlStep(s=>s+1)}>{["①","②","③","④","⑤"][tlStep]} {R(el?"を{見|み}る →":"を見る →")}</Btn>
+          : <>
+              <Dialogue who="morry">{R(el?"「パスワードを{使|つか}い{回|まわ}すのは、\n\"1{本|ぽん}の{鍵|かぎ}で、いろんな{家|いえ}のドアを{閉|し}めている\" のと{同|おな}じ。\nその{鍵|かぎ}が1{回|かい}{盗|ぬす}まれると、\nいくつもの{家|いえ}のドアが{開|ひら}いてしまうんだ」":"「パスワードを使い回すのは、\n\"1本の鍵で、いろんな家のドアを閉めている\" のと同じ。\nその鍵が1回盗まれると、\nいくつもの家のドアが開いてしまうんだ」")}</Dialogue>
+              <Btn onClick={() => setPhase("reflect")}>{R(el?"{振|ふ}り{返|かえ}り →":"振り返り →")}</Btn>
+            </>}
+      </Wrap>
+    );
+  }
+
+  if (phase === "reflect") {
+    const good = chose === "new";
+    return (
+      <Wrap>
+        <div style={{ textAlign:"center", fontSize:11, fontWeight:900, color:"rgba(96,165,250,.85)", marginBottom:6 }}>💭 {R(el?"{振|ふ}り{返|かえ}り":"振り返り")}</div>
+        <div style={{ textAlign:"center", fontSize:19, fontWeight:900, marginBottom:14 }}>{good ? R(el?"ハナは、なぜ{無事|ぶじ}だった？":"ハナは、なぜ無事だった？") : R(el?"ハナは、なぜ{狙|ねら}われた？":"ハナは、なぜ狙われた？")}</div>
+        <div style={{ background:"rgba(96,165,250,.1)", borderLeft:"3px solid #60a5fa", borderRadius:8, padding:14, marginBottom:16 }}>
+          <div style={{ fontSize:12, color:"#93c5fd", fontWeight:900, marginBottom:6 }}>{good ? R(el?"✅ {助|たす}かった{理由|りゆう}":"✅ 助かった理由") : R(el?"⚠️ {狙|ねら}われた{理由|りゆう}":"⚠️ 狙われた理由")}</div>
+          <div style={{ fontSize:13, lineHeight:1.65, color:"rgba(255,255,255,.9)" }}>{good ? R(el?"サイトごとに{違|ちが}うパスワードにしていたから。1つ{流出|りゅうしゅつ}しても、{他|ほか}は{無事|ぶじ}だった。「{面倒|めんどう}」を{選|えら}ばなかったことが、ハナを{守|まも}った。":"サイトごとに違うパスワードにしていたから。1つ流出しても、他は無事だった。「面倒」を選ばなかったことが、ハナを守った。") : R(el?"{別|べつ}のサイトと{同|おな}じ \"hanagogo\" を{使|つか}い{回|まわ}していたから。そのサイトが{流出|りゅうしゅつ}しただけで、ゲームのアカウントまで{入|はい}られてしまった。":"別のサイトと同じ \"hanagogo\" を使い回していたから。そのサイトが流出しただけで、ゲームのアカウントまで入られてしまった。")}</div>
+        </div>
+        <div style={{ background:"rgba(255,255,255,.04)", borderRadius:12, padding:"16px 14px", marginBottom:14 }}>
+          <div style={{ fontSize:12, color:"#7dd3fc", fontWeight:900, marginBottom:12, textAlign:"center" }}>🔑 {R(el?"どんなパスワードにすればいい？":"どんなパスワードにすればいい？")}</div>
+          <div style={{ background:"rgba(239,68,68,.1)", border:"1px solid rgba(239,68,68,.3)", borderRadius:8, padding:10, marginBottom:8, textAlign:"center" }}>
+            <div style={{ fontSize:10, color:"#f87171", fontWeight:900, marginBottom:4 }}>✕ {R(el?"あぶない":"あぶない")}</div>
+            <div style={{ fontFamily:"monospace", fontSize:15, color:"#fca5a5", letterSpacing:1 }}>hanagogo</div>
+            <div style={{ fontSize:10, color:"rgba(255,255,255,.5)", marginTop:4 }}>{R(el?"{短|みじか}い／{名前|なまえ}が{入|はい}っている／{使|つか}い{回|まわ}している":"短い／名前が入っている／使い回している")}</div>
+          </div>
+          <div style={{ textAlign:"center", fontSize:16, margin:"6px 0", color:"rgba(255,255,255,.4)" }}>⬇︎ {R(el?"こう{変|か}える":"こう変える")}</div>
+          <div style={{ background:"rgba(74,222,128,.1)", border:"1px solid rgba(74,222,128,.3)", borderRadius:8, padding:12, textAlign:"center" }}>
+            <div style={{ fontSize:10, color:"#4ade80", fontWeight:900, marginBottom:6 }}>◎ {R(el?"おすすめ：パスフレーズ":"おすすめ：パスフレーズ")}</div>
+            <div style={{ fontFamily:"monospace", fontSize:17, color:"#86efac", letterSpacing:1, fontWeight:700 }}>tomato_kaeru_78</div>
+            <div style={{ display:"flex", justifyContent:"center", gap:5, marginTop:9, flexWrap:"wrap" }}>
+              {[el?"{関係|かんけい}ない{言葉|ことば}":"関係ない言葉","_",el?"{別|べつ}の{言葉|ことば}":"別の言葉",el?"{数字|すうじ}":"数字"].map((p,i)=><span key={i} style={{ fontSize:9, padding:"2px 8px", borderRadius:8, background:"rgba(74,222,128,.2)", color:"#bbf7d0" }}>{R(p)}</span>)}
+            </div>
+            <div style={{ fontSize:10.5, color:"rgba(255,255,255,.6)", marginTop:9, lineHeight:1.5 }}>{R(el?"{自分|じぶん}だけがわかる、バラバラの{言葉|ことば}をつなぐ。{歌詞|かし}やことわざなど \"{有名|ゆうめい}なフレーズ\" は{攻撃者|こうげきしゃ}も{知|し}っているので{使|つか}わない。{長|なが}いのに{覚|おぼ}えやすく、{破|やぶ}られにくい。":"自分だけがわかる、バラバラの言葉をつなぐ。歌詞やことわざなど \"有名なフレーズ\" は攻撃者も知っているので使わない。長いのに覚えやすく、破られにくい。")}</div>
+          </div>
+        </div>
+        <div style={{ background:"rgba(255,255,255,.05)", borderRadius:10, padding:"11px 13px", marginBottom:8, display:"flex", gap:10 }}><div style={{ fontSize:17 }}>🔑</div><div style={{ fontSize:12, lineHeight:1.5, color:"rgba(255,255,255,.85)" }}>{R(el?"{使|つか}い{回|まわ}さない。サイトごとに{違|ちが}うパスワードにする":"使い回さない。サイトごとに違うパスワードにする")}</div></div>
+        <div style={{ background:"rgba(255,255,255,.05)", borderRadius:10, padding:"11px 13px", marginBottom:8, display:"flex", gap:10 }}><div style={{ fontSize:17 }}>🧩</div><div style={{ fontSize:12, lineHeight:1.5, color:"rgba(255,255,255,.85)" }}>{R(el?"パスフレーズにする。{関係|かんけい}のない{言葉|ことば}をつなげると、{長|なが}くて{覚|おぼ}えやすい":"パスフレーズにする。関係のない言葉をつなげると、長くて覚えやすい")}</div></div>
+        <div style={{ background:"rgba(255,255,255,.05)", borderRadius:10, padding:"11px 13px", marginBottom:8, display:"flex", gap:10 }}><div style={{ fontSize:17 }}>🧰</div><div style={{ fontSize:12, lineHeight:1.5, color:"rgba(255,255,255,.85)" }}>{R(el?"パスワード{管理|かんり}アプリを{使|つか}えば、{全部|ぜんぶ}{覚|おぼ}えなくていい":"パスワード管理アプリを使えば、全部覚えなくていい")}</div></div>
+        <div style={{ background:"rgba(255,255,255,.05)", borderRadius:10, padding:"11px 13px", marginBottom:8, display:"flex", gap:10 }}><div style={{ fontSize:17 }}>🔔</div><div style={{ fontSize:12, lineHeight:1.5, color:"rgba(255,255,255,.85)" }}>{R(el?"{流出|りゅうしゅつ}ニュースを{見|み}たら、パスワードを{変|か}える":"流出ニュースを見たら、パスワードを変える")}</div></div>
+        <div style={{ fontSize:9.5, color:"rgba(255,255,255,.35)", textAlign:"center", marginTop:12, lineHeight:1.5 }}>{R(el?"{出典|しゅってん}：{総務省|そうむしょう}「{国民|こくみん}のためのサイバーセキュリティサイト」／{内閣|ないかく}サイバーセキュリティセンター（NISC）":"出典：総務省「国民のためのサイバーセキュリティサイト」／内閣サイバーセキュリティセンター（NISC）")}</div>
+        <Btn onClick={() => { feedback("complete"); onComplete(3); }}>{R(el?"{親子|おやこ}で{話|はな}そう → EP4-1クリア 🎉":"親子で話そう → EP4-1クリア 🎉")}</Btn>
+      </Wrap>
+    );
+  }
 
   return null;
 }
