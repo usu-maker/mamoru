@@ -1240,7 +1240,7 @@ function TodaysHomework({ tasks, accentColor = "#ffa940", mode = "dark", onCompl
           {onComplete && (
             <button onClick={onComplete}
               style={{ width: "100%", padding: 14, background: `linear-gradient(135deg,${accentColor},${accentColor}cc)`, border: "none", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 4px 16px ${accentColor}33` }}>
-              <RubyText text={ageMode === "elementary" ? "キーワードを{覚|おぼ}える 📖 →" : "キーワードを覚える 📖 →"} />
+              <RubyText text={ageMode === "elementary" ? "{次|つぎ}へ →" : "次へ →"} />
             </button>
           )}
         </div>
@@ -15926,13 +15926,13 @@ function Episode4_1({ onComplete, onExit }) {
           accentColor={red}
           onComplete={() => setPhase("complete")}
           tasks={el ? [
-            { title: "2{段階|だんかい}{認証|にんしょう}を{設定|せってい}する", desc: "おうちの{人|ひと}と{一緒|いっしょ}に、よく{使|つか}うアプリの2{段階|だんかい}{認証|にんしょう}をオンにしよう" },
-            { title: "{公式|こうしき}サイトをブックマークする", desc: "SMSやメールのリンクではなく、ブックマークから{開|ひら}く{習慣|しゅうかん}をつけよう" },
-            { title: "「{認証|にんしょう}コードは{誰|だれ}にも{教|おし}えない」を{約束|やくそく}する", desc: "おうちの{人|ひと}と{家族|かぞく}のルールにしよう" },
+            { title: "{使|つか}い{回|まわ}しているパスワードがあれば1つ{変|か}える（なければOK！）", desc: "いちばん{大切|たいせつ}なアカウントを、{他|ほか}と{違|ちが}うパスワードにしよう" },
+            { title: "{自分|じぶん}だけのパスフレーズを1つ{作|つく}ってみる", desc: "バラバラの{言葉|ことば}をつなげて、{長|なが}いパスワードを{作|つく}ろう" },
+            { title: "{家族|かぞく}でパスワードのルールを{決|き}める", desc: "「{使|つか}い{回|まわ}さない」を{家族|かぞく}の{約束|やくそく}にしよう" },
           ] : [
-            { title: "2段階認証を設定する", desc: "おうちの人と一緒に、よく使うアプリの2段階認証をオンにしよう" },
-            { title: "公式サイトをブックマークする", desc: "SMSやメールのリンクではなく、ブックマークから開く習慣をつけよう" },
-            { title: "「認証コードは誰にも教えない」を約束する", desc: "おうちの人と家族のルールにしよう" },
+            { title: "使い回しているパスワードがあれば1つ変える（なければOK！）", desc: "いちばん大切なアカウントを、他と違うパスワードにしよう" },
+            { title: "自分だけのパスフレーズを1つ作ってみる", desc: "バラバラの言葉をつなげて、長いパスワードを作ろう" },
+            { title: "家族でパスワードのルールを決める", desc: "「使い回さない」を家族の約束にしよう" },
           ]}
         />
       </div>
