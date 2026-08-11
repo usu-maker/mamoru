@@ -783,6 +783,8 @@ const GlobalStyle = () => (
     @keyframes ep5GlowShift {0%{box-shadow:0 0 0 rgba(5,196,107,0)} 40%{box-shadow:0 0 16px rgba(5,196,107,.8)} 100%{box-shadow:0 0 20px rgba(236,72,153,.9);background:#c2185b}}
     @keyframes cardIn    {from{opacity:0;transform:translateY(24px) scale(.96)} to{opacity:1;transform:translateY(0) scale(1)}}
     @keyframes ringExpand{from{opacity:0;transform:scale(.85)} to{opacity:1;transform:scale(1)}}
+    @keyframes ep41Flow  {0%{left:-2%;opacity:0} 12%{opacity:1} 82%{opacity:1} 100%{left:98%;opacity:0}}
+    @keyframes ep41Break {0%,70%,100%{border-color:rgba(239,68,68,.5)} 80%{border-color:#ef4444;box-shadow:0 0 8px rgba(239,68,68,.5)}}
     @keyframes slowRise  {from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)}}
     @keyframes sink      {0%{opacity:0;transform:translateY(-12px) scale(1.05)} 100%{opacity:1;transform:translateY(0) scale(1)}}
     @keyframes shudder   {0%,100%{transform:translateX(0)} 20%{transform:translateX(-3px)} 40%{transform:translateX(3px)} 60%{transform:translateX(-2px)} 80%{transform:translateX(2px)}}
@@ -15809,6 +15811,61 @@ function Episode4_1({ onComplete, onExit }) {
         <div style={{ textAlign:"center", fontSize:11, fontWeight:900, color:"rgba(248,113,113,.9)", marginBottom:6 }}>🔍 {R(el?"パスワードリスト{攻撃|こうげき}":"パスワードリスト攻撃")}</div>
         <div style={{ textAlign:"center", fontSize:19, fontWeight:900, marginBottom:14 }}>{R(el?"{攻撃者|こうげきしゃ}は{何|なに}をした？":"攻撃者は何をした？")}</div>
         <Dialogue who="morry">{R(el?"「いったん、どんな{手口|てぐち}で{被害|ひがい}が{起|お}きたのか、\n{順番|じゅんばん}に{見|み}ていこう。\n{下|した}のボタンを{押|お}してみて」":"「いったん、どんな手口で被害が起きたのか、\n順番に見ていこう。\n下のボタンを押してみて」")}</Dialogue>
+
+        {/* ═══ S2-c: 結論先出し＋攻撃図（①〜⑤タップの直前）═══ */}
+        <Dialogue who="morry">{R(el?"「…の{前|まえ}に、まず{結論|けつろん}から！\nこれは「リスト{型|がた}{攻撃|こうげき}」という{手口|てぐち}だったんだ。」":"「…の前に、まず結論から！\nこれは「リスト型攻撃」という手口だったんだ。」")}</Dialogue>
+
+        {/* 結論カード */}
+        <div style={{ background:"linear-gradient(135deg,rgba(220,38,38,.16),rgba(91,33,182,.16))", border:"1px solid rgba(220,38,38,.4)", borderRadius:16, padding:"15px 16px 17px", margin:"4px 0 14px", textAlign:"center", animation:"cardIn .5s ease both" }}>
+          <div style={{ fontSize:10, fontWeight:900, letterSpacing:1, color:"#fbbf24", marginBottom:7 }}>🔍 {R(el?"これは{何|なに}だったのか":"これは何だったのか")}</div>
+          <div style={{ fontSize:20, fontWeight:900, lineHeight:1.4, marginBottom:6 }}><span style={{ color:"#fca5a5", borderBottom:"3px solid rgba(220,38,38,.55)", paddingBottom:2 }}>{R(el?"リスト{型|がた}{攻撃|こうげき}":"リスト型攻撃")}</span>{R(el?"だった":"だった")}</div>
+          <div style={{ fontSize:11, color:"rgba(255,255,255,.62)", lineHeight:1.7 }}>{R(el?"1つのサービスから{流出|りゅうしゅつ}したID・パスワードを、<br/>{他|ほか}のたくさんのサービスでも{試|ため}す{攻撃|こうげき}":"1つのサービスから流出したID・パスワードを、<br/>他のたくさんのサービスでも試す攻撃")}</div>
+        </div>
+
+        {/* CSS攻撃図（矢印アニメ） */}
+        <div style={{ background:"rgba(255,255,255,.03)", border:".5px solid rgba(255,255,255,.12)", borderRadius:16, padding:"18px 14px 16px", marginBottom:14, animation:"cardIn .5s ease .1s both" }}>
+          <div style={{ fontSize:11, fontWeight:700, color:"rgba(255,255,255,.55)", textAlign:"center", marginBottom:16 }}>{R(el?"{盗|ぬす}んだID・パスワードを、{次々|つぎつぎ}と{打|う}ち{込|こ}む":"盗んだID・パスワードを、次々と打ち込む")}</div>
+          <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+            {/* 攻撃者＋リスト */}
+            <div style={{ textAlign:"center", flexShrink:0, width:98 }}>
+              <div style={{ width:50, height:50, borderRadius:"50%", background:"radial-gradient(circle at 50% 40%,#4b5563,#1f2937)", border:"2px solid #ef4444", margin:"0 auto 6px", display:"flex", alignItems:"center", justifyContent:"center", fontSize:25 }}>🧑‍💻</div>
+              <div style={{ fontSize:10, color:"#ef4444", fontWeight:700 }}>{R(el?"{攻撃者|こうげきしゃ}":"攻撃者")}</div>
+              <div style={{ marginTop:8, background:"#0d0d16", border:"1px solid rgba(239,68,68,.35)", borderRadius:7, padding:"6px 5px", textAlign:"left" }}>
+                <div style={{ fontSize:7, color:"#f87171", fontWeight:700, marginBottom:3, textAlign:"center" }}>{R(el?"{盗|ぬす}んだ{大量|たいりょう}リスト":"盗んだ大量リスト")}</div>
+                <div style={{ fontFamily:"monospace", fontSize:7.5, color:"#fca5a5", fontWeight:700, lineHeight:1.55, whiteSpace:"nowrap" }}>hana / hanagogo</div>
+                <div style={{ fontFamily:"monospace", fontSize:7.5, color:"rgba(255,255,255,.5)", lineHeight:1.55, whiteSpace:"nowrap" }}>user_02 / ******</div>
+                <div style={{ fontFamily:"monospace", fontSize:7.5, color:"rgba(255,255,255,.5)", lineHeight:1.55, whiteSpace:"nowrap" }}>user_03 / ******</div>
+                <div style={{ fontFamily:"monospace", fontSize:7.5, color:"rgba(255,255,255,.5)", lineHeight:1.55, whiteSpace:"nowrap", opacity:.5 }}>{R(el?"… 40{万件|まんけん}":"… 40万件")}</div>
+              </div>
+            </div>
+            {/* 矢印3本（🔑アニメ） */}
+            <div style={{ flex:1, display:"flex", flexDirection:"column", gap:15, padding:"0 2px" }}>
+              {[0,1,2].map((n) => (
+                <div key={n} style={{ display:"flex", alignItems:"center" }}>
+                  <div style={{ flex:1, height:2, borderRadius:99, position:"relative", background:"linear-gradient(90deg,#ef4444,#ff6b35)" }}>
+                    <div style={{ position:"absolute", top:-7, left:0, fontSize:9, animation:`ep41Flow 2s linear ${n*0.55}s infinite` }}>🔑</div>
+                    <div style={{ position:"absolute", right:-1, top:"50%", transform:"translateY(-50%)", width:0, height:0, borderLeft:"6px solid #ff6b35", borderTop:"4px solid transparent", borderBottom:"4px solid transparent" }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+            {/* サービス3枠（突破アニメ） */}
+            <div style={{ display:"flex", flexDirection:"column", gap:15, flexShrink:0, width:88 }}>
+              {["Nintando","COPCOM","LINE"].map((nm,i) => (
+                <div key={nm} style={{ borderRadius:8, padding:"6px 5px", textAlign:"center", border:"1px solid rgba(239,68,68,.5)", background:"rgba(239,68,68,.1)", animation:`ep41Break 2s ease ${i*0.55}s infinite` }}>
+                  <div style={{ fontSize:11, fontWeight:900, color:"#f87171", letterSpacing:nm==="LINE"?1:.3 }}>{nm}</div>
+                  <div style={{ fontSize:8, color:"#fca5a5", marginTop:2 }}>🔓 {R(el?"{突破|とっぱ}":"突破")}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div style={{ marginTop:15, fontSize:10.5, color:"rgba(255,255,255,.55)", lineHeight:1.7, textAlign:"center" }}>{R(el?"{同|おな}じパスワードを{使|つか}い{回|まわ}していると、<br/>":"同じパスワードを使い回していると、<br/>")}<span style={{ color:"#fbbf24", fontWeight:700 }}>{R(el?"{流出|りゅうしゅつ}した1つで、{他|ほか}のサービスも{開|ひら}いてしまう":"流出した1つで、他のサービスも開いてしまう")}</span></div>
+        </div>
+
+        {/* 橋渡しセリフ */}
+        <Dialogue who="morry">{R(el?"「{仕組|しく}みが{分|わ}かったところで、{実際|じっさい}に{起|お}きた{順番|じゅんばん}を1つずつ{見|み}ていこう。」":"「仕組みが分かったところで、実際に起きた順番を1つずつ見ていこう。」")}</Dialogue>
+        {/* ═══ /S2-c ═══ */}
+
         <div style={{ marginTop:14 }}>
           {steps.slice(0, tlStep).map((s, i) => (
             <div key={i} style={{ display:"flex", gap:11, marginBottom:12, animation:"slideUp .4s ease" }}>
