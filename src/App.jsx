@@ -2860,6 +2860,27 @@ const PARENT_CARDS = {
     contacts: [{ name: "LINE公式 乗っ取り対処", tel: "line.me/ja/safety" }, { name: "警察相談専用電話", tel: "#9110" }],
     elContacts: [{ name: "LINE{公式|こうしき} {乗|の}っ{取|と}り{対処|たいしょ}", tel: "line.me/ja/safety" }, { name: "{警察|けいさつ}{相談|そうだん}{専用|せんよう}{電話|でんわ}", tel: "#9110" }],
   },
+  ep4_1: {
+    title: "🔑 パスワードの使い回し・リスト型攻撃 — 保護者の方へ",
+    stats: [
+      { icon: "📊", text: "令和7年に検挙された不正アクセス（識別符号窃用型）で、手口別の最多は「パスワードの設定・管理の甘さにつけ込んで入手」（警察庁・総務省・経産省 令和8年3月公表）" },
+      { icon: "🎮", text: "不正に利用されたサービス別では「オンラインゲーム・コミュニティサイト」が最多。子どもが被害に遭いやすい領域です（同上）" },
+      { icon: "🔑", text: "リスト型攻撃は、入手した他人のID・パスワードをリストのように使い各サイトへログインを試す手口。1つ漏れると使い回した他サービスも突破されうる（総務省）" },
+    ],
+    law: "不正アクセス禁止法により、他人のID・パスワードでの不正ログインは3年以下の懲役または100万円以下の罰金。未成年でも対象となります。",
+    actions: [
+      "サービスごとに違う（使い回さない）固有のパスワードにする",
+      "英大文字・小文字＋数字＋記号で10桁以上、または覚えやすいパスフレーズにする（NISC推奨）",
+      "定期変更は不要。流出のニュースを見たら、そのサービスのパスワードを速やかに変える",
+    ],
+    elActions: [
+      "サービスごとに{違|ちが}う（{使|つか}い{回|まわ}さない）{固有|こゆう}のパスワードにする",
+      "{英|えい}{大文字|おおもじ}・{小文字|こもじ}＋{数字|すうじ}＋{記号|きごう}で10{桁|けた}{以上|いじょう}、または{覚|おぼ}えやすいパスフレーズにする（NISC{推奨|すいしょう}）",
+      "{定期|ていき}{変更|へんこう}は{不要|ふよう}。{流出|りゅうしゅつ}のニュースを{見|み}たら、そのサービスのパスワードを{速|すみ}やかに{変|か}える",
+    ],
+    contacts: [{ name: "警察相談専用電話", tel: "#9110" }, { name: "都道府県警察 サイバー犯罪相談窓口", tel: "cyber-police" }],
+    elContacts: [{ name: "{警察|けいさつ}{相談|そうだん}{専用|せんよう}{電話|でんわ}", tel: "#9110" }, { name: "{都道府県|とどうふけん}{警察|けいさつ} サイバー{犯罪|はんざい}{相談|そうだん}{窓口|まどぐち}", tel: "cyber-police" }],
+  },
   ep5: {
     title: "👥 ネットいじめ — 保護者の方へ",
     stats: [
@@ -15937,7 +15958,7 @@ function Episode4_1({ onComplete, onExit }) {
       <div style={{ maxWidth: 440, margin: "0 auto" }}>
         <OwlSay mood="excited" e="パスワードを{守|まも}るための{大切|たいせつ}なことばをいっしょにおぼえよう！🦉">パスワードを守るための大切なワードを一緒に覚えよう！🦉</OwlSay>
         <KeywordPhase epKey="ep4_1" accentColor={red} onComplete={() => setPhase("pre_dialogue")} />
-        <ParentExpertCard epKey="ep4" accentColor={red} />
+        <ParentExpertCard epKey="ep4_1" accentColor={red} />
       </div>
     </div>
   );
@@ -15966,7 +15987,7 @@ function Episode4_1({ onComplete, onExit }) {
         <EpisodeShell onExit={onExit}>
           <ParentDialogue
             questions={ep4Questions_placeholder}
-            epKey="ep4"
+            epKey="ep4_1"
             accentColor={red}
             onComplete={() => setPhase("homework")}
           />
