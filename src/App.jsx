@@ -13402,7 +13402,7 @@ function Ep4Countermeasures({ el, red, onComplete }) {
             }}>
               <span style={{fontSize:11,color:"#ff3b30"}}>⚠️</span>
               <span style={{fontSize:10,color:"#ff3b30",fontFamily:"monospace"}}>
-                nintendo-account-<strong>verify.com</strong>
+                nintando-account-<strong>verify.com</strong>
               </span>
             </div>
           </div>
@@ -13432,7 +13432,7 @@ function Ep4Countermeasures({ el, red, onComplete }) {
             }}>
               <span style={{fontSize:11,color:"#22c55e"}}>🔒</span>
               <span style={{fontSize:10,color:"#16a34a",fontFamily:"monospace"}}>
-                <strong>accounts.nintendo.com</strong>
+                <strong>accounts.nintando.com</strong>
               </span>
             </div>
           </div>
@@ -13449,8 +13449,8 @@ function Ep4Countermeasures({ el, red, onComplete }) {
         </div>
       ),
       desc: el
-        ?"「nintendo」という{文字|もじ}が{入|はい}っていても{本物|ほんもの}とは{限|かぎ}らない。Amazon・{楽天|らくてん}・{銀行|ぎんこう}も{同|おな}じ。{公式|こうしき}ドメインと1{文字|もじ}でも{違|ちが}えば{偽物|にせもの}。"
-        :"「nintendo」という文字が入っていても本物とは限らない。Amazon・楽天・銀行も同じ。公式ドメインと1文字でも違えば偽物。",
+        ?"「nintando」という{文字|もじ}が{入|はい}っていても{本物|ほんもの}とは{限|かぎ}らない。Amazon・{楽天|らくてん}・{銀行|ぎんこう}も{同|おな}じ。{公式|こうしき}ドメインと1{文字|もじ}でも{違|ちが}えば{偽物|にせもの}。"
+        :"「nintando」という文字が入っていても本物とは限らない。Amazon・楽天・銀行も同じ。公式ドメインと1文字でも違えば偽物。",
     },
     {
       icon:"🔖",
@@ -13477,8 +13477,8 @@ function Ep4Countermeasures({ el, red, onComplete }) {
               padding:"6px 8px",fontSize:9,color:"#fff",
               lineHeight:1.5,maxWidth:"90%",
             }}>
-              <RubyText text={el?"【{任天堂|にんてんどう}】{不正|ふせい}アクセスを{検知|けんち}。":"【任天堂】不正アクセスを検知。"}/>
-              <span style={{color:"#4db8ff",textDecoration:"underline",fontSize:8}}> https://nintendo-account-verify.com</span>
+              <RubyText text={el?"【Nintando】{不正|ふせい}アクセスを{検知|けんち}。":"【Nintando】不正アクセスを検知。"}/>
+              <span style={{color:"#4db8ff",textDecoration:"underline",fontSize:8}}> https://nintando-account-verify.com</span>
             </div>
           </div>
           {/* ブックマークのOK例 */}
@@ -13781,14 +13781,14 @@ function Ep4FakeLogin({ el, red, emailInput, setEmailInput, passwordInput, setPa
             fontFamily:"monospace",
             overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",
           }}>
-            nintendo-account-verify.com
+            nintando-account-verify.com
           </span>
         </div>
       </div>
 
-      {/* Nintendoヘッダー */}
+      {/* Nintandoヘッダー */}
       <div style={{background:red,padding:"10px 16px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-        <span style={{color:"#fff",fontSize:15,fontWeight:900,letterSpacing:1}}>Nintendo</span>
+        <span style={{color:"#fff",fontSize:15,fontWeight:900,letterSpacing:1}}>Nintando</span>
         <span style={{color:"rgba(255,255,255,.7)",fontSize:11}}>
           <RubyText text={el?"{アカウント新規作成|あかうんとしんきさくせい}":"アカウント新規作成"}/>
         </span>
@@ -13796,7 +13796,7 @@ function Ep4FakeLogin({ el, red, emailInput, setEmailInput, passwordInput, setPa
 
       <div style={{padding:"14px 14px 24px",position:"relative"}}>
         <div style={{textAlign:"center",fontSize:15,fontWeight:700,color:"#333",marginBottom:14}}>
-          <RubyText text={el?"ニンテンドーアカウント":"ニンテンドーアカウント"}/>
+          <RubyText text={el?"Nintandoアカウント":"Nintandoアカウント"}/>
         </div>
 
         {/* ハナの吹き出し */}
@@ -14047,11 +14047,11 @@ function Ep4CodeInput({ el, red, emailInput, onComplete }) {
             justifyContent:"center",fontSize:18,flexShrink:0,
           }}>✉️</div>
           <div style={{flex:1}}>
-            <div style={{fontSize:12,fontWeight:700,color:"#fff",marginBottom:2}}>Nintendo</div>
+            <div style={{fontSize:12,fontWeight:700,color:"#fff",marginBottom:2}}>Nintando</div>
             <div style={{fontSize:11,color:"rgba(255,255,255,.75)",lineHeight:1.5}}>
               <RubyText text={el
-                ?"ニンテンドーアカウント {認証|にんしょう}コード\n{認証|にんしょう}コード："
-                :"ニンテンドーアカウント 認証コード\n認証コード："
+                ?"Nintandoアカウント {認証|にんしょう}コード\n{認証|にんしょう}コード："
+                :"Nintandoアカウント 認証コード\n認証コード："
               }/>
               <strong style={{color:"#ffd700",letterSpacing:2,fontSize:13}}>
                 {CORRECT_CODE}
@@ -14062,9 +14062,9 @@ function Ep4CodeInput({ el, red, emailInput, onComplete }) {
         </div>
       )}
 
-      {/* Nintendoヘッダー */}
+      {/* Nintandoヘッダー */}
       <div style={{background:red,padding:"10px 16px"}}>
-        <span style={{color:"#fff",fontSize:15,fontWeight:900}}>Nintendo</span>
+        <span style={{color:"#fff",fontSize:15,fontWeight:900}}>Nintando</span>
       </div>
 
       <div style={{padding:"16px 14px"}}>
@@ -14105,7 +14105,7 @@ function Ep4CodeInput({ el, red, emailInput, onComplete }) {
           boxShadow:"0 1px 4px rgba(0,0,0,.1)",
         }}>
           <div style={{fontSize:12,color:"#555",fontWeight:700,marginBottom:4}}>
-            <RubyText text={el?"ニンテンドーアカウント":"ニンテンドーアカウント"}/>
+            <RubyText text={el?"Nintandoアカウント":"Nintandoアカウント"}/>
           </div>
           <div style={{fontSize:12,color:"#555",marginBottom:10}}>
             {emailInput || "h.***@gmail.com"}
@@ -14137,8 +14137,8 @@ function Ep4CodeInput({ el, red, emailInput, onComplete }) {
               </div>
               <div style={{color:"#333",lineHeight:1.7}}>
                 <RubyText text={el
-                  ?"{差出人|さしだしにん}：no-reply@nintendo.com\n{認証|にんしょう}コード："
-                  :"差出人：no-reply@nintendo.com\n認証コード："
+                  ?"{差出人|さしだしにん}：no-reply@nintando.com\n{認証|にんしょう}コード："
+                  :"差出人：no-reply@nintando.com\n認証コード："
                 }/>
                 <strong style={{
                   fontSize:16,color:red,
@@ -14268,7 +14268,7 @@ function Ep4Stolen({ el, red, onComplete }) {
 
   const LINES = [
     {text:"[●] 認証コード取得: 482916", color:"#4ade80", delay:300},
-    {text:"[✓] Nintendoサーバーへログイン成功", color:"#4ade80", delay:1000},
+    {text:"[✓] Nintandoサーバーへログイン成功", color:"#4ade80", delay:1000},
     {text:"[●] メールアドレス変更中...", color:"#fbbf24", delay:1800},
     {text:"[✓] → attacker@proton.me に変更完了", color:"#60a5fa", delay:2800},
     {text:"[●] パスワード変更中...", color:"#fbbf24", delay:3600},
@@ -14297,7 +14297,7 @@ function Ep4Stolen({ el, red, onComplete }) {
       display:"flex",flexDirection:"column",
     }}>
       <div style={{background:red,padding:"10px 16px"}}>
-        <span style={{color:"#fff",fontSize:15,fontWeight:900}}>Nintendo</span>
+        <span style={{color:"#fff",fontSize:15,fontWeight:900}}>Nintando</span>
       </div>
       <div style={{padding:"28px 20px",textAlign:"center",flex:1}}>
         <div style={{fontSize:48,marginBottom:16,animation:"mamFadeUp .6s ease"}}>✅</div>
@@ -14313,8 +14313,8 @@ function Ep4Stolen({ el, red, onComplete }) {
           whiteSpace:"pre-line",
         }}>
           <RubyText text={el
-            ?"ニンテンドーアカウントの\nセキュリティ{確認|かくにん}が{完了|かんりょう}しました。\n{引|ひ}き{続|つづ}きNintendoをお{楽|たの}しみください。"
-            :"ニンテンドーアカウントの\nセキュリティ確認が完了しました。\n引き続きNintendoをお楽しみください。"
+            ?"Nintandoアカウントの\nセキュリティ{確認|かくにん}が{完了|かんりょう}しました。\n{引|ひ}き{続|つづ}きNintandoをお{楽|たの}しみください。"
+            :"Nintandoアカウントの\nセキュリティ確認が完了しました。\n引き続きNintandoをお楽しみください。"
           }/>
         </div>
         <div style={{
@@ -14581,8 +14581,8 @@ function Ep4AftermathSwitch({ el, red, onComplete }) {
                 borderBottom:"1px solid #ccc",
               }}>
                 <RubyText text={el
-                  ?"ニンテンドーアカウントの\n{再|さい}ログインが{必要|ひつよう}です。"
-                  :"ニンテンドーアカウントの\n再ログインが必要です。"
+                  ?"Nintandoアカウントの\n{再|さい}ログインが{必要|ひつよう}です。"
+                  :"Nintandoアカウントの\n再ログインが必要です。"
                 }/>
               </div>
               <button
@@ -14997,8 +14997,8 @@ function Ep4Reveal({ el, red, onComplete }) {
           </div>
           <div style={{fontSize:11,color:"#fca5a5",lineHeight:1.7}}>
             <RubyText text={el
-              ?"→ {攻撃|こうげき}{者|しゃ}が{裏|うら}でリアルタイムに\n  {本物|ほんもの}のNintendoサイトに{入力|にゅうりょく}していたから\n  {本物|ほんもの}のコードが{届|とど}いてしまった！"
-              :"→ 攻撃者が裏でリアルタイムに\n  本物のNintendoサイトに入力していたから\n  本物のコードが届いてしまった！"
+              ?"→ {攻撃|こうげき}{者|しゃ}が{裏|うら}でリアルタイムに\n  {本物|ほんもの}のNintandoサイトに{入力|にゅうりょく}していたから\n  {本物|ほんもの}のコードが{届|とど}いてしまった！"
+              :"→ 攻撃者が裏でリアルタイムに\n  本物のNintandoサイトに入力していたから\n  本物のコードが届いてしまった！"
             }/>
           </div>
         </div>
@@ -15052,7 +15052,7 @@ function Ep4Reveal({ el, red, onComplete }) {
             <div style={{fontSize:8,color:"#60a5fa"}}>← ハナ</div>
           </div>
           <div style={sceneDesc}>
-            <RubyText text={el?"{自動|じどう}ツールで{任天堂|にんてんどう}をかたるSMSを{大量|たいりょう}{送信|そうしん}。ハナもその{中|なか}の1{人|にん}だった。":"自動ツールで任天堂をかたるSMSを大量送信。ハナもその中の1人だった。"}/>
+            <RubyText text={el?"{自動|じどう}ツールでNintandoをかたるSMSを{大量|たいりょう}{送信|そうしん}。ハナもその{中|なか}の1{人|にん}だった。":"自動ツールでNintandoをかたるSMSを大量送信。ハナもその中の1人だった。"}/>
           </div>
         </div>
       ),
@@ -15068,11 +15068,11 @@ function Ep4Reveal({ el, red, onComplete }) {
           <div style={pmD}>
             <div style={{background:"#1c1c1e",padding:"3px 8px",textAlign:"center",borderBottom:".5px solid rgba(255,255,255,.1)"}}>
               <div style={{fontSize:6,color:"rgba(255,255,255,.4)"}}>メッセージ</div>
-              <div style={{fontSize:8,fontWeight:700,color:"#fff"}}>任天堂</div>
+              <div style={{fontSize:8,fontWeight:700,color:"#fff"}}>Nintando</div>
             </div>
             <div style={smsBubbleStyle}>
-              <RubyText text={el?"【{任天堂|にんてんどう}】{不正|ふせい}アクセスが{検知|けんち}されました。24{時間以内|じかんいない}にご{確認|かくにん}ください。":"【任天堂】不正アクセスが検知されました。24時間以内にご確認ください。"}/>
-              <br/><span style={{color:"#4db8ff",textDecoration:"underline",fontSize:6}}>https://nintendo-account-verify.com</span>
+              <RubyText text={el?"【Nintando】{不正|ふせい}アクセスが{検知|けんち}されました。24{時間以内|じかんいない}にご{確認|かくにん}ください。":"【Nintando】不正アクセスが検知されました。24時間以内にご確認ください。"}/>
+              <br/><span style={{color:"#4db8ff",textDecoration:"underline",fontSize:6}}>https://nintando-account-verify.com</span>
             </div>
             <div style={{fontSize:6,color:"rgba(255,255,255,.3)",padding:"0 6px 4px"}}>
               <RubyText text={el?"{差出人|さしだしにん}が{連絡先|れんらくさき}に{存在|そんざい}しません":"差出人が連絡先に存在しません"}/>
@@ -15100,19 +15100,19 @@ function Ep4Reveal({ el, red, onComplete }) {
             <div style={{background:"#f2f2f7",padding:"2px 5px"}}>
               <div style={{background:"#fff",borderRadius:4,padding:"2px 5px",display:"flex",alignItems:"center",gap:2}}>
                 <span style={{fontSize:7,color:"#ff3b30"}}>⚠️</span>
-                <span style={{fontSize:6,color:"#ff3b30",fontFamily:"monospace"}}>nintendo-account-verify.com</span>
+                <span style={{fontSize:6,color:"#ff3b30",fontFamily:"monospace"}}>nintando-account-verify.com</span>
               </div>
             </div>
-            <div style={ntHdrStyle}><span style={{color:"#fff",fontSize:7,fontWeight:900}}>Nintendo</span></div>
+            <div style={ntHdrStyle}><span style={{color:"#fff",fontSize:7,fontWeight:900}}>Nintando</span></div>
             <div style={ntCardStyle}>
-              <div style={{fontSize:6,fontWeight:700,color:"#333",marginBottom:3}}>ニンテンドーアカウント</div>
+              <div style={{fontSize:6,fontWeight:700,color:"#333",marginBottom:3}}>Nintandoアカウント</div>
               <div style={{border:"1px solid #ccc",borderRadius:2,padding:"2px 4px",fontSize:6,color:"#999",marginBottom:2}}>メールアドレス</div>
               <div style={{border:"1px solid #ccc",borderRadius:2,padding:"2px 4px",fontSize:6,color:"#999",marginBottom:3}}>パスワード</div>
               <div style={{textAlign:"center"}}><span style={{background:"#ccc",color:"#fff",borderRadius:99,padding:"1px 8px",fontSize:6}}>ログイン</span></div>
             </div>
           </div>
           <div style={{background:"rgba(255,59,48,.1)",border:"1px solid rgba(255,59,48,.3)",borderRadius:5,padding:"4px 6px",fontSize:7,color:"#ff9999",lineHeight:1.5,marginTop:4}}>
-            ⚠️ <RubyText text={el?"{本物|ほんもの}：accounts.nintendo.com\n{偽物|にせもの}：nintendo-account-verify.com":"本物：accounts.nintendo.com\n偽物：nintendo-account-verify.com"}/>
+            ⚠️ <RubyText text={el?"{本物|ほんもの}：accounts.nintando.com\n{偽物|にせもの}：nintando-account-verify.com":"本物：accounts.nintando.com\n偽物：nintando-account-verify.com"}/>
           </div>
           <div style={sceneDesc}>
             <RubyText text={el?"{本物|ほんもの}そっくりの{偽|にせ}ログイン{画面|がめん}。URLが{違|ちが}う！":"本物そっくりの偽ログイン画面。URLが違う！"}/>
@@ -15135,7 +15135,7 @@ function Ep4Reveal({ el, red, onComplete }) {
             <div style={{flex:1}}>
               <div style={{fontSize:7,color:"#60a5fa",fontWeight:700,marginBottom:3}}>← ハナ（<RubyText text={el?"{入力|にゅうりょく}":"入力"}/>）</div>
               <div style={pmL}>
-                <div style={ntHdrStyle}><span style={{color:"#fff",fontSize:6,fontWeight:900}}>Nintendo</span></div>
+                <div style={ntHdrStyle}><span style={{color:"#fff",fontSize:6,fontWeight:900}}>Nintando</span></div>
                 <div style={ntCardStyle}>
                   <div style={{border:"1px solid #4a90d9",borderRadius:2,padding:"1px 3px",fontSize:6,color:"#333",marginBottom:1}}>hana@gmail.com</div>
                   <div style={{border:"1px solid #4a90d9",borderRadius:2,padding:"1px 3px",fontSize:6,color:"#333",marginBottom:3}}>●●●●●●</div>
@@ -15176,7 +15176,7 @@ function Ep4Reveal({ el, red, onComplete }) {
             <RubyText text={el?"{本物|ほんもの}サイトへ{入力|にゅうりょく} → 2FA{待機|たいき}":"本物サイトへ入力 → 2FA待機"}/>
           </div>
           <div style={pmL}>
-            <div style={ntHdrStyle}><span style={{color:"#fff",fontSize:7,fontWeight:900}}>Nintendo（<RubyText text={el?"{本物|ほんもの}":"本物"}/>）</span></div>
+            <div style={ntHdrStyle}><span style={{color:"#fff",fontSize:7,fontWeight:900}}>Nintando（<RubyText text={el?"{本物|ほんもの}":"本物"}/>）</span></div>
             <div style={{background:"#f0f0f0",padding:5}}>
               <div style={{fontSize:6,fontWeight:700,color:"#333",textAlign:"center",marginBottom:3}}>
                 <RubyText text={el?"{本人|ほんにん}{確認|かくにん}コードを{入力|にゅうりょく}":"本人確認コードを入力"}/>
@@ -15188,7 +15188,7 @@ function Ep4Reveal({ el, red, onComplete }) {
             </div>
           </div>
           <div style={sceneDesc}>
-            <RubyText text={el?"{盗|ぬす}んだIDとPWで{本物|ほんもの}のNintendoへ{入力|にゅうりょく}。コードが{届|とど}くのを{待|ま}っている。":"盗んだIDとPWで本物のNintendoへ入力。コードが届くのを待っている。"}/>
+            <RubyText text={el?"{盗|ぬす}んだIDとPWで{本物|ほんもの}のNintandoへ{入力|にゅうりょく}。コードが{届|とど}くのを{待|ま}っている。":"盗んだIDとPWで本物のNintandoへ入力。コードが届くのを待っている。"}/>
           </div>
         </div>
       ),
@@ -15207,7 +15207,7 @@ function Ep4Reveal({ el, red, onComplete }) {
             <div style={{background:"rgba(50,50,52,.95)",borderRadius:5,padding:"6px 7px",display:"flex",gap:5,alignItems:"flex-start",margin:5}}>
               <div style={{width:20,height:20,borderRadius:4,background:"#1a73e8",display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,flexShrink:0}}>✉️</div>
               <div>
-                <div style={{fontSize:7,fontWeight:700,color:"#fff"}}>Nintendo</div>
+                <div style={{fontSize:7,fontWeight:700,color:"#fff"}}>Nintando</div>
                 <div style={{fontSize:7,color:"rgba(255,255,255,.7)"}}>
                   <RubyText text={el?"{認証|にんしょう}コード：":"認証コード："}/><strong style={{color:"#ffd700",letterSpacing:2}}>482916</strong>
                 </div>
@@ -15218,7 +15218,7 @@ function Ep4Reveal({ el, red, onComplete }) {
             </div>
           </div>
           <div style={sceneDesc}>
-            <RubyText text={el?"{攻撃|こうげき}{者|しゃ}が{本物|ほんもの}サイトにIDを{入力|にゅうりょく}したことで、{本物|ほんもの}のNintendoからコードが{送|おく}られた。":"攻撃者が本物サイトにIDを入力したことで、本物のNintendoからコードが送られた。"}/>
+            <RubyText text={el?"{攻撃|こうげき}{者|しゃ}が{本物|ほんもの}サイトにIDを{入力|にゅうりょく}したことで、{本物|ほんもの}のNintandoからコードが{送|おく}られた。":"攻撃者が本物サイトにIDを入力したことで、本物のNintandoからコードが送られた。"}/>
           </div>
         </div>
       ),
@@ -15238,7 +15238,7 @@ function Ep4Reveal({ el, red, onComplete }) {
             <div style={{flex:1}}>
               <div style={{fontSize:7,color:"#60a5fa",fontWeight:700,marginBottom:3}}>← ハナ</div>
               <div style={pmL}>
-                <div style={ntHdrStyle}><span style={{color:"#fff",fontSize:6,fontWeight:900}}>Nintendo</span></div>
+                <div style={ntHdrStyle}><span style={{color:"#fff",fontSize:6,fontWeight:900}}>Nintando</span></div>
                 <div style={{background:"#f0f0f0",padding:4}}>
                   <div style={{border:"1.5px solid #4a90d9",borderRadius:2,padding:2,fontSize:9,fontFamily:"monospace",fontWeight:700,letterSpacing:3,textAlign:"center",color:"#e60012",marginBottom:2}}>482916</div>
                   <div style={{textAlign:"center"}}><span style={{background:"#e60012",color:"#fff",borderRadius:99,padding:"1px 7px",fontSize:6}}>認証する</span></div>
@@ -15278,7 +15278,7 @@ function Ep4Reveal({ el, red, onComplete }) {
             <RubyText text={el?"ログイン{成功|せいこう}！メール・PW{変更|へんこう}":"ログイン成功！メール・PW変更"}/>
           </div>
           <div style={pmL}>
-            <div style={ntHdrStyle}><span style={{color:"#fff",fontSize:7,fontWeight:900}}>Nintendo Account</span></div>
+            <div style={ntHdrStyle}><span style={{color:"#fff",fontSize:7,fontWeight:900}}>Nintando Account</span></div>
             <div style={{background:"#f0f0f0",padding:4}}>
               <div style={ntCardStyle}>
                 <div style={{fontSize:6,fontWeight:700,color:"#4ade80",marginBottom:3}}>✓ ログイン成功</div>
@@ -15305,7 +15305,7 @@ function Ep4Reveal({ el, red, onComplete }) {
             <RubyText text={el?"eShopで{大量|たいりょう}{購入|こうにゅう}":"eShopで大量購入"}/>
           </div>
           <div style={{background:"#1a1a2e",borderRadius:6,padding:"6px 7px"}}>
-            <div style={{fontSize:8,color:"#fff",fontWeight:700,marginBottom:4}}>🛒 Nintendo eShop</div>
+            <div style={{fontSize:8,color:"#fff",fontWeight:700,marginBottom:4}}>🛒 Nintando eShop</div>
             {[
               {e:"🎮",n:el?"Switch{本体|ほんたい}":"Switch本体",p:"¥37,980"},
               {e:"🎯",n:el?"Proコントローラー":"Proコントローラー",p:"¥8,978"},
@@ -15340,14 +15340,14 @@ function Ep4Reveal({ el, red, onComplete }) {
             <RubyText text={el?"「{完了|かんりょう}」{画面|がめん}で{安心|あんしん}":"「完了」画面で安心"}/>
           </div>
           <div style={pmL}>
-            <div style={ntHdrStyle}><span style={{color:"#fff",fontSize:7,fontWeight:900}}>Nintendo</span></div>
+            <div style={ntHdrStyle}><span style={{color:"#fff",fontSize:7,fontWeight:900}}>Nintando</span></div>
             <div style={{background:"#f0f0f0",padding:"10px 8px",textAlign:"center"}}>
               <div style={{fontSize:22,marginBottom:3}}>✅</div>
               <div style={{fontSize:7,fontWeight:700,color:"#333",marginBottom:2}}>
                 <RubyText text={el?"{確認|かくにん}が{完了|かんりょう}しました":"確認が完了しました"}/>
               </div>
               <div style={{fontSize:6,color:"#555",lineHeight:1.4}}>
-                <RubyText text={el?"{引|ひ}き{続|つづ}きNintendoをお{楽|たの}しみください":"引き続きNintendoをお楽しみください"}/>
+                <RubyText text={el?"{引|ひ}き{続|つづ}きNintandoをお{楽|たの}しみください":"引き続きNintandoをお楽しみください"}/>
               </div>
             </div>
           </div>
@@ -15376,7 +15376,7 @@ function Ep4Reveal({ el, red, onComplete }) {
             <div style={{background:"#f2f2f7",padding:"2px 5px"}}>
               <div style={{background:"#fff",borderRadius:4,padding:"2px 5px",display:"flex",alignItems:"center",gap:2}}>
                 <span style={{fontSize:6}}>🔍</span>
-                <span style={{fontSize:6,color:"#333",fontFamily:"monospace"}}>nintendo-account-verify.com</span>
+                <span style={{fontSize:6,color:"#333",fontFamily:"monospace"}}>nintando-account-verify.com</span>
               </div>
             </div>
             <div style={{background:"#fff",padding:"10px",textAlign:"center"}}>
@@ -15416,7 +15416,7 @@ function Ep4Reveal({ el, red, onComplete }) {
                   <div style={{fontSize:6,color:"rgba(255,255,255,.5)",marginBottom:3}}>📧 カード明細</div>
                   {["¥37,980","¥8,978","¥7,700"].map((p,i)=>(
                     <div key={i} style={{display:"flex",justifyContent:"space-between",fontSize:6,color:"rgba(255,255,255,.8)",padding:"1px 0",borderBottom:".5px solid rgba(255,255,255,.1)"}}>
-                      <span>Nintendo eShop</span><span style={{color:"#ff3b30"}}>{p}</span>
+                      <span>Nintando eShop</span><span style={{color:"#ff3b30"}}>{p}</span>
                     </div>
                   ))}
                   <div style={{textAlign:"right",marginTop:3,fontSize:9,fontWeight:900,color:"#ff3b30"}}>¥54,658</div>
@@ -16274,8 +16274,8 @@ function Episode4({ onComplete, onExit }) {
           marginBottom:4,
         }}>
           <RubyText text={el
-            ?"【{任天堂|にんてんどう}】お{客様|きゃくさま}のニンテンドーアカウントで{不正|ふせい}アクセスが{検知|けんち}されました。\n\n24{時間以内|じかんいない}にご{確認|かくにん}ください。"
-            :"【任天堂】お客様のニンテンドーアカウントで不正アクセスが検知されました。\n\n24時間以内にご確認ください。"
+            ?"【Nintando】お{客様|きゃくさま}のNintandoアカウントで{不正|ふせい}アクセスが{検知|けんち}されました。\n\n24{時間以内|じかんいない}にご{確認|かくにん}ください。"
+            :"【Nintando】お客様のNintandoアカウントで不正アクセスが検知されました。\n\n24時間以内にご確認ください。"
           }/>
           <br/>
           {/* タップできるURL */}
@@ -16290,7 +16290,7 @@ function Episode4({ onComplete, onExit }) {
               display:"inline-block",
               marginTop:6,
             }}>
-            https://nintendo-account-verify.com/check
+            https://nintando-account-verify.com/check
           </span>
         </div>
 
@@ -16403,23 +16403,23 @@ function Episode4({ onComplete, onExit }) {
 
     const emails = [
       {
-        title: el?"[マイニンテンドーストア]ご{注文|ちゅうもん}{完了|かんりょう}のお{知|し}らせ":"[マイニンテンドーストア]ご注文完了のお知らせ",
-        item: el?"ニンテンドー ゲームキューブ コントローラー":"ニンテンドー ゲームキューブ コントローラー",
+        title: el?"[Nintandoストア]ご{注文|ちゅうもん}{完了|かんりょう}のお{知|し}らせ":"[Nintandoストア]ご注文完了のお知らせ",
+        item: el?"Nintando ゲームキューブ コントローラー":"Nintando ゲームキューブ コントローラー",
         price:"7,980円",time:"2:14",
       },
       {
-        title: el?"[マイニンテンドーストア]ご{注文|ちゅうもん}{完了|かんりょう}のお{知|し}らせ":"[マイニンテンドーストア]ご注文完了のお知らせ",
-        item: el?"Nintendo Switch Proコントローラー":"Nintendo Switch Proコントローラー",
+        title: el?"[Nintandoストア]ご{注文|ちゅうもん}{完了|かんりょう}のお{知|し}らせ":"[Nintandoストア]ご注文完了のお知らせ",
+        item: el?"Nintando Switch Proコントローラー":"Nintando Switch Proコントローラー",
         price:"8,978円",time:"2:16",
       },
       {
-        title: el?"ニンテンドーeShop ご{購入|こうにゅう}のお{知|し}らせ":"ニンテンドーeShop ご購入のお知らせ",
+        title: el?"Nintando eShop ご{購入|こうにゅう}のお{知|し}らせ":"Nintando eShop ご購入のお知らせ",
         item: el?"ゼルダの{伝説|でんせつ} ティアーズ オブ ザ キングダム":"ゼルダの伝説 ティアーズ オブ ザ キングダム",
         price:"7,700円",time:"2:19",
       },
       {
-        title: el?"[マイニンテンドーストア]ご{注文|ちゅうもん}{完了|かんりょう}のお{知|し}らせ":"[マイニンテンドーストア]ご注文完了のお知らせ",
-        item: el?"Nintendo Switch（{有機ELモデル|ゆうきELもでる}）":"Nintendo Switch（有機ELモデル）",
+        title: el?"[Nintandoストア]ご{注文|ちゅうもん}{完了|かんりょう}のお{知|し}らせ":"[Nintandoストア]ご注文完了のお知らせ",
+        item: el?"Nintando Switch（{有機ELモデル|ゆうきELもでる}）":"Nintando Switch（有機ELモデル）",
         price:"37,980円",time:"2:23",
       },
     ];
@@ -16474,7 +16474,7 @@ function Episode4({ onComplete, onExit }) {
                   )}
                   <span style={{
                     fontSize:13,fontWeight:i===emailStep?700:500,
-                  }}>Nintendo</span>
+                  }}>Nintando</span>
                 </div>
                 <span style={{fontSize:11,color:"rgba(255,255,255,.4)"}}>
                   {m.time}
@@ -16531,8 +16531,8 @@ function Episode4({ onComplete, onExit }) {
             animation:"mamFadeUp .5s ease",
           }}>
             <RubyText text={el
-              ?"ハナ：「え…なんでNintendoからメールがこんなに…？Switch{本体|ほんたい}なんて{買|か}ってないのに！もしかして…！」"
-              :"ハナ：「え…なんでNintendoからメールがこんなに…？Switch本体なんて買ってないのに！もしかして…！」"
+              ?"ハナ：「え…なんでNintandoからメールがこんなに…？Switch{本体|ほんたい}なんて{買|か}ってないのに！もしかして…！」"
+              :"ハナ：「え…なんでNintandoからメールがこんなに…？Switch本体なんて買ってないのに！もしかして…！」"
             }/>
           </div>
         )}
