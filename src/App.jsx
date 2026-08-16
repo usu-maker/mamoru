@@ -6905,20 +6905,10 @@ function HomeScreen({ onNavigate, progress, startTutorial, onTutorialStarted }) 
       duration: ageMode === "elementary" ? "{約|やく}8{分|ふん}" : "約8分",
       audience: ageMode === "elementary" ? "{中学生|ちゅうがくせい}〜・{親子|おやこ}で" : "中学生〜・親子で",
       accent: "#8b5cf6", bg1: "#1a0a2e", bg2: "#0a0515", done: progress.ep7 },
-    { id: "twodevice",
-      tag: "SPECIAL · 2{台|だい}モード 👨‍👩‍👧",
-      title: ageMode === "elementary" ? "{親|おや}が{犯罪者|はんざいしゃ}{役|やく}になる{体験|たいけん}" : "親が犯罪者役になる体験",
-      icon: "📲",
-      desc: ageMode === "elementary" ? "{親|おや}が「{闇|やみ}バイト{勧誘者|かんゆうしゃ}」{役|やく}でボタンをおす→こどもにDMが{届|とど}く。1{台|だい}で{体験|たいけん}できる{親子|おやこ}きょうどうロールプレイ。{体験|たいけん}{後|ご}の{対話|たいわ}が{最大|さいだい}の{教育|きょういく}になる。" : "親が「闇バイト勧誘者」役でボタンを押す→子どもにDMが届く。1台で体験できる親子共同ロールプレイ。体験後の対話が最大の教育になる。",
-      duration: ageMode === "elementary" ? "{約|やく}10{分|ふん}" : "約10分",
-      audience: ageMode === "elementary" ? "{親子|おやこ}で{必須|ひっす}" : "親子で必須",
-      accent: "#f59e0b", bg1: "#1a1200", bg2: "#0f0a00", done: progress.twodevice },
-    { id: "attacker", tag: t("modes.attacker.tag"), title: t("modes.attacker.title"), icon: "🎭", desc: t("modes.attacker.desc"), duration: t("modes.attacker.duration"), audience: t("modes.attacker.audience"), accent: "#ff4343", bg1: "#1a0505", bg2: "#0f0303", done: progress.attacker },
   ];
   const soon = [
     { icon: "🤖", title: ageMode === "elementary" ? "{生成|せいせい}AI{詐欺|さぎ}・ディープフェイク" : "生成AI詐欺・ディープフェイク", tag: "EPISODE 08" },
     { icon: "🎮", title: "オンラインゲームトラブル", tag: "EPISODE 09" },
-    { icon: "🌐", title: ageMode === "elementary" ? "Firebase{連携|れんけい}リアル2{台|だい}モード" : "Firebase連携リアル2台モード", tag: "COMING SOON" },
   ];
 
   return (
@@ -7056,7 +7046,7 @@ function HomeScreen({ onNavigate, progress, startTutorial, onTutorialStarted }) 
         <div style={{ padding: "24px 20px 80px", maxWidth: 440, margin: "0 auto" }}>
           <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 11, fontWeight: 900, color: "#fff", letterSpacing: ".1em", marginBottom: 10 }}>{t("home.sectionPlay")}</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 16 }}>
-            {modes.filter(m => m.id !== "twodevice" && m.id !== "attacker").map((m, i) => (
+            {modes.map((m, i) => (
               <button key={m.id} onClick={() => {
                 if (m.id === "ep12") { if (!progress.ep1) { alert("EP1をクリアするとアンロックされます！"); return; } onNavigate("ep12"); return; }
                 if (m.id === "ep4") { if (!progress.ep4_1) { alert("EP4-1をクリアするとアンロックされます！"); return; } onNavigate("ep4"); return; }
@@ -7093,27 +7083,18 @@ function HomeScreen({ onNavigate, progress, startTutorial, onTutorialStarted }) 
 
           <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 11, color: "rgba(255,255,255,.4)", letterSpacing: ".1em", margin: "16px 0 8px" }}>{t("home.sectionSoon")}</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {[modes.find(x => x.id === "twodevice"), modes.find(x => x.id === "attacker")].map((m, i) => (
-              <button key={m.id} onClick={() => {
-                if (m.id === "twodevice") { alert("🚧 2台モードは近日公開予定です！\n\nFirebase連携によるリアル2台モードを準備中です。お楽しみに。"); return; }
-                if (m.id === "attacker" && !CLAUDE_API_ENABLED) { alert("🚧 攻撃者体験は近日公開予定です！\n\nAIリアルタイム生成が必要な機能のため、準備中です。お楽しみに。"); return; }
-                onNavigate(m.id);
-              }}
-                style={{ width: "100%", background: m.id === "attacker" && !CLAUDE_API_ENABLED ? "linear-gradient(135deg,#1a1a1a,#111)" : `linear-gradient(135deg,${m.bg1},${m.bg2})`, border: `1.5px solid ${m.accent}35`, borderRadius: 22, padding: "20px 18px", cursor: "pointer", textAlign: "left", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative", overflow: "hidden", boxShadow: `0 6px 20px rgba(0,0,0,.3)`, opacity: 0.6, animation: `slideUp .5s ${i * .12}s both ease` }}>
-                <div style={{ position: "absolute", top: 12, right: 12, background: "#475569", color: "#fff", fontSize: 9, fontWeight: 900, padding: "3px 9px", borderRadius: 99, letterSpacing: ".1em" }}>🚧 近日公開</div>
-                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
-                  <div style={{ width: 52, height: 52, borderRadius: 14, background: `${m.accent}18`, border: `1.5px solid ${m.accent}35`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, flexShrink: 0 }}>{m.icon}</div>
-                  <div>
-                    <div style={{ fontSize: 9, fontFamily: "'DotGothic16',monospace", color: m.accent, letterSpacing: ".15em", marginBottom: 4 }}><RubyText text={m.tag} /></div>
-                    <div style={{ fontSize: 17, fontWeight: 900, color: "#fff", lineHeight: 1.2 }}><RubyText text={m.title} /></div>
-                  </div>
+            {soon.map((s, i) => (
+              <div key={s.tag + i}
+                style={{ width: "100%", background: "rgba(255,255,255,.03)", border: "1.5px dashed rgba(255,255,255,.14)", borderRadius: 22, padding: "16px 18px", position: "relative", display: "flex", alignItems: "center", gap: 13, cursor: "default", userSelect: "none", animation: `slideUp .5s ${i * .12}s both ease` }}>
+                <div style={{ position: "absolute", top: 12, right: 14, background: "rgba(255,255,255,.07)", color: "rgba(255,255,255,.45)", fontSize: 8.5, fontWeight: 900, padding: "3px 9px", borderRadius: 99, letterSpacing: ".06em" }}>
+                  <RubyText text={ageMode === "elementary" ? "{準備中|じゅんびちゅう}" : "準備中"} />
                 </div>
-                <p style={{ fontSize: 12, color: "rgba(255,255,255,.6)", lineHeight: 1.75, margin: "0 0 14px" }}><RubyText text={m.desc} /></p>
-                <div style={{ display: "flex", gap: 10 }}>
-                  <span style={{ fontSize: 11, color: "rgba(255,255,255,.4)" }}>⏱ <RubyText text={m.duration} /></span>
-                  <span style={{ fontSize: 11, color: "rgba(255,255,255,.4)" }}>👤 <RubyText text={m.audience} /></span>
+                <div style={{ width: 46, height: 46, borderRadius: 13, background: "rgba(255,255,255,.05)", border: "1.5px solid rgba(255,255,255,.12)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 23, flexShrink: 0, opacity: .75 }}>{s.icon}</div>
+                <div>
+                  <div style={{ fontSize: 9, fontFamily: "'DotGothic16',monospace", color: "rgba(255,255,255,.38)", letterSpacing: ".15em", marginBottom: 4 }}>{s.tag}</div>
+                  <div style={{ fontSize: 14.5, fontWeight: 700, color: "rgba(255,255,255,.62)", lineHeight: 1.35 }}><RubyText text={s.title} /></div>
                 </div>
-              </button>
+              </div>
             ))}
           </div>
         </div>
@@ -22368,6 +22349,13 @@ function RoundFeedback({ scenario, kidChoice, onNext, isLast }) {
   );
 }
 
+// ─────────────────────────────────────────────
+// 【未使用・保存用】TwoDeviceMode（2台モード／親が犯罪者役）
+// 2026-08: 実装難度が高いと判断し、ホーム画面からの導線・EP_META・進捗集計・
+// バッジ（親子コラボ達成）をすべて削除した。将来 Firebase 連携でリアル2台モードを
+// 実装する可能性を残すため、コンポーネント本体はここに保存してある。
+// 復活させる場合は modes 配列・EP_META・epKeys・ルーティングへの再登録が必要。
+// ─────────────────────────────────────────────
 function TwoDeviceMode({ onComplete }) {
   const ageMode = useAgeMode();
   const [phase, setPhase] = useState("intro"); // intro|parent|kid|feedback|debrief|complete
@@ -22582,6 +22570,13 @@ const PHOTO_OPTIONS = [
   { id: "park", emoji: "🌸", label: "近所の公園", risks: ["場所", "行動エリア"] },
 ];
 
+// ─────────────────────────────────────────────
+// 【未使用・保存用】AttackerMode（攻撃者体験／投稿から何が特定できるか）
+// 2026-08: Claude API によるリアルタイム生成が前提の機能であり、現状 CLAUDE_API_ENABLED=false の
+// ため動作しない。実装しない方針としてホーム画面の導線・EP_META・進捗集計から削除した。
+// 将来 API を有効化して復活させる可能性を残すため、コンポーネント本体は保存してある。
+// 復活させる場合は modes 配列・EP_META・epKeys・ルーティングへの再登録が必要。
+// ─────────────────────────────────────────────
 function AttackerMode({ onComplete }) {
   const [phase, setPhase] = useState("intro"); // intro|posting|attacker|debrief
   const [postData, setPostData] = useState(null);
@@ -22918,8 +22913,6 @@ export default function App() {
         {screen === "ep5" && <Episode5 onComplete={(s) => finish("ep5", s)} onExit={() => navigate("home")} />}
         {screen === "ep6" && <Episode6 onComplete={(s) => finish("ep6", s)} onExit={() => navigate("home")} />}
         {screen === "ep7" && <Episode7 onComplete={(s) => finish("ep7", s)} onExit={() => navigate("home")} />}
-        {screen === "twodevice" && <TwoDeviceMode onComplete={() => finish("twodevice", 3)} />}
-        {screen === "attacker" && <AttackerMode onComplete={() => finish("attacker", 3)} />}
       </LangContext.Provider>
     </AgeModeContext.Provider>
   );
