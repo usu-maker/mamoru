@@ -1696,7 +1696,6 @@ const BADGES = [
   { id: "ep5_master",   icon: "👥", label: "いじめ防衛隊",      elLabel: "いじめ{防衛隊|ぼうえいたい}",          desc: "EP5をクリア",                elDesc: "EP5をクリア",                                     color: "#ec4899", cond: (r) => r.ep5?.completed },
   { id: "ep6_master",   icon: "📸", label: "画像安全マスター",   elLabel: "{画像|がぞう}{安全|あんぜん}マスター",  desc: "EP6をクリア",                elDesc: "EP6をクリア",                                     color: "#f43f5e", cond: (r) => r.ep6?.completed },
   { id: "ep7_master",   icon: "🕸️", label: "グルーミング免疫",   elLabel: "グルーミング{免疫|めんえき}",          desc: "EP7をクリア",                elDesc: "EP7をクリア",                                     color: "#8b5cf6", cond: (r) => r.ep7?.completed },
-  { id: "two_device",   icon: "📲", label: "親子コラボ達成",     elLabel: "{親子|おやこ}コラボ{達成|たっせい}",   desc: "2台モードをクリア",           elDesc: "2{台|だい}モードをクリア",                         color: "#f59e0b", cond: (r) => r.twodevice?.completed },
   { id: "triple",       icon: "⭐", label: "3冠達成",           elLabel: "3{冠|かん}{達成|たっせい}",            desc: "任意3EPをクリア",             elDesc: "{任意|にんい}3EPをクリア",                         color: "#a78bfa", cond: (r) => Object.values(r).filter(v => v?.completed).length >= 3 },
   { id: "five_star",    icon: "🌟", label: "5冠達成",           elLabel: "5{冠|かん}{達成|たっせい}",            desc: "任意5EPをクリア",             elDesc: "{任意|にんい}5EPをクリア",                         color: "#fbbf24", cond: (r) => Object.values(r).filter(v => v?.completed).length >= 5 },
   { id: "all_clear",    icon: "🏆", label: "全EP制覇",          elLabel: "{全|ぜん}EP{制覇|せいは}",             desc: "全7EPをクリア",               elDesc: "{全|ぜん}7EPをクリア",                             color: "#ff6b6b", cond: (r) => ["ep1","ep2","ep3","ep4","ep5","ep6","ep7"].every(k => r[k]?.completed) },
@@ -1759,7 +1758,7 @@ function BadgeGallery({ record }) {
   const earned = getBadges(record);
   const masterTitle = getMasterTitle(record);
   const ageMode = useAgeMode();
-  const allKeys = ["ep1","ep2","ep3","ep4","ep5","ep6","ep7","twodevice","attacker"];
+  const allKeys = ["ep1","ep12","ep2","ep3","ep32","ep4_1","ep4","ep5","ep6","ep7"];
   const displayTitle = ageMode === "elementary" ? masterTitle.elTitle : masterTitle.title;
   const titleEmoji = displayTitle.split(" ")[0];
   const titleText = displayTitle.slice(displayTitle.indexOf(" ") + 1);
@@ -4379,7 +4378,7 @@ function ParentSecretDashboard({ onClose }) {
   const weekStr = getWeekNumber();
   const weeklyResult = (() => { try { return JSON.parse(localStorage.getItem(`mamoru_weekly_result_${weekStr}`) || "[]"); } catch { return []; } })();
 
-  const epKeys = ["ep1","ep2","ep3","ep4","ep5","ep6","ep7"];
+  const epKeys = ["ep1","ep12","ep2","ep3","ep32","ep4_1","ep4","ep5","ep6","ep7"];
   const completedEps = epKeys.filter(k => record[k]?.completed);
   const totalTime = epKeys.reduce((sum, k) => sum + (record[k]?.time || 0), 0);
   const totalRetries = epKeys.reduce((sum, k) => sum + (record[k]?.retries || 0), 0);
@@ -5780,15 +5779,15 @@ const STORAGE_KEY = "mamoru_progress_v1";
 
 const EP_META = {
   ep1: { title: "その写真、アップロードして大丈夫？", icon: "🔍", color: "#ffa940", theme: "個人情報・位置情報" },
+  ep12: { title: "本当は、位置情報が見えてるよ", icon: "📍", color: "#ffa940", theme: "位置情報サービス" },
   ep2: { title: "フェイクニュースを見抜け", icon: "🔎", color: "#7c3aed", theme: "情報リテラシー" },
   ep3: { title: "断れなくなる前に", icon: "⚠️", color: "#16a34a", theme: "闇バイト・詐欺" },
+  ep32: { title: "その求人、闇バイトじゃない？", icon: "💬", color: "#16a34a", theme: "闇バイト求人の見抜き方" },
   ep4_1: { title: "使い回しの落とし穴", icon: "🔑", color: "#0ea5e9", theme: "パスワード・リスト型攻撃" },
   ep4: { title: "そっくり！偽サイトの罠", icon: "🎣", color: "#0ea5e9", theme: "フィッシング詐欺" },
   ep5: { title: "見ているだけも、いじめだった", icon: "👥", color: "#ec4899", theme: "ネットいじめ" },
   ep6: { title: "勝手に投稿、してない？", icon: "📸", color: "#f43f5e", theme: "肖像権" },
   ep7: { title: "その人、本当に同い年？", icon: "🕸️", color: "#8b5cf6", theme: "SNSでの出会いトラブル" },
-  twodevice: { title: "親が犯罪者役になる体験", icon: "📲", color: "#f59e0b", theme: "闇バイト・詐欺" },
-  attacker: { title: "投稿したら、何がバレる？", icon: "🎭", color: "#ff4343", theme: "個人情報漏洩" },
 };
 
 function loadRecord() {
@@ -6080,7 +6079,7 @@ function ParentReport({ onBack }) {
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [tab, setTab] = useState("summary"); // summary | detail | advice | badges
 
-  const epKeys = ["ep1", "ep2", "ep3", "ep4", "attacker"];
+  const epKeys = ["ep1", "ep12", "ep2", "ep3", "ep32", "ep4_1", "ep4", "ep5", "ep6", "ep7"];
   const completed = epKeys.filter(k => record[k]?.completed);
   const totalScore = epKeys.reduce((s, k) => s + (record[k]?.score || 0), 0);
   const maxScore = epKeys.reduce((s, k) => s + (EP_META[k] ? 3 : 3), 0);
@@ -6420,7 +6419,7 @@ function ParentReport({ onBack }) {
                 <RubyText text={ageMode === "elementary" ? "{各|かく}エピソード{終了後|しゅうりょうご}に{入力|にゅうりょく}した{内容|ないよう}です。{子|こ}どもと{一緒|いっしょ}に{読|よ}み{返|かえ}してみましょう。" : "各エピソード終了後に入力した内容です。子どもと一緒に読み返してみましょう。"} />
               </div>
             </div>
-            {Object.keys(EP_META).filter(k => !["twodevice","attacker"].includes(k)).map(k => {
+            {Object.keys(EP_META).map(k => {
               let saved = "";
               try { saved = localStorage.getItem(`mamoru_mywords_${k}`) || ""; } catch {}
               const meta = EP_META[k];
@@ -22870,8 +22869,6 @@ export default function App() {
       ep5: !!rec.ep5?.completed, ep6: !!rec.ep6?.completed,
       ep7: !!rec.ep7?.completed,
       ep12: !!rec.ep12?.completed,
-      twodevice: !!rec.twodevice?.completed,
-      attacker: !!rec.attacker?.completed,
     };
   });
   const navigate = (to) => { setScreen(to); window.scrollTo(0, 0); };
