@@ -157,19 +157,6 @@ const I18N = {
       duration: { ja: "約8分", el: "{約|やく}8{分|ふん}", en: "About 8 min", ko: "약 8분", zh: "约8分钟" },
       audience: { ja: "中学生〜・親子で", el: "{中学生|ちゅうがくせい}〜・{親子|おやこ}で", en: "Ages 12+ / With parents", ko: "중학생~ · 부모와 함께", zh: "初中~ · 亲子" },
     },
-    ep32: {
-      tag: { ja: "EPISODE 03-2 · 怪しい求人を見抜く", el: "EPISODE 03-2 · {怪|あや}しい{求人|きゅうじん}を{見抜|みぬ}く", en: "EPISODE 03-2 · Spot the Dark Job", ko: "EPISODE 03-2 · 이상한 구인 간파하기", zh: "第03-2话 · 识破可疑招募" },
-      title: { ja: "その求人、闇バイトじゃない？", el: "その{求人|きゅうじん}、{闇|やみ}バイトじゃない？", en: "Is That Job Listing Legit?", ko: "그 구인, 불법 아르바이트 아냐?", zh: "那个招聘，是非法兼职吗？" },
-      desc: {
-        ja: "X・Instagram・求人サイト…3つの場面で怪しいポイントを全部タップして見つけよう。",
-        el: "X・Instagram・{求人|きゅうじん}サイト…3つの{場面|ばめん}で{怪|あや}しいポイントを{全部|ぜんぶ}タップして{見|み}つけよう。",
-        en: "X, Instagram, job sites... Find all the suspicious points in 3 real-looking scams.",
-        ko: "X, 인스타그램, 구인 사이트... 3개 장면에서 수상한 포인트를 모두 찾아라.",
-        zh: "X、Instagram、求职网站…在3个场景中找出所有可疑点。",
-      },
-      duration: { ja: "約8分", el: "{約|やく}8{分|ふん}", en: "About 8 min", ko: "약 8분", zh: "约8分钟" },
-      audience: { ja: "中学生〜・親子で", el: "{中学生|ちゅうがくせい}〜・{親子|おやこ}で", en: "Ages 12+ / With parents", ko: "중학생~ · 부모와 함께", zh: "初中~ · 亲子" },
-    },
     ep4_1: {
       tag: { ja: "EPISODE 04-1 · パスワード流出体験", el: "EPISODE 04-1 · パスワード{流出|りゅうしゅつ}{体験|たいけん}", en: "EPISODE 04-1 · Credential Stuffing", ko: "EPISODE 04-1 · 비밀번호 유출 체험", zh: "第04-1话 · 密码泄露体验" },
       title: { ja: "使い回しの落とし穴", el: "{使|つか}い{回|まわ}しの{落|お}とし{穴|あな}", en: "The Password Reuse Trap", ko: "비밀번호 재사용의 함정", zh: "重复使用密码的陷阱" },
@@ -1758,7 +1745,7 @@ function BadgeGallery({ record }) {
   const earned = getBadges(record);
   const masterTitle = getMasterTitle(record);
   const ageMode = useAgeMode();
-  const allKeys = ["ep1","ep12","ep2","ep3","ep32","ep4_1","ep4","ep5","ep6","ep7"];
+  const allKeys = ["ep1","ep12","ep2","ep3","ep4_1","ep4","ep5","ep6","ep7"];
   const displayTitle = ageMode === "elementary" ? masterTitle.elTitle : masterTitle.title;
   const titleEmoji = displayTitle.split(" ")[0];
   const titleText = displayTitle.slice(displayTitle.indexOf(" ") + 1);
@@ -3640,17 +3627,6 @@ const EP_INTRO_META = {
     elParentNote: "2024{年|ねん}、{高校|こうこう}・{大学生|だいがくせい}の{逮捕者|たいほしゃ}が{急増|きゅうぞう}。「{知|し}らなかった」は{裁判|さいばん}で{通用|つうよう}しません。{相談|そうだん}できる{関係|かんけい}を{今日|きょう}{作|つく}りましょう。",
     accentColor: "#16a34a",
   },
-  ep32: {
-    theme: "怪しい求人を見抜く",
-    hook: "SNS・Instagram・求人サイト…闇バイトの入口はどこにでもある。本物の手口を使った3つの場面で、怪しいポイントを自分で見つけよう。",
-    talkPoints: ["求人を見て怪しいと気づいたサインは何か", "友達から「いい仕事あるよ」と誘われたらどうするか", "怪しいと思ったら誰に相談するか"],
-    parentNote: "闇バイトの入口はSNS・ゲーム・求人サイトなど日常的に使うサービスの中にあります。「高収入・簡単・スマホだけ」の募集を見たら必ず大人に相談するよう約束しましょう。",
-    elTheme: "{怪|あや}しい{求人|きゅうじん}を{見抜|みぬ}く",
-    elHook: "SNS・Instagram・{求人|きゅうじん}サイト…{闇|やみ}バイトの{入口|いりぐち}はどこにでもある。{本物|ほんもの}の{手口|てぐち}をつかった3つの{場面|ばめん}で、{怪|あや}しいポイントを{自分|じぶん}で{見|み}つけよう。",
-    elTalkPoints: ["{求人|きゅうじん}を{見|み}て{怪|あや}しいと{気|き}づいたサインは{何|なに}か", "{友達|ともだち}から「いい{仕事|しごと}あるよ」と{誘|さそ}われたらどうするか", "{怪|あや}しいと{思|おも}ったら{誰|だれ}に{相談|そうだん}するか"],
-    elParentNote: "{闇|やみ}バイトの{入口|いりぐち}はSNS・ゲーム・{求人|きゅうじん}サイトなど{日常|にちじょう}てきに{使|つか}うサービスの{中|なか}にあります。「{高収入|こうしゅうにゅう}・かんたん・スマホだけ」のぼしゅうを{見|み}たら{必|かなら}ず{大人|おとな}に{相談|そうだん}するよう{約束|やくそく}しましょう。",
-    accentColor: "#16a34a",
-  },
   ep4_1: {
     theme: "パスワード・リスト型攻撃",
     hook: "いつものパスワードを使い回していると…どこか1つのサイトから情報が流出しただけで、他のアカウントまで自動で乗っ取られてしまう。",
@@ -4378,7 +4354,7 @@ function ParentSecretDashboard({ onClose }) {
   const weekStr = getWeekNumber();
   const weeklyResult = (() => { try { return JSON.parse(localStorage.getItem(`mamoru_weekly_result_${weekStr}`) || "[]"); } catch { return []; } })();
 
-  const epKeys = ["ep1","ep12","ep2","ep3","ep32","ep4_1","ep4","ep5","ep6","ep7"];
+  const epKeys = ["ep1","ep12","ep2","ep3","ep4_1","ep4","ep5","ep6","ep7"];
   const completedEps = epKeys.filter(k => record[k]?.completed);
   const totalTime = epKeys.reduce((sum, k) => sum + (record[k]?.time || 0), 0);
   const totalRetries = epKeys.reduce((sum, k) => sum + (record[k]?.retries || 0), 0);
@@ -5782,7 +5758,6 @@ const EP_META = {
   ep12: { title: "本当は、位置情報が見えてるよ", icon: "📍", color: "#ffa940", theme: "位置情報サービス" },
   ep2: { title: "フェイクニュースを見抜け", icon: "🔎", color: "#7c3aed", theme: "情報リテラシー" },
   ep3: { title: "断れなくなる前に", icon: "⚠️", color: "#16a34a", theme: "闇バイト・詐欺" },
-  ep32: { title: "その求人、闇バイトじゃない？", icon: "💬", color: "#16a34a", theme: "闇バイト求人の見抜き方" },
   ep4_1: { title: "使い回しの落とし穴", icon: "🔑", color: "#0ea5e9", theme: "パスワード・リスト型攻撃" },
   ep4: { title: "そっくり！偽サイトの罠", icon: "🎣", color: "#0ea5e9", theme: "フィッシング詐欺" },
   ep5: { title: "見ているだけも、いじめだった", icon: "👥", color: "#ec4899", theme: "ネットいじめ" },
@@ -6079,7 +6054,7 @@ function ParentReport({ onBack }) {
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [tab, setTab] = useState("summary"); // summary | detail | advice | badges
 
-  const epKeys = ["ep1", "ep12", "ep2", "ep3", "ep32", "ep4_1", "ep4", "ep5", "ep6", "ep7"];
+  const epKeys = ["ep1", "ep12", "ep2", "ep3", "ep4_1", "ep4", "ep5", "ep6", "ep7"];
   const completed = epKeys.filter(k => record[k]?.completed);
   const totalScore = epKeys.reduce((s, k) => s + (record[k]?.score || 0), 0);
   const maxScore = epKeys.reduce((s, k) => s + (EP_META[k] ? 3 : 3), 0);
@@ -6878,7 +6853,6 @@ function HomeScreen({ onNavigate, progress, startTutorial, onTutorialStarted }) 
       accent: "#ffa940", bg1: "#1a1000", bg2: "#0f0800", done: progress.ep12, locked: !progress.ep1 },
     { id: "ep2", tag: t("modes.ep2.tag"), title: t("modes.ep2.title"), icon: "🔎", desc: t("modes.ep2.desc"), duration: t("modes.ep2.duration"), audience: t("modes.ep2.audience"), accent: "#7c3aed", bg1: "#0f0a1e", bg2: "#07041a", done: progress.ep2 },
     { id: "ep3", tag: t("modes.ep3.tag"), title: t("modes.ep3.title"), icon: "⚠️", desc: t("modes.ep3.desc"), duration: t("modes.ep3.duration"), audience: t("modes.ep3.audience"), accent: "#16a34a", bg1: "#0a1a0a", bg2: "#041004", done: progress.ep3 },
-    { id: "ep32", tag: t("modes.ep32.tag"), title: t("modes.ep32.title"), icon: "💬", desc: t("modes.ep32.desc"), duration: t("modes.ep32.duration"), audience: t("modes.ep32.audience"), accent: "#06c755", bg1: "#041210", bg2: "#020c08", done: progress.ep32 },
     { id: "ep4_1", tag: t("modes.ep4_1.tag"), title: t("modes.ep4_1.title"), icon: "🔑", desc: t("modes.ep4_1.desc"), duration: t("modes.ep4_1.duration"), audience: t("modes.ep4_1.audience"), accent: "#0ea5e9", bg1: "#031220", bg2: "#020c18", done: progress.ep4_1 },
     { id: "ep4", tag: t("modes.ep4.tag"), title: t("modes.ep4.title"), icon: "🎣", desc: t("modes.ep4.desc"), duration: t("modes.ep4.duration"), audience: t("modes.ep4.audience"), accent: "#0ea5e9", bg1: "#031220", bg2: "#020c18", done: progress.ep4, locked: !progress.ep4_1 },
     { id: "ep5",
@@ -13062,298 +13036,6 @@ function PhoneFrame({ children, header }) {
     </div>
   );
 }
-
-// ═══════════════════════════════════════════════════════════════
-// EPISODE 03-2 — その求人、闇バイトじゃない？
-// 怪しい求人を見抜くタップ体験
-// ═══════════════════════════════════════════════════════════════
-function Episode3_2({ onComplete, onExit }) {
-  const ageMode = useAgeMode();
-  const el = ageMode === "elementary";
-  const [phase, setPhase] = useState("parent_intro");
-  const [stage, setStage] = useState(1); // 1, 2, 3
-  const [foundS1, setFoundS1] = useState([]);
-  const [foundS2, setFoundS2] = useState([]);
-  const [foundS3, setFoundS3] = useState([]);
-  const [detailModal, setDetailModal] = useState(null); // { title, body }
-  const [contactName, setContactName] = useState("");
-  const [contactSaved, setContactSaved] = useState(false);
-
-  const green = "#16a34a";
-  const greenDark = "#15803d";
-
-  useEffect(() => {
-    const saved = localStorage.getItem("mamoru_ep3_2_contact");
-    if (saved) setContactName(saved);
-  }, []);
-
-  // Stage 1: X (Twitter) DM
-  const stage1Points = el ? [
-    { id: 0, label: el ? "アカウント{作成|さくせい}3{週間前|しゅうかんまえ}" : "アカウント作成3週間前", body: el ? "たった3{週間前|しゅうかんまえ}に{作|つく}られたアカウント。{本物|ほんもの}の{会社|かいしゃ}は{何年|なんねん}も{前|まえ}からアカウントがある。つかい{捨|す}て{目的|もくてき}で{作|つく}られた{可能性|かのうせい}が{高|たか}い。" : "たった3週間前に作られたアカウント。本物の会社は何年も前からアカウントがある。使い捨て目的で作られた可能性が高い。" },
-    { id: 1, label: el ? "フォロー{中|ちゅう}：1.2{万|まん}（フォロワーより{多|おお}い）" : "フォロー中：1.2万（フォロワーより多い）", body: el ? "フォロワーより{圧倒的|あっとうてき}にフォロー{数|すう}が{多|おお}い。{大量|たいりょう}フォローで{目立|めだ}たせようとしている。スパムアカウントの{典型的|てんけいてき}な{特徴|とくちょう}。" : "フォロワーより圧倒的にフォロー数が多い。大量フォローで目立たせようとしている。スパムアカウントの典型的な特徴。" },
-    { id: 2, label: el ? "{日払|ひばら}い3〜5{万円|まんえん}" : "日払い3〜5万円", body: el ? "1{日|にち}でこの{金額|きんがく}は{普通|ふつう}のバイトではあり{得|え}ない。{最低賃金|さいていちんぎん}のバイトなら8{時間|じかん}はたらいて{約|やく}1{万円|まんえん}。なぜこんなに{高|たか}いのか{必|かなら}ず{疑|うたが}うこと。" : "1日でこの金額は普通のバイトではあり得ない。最低賃金のバイトなら8時間働いて約1万円。なぜこんなに高いのか必ず疑うこと。" },
-    { id: 3, label: el ? "{身|み}バレなし" : "身バレなし", body: el ? "{合法的|ごうほうてき}な{仕事|しごと}なら{身|み}バレを{気|き}にする{必要|ひつよう}がない。{違法|いほう}な{仕事|しごと}だから{正体|しょうたい}を{隠|かく}す{必要|ひつよう}がある。これは{犯罪|はんざい}に{関|かか}わる{仕事|しごと}のサイン。" : "合法的な仕事なら身バレを気にする必要がない。違法な仕事だから正体を隠す必要がある。これは犯罪に関わる仕事のサイン。" },
-    { id: 4, label: el ? "LINEに{誘導|ゆうどう}するURL" : "LINEに誘導するURL", body: el ? "{正式|せいしき}な{採用|さいよう}は{会社|かいしゃ}の{公式|こうしき}サイトやハローワーク。LINEに{誘導|ゆうどう}するのは{個人情報|こじんじょうほう}を{集|あつ}めるため。{一度|いちど}LINEを{教|おし}えると{逃|に}げられなくなる。" : "正式な採用は会社の公式サイトやハローワーク。LINEに誘導するのは個人情報を集めるため。一度LINEを教えると逃げられなくなる。" },
-    { id: 5, label: el ? "18{才|さい}{未満|みまん}も{応募|おうぼ}OK" : "18歳未満も応募可能", body: el ? "{未成年|みせいねん}をターゲットにしている{証拠|しょうこ}。{判断力|はんだんりょく}が{低|ひく}く・{断|ことわ}りにくい・{社会|しゃかい}{経験|けいけん}が{少|すく}ない{若者|わかもの}が{狙|ねら}われている。" : "未成年をターゲットにしている証拠。判断力が低く・断りにくい・社会経験が少ない若者が狙われている。" },
-  ] : [
-    { id: 0, label: "アカウント作成3週間前", body: "たった3週間前に作られたアカウント。本物の会社は何年も前からアカウントがある。使い捨て目的で作られた可能性が高い。" },
-    { id: 1, label: "フォロー中：1.2万（フォロワーより多い）", body: "フォロワーより圧倒的にフォロー数が多い。大量フォローで目立たせようとしている。スパムアカウントの典型的な特徴。" },
-    { id: 2, label: "日払い3〜5万円", body: "1日でこの金額は普通のバイトではあり得ない。最低賃金のバイトなら8時間働いて約1万円。なぜこんなに高いのか必ず疑うこと。" },
-    { id: 3, label: "身バレなし", body: "合法的な仕事なら身バレを気にする必要がない。違法な仕事だから正体を隠す必要がある。これは犯罪に関わる仕事のサイン。" },
-    { id: 4, label: "LINEに誘導するURL", body: "正式な採用は会社の公式サイトやハローワーク。LINEに誘導するのは個人情報を集めるため。一度LINEを教えると逃げられなくなる。" },
-    { id: 5, label: "18歳未満も応募可能", body: "未成年をターゲットにしている証拠。判断力が低く・断りにくい・社会経験が少ない若者が狙われている。" },
-  ];
-
-  // Stage 2: Instagram post
-  const stage2Points = el ? [
-    { id: 0, label: el ? "{収入|しゅうにゅう}{証明|しょうめい}{画像|がぞう}「¥680,000」" : "収入証明画像「¥680,000」", body: el ? "{収入|しゅうにゅう}{証明|しょうめい}は{簡単|かんたん}に{偽造|ぎぞう}できる。アプリひとつで{数字|すうじ}を{書|か}き{換|か}えられる。{画像|がぞう}1{枚|まい}の{証拠|しょうこ}は{信用|しんよう}してはいけない。" : "収入証明は簡単に偽造できる。アプリひとつで数字を書き換えられる。画像1枚の証拠は信用してはいけない。" },
-    { id: 1, label: el ? "「{未経験|みけいけん}でも{月|つき}30{万|まん}は{余裕|よゆう}」" : "「未経験でも月30万は余裕」", body: el ? "スキルなしで{月|つき}30{万円|まんえん}は{現実的|げんじつてき}にあり{得|え}ない。その{分|ぶん}のリスク・{危険|きけん}がある。「{簡単|かんたん}に{稼|かせ}げる」には{必|かなら}ず{裏|うら}がある。" : "スキルなしで月30万は現実的にあり得ない。その分のリスク・危険がある。「簡単に稼げる」には必ず裏がある。" },
-    { id: 2, label: el ? "「まずはDMください」" : "「まずはDMください」", body: el ? "{最初|さいしょ}の{一歩|いっぽ}がDMへの{誘導|ゆうどう}。{個人情報|こじんじょうほう}を{少|すこ}しずつ{引|ひ}き{出|だ}すための{入口|いりぐち}。{正式|せいしき}な{採用|さいよう}はDMでは{行|おこな}われない。" : "最初の一歩がDMへの誘導。個人情報を少しずつ引き出すための入口。正式な採用はDMでは行われない。" },
-    { id: 3, label: el ? "ハッシュタグ（#{高校生|こうこうせい} #{大学生|だいがくせい}）" : "ハッシュタグ（#高校生 #大学生）", body: el ? "{若者|わかもの}を{意図的|いとてき}にターゲットにしている。{若者|わかもの}は{断|ことわ}りにくく・{社会|しゃかい}{経験|けいけん}が{少|すく}ないため{狙|ねら}われやすい。" : "若者を意図的にターゲットにしている。若者は断りにくく・社会経験が少ないため狙われやすい。" },
-    { id: 4, label: el ? "プロフィールのリンク" : "プロフィールのリンク", body: el ? "{外部|がいぶ}サイトやLINEグループへの{誘導|ゆうどう}。{個人情報|こじんじょうほう}を{入力|にゅうりょく}させるための{罠|わな}。{絶対|ぜったい}にタップしない。" : "外部サイトやLINEグループへの誘導。個人情報を入力させるための罠。絶対にタップしない。" },
-  ] : [
-    { id: 0, label: "収入証明画像「¥680,000」", body: "収入証明は簡単に偽造できる。アプリひとつで数字を書き換えられる。画像1枚の証拠は信用してはいけない。" },
-    { id: 1, label: "「未経験でも月30万は余裕」", body: "スキルなしで月30万は現実的にあり得ない。その分のリスク・危険がある。「簡単に稼げる」には必ず裏がある。" },
-    { id: 2, label: "「まずはDMください」", body: "最初の一歩がDMへの誘導。個人情報を少しずつ引き出すための入口。正式な採用はDMでは行われない。" },
-    { id: 3, label: "ハッシュタグ（#高校生 #大学生）", body: "若者を意図的にターゲットにしている。若者は断りにくく・社会経験が少ないため狙われやすい。" },
-    { id: 4, label: "プロフィールのリンク", body: "外部サイトやLINEグループへの誘導。個人情報を入力させるための罠。絶対にタップしない。" },
-  ];
-
-  // Stage 3: Job site
-  const stage3Points = el ? [
-    { id: 0, label: el ? "「1〜3{時間|じかん}で{日払|ひばら}い5{万円|まんえん}」" : "「1〜3時間で日払い5万円」", body: el ? "{時給|じきゅう}{換算|かんさん}で1{万|まん}6{千円|せんえん}{以上|いじょう}。{普通|ふつう}のバイトの10{倍|ばい}{以上|いじょう}の{金額|きんがく}。なぜこんなに{高|たか}いのか{絶対|ぜったい}に{疑|うたが}うこと。" : "時給換算で1万6千円以上。普通のバイトの10倍以上の金額。なぜこんなに高いのか絶対に疑うこと。" },
-    { id: 1, label: el ? "「{荷物|にもつ}の{中身|なかみ}の{確認|かくにん}は{不要|ふよう}」" : "「荷物の中身の確認は不要」", body: el ? "{中身|なかみ}を{見|み}せない{理由|りゆう}がある。{違法|いほう}な{物品|ぶっぴん}（{薬物|やくぶつ}・{盗品|とうひん}など）の{運搬|うんぱん}の{典型的|てんけいてき}な{手口|てぐち}。「{知|し}らなかった」では{済|す}まない。" : "中身を見せない理由がある。違法な物品（薬物・盗品など）の運搬の典型的な手口。「知らなかった」では済まない。" },
-    { id: 2, label: el ? "「{詳細|しょうさい}は{採用|さいよう}{後|ご}にご{説明|せつめい}」" : "「詳細は採用後にご説明」", body: el ? "{採用|さいよう}{前|まえ}に{仕事|しごと}{内容|ないよう}を{教|おし}えない。{断|ことわ}れなくなってから{本当|ほんとう}の{仕事|しごと}を{教|おし}える{罠|わな}。{合法|ごうほう}の{仕事|しごと}なら{最初|さいしょ}から{説明|せつめい}できる。" : "採用前に仕事内容を教えない。断れなくなってから本当の仕事を教える罠。合法の仕事なら最初から説明できる。" },
-    { id: 3, label: el ? "「{身分証明書|みぶんしょうめいしょ}をご{用意|ようい}ください」" : "「身分証明書をご用意ください」", body: el ? "{最初|さいしょ}から{個人情報|こじんじょうほう}を{要求|ようきゅう}している。{一度|いちど}{送|おく}ると{脅|おど}しの{材料|ざいりょう}にされる。{身分証|みぶんしょう}を{送|おく}ったら{絶対|ぜったい}に{逃|に}げられなくなる。" : "最初から個人情報を要求している。一度送ると脅しの材料にされる。身分証を送ったら絶対に逃げられなくなる。" },
-    { id: 4, label: el ? "「{秘密|ひみつ}が{守|まも}れる{方|かた}」" : "「秘密が守れる方」", body: el ? "{誰|だれ}にも{言|い}えない{仕事|しごと}＝{違法|いほう}な{仕事|しごと}。{合法|ごうほう}の{仕事|しごと}に{秘密|ひみつ}にする{理由|りゆう}はない。{家族|かぞく}や{友達|ともだち}に{言|い}えない{仕事|しごと}はやってはいけない。" : "誰にも言えない仕事＝違法な仕事。合法の仕事に秘密にする理由はない。家族や友達に言えない仕事はやってはいけない。" },
-    { id: 5, label: el ? "「すぐに{動|うご}ける{方|かた}」" : "「すぐに動ける方」", body: el ? "{考|かんが}える{時間|じかん}を{与|あた}えない。{焦|あせ}らせて{判断力|はんだんりょく}を{失|うしな}わせるのが{目的|もくてき}。{急|いそ}かされたら{必|かなら}ず{立|た}ち{止|と}まって{考|かんが}えること。" : "考える時間を与えない。焦らせて判断力を失わせるのが目的。急かされたら必ず立ち止まって考えること。" },
-  ] : [
-    { id: 0, label: "「1〜3時間で日払い5万円」", body: "時給換算で1万6千円以上。普通のバイトの10倍以上の金額。なぜこんなに高いのか絶対に疑うこと。" },
-    { id: 1, label: "「荷物の中身の確認は不要」", body: "中身を見せない理由がある。違法な物品（薬物・盗品など）の運搬の典型的な手口。「知らなかった」では済まない。" },
-    { id: 2, label: "「詳細は採用後にご説明」", body: "採用前に仕事内容を教えない。断れなくなってから本当の仕事を教える罠。合法の仕事なら最初から説明できる。" },
-    { id: 3, label: "「身分証明書をご用意ください」", body: "最初から個人情報を要求している。一度送ると脅しの材料にされる。身分証を送ったら絶対に逃げられなくなる。" },
-    { id: 4, label: "「秘密が守れる方」", body: "誰にも言えない仕事＝違法な仕事。合法の仕事に秘密にする理由はない。家族や友達に言えない仕事はやってはいけない。" },
-    { id: 5, label: "「すぐに動ける方」", body: "考える時間を与えない。焦らせて判断力を失わせるのが目的。急かされたら必ず立ち止まって考えること。" },
-  ];
-
-  const dangerSignCards = el ? [
-    { icon: "🚨", title: "{報酬|ほうしゅう}が{異常|いじょう}に{高|たか}い", desc: "{日払|ひばら}い{数万円|すうまんえん}・{月|つき}30{万|まん}{以上|いじょう}は{要注意|ようちゅうい}" },
-    { icon: "🚨", title: "{仕事|しごと}の{内容|ないよう}があいまい", desc: "「{荷物|にもつ}を{運|はこ}ぶだけ」「かんたんな{作業|さぎょう}」はNG" },
-    { icon: "🚨", title: "LINEやDMに{誘導|ゆうどう}する", desc: "{公式|こうしき}サイト・ハローワーク{以外|いがい}は{疑|うたが}う" },
-    { icon: "🚨", title: "{最初|さいしょ}から{身分証|みぶんしょう}を{要求|ようきゅう}する", desc: "{採用|さいよう}{前|まえ}の{個人情報|こじんじょうほう}{提供|ていきょう}は{絶対|ぜったい}NG" },
-    { icon: "🚨", title: "{秘密|ひみつ}にするよう{求|もと}める", desc: "{家族|かぞく}に{言|い}えない{仕事|しごと}はやってはいけない" },
-    { icon: "🚨", title: "{断|ことわ}ると{脅|おど}してくる", desc: "{脅|おど}されたらすぐ{警察|けいさつ}（#9110）に{相談|そうだん}" },
-  ] : [
-    { icon: "🚨", title: "報酬が異常に高い", desc: "日払い数万円・月30万以上は要注意" },
-    { icon: "🚨", title: "仕事の内容があいまい", desc: "「荷物を運ぶだけ」「簡単な作業」はNG" },
-    { icon: "🚨", title: "LINEやDMに誘導する", desc: "公式サイト・ハローワーク以外は疑う" },
-    { icon: "🚨", title: "最初から身分証を要求する", desc: "採用前の個人情報提供は絶対NG" },
-    { icon: "🚨", title: "秘密にするよう求める", desc: "家族に言えない仕事はやってはいけない" },
-    { icon: "🚨", title: "断ると脅してくる", desc: "脅されたらすぐ警察（#9110）に相談" },
-  ];
-
-  const renderFindGame = (points, found, setFound, stageLabel, nextStage) => {
-    const remaining = points.length - found.length;
-    const allFound = found.length >= points.length;
-    return (
-      <EpisodeShell onExit={onExit}>
-      <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0a1a0a,#041004)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
-        <div style={{ maxWidth: 440, margin: "0 auto" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-            <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: green, letterSpacing: ".15em" }}>{stageLabel}</div>
-            <div style={{ background: `${green}18`, border: `1px solid ${green}33`, borderRadius: 20, padding: "4px 12px", fontSize: 12, color: green, fontWeight: 900 }}>
-              {found.length}/{points.length} <RubyText text={el ? "{発見|はっけん}" : "発見"} />
-            </div>
-          </div>
-          {!allFound && (
-            <OwlSay mood="worried" e={el ? `{怪|あや}しいポイントを{全部|ぜんぶ}{見|み}つけよう！あと${remaining}個かくれてるよ🦉` : `怪しいポイントを全部見つけよう！あと${remaining}個隠れてるよ🦉`}>{`怪しいポイントを全部見つけよう！あと${remaining}個隠れてるよ🦉`}</OwlSay>
-          )}
-          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 14 }}>
-            {points.map((pt) => {
-              const isFound = found.includes(pt.id);
-              return (
-                <button key={pt.id} onClick={() => {
-                  feedback(isFound ? "tap" : "found");
-                  if (!isFound) setFound(prev => [...prev, pt.id]);
-                  setDetailModal({ title: pt.label, body: pt.body });
-                }}
-                  style={{ width: "100%", padding: "13px 16px", background: isFound ? `${green}18` : "rgba(255,255,255,.04)", border: `1.5px solid ${isFound ? green + "55" : "rgba(255,255,255,.1)"}`, borderRadius: 14, color: isFound ? "#86efac" : "rgba(255,255,255,.75)", fontSize: 13, fontWeight: isFound ? 900 : 500, cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 12, textAlign: "left", transition: "all .2s" }}>
-                  <span style={{ fontSize: 18, flexShrink: 0 }}>{isFound ? "✅" : "❓"}</span>
-                  <RubyText text={pt.label} />
-                  {!isFound && <span style={{ marginLeft: "auto", fontSize: 11, color: "rgba(255,255,255,.3)" }}><RubyText text={el ? "タップ" : "タップ"} /></span>}
-                </button>
-              );
-            })}
-          </div>
-          {allFound && (
-            <button onClick={() => { feedback("complete"); nextStage(); }}
-              style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${green},${greenDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", animation: "popIn .4s ease" }}>
-              {stageLabel.replace("STAGE","").includes("3") ? <RubyText text={el ? "まとめを{見|み}る →" : "まとめを見る →"} /> : <RubyText text={el ? "STAGE {クリア|くりあ}！{次|つぎ}へ →" : "ステージクリア！次へ →"} />}
-            </button>
-          )}
-        </div>
-        {detailModal && (
-          <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.8)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }} onClick={() => setDetailModal(null)}>
-            <div style={{ background: "linear-gradient(135deg,#0a1a0a,#041004)", border: `2px solid ${green}`, borderRadius: 20, padding: "22px 20px", maxWidth: 340, width: "100%", animation: "popIn .3s ease" }} onClick={e => e.stopPropagation()}>
-              <div style={{ fontSize: 28, textAlign: "center", marginBottom: 8 }}>🚨</div>
-              <h3 style={{ color: "#86efac", fontSize: 15, fontWeight: 900, textAlign: "center", margin: "0 0 12px" }}><RubyText text={detailModal.title} /></h3>
-              <p style={{ color: "rgba(255,255,255,.75)", fontSize: 13, lineHeight: 1.8, margin: "0 0 14px" }}><RubyText text={detailModal.body} /></p>
-              <button onClick={() => setDetailModal(null)} style={{ width: "100%", padding: 12, background: `linear-gradient(135deg,${green},${greenDark})`, border: "none", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>
-                <RubyText text={el ? "なるほど！" : "なるほど！"} />
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-      </EpisodeShell>
-    );
-  };
-
-  if (phase === "parent_intro") return (
-    <EpisodeIntroCard epKey="ep32" onStart={() => setPhase("intro")} />
-  );
-
-  if (phase === "intro") return (
-    <EpisodeShell onExit={onExit}>
-    <div style={{ minHeight: "100vh", background: "radial-gradient(ellipse at top,#0a1a0a,#041004)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 20px", fontFamily: "'Zen Maru Gothic',sans-serif", position: "relative" }}>
-      <StarField count={20} color={green} sizeMin={1} sizeRange={2} opacityMin={0.05} opacityRange={0.25} blinkMin={2} blinkRange={4} />
-      <div style={{ fontSize: 70, marginBottom: 12, animation: "float 3s ease-in-out infinite" }}>⚠️</div>
-      <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 10, color: green, letterSpacing: ".4em", margin: "0 0 10px" }}>EPISODE 03-2</div>
-      <h1 style={{ fontSize: 20, fontWeight: 900, color: "#fff", margin: "0 0 8px", textAlign: "center", lineHeight: 1.3 }}>
-        <RubyText text={el ? "その{求人|きゅうじん}、" : "その求人、"} /><br />
-        <RubyText text={el ? "{闇|やみ}バイトじゃない？" : "闇バイトじゃない？"} />
-      </h1>
-      <div style={{ maxWidth: 320, margin: "12px 0 20px" }}>
-        <OwlSay mood="worried" e={el ? "エピソード3で{闇|やみ}バイトのこわさを{学|まな}んだね。でも、{実際|じっさい}の{募集|ぼしゅう}を{見|み}てもすぐ{気|き}づける？{本物|ほんもの}の{手口|てぐち}を{使|つか}った3つの{場面|ばめん}で{怪|あや}しいポイントを{全部|ぜんぶ}{見|み}つけよう！🦉" : "エピソード3で闇バイトのこわさを学んだね。でも、実際の募集を見てもすぐ気づける？本物の手口を使った3つの場面で怪しいポイントを全部見つけよう！🦉"}>エピソード3で闇バイトのこわさを学んだね。でも、実際の募集を見てもすぐ気づける？本物の手口を使った3つの場面で怪しいポイントを全部見つけよう！🦉</OwlSay>
-      </div>
-      <div style={{ background: `${green}0a`, border: `1px solid ${green}22`, borderRadius: 16, padding: "14px 18px", maxWidth: 320, marginBottom: 16, fontSize: 13, color: "rgba(255,255,255,.7)", lineHeight: 1.8, textAlign: "center" }}>
-        <RubyText text={el ? "{画面|がめん}をよく{読|よ}んで、{怪|あや}しいと{思|おも}う{部分|ぶぶん}をタップしよう。{全部|ぜんぶ}{見|み}つけたら{次|つぎ}のステージへ！" : "画面をよく読んで、怪しいと思う部分をタップしよう。全部見つけたら次のステージへ！"} />
-      </div>
-      <button onClick={() => { feedback("tap"); setPhase("stage1"); }} style={{ background: `linear-gradient(135deg,${green},${greenDark})`, border: "none", borderRadius: 50, padding: "15px 44px", fontSize: 16, fontWeight: 900, color: "#fff", cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${green}44` }}>
-        <RubyText text={el ? "STAGE 1 {スタート|すたーと} →" : "STAGE 1 スタート →"} />
-      </button>
-    </div>
-    </EpisodeShell>
-  );
-
-  if (phase === "stage1") {
-    return renderFindGame(
-      stage1Points, foundS1, setFoundS1,
-      "STAGE 1 / 3 — X（旧Twitter）DM",
-      () => setPhase("stage2")
-    );
-  }
-
-  if (phase === "stage2") {
-    return renderFindGame(
-      stage2Points, foundS2, setFoundS2,
-      "STAGE 2 / 3 — Instagram投稿",
-      () => setPhase("stage3")
-    );
-  }
-
-  if (phase === "stage3") {
-    return renderFindGame(
-      stage3Points, foundS3, setFoundS3,
-      "STAGE 3 / 3 — 求人サイト",
-      () => setPhase("reveal")
-    );
-  }
-
-  if (phase === "reveal") return (
-    <EpisodeShell onExit={onExit}>
-    <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0a1a0a,#041004)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
-      <div style={{ maxWidth: 440, margin: "0 auto" }}>
-        <div style={{ textAlign: "center", marginBottom: 16 }}>
-          <div style={{ fontSize: 48, marginBottom: 8, animation: "celebrate 1s infinite" }}>🎉</div>
-          <h2 style={{ fontSize: 20, fontWeight: 900, color: "#fff", margin: "0 0 6px" }}>
-            <RubyText text={el ? "3つの{入口|いりぐち}、{全部|ぜんぶ}{見抜|みぬ}けた！" : "3つの入口、全部見抜けた！"} />
-          </h2>
-        </div>
-        <OwlSay mood="happy" e={el ? "3つの{全然|ぜんぜん}{違|ちが}う{場所|ばしょ}から{同|おな}じ{手口|てぐち}が{使|つか}われていたね。{共通|きょうつう}するサインを{覚|おぼ}えておこう！🦉" : "3つの全然違う場所から同じ手口が使われていたね。共通するサインを覚えておこう！🦉"}>3つの全然違う場所から同じ手口が使われていたね。共通するサインを覚えておこう！🦉</OwlSay>
-        <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 14 }}>
-          {dangerSignCards.map((c, i) => (
-            <div key={i} style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.08)", borderRadius: 14, padding: "12px 16px", display: "flex", gap: 12, alignItems: "flex-start", animation: `slideUp .4s ${i * .08}s both ease` }}>
-              <span style={{ fontSize: 20, flexShrink: 0 }}>{c.icon}</span>
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 900, color: "#86efac", marginBottom: 3 }}><RubyText text={c.title} /></div>
-                <div style={{ fontSize: 12, color: "rgba(255,255,255,.55)" }}><RubyText text={c.desc} /></div>
-              </div>
-            </div>
-          ))}
-        </div>
-        <div style={{ background: `${green}18`, border: `1px solid ${green}44`, borderRadius: 14, padding: "14px 16px", marginBottom: 14, textAlign: "center", fontSize: 15, fontWeight: 900, color: "#86efac" }}>
-          <RubyText text={el ? "「1つでも{当|あ}てはまったら{絶対|ぜったい}に{関|かか}わらない！」" : "「1つでも当てはまったら絶対に関わらない！」"} />
-        </div>
-        <button onClick={() => setPhase("promise")}
-          style={{ width: "100%", padding: 15, background: `linear-gradient(135deg,${green},${greenDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 15, fontWeight: 900, cursor: "pointer", fontFamily: "inherit" }}>
-          <RubyText text={el ? "{次|つぎ}へ：{我|わ}が{家|や}のルールを{決|き}める →" : "次へ：我が家のルールを決める →"} />
-        </button>
-      </div>
-    </div>
-    </EpisodeShell>
-  );
-
-  if (phase === "promise") return (
-    <EpisodeShell onExit={onExit}>
-    <div style={{ minHeight: "100vh", background: "linear-gradient(180deg,#0a1a0a,#041004)", padding: "20px 16px", fontFamily: "'Zen Maru Gothic',sans-serif", color: "#fff" }}>
-      <div style={{ maxWidth: 440, margin: "0 auto" }}>
-        <h2 style={{ fontSize: 20, fontWeight: 900, color: "#fff", textAlign: "center", marginBottom: 8 }}>
-          <RubyText text={el ? "{我|わ}が{家|や}の{約束|やくそく}を{作|つく}ろう" : "我が家の約束を作ろう"} />
-        </h2>
-        <OwlSay mood="happy" e={el ? "{怪|あや}しいお{仕事|しごと}の{誘|さそ}いが{来|き}たとき、{一人|ひとり}で{悩|なや}まないようにしよう。{相談|そうだん}できる{人|ひと}の{名前|なまえ}を{入力|にゅうりょく}してね。🦉" : "怪しいお仕事の誘いが来たとき、一人で悩まないようにしよう。相談できる人の名前を入力してね。🦉"}>怪しいお仕事の誘いが来たとき、一人で悩まないようにしよう。相談できる人の名前を入力してね。🦉</OwlSay>
-        <div style={{ background: `${green}08`, border: `1px solid ${green}22`, borderRadius: 16, padding: "16px", marginBottom: 14 }}>
-          <div style={{ fontSize: 13, color: "rgba(255,255,255,.6)", marginBottom: 10 }}>
-            <RubyText text={el ? "{怪|あや}しいお{仕事|しごと}を{見|み}たら…" : "怪しいお仕事を見たら…"} />
-          </div>
-          <input
-            value={contactName}
-            onChange={e => setContactName(e.target.value)}
-            placeholder={el ? "例：お{父|とう}さん・お{母|かあ}さん・◯◯{先生|せんせい}" : "例：お父さん・お母さん・◯◯先生"}
-            style={{ width: "100%", padding: "12px 14px", background: "rgba(255,255,255,.06)", border: `1px solid ${green}44`, borderRadius: 12, color: "#fff", fontSize: 14, fontFamily: "inherit", outline: "none", boxSizing: "border-box" }}
-          />
-        </div>
-        {contactName.length > 0 && (
-          <>
-            <div style={{ background: `${green}0a`, border: `2px solid ${green}44`, borderRadius: 16, padding: "18px 16px", marginBottom: 14, animation: "slideUp .4s ease" }}>
-              <div style={{ fontSize: 13, fontWeight: 900, color: green, marginBottom: 10 }}>🛡️ <RubyText text={el ? "{我|わ}が{家|や}の{約束|やくそく}" : "我が家の約束"} /></div>
-              <div style={{ fontSize: 13, color: "rgba(255,255,255,.75)", lineHeight: 1.9 }}>
-                <RubyText text={el ? "{怪|あや}しいお{仕事|しごと}の{誘|さそ}いが{来|き}たら" : "怪しいお仕事の誘いが来たら"} /><br />
-                <strong style={{ color: "#86efac", fontSize: 15 }}>「{contactName}」</strong><RubyText text={el ? "に{すぐ|すぐ}{相談|そうだん}する！" : "にすぐ相談する！"} /><br />
-                <span style={{ fontSize: 11, color: "rgba(255,255,255,.4)" }}>{new Date().toLocaleDateString("ja-JP")}</span>
-              </div>
-            </div>
-            <div style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.08)", borderRadius: 14, padding: "14px 16px", marginBottom: 14 }}>
-              <div style={{ fontSize: 12, fontWeight: 900, color: "#fcd34d", marginBottom: 8 }}>📞 <RubyText text={el ? "{困|こま}ったらここに{電話|でんわ}しよう" : "困ったらここに電話しよう"} /></div>
-              {[
-                { name: "#9110", desc: el ? "{警察|けいさつ}{相談|そうだん}{専用|せんよう}{電話|でんわ}" : "警察相談専用電話" },
-                { name: "0120-007-110", desc: el ? "{子|こ}どもの{人権|じんけん}110{番|ばん}" : "子どもの人権110番" },
-                { name: "0120-279-338", desc: el ? "よりそいホットライン" : "よりそいホットライン" },
-              ].map((c, i) => (
-                <div key={i} style={{ display: "flex", gap: 10, marginBottom: 6, alignItems: "center" }}>
-                  <a href={`tel:${c.name}`} style={{ fontSize: 14, fontWeight: 900, color: "#86efac", textDecoration: "none" }}>{c.name}</a>
-                  <span style={{ fontSize: 12, color: "rgba(255,255,255,.5)" }}><RubyText text={c.desc} /></span>
-                </div>
-              ))}
-            </div>
-            <button onClick={() => {
-              feedback("complete");
-              try { localStorage.setItem("mamoru_ep3_2_contact", contactName); } catch {}
-              onComplete(3);
-            }}
-              style={{ width: "100%", padding: 16, background: `linear-gradient(135deg,${green},${greenDark})`, border: "none", borderRadius: 14, color: "#fff", fontSize: 16, fontWeight: 900, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 8px 24px ${green}44` }}>
-              🏆 <RubyText text={el ? "{修了証|しゅうりょうしょう}をもらう" : "修了証をもらう"} />
-            </button>
-          </>
-        )}
-      </div>
-    </div>
-    </EpisodeShell>
-  );
-
-  return null;
-}
-
 
 function Ep4Countermeasures({ el, red, onComplete }) {
   const [checked, setChecked] = useState(new Set());
@@ -22859,7 +22541,7 @@ export default function App() {
     const rec = loadRecord();
     return {
       ep1: !!rec.ep1?.completed, ep2: !!rec.ep2?.completed,
-      ep3: !!rec.ep3?.completed, ep32: !!rec.ep32?.completed,
+      ep3: !!rec.ep3?.completed,
       ep4: !!rec.ep4?.completed, ep4_1: !!rec.ep4_1?.completed,
       ep5: !!rec.ep5?.completed, ep6: !!rec.ep6?.completed,
       ep7: !!rec.ep7?.completed,
@@ -22907,7 +22589,6 @@ export default function App() {
         {screen === "ep12" && <Episode1_2 onComplete={(s) => finish("ep12", s)} onExit={() => navigate("home")} />}
         {screen === "ep2" && <Episode2 onComplete={(s) => finish("ep2", s)} onExit={() => navigate("home")} />}
         {screen === "ep3" && <Episode3 onComplete={(s) => finish("ep3", s)} onExit={() => navigate("home")} />}
-        {screen === "ep32" && <Episode3_2 onComplete={(s) => finish("ep32", s)} onExit={() => navigate("home")} />}
         {screen === "ep4_1" && <Episode4_1 onComplete={(s) => finish("ep4_1", s)} onExit={() => navigate("home")} />}
         {screen === "ep4" && <Episode4 onComplete={(s) => finish("ep4", s)} onExit={() => navigate("home")} />}
         {screen === "ep5" && <Episode5 onComplete={(s) => finish("ep5", s)} onExit={() => navigate("home")} />}
