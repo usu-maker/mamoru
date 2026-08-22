@@ -764,6 +764,7 @@ const GlobalStyle = () => (
     @keyframes typeReveal{from{clip-path:inset(0 100% 0 0)} to{clip-path:inset(0 0% 0 0)}}
     @keyframes slideCard {from{opacity:0;transform:translateX(60px)} to{opacity:1;transform:translateX(0)}}
     @keyframes glowPulse {0%,100%{box-shadow:0 0 20px rgba(255,169,64,.2)} 50%{box-shadow:0 0 40px rgba(255,169,64,.5)}}
+    @keyframes glowPulseTeal {0%,100%{box-shadow:0 0 20px rgba(45,212,191,.22)} 50%{box-shadow:0 0 42px rgba(45,212,191,.55)}}
     @keyframes mamFadeUp {from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)}}
     @keyframes mamShake {0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-4px)} 40%,80%{transform:translateX(4px)}}
     @keyframes fadeOut    {from{opacity:.6} to{opacity:0}}
@@ -4482,15 +4483,44 @@ function Opening({ onComplete }) {
       <div style={{ position: "absolute", width: 400, height: 400, borderRadius: "50%", background: "radial-gradient(circle,rgba(255,169,64,.08),transparent)", top: -100, left: -100, pointerEvents: "none" }} />
       <div style={{ position: "absolute", width: 300, height: 300, borderRadius: "50%", background: "radial-gradient(circle,rgba(99,102,241,.06),transparent)", bottom: -50, right: -50, pointerEvents: "none" }} />
 
-      {/* シールドロゴ */}
+      {/* MAMORUロゴ（モリィアイコン） */}
       <div style={{ animation: "logoReveal .9s cubic-bezier(.34,1.56,.64,1) both", marginBottom: 24 }}>
         <div style={{
-          width: 90, height: 90, borderRadius: 26,
-          background: "linear-gradient(135deg,#ffa940,#ff6b00)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: 44, boxShadow: "0 0 40px rgba(255,169,64,.4), 0 8px 32px rgba(0,0,0,.4)",
-          animation: "glowPulse 2.5s ease-in-out infinite",
-        }}>🛡️</div>
+          width: 90, height: 90, borderRadius: 26, overflow: "hidden",
+          boxShadow: "0 0 40px rgba(45,212,191,.35), 0 8px 32px rgba(0,0,0,.4)",
+          animation: "glowPulseTeal 2.5s ease-in-out infinite",
+        }}>
+          <svg viewBox="0 0 120 120" style={{ width: "100%", height: "100%", display: "block" }} role="img" aria-label="MAMORU">
+            <defs>
+              <linearGradient id="mamoruLogoBg" x1="0" y1="0" x2="0.4" y2="1">
+                <stop offset="0" stopColor="#2dd4bf" /><stop offset="1" stopColor="#0d9488" />
+              </linearGradient>
+              <radialGradient id="mamoruLogoBody" cx="42%" cy="26%" r="82%">
+                <stop offset="0" stopColor="#e0b98d" /><stop offset="0.5" stopColor="#c9986a" /><stop offset="1" stopColor="#a3764c" />
+              </radialGradient>
+              <radialGradient id="mamoruLogoBelly" cx="46%" cy="22%" r="80%">
+                <stop offset="0" stopColor="#fdf0da" /><stop offset="1" stopColor="#e8c396" />
+              </radialGradient>
+              <linearGradient id="mamoruLogoBeak" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stopColor="#ffc061" /><stop offset="1" stopColor="#e8871a" />
+              </linearGradient>
+            </defs>
+            <rect width="120" height="120" fill="url(#mamoruLogoBg)" />
+            <path d="M30 21 Q25 32 27.5 41 Q34 37 41.5 32.5 Q35 28 30 21Z" fill="#8b6240" />
+            <path d="M90 21 Q95 32 92.5 41 Q86 37 78.5 32.5 Q85 28 90 21Z" fill="#8b6240" />
+            <ellipse cx="60" cy="66" rx="42" ry="43.5" fill="url(#mamoruLogoBody)" />
+            <ellipse cx="60" cy="77" rx="28.5" ry="30" fill="url(#mamoruLogoBelly)" />
+            <circle cx="43" cy="52" r="18" fill="#fdfaf4" />
+            <circle cx="77" cy="52" r="18" fill="#fdfaf4" />
+            <circle cx="43" cy="52" r="18" fill="none" stroke="#9c6f47" strokeWidth="2.6" />
+            <circle cx="77" cy="52" r="18" fill="none" stroke="#9c6f47" strokeWidth="2.6" />
+            <circle cx="43" cy="52" r="8.6" fill="#2c1810" />
+            <circle cx="77" cy="52" r="8.6" fill="#2c1810" />
+            <circle cx="45.6" cy="48.6" r="3" fill="#ffffff" />
+            <circle cx="79.6" cy="48.6" r="3" fill="#ffffff" />
+            <path d="M52.5 64.5 L67.5 64.5 L60 77.5Z" fill="url(#mamoruLogoBeak)" />
+          </svg>
+        </div>
       </div>
 
       {/* キャッチコピー */}
