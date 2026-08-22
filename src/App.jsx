@@ -770,6 +770,8 @@ const GlobalStyle = () => (
     @keyframes ep5GlowShift {0%{box-shadow:0 0 0 rgba(5,196,107,0)} 40%{box-shadow:0 0 16px rgba(5,196,107,.8)} 100%{box-shadow:0 0 20px rgba(236,72,153,.9);background:#c2185b}}
     @keyframes cardIn    {from{opacity:0;transform:translateY(24px) scale(.96)} to{opacity:1;transform:translateY(0) scale(1)}}
     @keyframes ringExpand{from{opacity:0;transform:scale(.85)} to{opacity:1;transform:scale(1)}}
+    @keyframes fbGlow{0%,100%{box-shadow:0 0 0 0 rgba(255,169,64,.28), 0 4px 18px rgba(0,0,0,.3)} 50%{box-shadow:0 0 24px 3px rgba(255,169,64,.30), 0 4px 18px rgba(0,0,0,.3)}}
+    @keyframes fbShine{0%{left:-60%} 45%{left:120%} 100%{left:120%}}
     @keyframes ep41Flow  {0%{left:-2%;opacity:0} 12%{opacity:1} 82%{opacity:1} 100%{left:98%;opacity:0}}
     @keyframes ep41Break {0%,70%,100%{border-color:rgba(239,68,68,.5)} 80%{border-color:#ef4444;box-shadow:0 0 8px rgba(239,68,68,.5)}}
     @keyframes slowRise  {from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)}}
@@ -6422,6 +6424,31 @@ function ParentReport({ onBack }) {
         {/* ── TAB: NEWS ── */}
         {tab === "news" && <ParentNewsTab />}
 
+        {/* ご意見・ご要望（フィードバック） */}
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSfao3wbrr3jNWWjHCQhfKUxBiDjTlOmLHWnL6OcnTjPuO0quA/viewform"
+          target="_blank" rel="noopener noreferrer"
+          style={{
+            display: "flex", width: "100%", marginTop: 24, position: "relative", overflow: "hidden",
+            background: "linear-gradient(135deg,rgba(255,169,64,.14),rgba(255,107,0,.07))",
+            border: "1.5px solid rgba(255,169,64,.55)", borderRadius: 18,
+            padding: "18px 16px", gap: 13, alignItems: "center",
+            textDecoration: "none", cursor: "pointer", boxSizing: "border-box",
+            animation: "fbGlow 2.8s ease-in-out infinite",
+          }}>
+          <span style={{ position: "absolute", top: 0, left: "-60%", width: "45%", height: "100%", background: "linear-gradient(105deg,transparent,rgba(255,255,255,.5),transparent)", animation: "fbShine 4.5s ease-in-out infinite", pointerEvents: "none" }} />
+          <div style={{ width: 46, height: 46, borderRadius: 13, flexShrink: 0, background: "linear-gradient(135deg,#ffa940,#ff6b00)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 23, boxShadow: "0 4px 14px rgba(255,169,64,.3)" }}>💬</div>
+          <div style={{ flex: 1, textAlign: "left" }}>
+            <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 9, color: "#c2620a", letterSpacing: ".14em", marginBottom: 4 }}>FEEDBACK</div>
+            <div style={{ fontSize: 14, fontWeight: 900, color: "#1e293b", lineHeight: 1.4, marginBottom: 4 }}>
+              <RubyText text={ageMode === "elementary" ? "ご{意見|いけん}・ご{要望|ようぼう}をお{聞|き}かせください" : "ご意見・ご要望をお聞かせください"} />
+            </div>
+            <div style={{ fontSize: 11, color: "#64748b", lineHeight: 1.7, whiteSpace: "pre-line" }}>
+              <RubyText text={ageMode === "elementary" ? "いただいた{声|こえ}をもとに{改善|かいぜん}していきます。\nお{子|こ}さまからのご{意見|いけん}も{歓迎|かんげい}です。" : "いただいた声をもとに改善していきます。\nお子さまからのご意見も歓迎です。"} />
+            </div>
+          </div>
+          <div style={{ width: 29, height: 29, borderRadius: "50%", flexShrink: 0, background: "#ffa940", color: "#241200", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, fontWeight: 900 }}>→</div>
+        </a>
+
         {/* Reset button */}
         <div style={{ marginTop: 24, textAlign: "center" }}>
           {!showClearConfirm ? (
@@ -7004,6 +7031,32 @@ function HomeScreen({ onNavigate, progress, startTutorial, onTutorialStarted }) 
             </div>
             <div style={{ color: "rgba(255,255,255,.3)" }}>→</div>
           </button>
+
+          {/* ご意見・ご要望（フィードバック） */}
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSfao3wbrr3jNWWjHCQhfKUxBiDjTlOmLHWnL6OcnTjPuO0quA/viewform"
+            target="_blank" rel="noopener noreferrer"
+            onClick={() => feedback("tap")}
+            style={{
+              width: "100%", marginBottom: 14, position: "relative", overflow: "hidden",
+              background: "linear-gradient(135deg,rgba(255,169,64,.16),rgba(255,107,0,.10))",
+              border: "1.5px solid rgba(255,169,64,.55)", borderRadius: 20,
+              padding: "18px 16px", display: "flex", gap: 13, alignItems: "center",
+              textDecoration: "none", cursor: "pointer",
+              animation: "fbGlow 2.8s ease-in-out infinite",
+            }}>
+            <span style={{ position: "absolute", top: 0, left: "-60%", width: "45%", height: "100%", background: "linear-gradient(105deg,transparent,rgba(255,255,255,.13),transparent)", animation: "fbShine 4.5s ease-in-out infinite", pointerEvents: "none" }} />
+            <div style={{ width: 46, height: 46, borderRadius: 13, flexShrink: 0, background: "linear-gradient(135deg,#ffa940,#ff6b00)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 23, boxShadow: "0 4px 14px rgba(255,169,64,.35)" }}>💬</div>
+            <div style={{ flex: 1, textAlign: "left" }}>
+              <div style={{ fontFamily: "'DotGothic16',monospace", fontSize: 9, color: "#ffc061", letterSpacing: ".14em", marginBottom: 4 }}>FEEDBACK</div>
+              <div style={{ fontSize: 14.5, fontWeight: 900, color: "#fff", lineHeight: 1.4, marginBottom: 4 }}>
+                <RubyText text={ageMode === "elementary" ? "ご{意見|いけん}・ご{要望|ようぼう}はこちら！" : "ご意見・ご要望はこちら！"} />
+              </div>
+              <div style={{ fontSize: 11, color: "rgba(255,255,255,.62)", lineHeight: 1.7, whiteSpace: "pre-line" }}>
+                <RubyText text={ageMode === "elementary" ? "つかってみて{感|かん}じたこと、{教|おし}えてね。\n{大人|おとな}の{方|かた}のご{意見|いけん}も{大歓迎|だいかんげい}です。" : "つかってみて感じたこと、教えてね。\n大人の方のご意見も大歓迎です。"} />
+              </div>
+            </div>
+            <div style={{ width: 29, height: 29, borderRadius: "50%", flexShrink: 0, background: "rgba(255,169,64,.9)", color: "#241200", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, fontWeight: 900 }}>→</div>
+          </a>
 
           {/* プライバシーポリシー */}
           <div style={{ textAlign: "center" }}>
